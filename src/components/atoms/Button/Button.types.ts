@@ -6,7 +6,7 @@ export type ButtonVariant = 'contained' | 'outlined' | 'text';
 
 export interface ButtonProps {
   children: ReactNode;
-  // size?: Size;
+  size?: Size;
   // variant?: ButtonVariant;
   // color?: Palette;
   // disabled?: boolean;

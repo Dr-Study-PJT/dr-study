@@ -5,23 +5,40 @@ import {
   BsFillPersonFill,
   BsGlobe2,
 } from 'react-icons/bs';
+import { iconStyles } from './Icon.styles';
+import { IconInterface } from './Icons.types';
 
-const Icon = () => {
+// 아이콘 추가 시, 아이콘 이름 타입도 같이 추가
+const iconName: any = {
+  house: <BsHouseDoor />,
+  people: <BsFillPeopleFill />,
+  person: <BsFillPersonFill />,
+  globe: <BsGlobe2 />,
+};
+
+// Icon 컴포넌트
+export const Icon = ({
+  icon,
+  size,
+  color,
+  shape,
+  bg,
+  shadow,
+  active,
+}: IconInterface) => {
   return (
-    <>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsHouseDoor />
-      </button>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsFillPeopleFill />
-      </button>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsFillPersonFill />
-      </button>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsGlobe2 />
-      </button>
-    </>
+    <span
+      className={iconStyles({
+        size,
+        color,
+        shape,
+        bg,
+        shadow,
+        active: active ? true : false,
+      })}
+    >
+      {iconName[icon]}
+    </span>
   );
 };
 

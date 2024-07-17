@@ -1,8 +1,7 @@
 // 컴포넌트 타입 작성하세요.
 
-export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
-
 export interface HeadingProps {
-  level: HeadingLevel;
+  variant: 'h2' | 'h3' | 'h4';
+  color?: 'primary' | 'secondary' | 'success' | 'danger' | 'black' | 'white';
   children: React.ReactNode;
 }

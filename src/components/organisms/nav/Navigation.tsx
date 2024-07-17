@@ -1,3 +1,5 @@
+import { Heading, Span } from '@/components/atoms';
+import Button from '@/components/atoms/Button/Button';
 import Icon from '@/components/atoms/Icon/Icon';
 import React from 'react';
 import { tv } from 'tailwind-variants';
@@ -62,11 +64,56 @@ const button = tv({
 // 타입작성 !필요!
 const Navigation = ({ children }: any) => {
   return (
-    <div className="flex gap-3">
-      <Icon />
-      <button className={baseButton()}>Button</button>
+    <div>
+      <Icon icon="house" bg="black" size="xl" active shadow="lg" />
+      <Icon icon="people" bg="black" size="xl" shadow="lg" />
+      <Icon icon="person" bg="black" size="xl" shadow="lg" />
+      <Icon icon="globe" bg="black" size="xl" shadow="lg" />
+      {/* <button className={baseButton()}>Button</button>
       <button className={buyButton()}>Buy button</button>
-      <button className={button({ color: 'secondary' })}>variant button</button>
+      <button className={button({ color: 'secondary' })}>variant button</button> */}
+      <ul className="flex gap-1">
+        <li>
+          <Button size="sm">sm 다음으로</Button>
+        </li>
+        <li>
+          <Button size="md">md 다음으로</Button>
+        </li>
+        <li>
+          <Button size="lg">lg 다음으로</Button>
+        </li>
+        <li>
+          <Button size="xl">xl 다음으로</Button>
+        </li>
+      </ul>
+
+      <div>
+        <Heading variant="h2">h2 스터디그룹 생성</Heading>
+        <Heading variant="h3" color="primary">
+          h3 스터디그룹 생성
+        </Heading>
+        <Heading variant="h4" color="danger">
+          h4 스터디그룹 생성
+        </Heading>
+      </div>
+      <ul>
+        <li>
+          <Span variant="b1">b1 스터디 그룹 기본정보를 작성해주세요.</Span>
+        </li>
+        <li>
+          <Span variant="b2">b2 스터디 그룹 기본정보를 작성해주세요.</Span>
+        </li>
+        <li>
+          <Span variant="b3" color="primary">
+            b3 스터디 그룹 기본정보를 작성해주세요.
+          </Span>
+        </li>
+        <li>
+          <Span variant="b4" color="danger">
+            b4 스터디 그룹 기본정보를 작성해주세요.
+          </Span>
+        </li>
+      </ul>
     </div>
   );
 };

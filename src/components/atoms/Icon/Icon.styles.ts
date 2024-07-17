@@ -1,34 +1,39 @@
 import { tv } from 'tailwind-variants';
 
-export const buttonStyles = tv({
-  base: 'flex items-center justify-center rounded-md focus:outline-none transition duration-200',
+export const iconStyles = tv({
+  base: 'flex items-center justify-center text-white rounded-full transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300',
   variants: {
     color: {
       primary: 'text-blue-500',
       secondary: 'text-purple-500',
       success: 'text-green-500',
       danger: 'text-red-500',
-      white: 'text-white', // 흰 글씨 추가
     },
     bg: {
       gray: 'bg-gray-800',
       black: 'bg-black',
       white: 'bg-white',
-      primary: 'bg-blue-500',
-      none: '',
+      primary: 'primary',
+      none: '', // 배경색 없음
     },
     size: {
-      sm: 'px-2 py-1 text-sm',
-      md: 'px-4 py-2 text-md',
-      lg: 'px-6 py-3 text-lg',
-      xl: 'px-8 py-4 text-xl',
+      sm: 'w-4 h-4',
+      md: 'w-6 h-6',
+      lg: 'w-8 h-8',
+      xl: 'w-10 h-10',
     },
     shape: {
-      square: 'square',
+      square: '',
       rounded: 'rounded',
       circle: 'rounded-full',
     },
-
+    shadow: {
+      none: '',
+      sm: 'shadow-sm',
+      md: 'shadow-md',
+      lg: 'shadow-lg',
+      xl: 'shadow-xl',
+    },
     active: {
       true: '',
       false: '',
@@ -36,13 +41,19 @@ export const buttonStyles = tv({
   },
   compoundVariants: [
     {
+      active: true,
+      class: 'bg-blue-500 text-white',
+    },
+    {
+      active: false,
+      color: 'primary',
       class: 'hover:bg-blue-400', // hover 시 연한 파랑색 배경
     },
   ],
   defaultVariants: {
     size: 'md',
-    color: 'white',
-    bg: 'primary',
+    color: 'primary',
+    bg: 'none',
     shape: 'square',
     shadow: 'none',
     active: false,
