@@ -1,7 +1,12 @@
 import React, { InputHTMLAttributes, forwardRef, useState } from 'react';
 // import { InputWithLabelAndError } from "./Input.types";
 // import StyledInput from "./InputWithLabelAndError.styles";
-import { Label, Paragraph, Span } from '@/components/atoms';
+import { Input, Label, Paragraph, Span } from '@/components/atoms';
+import {
+  errorStyles,
+  inputStyles,
+  labelStyles,
+} from './InputWithLabelAndError.styles';
 
 // (수정됨)발생한 에러
 // 에러 메시지 : Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?
@@ -9,19 +14,26 @@ import { Label, Paragraph, Span } from '@/components/atoms';
 interface InputWithLabelAndError extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   placeholder?: string;
-  errordisplay?: any;
+  errorDisplay?: string;
 }
 
 export const InputWithLabelAndError = forwardRef<
   HTMLInputElement,
   InputWithLabelAndError
->(({ errordisplay, label, placeholder, ...props }, ref) => {
+>(({ errorDisplay, label, placeholder, ...props }, ref) => {
   return (
-    <>
-      <Label>{label}</Label>
-      <StyledInput {...props} ref={ref} placeholder={placeholder} />
-      {errordisplay && <Paragraph>{errordisplay.message}</Paragraph>}
-    </>
+    <div className="relative flex flex-col gap-2 bg-gray-800">
+      {label && <Label className={labelStyles()}>{label}</Label>}
+      <input
+        className={inputStyles()}
+        {...props}
+        ref={ref}
+        placeholder={placeholder}
+      />
+      {errorDisplay && (
+        <Paragraph className={errorStyles()}>{errorDisplay}</Paragraph>
+      )}
+    </div>
   );
 });
 

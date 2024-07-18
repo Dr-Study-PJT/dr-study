@@ -5,6 +5,31 @@ import React from 'react';
 
 import { tv } from 'tailwind-variants';
 
+// 라벨 스타일 정의
+export const labelStyles = tv({
+  base: [
+    'text-blue-600', // 기본 파란색 (#007AFF)
+  ],
+});
+
+// 인풋 스타일 정의
+export const inputStyles = tv({
+  base: [
+    'bg-transparent', // 배경 없음
+    'border-b-2',
+    'border-blue-600', // 파란색 밑줄 (#007AFF)
+    'text-white', // 흰색 텍스트
+    'py-2', // 약간의 패딩
+    'outline-none', // 아웃라인 없음
+    'focus:border-blue-700', // 포커스 시 밑줄 색상 변경
+  ],
+});
+
+// 에러 메시지 스타일 정의
+export const errorStyles = tv({
+  base: ['absolute', 'top-4', 'text-red-600', 'mt-1', 'text-sm'],
+});
+
 export const iconStyles = tv({
   base: 'flex items-center justify-center text-white rounded-full transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300',
   variants: {

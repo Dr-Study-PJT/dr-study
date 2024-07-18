@@ -1,8 +1,11 @@
-import { Heading, Span } from '@/components/atoms';
-import Button from '@/components/atoms/Button/Button';
+import { Button, Heading, Span } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
 import React from 'react';
 import { tv } from 'tailwind-variants';
+import { PlainTextForm } from '../Forms/PlainTextForm/PlainTextForm';
+import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
+import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
+import CreateStudyGroupProgress from '../Forms/CreateStudyGroupProgress/CreateStudyGroupProgress';
 
 const baseButton = tv({
   base: [
@@ -87,7 +90,6 @@ const Navigation = ({ children }: any) => {
           <Button size="xl">xl 다음으로</Button>
         </li>
       </ul>
-
       <div>
         <Heading variant="h2">h2 스터디그룹 생성</Heading>
         <Heading variant="h3" color="primary">
@@ -118,6 +120,19 @@ const Navigation = ({ children }: any) => {
           </Span>
         </li>
       </ul>
+      <PlainTextForm />
+
+      <div className="p-4 flex gap-4">
+        <ImageUpload shape="circle" />
+        {/* <ImageUpload shape="rounded-square" /> */}
+        {/* <ImageUpload shape="circle" /> */}
+      </div>
+
+      <StepsBox title="제목" subTitle="부제목" steps={3} currentStep={1}>
+        본문
+      </StepsBox>
+
+      <CreateStudyGroupProgress>들어갈 내용</CreateStudyGroupProgress>
     </div>
   );
 };
