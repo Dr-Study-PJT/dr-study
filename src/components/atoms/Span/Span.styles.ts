@@ -4,6 +4,7 @@ export const spanStyles = tv({
   base: '',
   variants: {
     variant: {
+      s1: 'text-lg font-semibold',
       b1: 'text-lg',
       b2: 'text-base',
       b3: 'text-sm',

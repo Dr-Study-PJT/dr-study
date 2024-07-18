@@ -69,6 +69,7 @@ const Navigation = ({ children }: any) => {
       <Icon icon="people" bg="black" size="xl" shadow="lg" />
       <Icon icon="person" bg="black" size="xl" shadow="lg" />
       <Icon icon="globe" bg="black" size="xl" shadow="lg" />
+      <Icon icon="arrowLeft" bg="black" size="xl" shadow="lg" />
       {/* <button className={baseButton()}>Button</button>
       <button className={buyButton()}>Buy button</button>
       <button className={button({ color: 'secondary' })}>variant button</button> */}
@@ -97,6 +98,9 @@ const Navigation = ({ children }: any) => {
         </Heading>
       </div>
       <ul>
+        <li>
+          <Span variant="s1">s1 스터디 그룹 기본정보를 작성해주세요.</Span>
+        </li>
         <li>
           <Span variant="b1">b1 스터디 그룹 기본정보를 작성해주세요.</Span>
         </li>
