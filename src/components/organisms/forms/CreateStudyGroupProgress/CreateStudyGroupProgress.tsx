@@ -111,6 +111,11 @@ const CreateStudyGroupProgress = ({
         errorDisplay={errors?.study_detail?.message || ''}
         label="스터디 그룹 상세내용"
       />
+      <InputWithLabelAndError
+        {...register('study_detail', { ...formConditions.plainText })}
+        errorDisplay={errors?.study_detail?.message || ''}
+        label="스터디 그룹 상세내용"
+      />
       <Button>검증</Button>
     </form>
   );
