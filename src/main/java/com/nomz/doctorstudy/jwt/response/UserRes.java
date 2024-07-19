@@ -1,4 +1,4 @@
-package com.nomz.doctor_study.jwt.response;
+package com.nomz.doctorstudy.jwt.response;
 
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;

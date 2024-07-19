@@ -1,4 +1,4 @@
-package com.nomz.doctor_study.common.auth;
+package com.nomz.doctorstudy.common.auth;
 
 import com.ssafy.db.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,10 +1,10 @@
-package com.nomz.doctor_study.common.auth;
+package com.nomz.doctorstudy.common.auth;
 
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.nomz.doctor_study.Member.entity.Member;
-import com.nomz.doctor_study.common.util.JwtTokenUtil;
-import com.nomz.doctor_study.jwt.service.UserService;
+import com.nomz.doctorstudy.Member.entity.Member;
+import com.nomz.doctorstudy.common.util.JwtTokenUtil;
+import com.nomz.doctorstudy.jwt.service.UserService;
 import com.ssafy.api.jwt.service.UserService;
 import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.common.util.ResponseBodyWriteUtil;

@@ -1,7 +1,7 @@
-package com.nomz.doctor_study.jwt.service;
+package com.nomz.doctorstudy.jwt.service;
 
-import com.nomz.doctor_study.Member.entity.Member;
-import com.nomz.doctor_study.jwt.request.UserRegisterPostReq;
+import com.nomz.doctorstudy.Member.entity.Member;
+import com.nomz.doctorstudy.jwt.request.UserRegisterPostReq;
 import com.ssafy.api.jwt.request.UserRegisterPostReq;
 import com.ssafy.db.entity.User;
 
