@@ -1,4 +1,4 @@
-package com.nomz.doctor_study.jwt.service;
+package com.nomz.doctorstudy.jwt.service;
 
 import com.ssafy.api.jwt.request.UserRegisterPostReq;
 import com.ssafy.db.entity.User;

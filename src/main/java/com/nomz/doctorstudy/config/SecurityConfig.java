@@ -1,7 +1,7 @@
-package com.nomz.doctor_study.config;
+package com.nomz.doctorstudy.config;
 
-import com.nomz.doctor_study.common.auth.MemberDetailService;
-import com.nomz.doctor_study.jwt.service.UserService;
+import com.nomz.doctorstudy.common.auth.MemberDetailService;
+import com.nomz.doctorstudy.jwt.service.UserService;
 import com.ssafy.api.jwt.service.UserService;
 import com.ssafy.common.auth.JwtAuthenticationFilter;
 import com.ssafy.common.auth.SsafyUserDetailService;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

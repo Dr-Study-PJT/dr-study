@@ -1,4 +1,4 @@
-package com.nomz.doctor_study.common.util;
+package com.nomz.doctorstudy.common.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

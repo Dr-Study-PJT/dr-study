@@ -1,4 +1,4 @@
-package com.nomz.doctor_study.Member.entity;
+package com.nomz.doctorstudy.Member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
