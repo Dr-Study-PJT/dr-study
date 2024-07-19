@@ -15,9 +15,7 @@ interface stepsLine {
 const StepProgress = ({ steps, currentStep }: stepsLine) => {
   return (
     <div className="relative flex items-center justify-between w-full">
-      {/* 선 */}
       <div className="absolute top-1/2 w-full h-1 bg-gray-300 -translate-y-1/2"></div>
-      {/* 점 */}
       {Array.from({ length: steps }).map((_, index) => (
         <div
           key={index}

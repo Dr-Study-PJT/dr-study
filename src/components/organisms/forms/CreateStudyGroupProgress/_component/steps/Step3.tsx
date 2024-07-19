@@ -7,7 +7,6 @@ import Image from 'next/image';
 import formConditions from '@/constants/formConditions';
 
 export const Step3 = ({
-  setFocus,
   handleSubmit,
   register,
   errors,
@@ -63,6 +62,7 @@ export const Step3 = ({
       />
       <InputWithLabelAndError
         {...register('study_detail', { ...formConditions.plainText })}
+        textarea
         errorDisplay={errors?.study_detail?.message || ''}
         label="스터디 그룹 상세내용"
       />

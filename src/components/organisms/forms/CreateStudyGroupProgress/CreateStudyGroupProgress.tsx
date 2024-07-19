@@ -7,6 +7,8 @@ import React, { useEffect, useState } from 'react';
 import { Step1 } from './_component/steps/Step1';
 import { Step3 } from './_component/steps/Step3';
 import { Step2 } from './_component/steps/Step2';
+import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
+import { handleKeyDownForSubmit } from '../_utils/handleKeyDownForNextInput';
 
 const CreateStudyGroupProgress = ({
   // 하위 컴포넌트에 이벤트를 전달하려면,
@@ -35,11 +37,16 @@ const CreateStudyGroupProgress = ({
   } = useForm<any>();
 
   const handleNextStep = (data: any) => {
-    console.log('bodyData:', bodyData);
     setBodyData({ ...bodyData, ...data });
     if (currentStep < steps) {
       setCurrentStep(currentStep + 1);
     }
+  };
+
+  const requestData = (data: any) => {
+    const dateString = data.goal_date;
+    const date = new Date(dateString); // 0000-00-00 문자열을 datetime 형식으로 변경
+    console.log('bodyData:', { ...bodyData, goal_date: date.toISOString() });
   };
 
   const progressData = {
@@ -94,9 +101,14 @@ const CreateStudyGroupProgress = ({
 
   return (
     <div>
-      <h1>{progressData.title}</h1>
-      <h2>{progressData.childrenData[currentStep - 1].subTitle}</h2>
-      <div>{progressData.childrenData[currentStep - 1].component}</div>
+      <StepsBox
+        title={progressData.title}
+        subTitle={progressData.childrenData[currentStep - 1].subTitle}
+        steps={steps}
+        currentStep={currentStep}
+      >
+        <div>{progressData.childrenData[currentStep - 1].component}</div>
+      </StepsBox>
       <div>
         {currentStep > 1 && (
           <Button onClick={() => setCurrentStep(currentStep - 1)}>이전</Button>
@@ -105,7 +117,7 @@ const CreateStudyGroupProgress = ({
           <Button onClick={handleSubmit(handleNextStep)}>다음</Button>
         )}
         {currentStep === steps && (
-          <Button onClick={handleSubmit(handleNextStep)}>완료</Button>
+          <Button onClick={handleSubmit(requestData)}>완료</Button>
         )}
       </div>
     </div>
