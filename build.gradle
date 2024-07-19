@@ -1,0 +1,81 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.nomz'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//STOMP 웹소캣 서버 사이드 테스트를 위한 의존성 추가
+	implementation("org.springframework.boot:spring-boot-starter-mustache")
+	//STOMP 관련 프론트 라이브러리
+	implementation('org.webjars.bower:jquery:3.3.1')
+	implementation('org.webjars:sockjs-client:1.1.2')
+	implementation('org.webjars:stomp-websocket:2.3.3-1')
+	implementation('org.webjars:webjars-locator:0.30')
+	//WebRTC 클라이언트 의존성 추가
+	implementation('org.webjars.bower:webrtc-adapter:7.4.0')
+
+
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	testImplementation "org.springframework.security:spring-security-test"
+
+	compileOnly 'org.projectlombok:lombok'
+//	runtimeOnly 'com.mysql:mysql-connector-j'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//QueryDsl
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	//jwt
+	implementation("com.auth0:java-jwt:3.10.3")
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//메일 처리용 thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'javax.mail:mail:1.4.7'
+
+
+
+
+
+
+}
+
+clean{
+	delete file("src/main/generated")
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
