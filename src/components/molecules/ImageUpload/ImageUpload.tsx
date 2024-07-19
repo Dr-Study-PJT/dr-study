@@ -39,10 +39,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const { control, setValue } = useForm();
   const [image, setImage] = useState<string | null>(null);
 
-  console.log(bodyData);
-  console.log(setBodyData);
-  console.log(setImageDisplay);
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -71,15 +67,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       control={control}
       render={({ field }) => (
         <div className={shapeVariants({ shape })}>
-          {image ? (
-            <Image
-              width={100}
-              height={100}
-              src={image}
-              alt="Uploaded"
-              className="w-full h-full object-cover"
-            />
-          ) : (
+          {
             <label className="flex flex-col items-center justify-center cursor-pointer text-gray-500">
               <FaPlus className="text-2xl" />
               <input
@@ -88,7 +76,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 onChange={handleImageUpload}
               />
             </label>
-          )}
+          }
         </div>
       )}
     />
