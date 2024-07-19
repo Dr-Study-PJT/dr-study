@@ -24,18 +24,24 @@ const shapeVariants = tv({
 });
 
 interface ImageUploadProps {
-  bodyData: any;
+  bodyData?: any;
   setBodyData?: Dispatch<SetStateAction<any>>;
+  setImageDisplay?: Dispatch<SetStateAction<any>>;
   shape?: 'square' | 'rounded-square' | 'circle';
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
   bodyData,
   setBodyData,
+  setImageDisplay,
   shape = 'circle',
 }) => {
   const { control, setValue } = useForm();
   const [image, setImage] = useState<string | null>(null);
+
+  console.log(bodyData);
+  console.log(setBodyData);
+  console.log(setImageDisplay);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -43,13 +49,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
+        setValue('image', file);
         if (setBodyData) {
           setBodyData({
             ...bodyData,
-            img_url: reader.result as string,
+            file: file,
           });
         }
-        setValue('image', file);
+        console.log(setBodyData, setImageDisplay);
+        if (setImageDisplay) {
+          setImageDisplay(reader.result as string);
+        }
       };
       reader.readAsDataURL(file);
     }

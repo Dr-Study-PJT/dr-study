@@ -7,30 +7,25 @@ import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
 import React, { ReactNode, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import formConditions from '@/constants/formConditions';
-
-interface CreateStudyGroupProgressProps {
-  title?: string;
-  subTitle?: string;
-  steps?: number;
-  displayComponents: ReactNode[];
-}
+import Image from 'next/image';
+import { CreateStudyGroupProgressProps } from './CreateStudyGroupProgress.types';
 
 const CreateStudyGroupProgress = ({
-  title = '제목',
-  subTitle = '부제목',
+  title = '제목을 입력하세요',
+  subTitle = '부제목을 입력하세요',
   steps = 3,
-  displayComponents = [],
+  displayComponents = [], // 리액트 노드들을 steps와 일치시켜 컴포넌트로 전달해야 합니다.
 }: CreateStudyGroupProgressProps) => {
   const [bodyData, setBodyData] = useState({
-    img_url: '',
+    file: null,
     study_group_name: '',
     study_goal: '',
     max_count: 1,
     goal_date: '',
     study_detail: '',
   });
+  const [imageDisplay, setImageDisplay] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [isValid, setIsValid] = useState<boolean>(false);
 
   // 다음으로 가기 전 입력 검증단계? 어떻게하지?
   const checkIsValidStep = () => {};
@@ -43,7 +38,7 @@ const CreateStudyGroupProgress = ({
 
   const handleNextStep = (data: any) => {
     console.log(bodyData, data);
-    setBodyData({ ...data, ...bodyData });
+    setBodyData({ ...bodyData, ...data });
     if (currentStep < steps) {
       setCurrentStep(currentStep + 1);
     }
@@ -51,7 +46,22 @@ const CreateStudyGroupProgress = ({
 
   const T1 = () => (
     <form onSubmit={handleSubmit(handleNextStep)}>
-      <ImageUpload bodyData={bodyData} setBodyData={setBodyData} />
+      <ImageUpload
+        bodyData={bodyData}
+        setBodyData={setBodyData}
+        setImageDisplay={setImageDisplay}
+      />
+      {imageDisplay && (
+        <div className="w-28 h-28">
+          <Image
+            width={100}
+            height={100}
+            src={imageDisplay}
+            alt="Uploaded"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
       <InputWithLabelAndError
         {...register('study_group_name', {
           ...formConditions.plainText,
@@ -69,7 +79,7 @@ const CreateStudyGroupProgress = ({
     </form>
   );
   const T2 = () => (
-    <form onSubmit={handleSubmit((data) => console.log(data))}>
+    <form onSubmit={handleSubmit(handleNextStep)}>
       <InputWithLabelAndError
         {...register('max_count', {
           ...formConditions.plainText,
@@ -93,6 +103,35 @@ const CreateStudyGroupProgress = ({
   );
   const T3 = () => (
     <form onSubmit={handleSubmit((data) => console.log(data))}>
+      <ImageUpload
+        bodyData={bodyData}
+        setBodyData={setBodyData}
+        setImageDisplay={setImageDisplay}
+      />
+      {imageDisplay && (
+        <div className="w-28 h-28">
+          <Image
+            width={100}
+            height={100}
+            src={imageDisplay}
+            alt="Uploaded"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+      <InputWithLabelAndError
+        {...register('study_group_name', {
+          ...formConditions.plainText,
+        })}
+        // errorDisplay 타입 에러 해결 !필요!
+        errorDisplay={errors?.study_group_name?.message || ''}
+        label="스터디 그룹명"
+      />
+      <InputWithLabelAndError
+        {...register('study_goal', { ...formConditions.plainText })}
+        errorDisplay={errors?.study_goal?.message || ''}
+        label="스터디 목표"
+      />
       <InputWithLabelAndError
         {...register('max_count', {
           ...formConditions.plainText,
@@ -111,12 +150,6 @@ const CreateStudyGroupProgress = ({
         errorDisplay={errors?.study_detail?.message || ''}
         label="스터디 그룹 상세내용"
       />
-      <InputWithLabelAndError
-        {...register('study_detail', { ...formConditions.plainText })}
-        errorDisplay={errors?.study_detail?.message || ''}
-        label="스터디 그룹 상세내용"
-      />
-      <Button>검증</Button>
     </form>
   );
 
@@ -131,7 +164,9 @@ const CreateStudyGroupProgress = ({
       >
         {tempDisplayComponents[currentStep - 1]}
         {/* 입력완료 버튼을 두고 -> 검증완료 시 다음으로 가능하도록? */}
-        <Button onClick={handleNextStep}>다음으로</Button>
+        <Button onClick={() => console.log('마지막스텝', bodyData)}>
+          다음으로
+        </Button>
       </StepsBox>
     </div>
   );
