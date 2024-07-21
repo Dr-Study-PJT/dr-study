@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.common.exception;
 
+import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,10 +16,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleCustomException(BusinessException ex) {
         return new ResponseEntity<>(
                 new ErrorResponse<>(
-                        ex.getMessage(),
+                        ex.getErrorCode().getMessage(),
                         Map.of()
                 ),
-                ex.getStatus()
+                ex.getErrorCode().getHttpStatus()
         );
     }
 

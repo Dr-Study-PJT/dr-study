@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.conference.dto;
+package com.nomz.doctorstudy.conference.request;
 
 import lombok.Builder;
 import lombok.Getter;

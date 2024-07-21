@@ -2,11 +2,12 @@ package com.nomz.doctorstudy.conference.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.Conference;
+import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
 import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
-import com.nomz.doctorstudy.conference.dto.GetConferenceListRequest;
+import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Transactional
     public Conference getConference(Long conferenceId) {
         return conferenceRepository.findById(conferenceId)
-                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "해당 아이디와 일치하는 컨퍼런스가 없습니다."));
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
     }
 
     @Override
