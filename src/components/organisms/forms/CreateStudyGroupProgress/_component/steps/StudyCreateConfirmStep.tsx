@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/atoms';
+import React from 'react';
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
 import formConditions from '@/constants/formConditions';
+import { formWrapperStyles } from '@/components/molecules/Form/Form.styles';
 
-export const Step3 = ({
+export const StudyCreateConfirmStep = ({
   handleSubmit,
   register,
   errors,
@@ -16,7 +15,10 @@ export const Step3 = ({
   setImageDisplay,
 }: any) => {
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      className={formWrapperStyles({ variant: 'steps' })}
+      onSubmit={handleSubmit}
+    >
       <ImageUpload
         bodyData={bodyData}
         setBodyData={setBodyData}

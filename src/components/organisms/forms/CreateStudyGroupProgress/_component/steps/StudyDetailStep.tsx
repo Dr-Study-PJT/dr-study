@@ -1,23 +1,28 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/atoms';
-import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-import Image from 'next/image';
 import formConditions from '@/constants/formConditions';
 import {
   handleKeyDownForNextInput,
   handleKeyDownForSubmit,
 } from '../../../_utils/handleKeyDownForNextInput';
+import { formWrapperStyles } from '@/components/molecules/Form/Form.styles';
 
-export const Step2 = ({ setFocus, handleSubmit, register, errors }: any) => {
+export const StudyDetailStep = ({
+  setFocus,
+  handleSubmit,
+  register,
+  errors,
+}: any) => {
   // 포커스할 필드명
   useEffect(() => {
     setFocus('max_count');
   }, [setFocus]);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      className={formWrapperStyles({ variant: 'steps' })}
+      onSubmit={handleSubmit}
+    >
       <InputWithLabelAndError
         type="number"
         min={1}

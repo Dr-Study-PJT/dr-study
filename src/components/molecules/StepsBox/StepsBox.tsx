@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import { Heading, Span } from '@/components/atoms';
 import { Button } from '@mui/material';
+import { Box } from '@/components/atoms/Box/Box';
 
 interface stepsLine {
   steps: number;
@@ -14,13 +15,13 @@ interface stepsLine {
 
 const StepProgress = ({ steps, currentStep }: stepsLine) => {
   return (
-    <div className="relative flex items-center justify-between w-full">
-      <div className="absolute top-1/2 w-full h-1 bg-gray-300 -translate-y-1/2"></div>
+    <div className="relative flex items-center justify-between w-full py-[30px]">
+      <div className="absolute top-1/2 w-full h-1 bg-[#5E658B] -translate-y-1/2"></div>
       {Array.from({ length: steps }).map((_, index) => (
         <div
           key={index}
           className={`relative z-10 w-6 h-6 rounded-full bg-blue-500 ${
-            currentStep === index + 1 ? 'border-4 border-black' : ''
+            currentStep === index + 1 ? 'border-4 border-[#D4D4D4]' : ''
           }`}
         ></div>
       ))}
@@ -45,11 +46,15 @@ export const StepsBox = ({
   children,
 }: StepsBoxProps) => {
   return (
-    <div>
-      <Heading variant="h2">{title}</Heading>
-      <Span variant="b1">{subTitle}</Span>
+    <Box>
+      <Heading variant="h2" color="white">
+        {title}
+      </Heading>
+      <Heading variant="h4" color="primary" className="p-[10px]">
+        {subTitle}
+      </Heading>
       <StepProgress steps={steps} currentStep={currentStep} />
       {children}
-    </div>
+    </Box>
   );
 };

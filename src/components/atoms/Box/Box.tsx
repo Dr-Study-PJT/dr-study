@@ -1,8 +1,7 @@
 import React from 'react';
 import { BoxProps } from './Box.types';
+import { boxStyles } from './Box.styles';
 
-// 스타일을 적용한 컴포넌트를 반환하세요.
-
-export const Box = ({ children }: BoxProps) => {
-  return <div className="">{children}</div>;
+export const Box = ({ variant, color = 'black', children }: BoxProps) => {
+  return <div className={boxStyles({ variant, color })}>{children}</div>;
 };

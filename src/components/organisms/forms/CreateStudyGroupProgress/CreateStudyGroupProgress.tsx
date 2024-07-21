@@ -2,13 +2,13 @@
 
 import { Button } from '@/components/atoms';
 import { useForm } from 'react-hook-form';
-import { CreateStudyGroupProgressProps } from './CreateStudyGroupProgress.types';
 import React, { useEffect, useState } from 'react';
-import { Step1 } from './_component/steps/Step1';
-import { Step3 } from './_component/steps/Step3';
-import { Step2 } from './_component/steps/Step2';
 import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
-import { handleKeyDownForSubmit } from '../_utils/handleKeyDownForNextInput';
+import { CreateStudyGroupProgressProps } from './CreateStudyGroupProgress.types';
+import { StudyBaseInfoStep } from './_component/steps/StudyBaseInfoStep';
+import { StudyDetailStep } from './_component/steps/StudyDetailStep';
+import { StudyCreateConfirmStep } from './_component/steps/StudyCreateConfirmStep';
+import { Box } from '@/components/atoms/Box/Box';
 
 const CreateStudyGroupProgress = ({
   // 하위 컴포넌트에 이벤트를 전달하려면,
@@ -55,7 +55,7 @@ const CreateStudyGroupProgress = ({
       {
         subTitle: '스터디 그룹 기본정보를 작성해주세요.',
         component: (
-          <Step1
+          <StudyBaseInfoStep
             setFocus={setFocus}
             key={1}
             bodyData={bodyData}
@@ -71,7 +71,7 @@ const CreateStudyGroupProgress = ({
       {
         subTitle: '스터디 그룹 상세정보를 작성해주세요.',
         component: (
-          <Step2
+          <StudyDetailStep
             setFocus={setFocus}
             key={2}
             handleSubmit={handleSubmit(handleNextStep)}
@@ -83,7 +83,7 @@ const CreateStudyGroupProgress = ({
       {
         subTitle: '입력한 스터디 정보가 맞는지 확인해주세요.',
         component: (
-          <Step3
+          <StudyCreateConfirmStep
             setFocus={setFocus}
             key={3}
             handleSubmit={handleSubmit(handleNextStep)}
@@ -100,16 +100,18 @@ const CreateStudyGroupProgress = ({
   };
 
   return (
-    <div>
+    <Box variant="createStudyGroupStepBox">
       <StepsBox
         title={progressData.title}
         subTitle={progressData.childrenData[currentStep - 1].subTitle}
         steps={steps}
         currentStep={currentStep}
       >
-        <div>{progressData.childrenData[currentStep - 1].component}</div>
+        <div className="w-full w-">
+          {progressData.childrenData[currentStep - 1].component}
+        </div>
       </StepsBox>
-      <div>
+      <div className="w-full flex justify-end">
         {currentStep > 1 && (
           <Button onClick={() => setCurrentStep(currentStep - 1)}>이전</Button>
         )}
@@ -120,7 +122,7 @@ const CreateStudyGroupProgress = ({
           <Button onClick={handleSubmit(requestData)}>완료</Button>
         )}
       </div>
-    </div>
+    </Box>
   );
 };
 

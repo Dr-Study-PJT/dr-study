@@ -8,8 +8,18 @@ import { tv } from 'tailwind-variants';
 // 라벨 스타일 정의
 export const labelStyles = tv({
   base: [
-    'text-blue-600', // 기본 파란색 (#007AFF)
+    'text-[12px] text-left text-blue-600', // 기본 파란색 (#007AFF)
   ],
+  variants: {
+    color: {
+      primary: 'text-blue-500',
+      secondary: 'text-purple-500',
+      success: 'text-green-500',
+      danger: 'text-red-500',
+      black: 'text-black',
+      white: 'text-white', // 흰 글씨 추가
+    },
+  },
 });
 
 // 인풋 스타일 정의
@@ -17,17 +27,17 @@ export const inputStyles = tv({
   base: [
     'bg-transparent', // 배경 없음
     'border-b-2',
-    'border-blue-600', // 파란색 밑줄 (#007AFF)
+    'border-[#2196F3]', // 파란색 밑줄 (#007AFF)
     'text-white', // 흰색 텍스트
-    'py-2', // 약간의 패딩
+    'py-1', // 약간의 패딩
     'outline-none', // 아웃라인 없음
-    'focus:border-blue-700', // 포커스 시 밑줄 색상 변경
+    'focus:border-[#4fb0ff]', // 포커스 시 밑줄 색상 변경
   ],
 });
 
 // 에러 메시지 스타일 정의
 export const errorStyles = tv({
-  base: ['absolute', 'top-4', 'text-red-600', 'mt-1', 'text-sm'],
+  base: ['absolute', 'top-12', 'text-red-600', 'mt-1', 'text-sm'],
 });
 
 export const iconStyles = tv({

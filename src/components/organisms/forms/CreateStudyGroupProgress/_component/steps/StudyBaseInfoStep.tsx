@@ -1,11 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetFocus,
-  useForm,
-} from 'react-hook-form';
-import { Button } from '@/components/atoms';
+import { FieldErrors, UseFormRegister, UseFormSetFocus } from 'react-hook-form';
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
@@ -13,9 +7,10 @@ import formConditions from '@/constants/formConditions';
 import {
   handleKeyDownForNextInput,
   handleKeyDownForSubmit,
-} from '../../../_utils/handleKeyDownForNextInput';
+} from '@/components/organisms/forms/_utils/handleKeyDownForNextInput';
+import { formWrapperStyles } from '@/components/molecules/Form/Form.styles';
 
-interface Step1Props {
+interface StudyBaseInfoStepProps {
   bodyData: any;
   setBodyData: React.Dispatch<React.SetStateAction<any>>;
   imageDisplay: any;
@@ -26,7 +21,7 @@ interface Step1Props {
   setFocus: UseFormSetFocus<any>;
 }
 
-export const Step1 = ({
+export const StudyBaseInfoStep = ({
   setFocus,
   bodyData,
   setBodyData,
@@ -35,32 +30,17 @@ export const Step1 = ({
   handleSubmit,
   register,
   errors,
-}: Step1Props) => {
+}: StudyBaseInfoStepProps) => {
   // 포커스할 필드명
   useEffect(() => {
     setFocus('study_group_name');
   }, [setFocus]);
 
-  // const handleKeyDownForNextInput = (
-  //   event: React.KeyboardEvent<HTMLInputElement>,
-  // ) => {
-  //   if (event.key === 'Enter') {
-  //     event.preventDefault(); // 기본 엔터 동작 방지
-  //     setFocus('study_goal');
-  //   }
-  // };
-
-  // const handleKeyDownForSubmit = (
-  //   event: React.KeyboardEvent<HTMLInputElement>,
-  // ) => {
-  //   if (event.key === 'Enter') {
-  //     event.preventDefault(); // 기본 엔터 동작 방지
-  //     handleSubmit();
-  //   }
-  // };
-
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      className={formWrapperStyles({ variant: 'steps' })}
+      onSubmit={handleSubmit}
+    >
       <ImageUpload
         bodyData={bodyData}
         setBodyData={setBodyData}
@@ -90,7 +70,7 @@ export const Step1 = ({
       <InputWithLabelAndError
         {...register('study_goal', { ...formConditions.plainText })}
         errorDisplay={errors?.study_goal?.message || ''}
-        label="스터디 목표"
+        label="스터디 그룹 목표"
         onKeyDown={(
           e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
         ) => handleKeyDownForSubmit(e, handleSubmit)}

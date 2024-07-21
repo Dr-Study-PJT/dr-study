@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { iconStyles } from './Icon.styles';
 
 export type IconKeyValue = {
   house: ReactNode;
@@ -11,7 +12,7 @@ export type IconKeyValue = {
 export interface IconInterface {
   // 아이콘 이름 추가
   icon: 'house' | 'people' | 'person' | 'globe' | 'arrowLeft';
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: keyof typeof iconStyles.variants.size;
   shape?: 'square' | 'rounded' | 'circle';
   color?: 'primary' | 'secondary' | 'success' | 'danger';
   bg?: 'primary' | 'gray' | 'black' | 'white' | 'none';

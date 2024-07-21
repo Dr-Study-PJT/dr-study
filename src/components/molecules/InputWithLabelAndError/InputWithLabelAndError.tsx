@@ -2,11 +2,10 @@ import React, {
   InputHTMLAttributes,
   TextareaHTMLAttributes,
   forwardRef,
-  useState,
 } from 'react';
 // import { InputWithLabelAndError } from "./Input.types";
 // import StyledInput from "./InputWithLabelAndError.styles";
-import { Input, Label, Paragraph, Span } from '@/components/atoms';
+import { Label, Paragraph } from '@/components/atoms';
 import {
   errorStyles,
   inputStyles,
@@ -42,8 +41,11 @@ export const InputWithLabelAndError = forwardRef<
 >((props, ref) => {
   const { textarea, errorDisplay, label, placeholder, ...rest } = props;
   return (
-    <div className="relative flex flex-col gap-2 bg-gray-800">
+    <div className="w-full relative flex flex-col">
       {label && <Label className={labelStyles()}>{label}</Label>}
+      {errorDisplay && (
+        <Paragraph className={errorStyles()}>{errorDisplay}</Paragraph>
+      )}
       {textarea ? (
         <textarea
           className={inputStyles()}
@@ -58,10 +60,6 @@ export const InputWithLabelAndError = forwardRef<
           ref={ref as React.Ref<HTMLInputElement>}
           placeholder={placeholder}
         />
-      )}
-
-      {errorDisplay && (
-        <Paragraph className={errorStyles()}>{errorDisplay}</Paragraph>
       )}
     </div>
   );

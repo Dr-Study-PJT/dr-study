@@ -6,5 +6,4 @@ export interface CreateStudyGroupProgressProps {
   title?: string;
   subTitle?: string;
   steps?: number;
-  displayComponents: ReactNode[];
 }

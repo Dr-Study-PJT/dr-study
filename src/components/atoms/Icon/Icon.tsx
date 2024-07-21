@@ -9,7 +9,6 @@ import {
 import { iconStyles } from './Icon.styles';
 import { IconInterface, IconKeyValue } from './Icons.types';
 
-// 아이콘 추가 시, 아이콘 이름 타입도 같이 추가
 const iconName: IconKeyValue = {
   house: <BsHouseDoor />,
   people: <BsFillPeopleFill />,
@@ -28,6 +27,8 @@ export const Icon = ({
   shadow,
   active,
 }: IconInterface) => {
+  const iconElement = React.cloneElement(iconName[icon], { size });
+
   return (
     <span
       className={iconStyles({
@@ -39,7 +40,7 @@ export const Icon = ({
         active: active ? true : false,
       })}
     >
-      {iconName[icon]}
+      {iconElement}
     </span>
   );
 };

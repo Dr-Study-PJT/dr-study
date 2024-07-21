@@ -10,17 +10,21 @@ export const iconStyles = tv({
       danger: 'text-red-500',
     },
     bg: {
-      gray: 'bg-gray-800',
+      gray: 'bg-[#393C49]',
       black: 'bg-black',
       white: 'bg-white',
       primary: 'primary',
       none: '', // 배경색 없음
     },
     size: {
+      navIcon: '72',
       sm: 'w-4 h-4',
       md: 'w-6 h-6',
       lg: 'w-8 h-8',
       xl: 'w-10 h-10',
+    },
+    fontSize: {
+      navIcon: 'text-[72px]',
     },
     shape: {
       square: '',
