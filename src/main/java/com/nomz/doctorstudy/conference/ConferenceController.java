@@ -1,9 +1,9 @@
 package com.nomz.doctorstudy.conference;
 
-import com.nomz.doctorstudy.common.SuccessResponse;
-import com.nomz.doctorstudy.common.exception.ErrorResponse;
+import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
-import com.nomz.doctorstudy.conference.dto.GetConferenceListRequest;
+import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
 import com.nomz.doctorstudy.conference.response.CreateConferenceResponse;
 import com.nomz.doctorstudy.conference.response.GetConferenceListResponse;
 import com.nomz.doctorstudy.conference.response.GetConferenceResponse;
@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -107,7 +108,7 @@ public class ConferenceController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<List<GetConferenceListResponse>>> getConferenceList(
-            @ModelAttribute GetConferenceListRequest request
+            @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
         GetConferenceListRequest command = GetConferenceListRequest.builder()
                 .title(request.getTitle())

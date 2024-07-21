@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.common.exception;
+package com.nomz.doctorstudy.common.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
