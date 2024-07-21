@@ -18,7 +18,6 @@ public class BlockProcessor {
 
         Stack<ScriptContext> context;
         for (char ch : script.toCharArray()) {
-            if ()
         }
     }
 
