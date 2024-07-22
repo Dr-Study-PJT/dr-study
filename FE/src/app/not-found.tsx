@@ -1,12 +1,14 @@
 import Link from 'next/link';
 
 import { ErrorLottie } from './_components/Lottie/Error/ErrorLottie';
+import { ErrorLottie2 } from './_components/Lottie/Error2/ErrorLottie2';
 
 export default function NotFound() {
   return (
     <div className="flex flex-col justify-center align-middle">
       <div className="w-full">
         <ErrorLottie />
+        <ErrorLottie2 />
       </div>
       <h1>아무것도 없네요!</h1>
 

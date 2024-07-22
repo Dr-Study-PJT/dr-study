@@ -3,6 +3,10 @@ import { tv } from 'tailwind-variants';
 export const buttonStyles = tv({
   base: 'flex items-center justify-center rounded-md focus:outline-none transition duration-200',
   variants: {
+    variant: {
+      home: "w-[196px] h-[53px] bg-gray-500 hover:bg-gray-700 text-white text-lg rounded-2xl py-2 px-6",
+      checkAndTry: "w-[196px] h-[53px] bg-[#8D251A] hover:bg-[#6b1b14] text-white text-lg rounded-2xl py-2 px-6",
+    },
     color: {
       primary: 'text-blue-500',
       secondary: 'text-purple-500',
@@ -36,13 +40,13 @@ export const buttonStyles = tv({
   },
   compoundVariants: [
     {
-      class: 'hover:bg-blue-400', // hover 시 연한 파랑색 배경
+      // class: 'hover:bg-blue-400', // hover 시 연한 파랑색 배경
     },
   ],
   defaultVariants: {
     size: 'md',
     color: 'white',
-    bg: 'primary',
+    bg: 'none',
     shape: 'square',
     shadow: 'none',
     active: false,

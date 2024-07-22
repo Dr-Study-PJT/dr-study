@@ -5,6 +5,8 @@ import './globals.css';
 import Navigation from '@/components/organisms/Navigation/Navigation';
 
 import localFont from 'next/font/local';
+import { Box } from '../components/atoms/Box/Box';
+import LoadingAndResult from '../components/organisms/LoadingAndResult/LoadingAndResult';
 
 const pretendard = localFont({
     src: [
@@ -68,11 +70,20 @@ export default function RootLayout({
                     <MSWComponent />
 
                     <Navigation>네브바</Navigation>
-                    <div>
+                    {/* 아래는 네브바 아래에... */}
+                    {/* 사이드바 */}
+                        <Box variant='sideBar'> 
+                            아무거나임
+                        </Box>
+                        {/* 본문 */}
+                        <Box variant='main'>
+                            <LoadingAndResult/>
+                        </Box>
+                    {/* <div>
                         본문래퍼
                         <div>사이드바</div>
                         {children}
-                    </div>
+                    </div> */}
                 </RQProvider>
             </body>
         </html>

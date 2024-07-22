@@ -3,6 +3,9 @@ import { tv } from 'tailwind-variants';
 export const spanStyles = tv({
   base: '',
   variants: {
+    customized: {
+
+    },
     variant: {
       s1: 'text-lg font-semibold',
       b1: 'text-lg',
