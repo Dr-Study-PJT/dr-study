@@ -33,12 +33,9 @@ export const MemberBaseInfoStep = ({
     register,
     errors,
 }: MemberBaseInfoStepProps) => {
-    // 포커스할 필드명
     useEffect(() => {
         setFocus('email');
     }, [setFocus]);
-
-    console.log(handleSubmit);
 
     return (
         <form
@@ -62,6 +59,7 @@ export const MemberBaseInfoStep = ({
                 </div>
             )}
             <InputWithLabelAndError
+                textarea={false}
                 {...register('email', {
                     ...formConditions.plainText,
                 })}
@@ -74,6 +72,7 @@ export const MemberBaseInfoStep = ({
                 ) => handleKeyDownForNextInput(e, 'nickname', setFocus)}
             />
             <InputWithLabelAndError
+                textarea={false}
                 {...register('nickname', { ...formConditions.plainText })}
                 errorDisplay={errors?.nickname?.message || ''}
                 label="닉네임 입력"
@@ -84,6 +83,7 @@ export const MemberBaseInfoStep = ({
                 ) => handleKeyDownForNextInput(e, 'password', setFocus)}
             />
             <InputWithLabelAndError
+                textarea={false}
                 {...register('password', { ...formConditions.password })}
                 errorDisplay={errors?.password?.message || ''}
                 label="비밀번호 입력"
@@ -95,6 +95,7 @@ export const MemberBaseInfoStep = ({
                 ) => handleKeyDownForNextInput(e, 'rePassword', setFocus)}
             />
             <InputWithLabelAndError
+                textarea={false}
                 {...register('rePassword', { ...formConditions.password })}
                 errorDisplay={errors?.rePassword?.message || ''}
                 label="비밀번호 재입력"

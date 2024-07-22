@@ -2,8 +2,8 @@ import React from 'react';
 
 import StudyGroupTemplate from '@/components/template/study-group/StudyGroupTemplate';
 
-const StudyGroupPage = () => {
+const GroupPage = () => {
   return <StudyGroupTemplate />;
 };
 
-export default StudyGroupPage;
+export default GroupPage;

@@ -11,7 +11,7 @@ const Navigation = ({ children }: any) => {
       <div>
         <ul className="flex">
           <li>
-            <Icon icon="house" bg="gray" fontSize="navIcon" />
+            <Icon icon="house" bg="gray" />
           </li>
           <li>
             <Icon icon="people" bg="gray" />

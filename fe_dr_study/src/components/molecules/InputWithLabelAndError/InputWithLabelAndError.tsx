@@ -10,6 +10,7 @@ import {
     inputStyles,
     labelStyles,
 } from './InputWithLabelAndError.styles';
+import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
 
 // HTMLInputType을 정의합니다.
 type HTMLInputType =
@@ -40,7 +41,7 @@ interface CommonProps {
     textarea: boolean;
     label?: string;
     placeholder?: string;
-    errorDisplay?: string;
+    errorDisplay?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
     inputType?: HTMLInputType;
 }
 
@@ -56,11 +57,17 @@ export const InputWithLabelAndError = forwardRef<
 >((props, ref) => {
     const { textarea, errorDisplay, label, placeholder, inputType, ...rest } =
         props;
+    
+     // errorDisplay에서 문자열 메시지 추출해서 string형으로 쓰게 했숴요
+     const errorMessage = typeof errorDisplay === 'string' ? errorDisplay
+     : errorDisplay?.message || '';  
+
+    
     return (
         <div className="w-full relative flex flex-col">
             {label && <Label className={labelStyles()}>{label}</Label>}
             {errorDisplay && (
-                <Paragraph className={errorStyles()}>{errorDisplay}</Paragraph>
+                <Paragraph className={errorStyles()}>{errorMessage as String}</Paragraph>
             )}
             {textarea ? (
                 <textarea

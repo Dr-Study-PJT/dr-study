@@ -1,9 +1,8 @@
-import React from 'react';
+import FindPasswordTemplate from '@/components/template/login/FindPasswordTemplate';
 
-import FindUserPasswordTemplate from '@/components/template/login/FindUserPasswordTemplate';
 
-const FindUserPasswordPage = () => {
-  return <FindUserPasswordTemplate />;
+const FindPasswordPage = () => {
+  return <FindPasswordTemplate />;
 };
 
-export default FindUserPasswordPage;
+export default FindPasswordPage;

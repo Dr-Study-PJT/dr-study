@@ -1,10 +1,12 @@
 // import { logout } from "../accounts/login/api/login";
 
 import { POST } from '@/utils/axios/routeModule';
-import { TUserData, getSessionStorageItem } from '@/utils/sessionStorage';
+import { IMemberData } from '@/interfaces/members';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
+
 
 import { authAPI as API } from './axiosInstanceManager';
-import { logout } from '@/app/login/_api/login';
+import { logout } from '@/app/auth/_api/login'; 
 
 export const fetchAccessToken = async (
     userId: string | null,
@@ -45,14 +47,14 @@ export async function handleAuthentication(isAuth: boolean): Promise<any> {
 
     if (!isAuth) return headers;
 
-    const userData: TUserData = getSessionStorageItem('userData');
-    if (!userData) return headers;
+    const memberData: IMemberData = getSessionStorageItem('memberData');
+    if (!memberData) return headers;
 
     let token = getAccessToken();
 
     if (!token || !isTokenValid(token)) {
         try {
-            const newToken = await fetchAccessToken(userData.email);
+            const newToken = await fetchAccessToken(memberData.email);
             setAccessToken(newToken);
             token = newToken;
         } catch (error) {

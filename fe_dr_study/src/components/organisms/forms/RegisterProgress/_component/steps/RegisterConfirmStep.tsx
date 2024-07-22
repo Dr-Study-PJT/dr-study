@@ -55,12 +55,6 @@ export const RegisterConfirmStep = ({
                 label="비밀번호 입력"
                 inputType="password"
             />
-            <InputWithLabelAndError
-                {...register('re_password', { ...formConditions.password })}
-                errorDisplay={errors?.re_password?.message || ''}
-                label="비밀번호 재입력"
-                inputType="password"
-            />
         </form>
     );
 };

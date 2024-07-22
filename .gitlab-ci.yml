@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+deploy_to_github:
+  stage: deploy
+  only:
+    - fe-master
+  script:
+    - git config --global user.email "he1236@ajou.ac.kr"
+    - git config --global user.name "horiz.d"
+    - git clone --branch fe-master https://oauth2:$GITLAB_TOKEN@gitlab.com/s11-webmobile1-sub2/S11P12D105.git
+    - cd S11P12D105
+    - git remote add github https://$GITHUB_TOKEN@github.com/no-mz/FE-DrStudy-production.git
+    - git push github fe-master:main

@@ -7,16 +7,17 @@ import { Button } from '@/components/atoms';
 import { Box } from '@/components/atoms/Box/Box';
 import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
 
-import { RegisterProgressProps } from './RegisterProgress.types';
 import { MemberBaseInfoStep, RegisterConfirmStep } from './_component/steps';
+import { RegisterProgressProps } from './RegisterProgress.types';
+import { register as registerMember } from '@/app/auth/register/_api/register';
+import { IRegisterReq } from '@/interfaces/members';
 
 const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
-    const [bodyData, setBodyData] = useState({
+    const [bodyData, setBodyData] = useState<IRegisterReq>({
         file: null,
         email: '',
         nickname: '',
         password: '',
-        re_password: '',
     });
     const [imageDisplay, setImageDisplay] = useState<string | null>(null);
     const [currentStep, setCurrentStep] = useState<number>(1);
@@ -29,18 +30,21 @@ const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
     } = useForm<any>();
 
     const handleNextStep = (data: any) => {
-        console.log('tklfgodgka');
-        setBodyData({ ...bodyData, ...data });
+        const { rePassword, ...restData } = data;
+        setBodyData({ ...bodyData, ...restData });
         if (currentStep < steps) {
             setCurrentStep(currentStep + 1);
         }
     };
 
-    // const requestData = (data: any) => {
-    //     console.log('bodyData:', {
-    //         ...bodyData,
-    //     });
-    // };
+    const handleRegister = async (data: any) => {
+        try {
+            const response = await registerMember(bodyData);
+            console.log('Registration successful:', response);
+        } catch (error) {
+            console.error('Registration failed:', error);
+        }
+    };
 
     const progressData = {
         title: 'Dr. Study에 가입하기',
@@ -67,7 +71,7 @@ const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
                     <RegisterConfirmStep
                         setFocus={setFocus}
                         key={2}
-                        handleSubmit={handleSubmit}
+                        handleSubmit={handleSubmit(handleRegister)}
                         register={register}
                         errors={errors}
                         bodyData={bodyData}
@@ -102,7 +106,7 @@ const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
                     <Button onClick={handleSubmit(handleNextStep)}>다음</Button>
                 )}
                 {currentStep === steps && (
-                    <Button onClick={handleSubmit(requestData)}>완료</Button>
+                    <Button onClick={handleSubmit(handleRegister)}>완료</Button>
                 )}
             </div>
         </Box>
@@ -110,4 +114,3 @@ const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
 };
 
 export default RegisterProgress;
-2;

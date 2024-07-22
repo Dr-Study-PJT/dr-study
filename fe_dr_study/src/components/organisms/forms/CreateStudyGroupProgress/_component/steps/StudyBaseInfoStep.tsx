@@ -33,7 +33,6 @@ export const StudyBaseInfoStep = ({
   register,
   errors,
 }: StudyBaseInfoStepProps) => {
-  // 포커스할 필드명
   useEffect(() => {
     setFocus('study_group_name');
   }, [setFocus]);
@@ -60,18 +59,20 @@ export const StudyBaseInfoStep = ({
         </div>
       )}
       <InputWithLabelAndError
+        textarea={false} 
         {...register('study_group_name', {
           ...formConditions.plainText,
         })}
-        errorDisplay={errors?.study_group_name?.message || ''}
+        errorDisplay={errors.study_group_name?.message || undefined} 
         label="스터디 그룹명"
         onKeyDown={(
           e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
         ) => handleKeyDownForNextInput(e, 'study_goal', setFocus)}
       />
       <InputWithLabelAndError
+        textarea={false} 
         {...register('study_goal', { ...formConditions.plainText })}
-        errorDisplay={errors?.study_goal?.message || ''}
+        errorDisplay={errors.study_goal?.message || undefined} 
         label="스터디 그룹 목표"
         onKeyDown={(
           e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,

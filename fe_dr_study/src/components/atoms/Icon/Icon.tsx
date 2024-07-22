@@ -28,7 +28,7 @@ export const Icon = ({
   shadow,
   active,
 }: IconInterface) => {
-  const iconElement = React.cloneElement(iconName[icon], { size });
+  // const iconElement = React.cloneElement(iconName[icon], { size });
 
   return (
     <span
@@ -41,7 +41,7 @@ export const Icon = ({
         active: !!active,
       })}
     >
-      {iconElement}
+      {/* {iconElement} */}
     </span>
   );
 };
