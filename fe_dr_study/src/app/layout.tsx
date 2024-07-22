@@ -67,7 +67,6 @@ export default function RootLayout({
             <body>
                 <RQProvider>
                     <MSWComponent />
-
                     <div className="h-[5.8125rem]">
                         <Navigation />
                     </div>

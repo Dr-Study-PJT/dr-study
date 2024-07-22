@@ -67,7 +67,7 @@ const button = tv({
 // 타입작성 !필요!
 const Examples = ({ children }: any) => {
     return (
-        <div>
+        <div className="w-full">
             <Icon icon="house" bg="black" size="xl" active shadow="lg" />
             <Icon icon="people" bg="black" size="xl" shadow="lg" />
             <Icon icon="person" bg="black" size="xl" shadow="lg" />
