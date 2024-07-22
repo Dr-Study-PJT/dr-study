@@ -1,6 +1,7 @@
 // src/app/accounts/login/api/login.ts
 import axios from 'axios';
 import Cookies from 'js-cookie';
+
 import { ILogIn } from '@/interfaces/accounts';
 import { removeUserData, setSessionStorageItem } from '@/utils/sessionStorage';
 
@@ -15,7 +16,7 @@ API.interceptors.response.use(
       response.config.url === '/login' ||
       response.config.url === '/refresh'
     ) {
-      const accessToken = response.data.accessToken;
+      const {accessToken} = response.data;
       if (accessToken) {
         Cookies.set('access_token', accessToken);
       }

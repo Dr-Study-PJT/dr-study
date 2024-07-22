@@ -1,8 +1,9 @@
 'use client';
 
 import Lottie from 'lottie-react';
-import constructing from './lottie_constructing.json';
 import { useEffect, useState } from 'react';
+
+import constructing from './lottie_constructing.json';
 
 export const ConstructingLottie = () => {
   const [loaded, setLoaded] = useState(false);
@@ -11,8 +12,7 @@ export const ConstructingLottie = () => {
     setLoaded(true);
   }, []);
   return (
-    <>
-      <Lottie
+    <Lottie
         style={{
           width: '100%',
           height: '400px',
@@ -20,8 +20,7 @@ export const ConstructingLottie = () => {
           transition: 'opacity 3s ease-out',
         }}
         animationData={constructing}
-        loop={true}
+        loop
       />
-    </>
   );
 };

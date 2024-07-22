@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { BoxProps } from './Box.types';
 import { boxStyles } from './Box.styles';
 

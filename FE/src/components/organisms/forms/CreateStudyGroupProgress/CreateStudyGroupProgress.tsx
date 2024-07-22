@@ -1,8 +1,9 @@
 'use client';
 
-import { Button } from '@/components/atoms';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
+
+import { Button } from '@/components/atoms';
 import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
 import { CreateStudyGroupProgressProps } from './CreateStudyGroupProgress.types';
 import { StudyBaseInfoStep } from './_component/steps/StudyBaseInfoStep';

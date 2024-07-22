@@ -1,5 +1,6 @@
-import { Heading } from '@/components/atoms';
 import React from 'react';
+
+import { Heading } from '@/components/atoms';
 
 const CreateStudyGroupTemplate = () => {
   return (

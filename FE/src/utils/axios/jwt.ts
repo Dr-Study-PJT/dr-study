@@ -1,9 +1,10 @@
 // import { logout } from "../accounts/login/api/login";
 
 import { POST } from '@/utils/axios/routeModule';
+import { TUserData, getSessionStorageItem } from '@/utils/sessionStorage';
+
 import { authAPI as API } from './axiosInstanceManager';
 import { logout } from '@/app/login/_api/login';
-import { TUserData, getSessionStorageItem } from '@/utils/sessionStorage';
 
 export const fetchAccessToken = async (
   userId: string | null,
@@ -23,15 +24,15 @@ export const fetchAccessToken = async (
       if (userId) {
         await logout(userId);
         return '토큰 만료로 로그아웃됩니다.';
-      } else {
+      } 
         return '유저 데이터를 찾을 수 없습니다.';
-      }
+      
     }
     return '토큰 갱신에 실패했습니다.';
   }
 };
 
-/*===========================================================*/
+/*= ========================================================== */
 // 기존의 recoil상태 또는 훅 사용 대신, 모든 API 인스턴스 & GET(= using fetch())를 위한 함수의 공통스코프에서 관리되는 파일에서 accessToken을 변수로 공통적으로 사용 및 관리하도록 설계
 
 let currentAccessToken: string | null = null;
@@ -61,7 +62,7 @@ export async function handleAuthentication(isAuth: boolean): Promise<any> {
     }
   }
 
-  headers['Authorization'] = `Bearer ${token}`;
+  headers.Authorization = `Bearer ${token}`;
   return headers;
 }
 

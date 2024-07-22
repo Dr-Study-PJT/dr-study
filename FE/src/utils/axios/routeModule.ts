@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+
 import { handleAuthentication } from './jwt';
 
 export async function GET(

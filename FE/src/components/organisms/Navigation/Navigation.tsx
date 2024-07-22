@@ -1,7 +1,8 @@
+import React from 'react';
+
 import { Box } from '@/components/atoms/Box/Box';
 import Icon from '@/components/atoms/Icon/Icon';
 import { Logo } from '@/components/atoms/Logo/Logo';
-import React from 'react';
 
 const Navigation = ({ children }: any) => {
   return (

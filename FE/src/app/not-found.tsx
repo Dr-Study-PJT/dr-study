@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import { ErrorLottie } from './_components/Lottie/Error/ErrorLottie';
 
 export default function NotFound() {

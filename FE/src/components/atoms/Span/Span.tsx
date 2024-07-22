@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { SpanProps } from './Span.types';
 import { spanStyles } from './Span.styles';
 

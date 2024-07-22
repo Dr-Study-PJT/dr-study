@@ -49,7 +49,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         if (setBodyData) {
           setBodyData({
             ...bodyData,
-            file: file,
+            file,
           });
         }
         console.log(setBodyData, setImageDisplay);
@@ -67,8 +67,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       control={control}
       render={({ field }) => (
         <div className={shapeVariants({ shape })}>
-          {
-            <label className="flex flex-col items-center justify-center cursor-pointer text-gray-500">
+          <label className="flex flex-col items-center justify-center cursor-pointer text-gray-500">
               <FaPlus className="text-2xl" />
               <input
                 type="file"
@@ -76,7 +75,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 onChange={handleImageUpload}
               />
             </label>
-          }
         </div>
       )}
     />

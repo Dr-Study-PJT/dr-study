@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+
 import { LogoProps } from './Logo.types';
 import { logoStyles } from './Logo.styles';
-import Image from 'next/image';
 
 export const Logo = ({}: LogoProps) => {
   return (

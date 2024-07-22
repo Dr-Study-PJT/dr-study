@@ -1,8 +1,10 @@
 import React from 'react';
+import Image from 'next/image';
+
+import formConditions from '@/constants/formConditions';
+
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-import Image from 'next/image';
-import formConditions from '@/constants/formConditions';
 import { formWrapperStyles } from '@/components/molecules/Form/Form.styles';
 
 export const StudyCreateConfirmStep = ({

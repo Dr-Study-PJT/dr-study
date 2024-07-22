@@ -1,5 +1,6 @@
-import StudyGroupListTemplate from '@/components/template/study-group/StudyGroupListTemplate';
 import React from 'react';
+
+import StudyGroupListTemplate from '@/components/template/study-group/StudyGroupListTemplate';
 
 const StudyGroupListPage = () => {
   return <StudyGroupListTemplate />;

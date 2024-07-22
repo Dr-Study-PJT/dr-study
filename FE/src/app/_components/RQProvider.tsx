@@ -8,7 +8,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-function RQProvider({ children }: Props) {
+const RQProvider = ({ children }: Props) => {
   const [client] = useState(
     new QueryClient({
       defaultOptions: {

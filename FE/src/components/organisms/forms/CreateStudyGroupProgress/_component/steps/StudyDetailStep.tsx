@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
-import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
+
 import formConditions from '@/constants/formConditions';
+
+import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import {
   handleKeyDownForNextInput,
   handleKeyDownForSubmit,

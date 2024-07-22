@@ -6,6 +6,7 @@ import {
   BsGlobe2,
   BsArrowLeft,
 } from 'react-icons/bs';
+
 import { iconStyles } from './Icon.styles';
 import { IconInterface, IconKeyValue } from './Icons.types';
 
@@ -37,7 +38,7 @@ export const Icon = ({
         shape,
         bg,
         shadow,
-        active: active ? true : false,
+        active: !!active,
       })}
     >
       {iconElement}

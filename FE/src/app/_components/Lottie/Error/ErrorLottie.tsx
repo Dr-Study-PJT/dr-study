@@ -1,8 +1,9 @@
 'use client';
 
 import Lottie from 'lottie-react';
-import errorAnimation from './lottie_error.json';
 import { useEffect, useState } from 'react';
+
+import errorAnimation from './lottie_error.json';
 
 export const ErrorLottie = () => {
   const [loaded, setLoaded] = useState(false);
@@ -11,8 +12,7 @@ export const ErrorLottie = () => {
     setLoaded(true);
   }, []);
   return (
-    <>
-      <Lottie
+    <Lottie
         style={{
           width: '100%',
           height: '400px',
@@ -20,8 +20,7 @@ export const ErrorLottie = () => {
           transition: 'opacity 3s ease-out',
         }}
         animationData={errorAnimation}
-        loop={true}
+        loop
       />
-    </>
   );
 };

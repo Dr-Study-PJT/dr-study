@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createMiddleware } from '@mswjs/http-middleware';
+
 import { mypageMockHandler } from './mypage/handler';
 
 const app = express();

@@ -1,5 +1,6 @@
-import EditConferenceTemplate from '@/components/template/conference/EditConferenceTemplate';
 import React from 'react';
+
+import EditConferenceTemplate from '@/components/template/conference/EditConferenceTemplate';
 
 const EditConferencePage = () => {
   return <EditConferenceTemplate />;
