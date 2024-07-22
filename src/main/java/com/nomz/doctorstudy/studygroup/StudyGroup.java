@@ -1,14 +1,16 @@
 package com.nomz.doctorstudy.studygroup;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity
 @Getter
-@Setter
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudyGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +22,8 @@ public class StudyGroup {
     @Column(nullable = false)
     private Long imageId;
 
-    @Column(nullable = false)
-    private Long captainId;
+    //@Column(nullable = false)
+    //private Member captainId;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -32,7 +34,7 @@ public class StudyGroup {
     @Column(nullable = false, length = 256)
     private String description;
 
-    @Column(nullable = false, length = 64)
+    @Column(length = 64)
     private String goal;
 
     private LocalDateTime dueDate;
@@ -42,6 +44,8 @@ public class StudyGroup {
 
     private int memberCapacity;
 
-    // Getters and Setters
+    // 태그 객체 생성하기
+    private List<String> tags;
+
 }
 
