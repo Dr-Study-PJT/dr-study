@@ -8,14 +8,16 @@ export type IconKeyValue = {
     person: ReactNode;
     globe: ReactNode;
     arrowLeft: ReactNode;
+    gear: ReactNode;
 };
 
 export interface IconInterface {
     // 아이콘 이름 추가
     size: keyof typeof iconStyles.variants.size;
     cursor?: keyof typeof iconStyles.variants.cursor;
-    icon: 'house' | 'people' | 'person' | 'globe' | 'arrowLeft';
+    icon: keyof IconKeyValue;
     text?: keyof typeof iconStyles.variants.text;
     bg?: keyof typeof iconStyles.variants.bg;
     active?: boolean;
+    hover?: keyof typeof iconStyles.variants.hover;
 }

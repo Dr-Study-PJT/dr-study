@@ -5,6 +5,7 @@ import {
     BsFillPersonFill,
     BsGlobe2,
     BsArrowLeft,
+    BsFillGearFill,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -16,6 +17,7 @@ const iconName: IconKeyValue = {
     person: <BsFillPersonFill />,
     globe: <BsGlobe2 />,
     arrowLeft: <BsArrowLeft />,
+    gear: <BsFillGearFill />,
 };
 
 // Icon 컴포넌트
@@ -27,6 +29,7 @@ export const Icon = ({
     bg,
     active,
     cursor,
+    hover,
 }: IconInterface) => {
     return (
         <div
@@ -36,6 +39,7 @@ export const Icon = ({
                 bg,
                 active,
                 cursor,
+                hover,
             })}
         >
             <div className=""></div>

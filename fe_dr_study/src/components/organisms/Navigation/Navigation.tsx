@@ -20,7 +20,8 @@ const Navigation = ({ children }: any) => {
                                 text="white"
                                 size="lg"
                                 cursor="pointer"
-                                active={true}
+                                hover="blue"
+                                active
                             />
                         </Link>
                     </li>
@@ -30,6 +31,7 @@ const Navigation = ({ children }: any) => {
                             bg="gray"
                             size="lg"
                             cursor="pointer"
+                            hover="blue"
                         />
                     </li>
                     <li>
@@ -38,6 +40,7 @@ const Navigation = ({ children }: any) => {
                             bg="gray"
                             size="lg"
                             cursor="pointer"
+                            hover="blue"
                         />
                     </li>
                     <li>
@@ -46,6 +49,7 @@ const Navigation = ({ children }: any) => {
                             bg="gray"
                             size="lg"
                             cursor="pointer"
+                            hover="blue"
                         />
                     </li>
                 </ul>

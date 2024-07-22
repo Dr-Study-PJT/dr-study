@@ -1,7 +1,7 @@
 import { tv } from 'tailwind-variants';
 
 export const iconStyles = tv({
-    base: 'p-3 rounded-full bg-[#393C49] text-[#007AFF] transition duration-200 hover:bg-blue-400',
+    base: 'p-3 rounded-full bg-[#393C49] text-[#007AFF] transition duration-200',
     variants: {
         cursor: {
             pointer: 'cursor-pointer',
@@ -17,10 +17,14 @@ export const iconStyles = tv({
         },
         text: {
             white: 'text-[#007AFF]',
+            gray: 'text-[#909090]',
         },
         active: {
             true: '',
             false: '',
+        },
+        hover: {
+            blue: 'hover:bg-blue-400',
         },
     },
     compoundVariants: [
