@@ -1,5 +1,7 @@
-// 컴포넌트 타입 작성하세요.
+import { boxStyles } from './Box.styles';
 
 export interface BoxProps {
+  variant?: keyof typeof boxStyles.variants.variant;
+  color?: 'primary' | 'secondary' | 'success' | 'danger' | 'black' | 'white';
   children: React.ReactNode;
 }

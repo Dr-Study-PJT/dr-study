@@ -1,8 +1,7 @@
-import React from "react";
-import { SpanProps } from "./Span.types";
+import React from 'react';
+import { SpanProps } from './Span.types';
+import { spanStyles } from './Span.styles';
 
-// 스타일을 적용한 컴포넌트를 반환
-
-export const Span = ({ children }: SpanProps) => {
-  return <span>{children}</span>;
+export const Span = ({ variant, color = 'black', children }: SpanProps) => {
+  return <span className={spanStyles({ variant, color })}>{children}</span>;
 };

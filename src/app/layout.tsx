@@ -3,8 +3,8 @@ import RQProvider from './_components/RQProvider';
 import { MSWComponent } from './_components/MSWComponent';
 
 import lightTheme from '../themes/lightTheme';
-import Navigation from '@/components/organisms/nav/Navigation';
 import './globals.css';
+import Navigation from '@/components/organisms/Navigation/Navigation';
 // import darkTheme from '../themes/darkTheme';
 // import { ThemeProvider } from 'styled-components';
 

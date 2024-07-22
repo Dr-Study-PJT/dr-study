@@ -4,24 +4,44 @@ import {
   BsFillPeopleFill,
   BsFillPersonFill,
   BsGlobe2,
+  BsArrowLeft,
 } from 'react-icons/bs';
+import { iconStyles } from './Icon.styles';
+import { IconInterface, IconKeyValue } from './Icons.types';
 
-const Icon = () => {
+const iconName: IconKeyValue = {
+  house: <BsHouseDoor />,
+  people: <BsFillPeopleFill />,
+  person: <BsFillPersonFill />,
+  globe: <BsGlobe2 />,
+  arrowLeft: <BsArrowLeft />,
+};
+
+// Icon 컴포넌트
+export const Icon = ({
+  icon,
+  size,
+  color,
+  shape,
+  bg,
+  shadow,
+  active,
+}: IconInterface) => {
+  const iconElement = React.cloneElement(iconName[icon], { size });
+
   return (
-    <>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsHouseDoor />
-      </button>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsFillPeopleFill />
-      </button>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsFillPersonFill />
-      </button>
-      <button className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-        <BsGlobe2 />
-      </button>
-    </>
+    <span
+      className={iconStyles({
+        size,
+        color,
+        shape,
+        bg,
+        shadow,
+        active: active ? true : false,
+      })}
+    >
+      {iconElement}
+    </span>
   );
 };
 

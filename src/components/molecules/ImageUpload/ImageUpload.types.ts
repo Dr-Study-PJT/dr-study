@@ -3,9 +3,7 @@
 // Form.types.ts
 import { ReactNode, FormEvent } from 'react';
 
-export interface FormWrapperProps extends React.FormEvent<HTMLFormElement> {
-  variant?: 'steps';
+export interface FormWrapperProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   children: ReactNode;
-  className?: string;
 }

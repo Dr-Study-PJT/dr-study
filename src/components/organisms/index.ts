@@ -1,2 +1,2 @@
-export { EditUserForm } from './forms/EditUserForm/EditUserForm';
-export { SignUpForm } from './forms/SignUpForm/SignUpForm';
+export { EditUserForm } from './Forms/EditUserForm/EditUserForm';
+export { SignUpForm } from './Forms/SignUpForm/SignUpForm';

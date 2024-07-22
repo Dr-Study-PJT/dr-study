@@ -4,11 +4,9 @@ import { Palette } from '../../../themes/lightTheme';
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text';
 
-export interface ButtonProps {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  // size?: Size;
-  // variant?: ButtonVariant;
-  // color?: Palette;
-  // disabled?: boolean;
-  // fullwidth?: string;
+  size?: Size;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }

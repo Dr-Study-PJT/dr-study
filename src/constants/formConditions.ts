@@ -1,4 +1,7 @@
 const formConditions = {
+  plainText: {
+    required: { value: true, message: 'Username is required' },
+  },
   nickname: {
     required: { value: true, message: 'Username is required' },
     minLength: { value: 3, message: 'Minimum length is 3' },

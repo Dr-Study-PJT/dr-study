@@ -1,14 +1,12 @@
 import { tv } from 'tailwind-variants';
 
-export const spanStyles = tv({
+export const stepsBoxStyles = tv({
   base: '',
   variants: {
     variant: {
-      s1: 'text-lg font-semibold',
-      b1: 'text-lg',
-      b2: 'text-base',
-      b3: 'text-sm',
-      b4: 'text-sm font-light',
+      h2: 'font-bold text-4xl',
+      h3: 'font-bold text-2xl',
+      h4: 'font-bold text-xl',
     },
     color: {
       primary: 'text-blue-500',
@@ -21,7 +19,7 @@ export const spanStyles = tv({
   },
   compoundVariants: [],
   defaultVariants: {
-    variant: 'b2',
+    variant: 'h2',
     color: 'black',
   },
 });
