@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.studygroup.response;
 
-import com.nomz.doctorstudy.studygroup.StudyGroup;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

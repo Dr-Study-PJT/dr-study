@@ -1,10 +1,12 @@
-package com.nomz.doctorstudy.studygroup;
+package com.nomz.doctorstudy.studygroup.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Entity
@@ -45,7 +47,7 @@ public class StudyGroup {
     private int memberCapacity;
 
     // 태그 객체 생성하기
-    //private List<String> tags;
+    @OneToMany(mappedBy = "studyGroup")
     private String tags;
 
 }

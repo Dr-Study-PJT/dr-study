@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.studygroup.request;
 
+import com.nomz.doctorstudy.studygroup.entity.Tag;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -37,5 +37,5 @@ public class CreateStudyGroupRequest {
     private final Integer memberCapacity;
 
     @Schema(description = "태그", example = "#정처기")
-    private final String tags;
+    private final List<Tag> tags;
 }

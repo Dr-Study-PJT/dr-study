@@ -1,8 +1,7 @@
 package com.nomz.doctorstudy.studygroup.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
-import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
-import com.nomz.doctorstudy.studygroup.StudyGroup;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.nomz.doctorstudy.studygroup.repository.MemberStudyGroupApplyRepository;
@@ -10,7 +9,6 @@ import com.nomz.doctorstudy.studygroup.repository.StudyGroupQueryRepository;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

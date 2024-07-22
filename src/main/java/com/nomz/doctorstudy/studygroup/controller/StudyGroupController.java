@@ -2,8 +2,8 @@ package com.nomz.doctorstudy.studygroup.controller;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
-import com.nomz.doctorstudy.studygroup.MemberStudyGroupApply;
-import com.nomz.doctorstudy.studygroup.StudyGroup;
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
 import com.nomz.doctorstudy.studygroup.response.CreateStudyGroupResponse;
@@ -35,7 +35,7 @@ import java.util.List;
 @Tag(name ="StudyGroup API", description = "StudyGroup API 입니다.")
 public class StudyGroupController {
     private final StudyGroupService studyGroupService;
-    private List<MemberStudyGroupApply> memberStudyGroupApplyList = new ArrayList<>();
+    private final List<MemberStudyGroupApply> memberStudyGroupApplyList = new ArrayList<>();
 
     @PostMapping
     @Operation(summary = "Study Group 생성", description = "Study Group 정보를 생성합니다.")

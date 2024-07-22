@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.studygroup.repository;
 
-import com.nomz.doctorstudy.studygroup.StudyGroup;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-import static com.nomz.doctorstudy.studygroup.QStudyGroup.studyGroup;
+import static com.nomz.doctorstudy.studygroup.entity.QStudyGroup.studyGroup;
 
 @Repository
 public class StudyGroupQueryRepository {

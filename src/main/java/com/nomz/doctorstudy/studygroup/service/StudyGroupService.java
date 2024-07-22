@@ -1,11 +1,8 @@
 package com.nomz.doctorstudy.studygroup.service;
 
-import com.nomz.doctorstudy.studygroup.StudyGroup;
-import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
-import com.nomz.doctorstudy.studygroup.request.AdmissionResponseRequest;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
-import com.nomz.doctorstudy.studygroup.response.AdmissionResponse;
 
 import java.util.List;
 
