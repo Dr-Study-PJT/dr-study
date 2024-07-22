@@ -1,35 +1,36 @@
 // import { logout } from "../accounts/login/api/login";
 
 import { POST } from '@/utils/axios/routeModule';
-import { TUserData, getSessionStorageItem } from '@/utils/sessionStorage';
+import { IMemberData } from '@/interfaces/members';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
+
 
 import { authAPI as API } from './axiosInstanceManager';
-import { logout } from '@/app/login/_api/login';
+import { logout } from '@/app/auth/_api/login'; 
 
 export const fetchAccessToken = async (
-  userId: string | null,
+    userId: string | null,
 ): Promise<string> => {
-  try {
-    const response = await POST({
-      API,
-      endPoint: 'refresh',
-      isAuth: false,
-    });
-    const newAccessToken: string = response.data;
-    return newAccessToken;
-  } catch (error: any) {
-    if (error.response && error.response.data === 'Expired token') {
-      // Refresh 토큰이 만료된 경우
-      // 사용자 데이터를 가져와서 로그아웃 함수를 호출합니다.
-      if (userId) {
-        await logout(userId);
-        return '토큰 만료로 로그아웃됩니다.';
-      } 
-        return '유저 데이터를 찾을 수 없습니다.';
-      
+    try {
+        const response = await POST({
+            API,
+            endPoint: 'refresh',
+            isAuth: false,
+        });
+        const newAccessToken: string = response.data;
+        return newAccessToken;
+    } catch (error: any) {
+        if (error.response && error.response.data === 'Expired token') {
+            // Refresh 토큰이 만료된 경우
+            // 사용자 데이터를 가져와서 로그아웃 함수를 호출합니다.
+            if (userId) {
+                await logout(userId);
+                return '토큰 만료로 로그아웃됩니다.';
+            }
+            return '유저 데이터를 찾을 수 없습니다.';
+        }
+        return '토큰 갱신에 실패했습니다.';
     }
-    return '토큰 갱신에 실패했습니다.';
-  }
 };
 
 /*= ========================================================== */
@@ -38,43 +39,46 @@ export const fetchAccessToken = async (
 let currentAccessToken: string | null = null;
 export const getAccessToken = (): string | null => currentAccessToken;
 export const setAccessToken = (token: string | null) => {
-  currentAccessToken = token;
+    currentAccessToken = token;
 };
 
 export async function handleAuthentication(isAuth: boolean): Promise<any> {
-  const headers: any = {};
+    const headers: any = {};
 
-  if (!isAuth) return headers;
+    if (!isAuth) return headers;
 
-  const userData: TUserData = getSessionStorageItem('userData');
-  if (!userData) return headers;
+    const memberData: IMemberData = getSessionStorageItem('memberData');
+    if (!memberData) return headers;
 
-  let token = getAccessToken();
+    let token = getAccessToken();
 
-  if (!token || !isTokenValid(token)) {
-    try {
-      const newToken = await fetchAccessToken(userData.email);
-      setAccessToken(newToken);
-      token = newToken;
-    } catch (error) {
-      console.error('새로운 access token을 가져오는데 실패했습니다.:', error);
-      throw error;
+    if (!token || !isTokenValid(token)) {
+        try {
+            const newToken = await fetchAccessToken(memberData.email);
+            setAccessToken(newToken);
+            token = newToken;
+        } catch (error) {
+            console.error(
+                '새로운 access token을 가져오는데 실패했습니다.:',
+                error,
+            );
+            throw error;
+        }
     }
-  }
 
-  headers.Authorization = `Bearer ${token}`;
-  return headers;
+    headers.Authorization = `Bearer ${token}`;
+    return headers;
 }
 
 const isTokenValid = (token: string): boolean => {
-  try {
-    const payload = token.split('.')[1];
-    const decodedPayload = JSON.parse(atob(payload));
-    const currentTime = Math.floor(Date.now() / 1000);
+    try {
+        const payload = token.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payload));
+        const currentTime = Math.floor(Date.now() / 1000);
 
-    return decodedPayload.exp > currentTime;
-  } catch (e) {
-    console.error('Error while checking token:', e);
-    return false; // 토큰이 유효하지 않거나 파싱 중 오류 시
-  }
+        return decodedPayload.exp > currentTime;
+    } catch (e) {
+        console.error('Error while checking token:', e);
+        return false; // 토큰이 유효하지 않거나 파싱 중 오류 시
+    }
 };

@@ -24,10 +24,10 @@ const meta = {
       description: "버튼의 크기를 설정합니다.",
       control: { type: "select", options: ["sm", "md", "lg", "xl"] },
     },
-    variant: {
-      description: "버튼의 타입을 설정합니다.",
-      control: { type: "select", options: ["contained", "outlined", "text"] },
-    },
+    // variant: {
+    //   description: "버튼의 타입을 설정합니다.",
+    //   control: { type: "select", options: ["contained", "outlined", "text"] },
+    // },
     color: {
       description: "브랜드 컬러를 비롯해 사전 예약된 버튼 컬러를 설정합니다.",
       control: { type: "select", options: ["primary", "secondary", "danger"] },
@@ -35,9 +35,9 @@ const meta = {
     disabled: {
       description: "버튼을 비활성화합니다.",
     },
-    fullwidth: {
-      description: "너비를 부모에 꽉차게 맞춥니다.",
-    },
+    // fullwidth: {
+    //   description: "너비를 부모에 꽉차게 맞춥니다.",
+    // },
   },
 } satisfies Meta<typeof Button>;
 
@@ -49,10 +49,10 @@ export const Primary: Story = {
   args: {
     children: "Button",
     size: "md",
-    variant: "contained",
+    // variant: "contained",
     color: "primary",
     disabled: false,
-    fullwidth: "false",
+    // fullwidth: "false",
   },
 };
 
@@ -61,7 +61,7 @@ const colorList: Palette[] = ["primary", "secondary", "danger"];
 export const Contained: Story = {
   args: {
     ...Primary.args,
-    variant: "contained",
+    // variant: "contained",
   },
   render: (args) => (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -77,7 +77,7 @@ export const Contained: Story = {
 export const Outlined: Story = {
   args: {
     ...Primary.args,
-    variant: "outlined",
+    // variant: "outlined",
   },
   render: (args) => (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -93,7 +93,7 @@ export const Outlined: Story = {
 export const Text: Story = {
   args: {
     ...Primary.args,
-    variant: "text",
+    // variant: "text",
   },
 
   render: (args) => (

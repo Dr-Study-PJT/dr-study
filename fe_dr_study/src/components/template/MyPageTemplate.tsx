@@ -1,5 +1,3 @@
-import UserInfo from '../molecules/UserInfo';
-import { EditUserForm } from '../organisms';
 import { ButtonType } from '../atoms/Input/Input.types';
 
 interface MyPageTemplateProps {
@@ -30,8 +28,6 @@ const MyPageTemplate: React.FC<MyPageTemplateProps> = ({
   return (
     <div>
       <h1>My Page</h1>
-      <UserInfo name={user.name} email={user.email} />
-      <EditUserForm field={field} onSubmit={updateUserName} />
     </div>
   );
 };
