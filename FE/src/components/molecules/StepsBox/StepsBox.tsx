@@ -1,11 +1,5 @@
-import React, {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  isValidElement,
-} from 'react';
-import { Heading, Span } from '@/components/atoms';
-import { Button } from '@mui/material';
+import React, { ReactNode } from 'react';
+import { Heading } from '@/components/atoms';
 import { Box } from '@/components/atoms/Box/Box';
 
 interface stepsLine {
@@ -34,7 +28,6 @@ export interface StepsBoxProps {
   subTitle: string;
   steps: number;
   currentStep: number;
-  // setCurrentStep: Dispatch<SetStateAction<number>>;
   children: ReactNode;
 }
 

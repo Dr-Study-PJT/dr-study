@@ -9,6 +9,7 @@
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
+  --font-pretendard: 'Pretendard', sans-serif;
   --foreground-rgb: 0, 0, 0;
   /* --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255; */
@@ -90,6 +91,8 @@ body {
 }
 
 body {
+  font-family: var(--font-pretendard);
+
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,

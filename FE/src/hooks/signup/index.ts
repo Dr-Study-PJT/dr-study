@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 export const useSignUp = () => {
   const [user, setUser] = useState(null);
@@ -8,7 +8,7 @@ export const useSignUp = () => {
   const signUp = (userData: any) => {
     // signUp 로직
     setUser(userData);
-    console.log("User signed up successfully");
+    console.log('User signed up successfully');
   };
 
   return {
