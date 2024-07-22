@@ -29,7 +29,7 @@ public class StudyGroup {
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
     @Column(nullable = false, length = 256)
     private String description;
@@ -45,7 +45,8 @@ public class StudyGroup {
     private int memberCapacity;
 
     // 태그 객체 생성하기
-    private List<String> tags;
+    //private List<String> tags;
+    private String tags;
 
 }
 

@@ -4,11 +4,7 @@ import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.studygroup.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.StudyGroup;
-import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
-import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
-import com.nomz.doctorstudy.studygroup.request.AdmissionResponseRequest;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
-import com.nomz.doctorstudy.studygroup.response.AdmissionResponse;
 import com.nomz.doctorstudy.studygroup.response.CreateStudyGroupResponse;
 import com.nomz.doctorstudy.studygroup.response.GetStudyGroupResponse;
 import com.nomz.doctorstudy.studygroup.service.StudyGroupService;
@@ -22,8 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +38,7 @@ public class StudyGroupController {
     @Operation(summary = "Study Group 생성", description = "Study Group 정보를 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Study Group 생성 성공"),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content (schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
                         "message": "유효하지 않은 입력입니다.",
                         "errors": {
@@ -89,15 +83,30 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<GetStudyGroupResponse>> getStudyGroup(
-            @PathVariable("studyGroupId") Long studyGroupId) {
-        StudyGroup studyGroup = studyGroupService.get
+            @PathVariable("groupId") Long groupId) {
+        StudyGroup studyGroup = studyGroupService.getStudyGroup(groupId);
+        GetStudyGroupResponse response = new GetStudyGroupResponse(
+                studyGroup.getId(),
+                studyGroup.getName(),
+                studyGroup.getImageId(),
+                studyGroup.getCreatedAt(),
+                studyGroup.getIsDeleted(),
+                studyGroup.getDescription(),
+                studyGroup.getTags(),
+                studyGroup.getMemberCount(),
+                studyGroup.getMemberCapacity());
 
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Study Group 조회에 성공했습니다.",
+                        response
+                )
+        );
     }
 
+}
 
 
-
-    }
 
 //    @Operation(summary = "Update an existing study group")
 //    @ApiResponses(value = {
