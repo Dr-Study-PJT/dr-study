@@ -1,11 +1,10 @@
 spring:
+  config:
+    import: application-secret.yml
   application:
     name: doctor-study
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mzstop?serverTimezone=Asia/Seoul
-    username: root
-    password: root
   jpa:
     database: mysql
     hibernate:
