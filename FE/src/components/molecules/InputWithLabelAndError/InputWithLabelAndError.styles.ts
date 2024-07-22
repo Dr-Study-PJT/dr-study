@@ -6,19 +6,22 @@ import { tv } from 'tailwind-variants';
 
 // 라벨 스타일 정의
 export const labelStyles = tv({
-  base: [
-    'text-[12px] text-left text-blue-600', // 기본 파란색 (#007AFF)
-  ],
-  variants: {
-    color: {
-      primary: 'text-blue-500',
-      secondary: 'text-purple-500',
-      success: 'text-green-500',
-      danger: 'text-red-500',
-      black: 'text-black',
-      white: 'text-white', // 흰 글씨 추가
+    base: [
+        'text-[12px] text-left text-blue-600', // 기본 파란색 (#007AFF)
+    ],
+    variants: {
+        lableVariant: {
+            roadingAndResult: 'text-[12px] text-left text-blue-600',
+        },
+        color: {
+            primary: 'text-blue-500',
+            secondary: 'text-purple-500',
+            success: 'text-green-500',
+            danger: 'text-red-500',
+            black: 'text-black',
+            white: 'text-white', // 흰 글씨 추가
+        },
     },
-  },
 });
 
 // 인풋 스타일 정의
