@@ -4,19 +4,18 @@ import CreateFailButtom from '@/components/molecules/CreateFailBottom/CreateFail
 import CreateFailTop from '@/components/molecules/CreateFailTop/CreateFailTop';
 import React from 'react';
 
-const LoadingAndResult = ({}) => {
+const CreateError = ({}) => {
   return (
-  
-  <>
-  <Box variant='LoadingAndResult'>
-  <CreateFailTop />
-  
-  <CreateFailButtom />
+      <>
+          <Box variant="createError">
+              <Box variant="createErrorContainer">
+                  <CreateFailTop />
 
-
-  </Box>
-  </>
-  )
+                  <CreateFailButtom />
+              </Box>
+          </Box>
+      </>
+  );
 };
 
-export default LoadingAndResult;
+export default CreateError;

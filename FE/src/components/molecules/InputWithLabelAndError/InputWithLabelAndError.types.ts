@@ -2,6 +2,8 @@
 
 import { ChangeEvent } from "react";
 import { Path, UseFormRegister } from "react-hook-form";
+import { labelStyles, inputStyles, errorStyles, iconStyles } from "./InputWithLabelAndError.styles";
+
 
 export type ButtonType = "text" | "password" | "email"; // 등등등 작성 !필요!
 
@@ -11,11 +13,12 @@ interface IFormValues {
 }
 
 export interface InputWithLabelAndError {
-  label: Path<IFormValues>;
-  required?: boolean;
-  type?: ButtonType;
-  value: string;
-  placeholder?: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void; // 함수 타입 작성 !필요!
-  register: UseFormRegister<IFormValues>;
+    labelVariant?: keyof typeof labelStyles.variants.lableVariant; // any 수정 !필요!
+    label: Path<IFormValues>;
+    required?: boolean;
+    type?: ButtonType;
+    value: string;
+    placeholder?: string;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void; // 함수 타입 작성 !필요!
+    register: UseFormRegister<IFormValues>;
 }

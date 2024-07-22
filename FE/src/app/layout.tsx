@@ -6,7 +6,7 @@ import Navigation from '@/components/organisms/Navigation/Navigation';
 
 import localFont from 'next/font/local';
 import { Box } from '../components/atoms/Box/Box';
-import LoadingAndResult from '../components/organisms/LoadingAndResult/LoadingAndResult';
+import CreateError from '../components/organisms/LoadingAndResult/LoadingAndResult';
 
 const pretendard = localFont({
     src: [
@@ -77,7 +77,7 @@ export default function RootLayout({
                         </Box>
                         {/* 본문 */}
                         <Box variant='main'>
-                            <LoadingAndResult/>
+                            <CreateError/>
                         </Box>
                     {/* <div>
                         본문래퍼
