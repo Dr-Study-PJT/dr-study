@@ -63,38 +63,53 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Override
     public void applyForStudyGroup(AdmissionRequest admissionRequest) {
-        // Handle the application process
-        MemberStudyGroupApply apply = new MemberStudyGroupApply();
-        apply.setMemberId(admissionRequest.getMemberId());
-        apply.setStudyGroupId(admissionRequest.getStudyGroupId());
-        apply.setMessage(admissionRequest.getMessage());
-        apply.setStatus("PENDING"); // Initial status
-        apply.setCreatedAt(new java.util.Date());
-        memberStudyGroupApplyRepository.save(apply);
+
     }
 
     @Override
     public void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest) {
-        // Handle the response to application
-        MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(admissionResponseRequest.getAdmissionId())
-                .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        apply.setStatus(admissionResponseRequest.isApproved() ? "APPROVED" : "REJECTED");
-        memberStudyGroupApplyRepository.save(apply);
     }
 
     @Override
-    public List<AdmissionResponse getAllStudyGroupApplications() {
-        // Retrieve all applications
-        List<MemberStudyGroupApply> applications = memberStudyGroupApplyRepository.findAll();
-        return applications.stream().map(application -> {
-            AdmissionResponse response = new AdmissionResponse();
-            response.setAdmissionId(application.getId());
-            response.setMemberId(application.getMemberId());
-            response.setStudyGroupId(application.getStudyGroupId());
-            response.setMessage(application.getMessage());
-            response.setApproved("APPROVED".equals(application.getStatus()));
-            return response;
-        }).collect(Collectors.toList());
+    public List<AdmissionResponse> getAllStudyGroupApplications() {
+        return List.of();
     }
+
+//    @Override
+//    public void applyForStudyGroup(AdmissionRequest admissionRequest) {
+//        // Handle the application process
+//        MemberStudyGroupApply apply = new MemberStudyGroupApply();
+//        apply.setMemberId(admissionRequest.getMemberId());
+//        apply.setStudyGroupId(admissionRequest.getStudyGroupId());
+//        apply.setMessage(admissionRequest.getMessage());
+//        apply.setStatus("PENDING"); // Initial status
+//        apply.setCreatedAt(new java.util.Date());
+//        memberStudyGroupApplyRepository.save(apply);
+//    }
+//
+//    @Override
+//    public void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest) {
+//        // Handle the response to application
+//        MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(admissionResponseRequest.getAdmissionId())
+//                .orElseThrow(() -> new RuntimeException("Application not found"));
+//
+//        apply.setStatus(admissionResponseRequest.isApproved() ? "APPROVED" : "REJECTED");
+//        memberStudyGroupApplyRepository.save(apply);
+//    }
+//
+//    @Override
+//    public List<AdmissionResponse> getAllStudyGroupApplications() {
+//        // Retrieve all applications
+//        List<MemberStudyGroupApply> applications = memberStudyGroupApplyRepository.findAll();
+//        return applications.stream().map(application -> {
+//            AdmissionResponse response = new AdmissionResponse();
+//            response.setAdmissionId(application.getId());
+//            response.setMemberId(application.getMemberId());
+//            response.setStudyGroupId(application.getStudyGroupId());
+//            response.setMessage(application.getMessage());
+//            response.setApproved("APPROVED".equals(application.getStatus()));
+//            return response;
+//        }).collect(Collectors.toList());
+//    }
 }
