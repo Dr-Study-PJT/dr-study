@@ -17,11 +17,11 @@ import { Label } from '../Label/Label';
 
 // forwardRef를 사용하여 ref를 전달할 수 있도록 수정합니다.
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ placeholder, variant, size, color, border, rounded, shadow, disabled, ...rest }, ref) => {
+  ({ placeholder, variant, textSize, color, border, rounded, shadow, disabled, ...rest }, ref) => {
     return (
       <input
         ref={ref}
-        className={AtomInputStyles({ variant, size, color, border, rounded, shadow, disabled })}
+        className={AtomInputStyles({ variant, textSize, color, border, rounded, shadow, disabled })}
         placeholder={placeholder}
         {...rest}
       />

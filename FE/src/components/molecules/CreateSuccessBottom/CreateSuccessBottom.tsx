@@ -6,16 +6,17 @@ import { PlainTextForm } from '@/components/organisms/Forms/PlainTextForm/PlainT
 //실패
 export const CreateFailBottom: React.FC = () => {
     return (
-        <Box variant="CreateFailBottom">
-            <div>
+        <Box variant="createSuccessBottom">
+            <div> 
+                {/* span말고 나중에 label로 바꿔야함 */}
                 <Span variant="b3" color="white">
-                    상태 메세지
+                    메세지
                 </Span>
                 <PlainTextForm></PlainTextForm>
             </div>
             <div className="flex justify-between">
-                <Button variant="home">홈으로</Button>
-                <Button variant="checkAndTry">확인 후 재시도</Button>
+                <Button variant="something">뭔가 버튼</Button>
+                <Button variant="check">확인</Button>
             </div>
         </Box>
     );

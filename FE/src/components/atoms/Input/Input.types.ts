@@ -35,7 +35,7 @@ export interface InputProps extends InputAttributesWithoutSize {
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void; // 함수 타입 작성
   register?: UseFormRegister<IFormValues>; // optional 설정
   variant?: keyof typeof AtomInputStyles.variants.variant;
-  size?: keyof typeof AtomInputStyles.variants.size;
+  textSize?: keyof typeof AtomInputStyles.variants.textSize;
   color?: keyof typeof AtomInputStyles.variants.color;
   border?: keyof typeof AtomInputStyles.variants.border;
   rounded?: keyof typeof AtomInputStyles.variants.rounded;
