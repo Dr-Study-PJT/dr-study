@@ -1,49 +1,37 @@
 import React from 'react';
 import {
-  BsHouseDoor,
-  BsFillPeopleFill,
-  BsFillPersonFill,
-  BsGlobe2,
-  BsArrowLeft,
+    BsHouseDoor,
+    BsFillPeopleFill,
+    BsFillPersonFill,
+    BsGlobe2,
+    BsArrowLeft,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
 import { IconInterface, IconKeyValue } from './Icons.types';
 
 const iconName: IconKeyValue = {
-  house: <BsHouseDoor />,
-  people: <BsFillPeopleFill />,
-  person: <BsFillPersonFill />,
-  globe: <BsGlobe2 />,
-  arrowLeft: <BsArrowLeft />,
+    house: <BsHouseDoor />,
+    people: <BsFillPeopleFill />,
+    person: <BsFillPersonFill />,
+    globe: <BsGlobe2 />,
+    arrowLeft: <BsArrowLeft />,
 };
 
 // Icon 컴포넌트
-export const Icon = ({
-  icon,
-  size,
-  color,
-  shape,
-  bg,
-  shadow,
-  active,
-}: IconInterface) => {
-  const iconElement = React.cloneElement(iconName[icon], { size });
-
-  return (
-    <span
-      className={iconStyles({
-        size,
-        color,
-        shape,
-        bg,
-        shadow,
-        active: !!active,
-      })}
-    >
-      {iconElement}
-    </span>
-  );
+// any 타입 수정 !필요!
+export const Icon = ({ icon, size, bg }: IconInterface) => {
+    return (
+        <div
+            className={iconStyles({
+                size,
+                bg,
+            })}
+        >
+            <div className=""></div>
+            {iconName[icon]}
+        </div>
+    );
 };
 
 export default Icon;
