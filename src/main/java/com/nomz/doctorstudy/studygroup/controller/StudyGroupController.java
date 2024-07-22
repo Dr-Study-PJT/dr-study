@@ -5,7 +5,9 @@ import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.studygroup.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
+import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
 import com.nomz.doctorstudy.studygroup.response.CreateStudyGroupResponse;
+import com.nomz.doctorstudy.studygroup.response.GetStudyGroupListResponse;
 import com.nomz.doctorstudy.studygroup.response.GetStudyGroupResponse;
 import com.nomz.doctorstudy.studygroup.service.StudyGroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -104,6 +107,37 @@ public class StudyGroupController {
         );
     }
 
+    @GetMapping
+    @Operation(summary = "Study Group 리스트 조회", description = "Study Group 리스트를 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 리스트 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetStudyGroupListResponse>>> getStudyGroupList(
+            @ParameterObject @ModelAttribute GetStudyGroupListRequest request
+    ) {
+        GetStudyGroupListRequest command = GetStudyGroupListRequest.builder()
+                .name(request.getName())
+                .memberCapacity(request.getMemberCapacity())
+                .build();
+
+        List<StudyGroup> studyGroupList = studyGroupService.getStudyGroupList(command);
+
+        List<GetStudyGroupListResponse> responseList = studyGroupList.stream().map(GetStudyGroupListResponse::of).toList();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        responseList
+                )
+        );
+    }
 }
 
 

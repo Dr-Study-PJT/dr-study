@@ -1,17 +1,22 @@
 package com.nomz.doctorstudy.studygroup.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.studygroup.StudyGroup;
 import com.nomz.doctorstudy.studygroup.StudyGroupErrorCode;
+import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.nomz.doctorstudy.studygroup.repository.MemberStudyGroupApplyRepository;
+import com.nomz.doctorstudy.studygroup.repository.StudyGroupQueryRepository;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
+import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -19,6 +24,7 @@ import java.time.LocalDateTime;
 public class StudyGroupServiceImpl implements StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
+    private final StudyGroupQueryRepository studyGroupQueryRepository;
     private final MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
 
     @Override
@@ -45,6 +51,16 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public StudyGroup getStudyGroup(Long groupId) {
         return studyGroupRepository.findById(groupId)
                 .orElseThrow(() ->  new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+    }
+
+    @Override
+    public List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command) {
+        return studyGroupQueryRepository.getStudyGroupList(
+                StudyGroupSearchFilter.builder()
+                        .name(command.getName())
+                        .memberCapacity(command.getMemberCapacity())
+                        .build()
+        );
     }
 
 
@@ -129,4 +145,5 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 //            return response;
 //        }).collect(Collectors.toList());
 //    }
+
 }

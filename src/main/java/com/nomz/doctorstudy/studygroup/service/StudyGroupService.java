@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.studygroup.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
 import com.nomz.doctorstudy.studygroup.request.AdmissionResponseRequest;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
+import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
 import com.nomz.doctorstudy.studygroup.response.AdmissionResponse;
 
 import java.util.List;
@@ -15,13 +16,12 @@ public interface StudyGroupService {
     // 스터디 그룹 ID로 조회
     StudyGroup getStudyGroup(Long groupId);
 
+    // 스터디 그룹 조건 검색
+    List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command);
+
     // Update an existing study group
     // StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails);
 
-
-
-    // Retrieve all study groups
-    // List<StudyGroup> getAllStudyGroups();
 
     // Delete a study group by its ID
     // void deleteStudyGroup(Long groupId);
