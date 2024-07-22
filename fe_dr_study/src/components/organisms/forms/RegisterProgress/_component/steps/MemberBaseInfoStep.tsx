@@ -38,7 +38,7 @@ export const MemberBaseInfoStep = ({
         setFocus('email');
     }, [setFocus]);
 
-    console.log(handleSubmit());
+    console.log(handleSubmit);
 
     return (
         <form
@@ -98,6 +98,7 @@ export const MemberBaseInfoStep = ({
                 {...register('rePassword', { ...formConditions.password })}
                 errorDisplay={errors?.rePassword?.message || ''}
                 label="비밀번호 재입력"
+                inputType="password"
                 onKeyDown={(
                     e: React.KeyboardEvent<
                         HTMLInputElement | HTMLTextAreaElement

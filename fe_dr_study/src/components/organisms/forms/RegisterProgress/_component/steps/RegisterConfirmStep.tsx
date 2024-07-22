@@ -38,37 +38,28 @@ export const RegisterConfirmStep = ({
                 </div>
             )}
             <InputWithLabelAndError
-                {...register('study_group_name', {
+                {...register('email', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.study_group_name?.message || ''}
-                label="스터디 그룹명"
+                errorDisplay={errors?.email?.message || ''}
+                label="이메일 입력"
             />
             <InputWithLabelAndError
-                {...register('study_goal', { ...formConditions.plainText })}
-                errorDisplay={errors?.study_goal?.message || ''}
-                label="스터디 목표"
+                {...register('nickname', { ...formConditions.plainText })}
+                errorDisplay={errors?.nickname?.message || ''}
+                label="닉네임 입력"
             />
             <InputWithLabelAndError
-                type="number"
-                min={1}
-                // max={maxNumber} 추후에 maxNumber 지정 !필요!
-                {...register('max_count', {
-                    ...formConditions.plainText,
-                })}
-                errorDisplay={errors?.max_count?.message || ''}
-                label="스터디 그룹 최대 인원수"
+                {...register('password', { ...formConditions.password })}
+                errorDisplay={errors?.password?.message || ''}
+                label="비밀번호 입력"
+                inputType="password"
             />
             <InputWithLabelAndError
-                {...register('goal_date', { ...formConditions.plainText })}
-                errorDisplay={errors?.goal_date?.message || ''}
-                label="목표 종료 기간"
-            />
-            <InputWithLabelAndError
-                {...register('study_detail', { ...formConditions.plainText })}
-                textarea
-                errorDisplay={errors?.study_detail?.message || ''}
-                label="스터디 그룹 상세내용"
+                {...register('re_password', { ...formConditions.password })}
+                errorDisplay={errors?.re_password?.message || ''}
+                label="비밀번호 재입력"
+                inputType="password"
             />
         </form>
     );

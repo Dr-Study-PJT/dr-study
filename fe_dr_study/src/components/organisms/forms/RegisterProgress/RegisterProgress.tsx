@@ -36,14 +36,11 @@ const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
         }
     };
 
-    const requestData = (data: any) => {
-        const dateString = data.goal_date;
-        const date = new Date(dateString); // 0000-00-00 문자열을 datetime 형식으로 변경
-        console.log('bodyData:', {
-            ...bodyData,
-            goal_date: date.toISOString(),
-        });
-    };
+    // const requestData = (data: any) => {
+    //     console.log('bodyData:', {
+    //         ...bodyData,
+    //     });
+    // };
 
     const progressData = {
         title: 'Dr. Study에 가입하기',
@@ -70,7 +67,7 @@ const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
                     <RegisterConfirmStep
                         setFocus={setFocus}
                         key={2}
-                        handleSubmit={handleSubmit(handleNextStep)}
+                        handleSubmit={handleSubmit}
                         register={register}
                         errors={errors}
                         bodyData={bodyData}
