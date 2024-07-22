@@ -1,72 +1,50 @@
-// import styled from 'styled-components';
-// import { variant, space, layout, color } from 'styled-system';
-// import { ButtonProps } from './Button.types';
+import { tv } from 'tailwind-variants';
 
-// const buttonVariants = {
-//   contained: {
-//     bg: 'primary.nmai',
-//     color: 'primary.contrastText',
-//     '&:hover': {
-//       bg: 'primary.hover',
-//     },
-//     '&:active': {
-//       bg: 'primary.active',
-//     },
-//     '&:disabled': {
-//       bg: 'primary.disabled',
-//     },
-//   },
-//   outlined: {
-//     bg: 'transparent',
-//     color: 'primary.main',
-//     border: '1px solid',
-//     borderColor: 'primary.main',
-//     '&:hover': {
-//       borderColor: 'primary.hover',
-//       color: 'primary.hover',
-//     },
-//     '&:active': {
-//       borderColor: 'primary.active',
-//       color: 'primary.active',
-//     },
-//     '&:disabled': {
-//       borderColor: 'primary.disabled',
-//       color: 'primary.disabled',
-//     },
-//   },
-//   text: {
-//     bg: 'transparent',
-//     color: 'primary.main',
-//     '&:hover': {
-//       bg: 'primary.hover',
-//       color: 'primary.contrastText',
-//     },
-//     '&:active': {
-//       bg: 'primary.active',
-//       color: 'primary.contrastText',
-//     },
-//     '&:disabled': {
-//       color: 'primary.disabled',
-//     },
-//   },
-// };
+export const buttonStyles = tv({
+  base: 'flex items-center justify-center rounded-md focus:outline-none transition duration-200',
+  variants: {
+    color: {
+      primary: 'text-blue-500',
+      secondary: 'text-purple-500',
+      success: 'text-green-500',
+      danger: 'text-red-500',
+      white: 'text-white', // 흰 글씨 추가
+    },
+    bg: {
+      gray: 'bg-gray-800',
+      black: 'bg-black',
+      white: 'bg-white',
+      primary: 'bg-blue-500',
+      none: '',
+    },
+    size: {
+      sm: 'px-2 py-1 text-sm',
+      md: 'px-4 py-2 text-md',
+      lg: 'px-6 py-3 text-lg',
+      xl: 'px-8 py-4 text-xl',
+    },
+    shape: {
+      square: 'square',
+      rounded: 'rounded',
+      circle: 'rounded-full',
+    },
 
-// export const BasicButton = styled('button')<ButtonProps>(
-//   {
-//     boxSizing: 'border-box',
-//     borderRadius: '4px',
-//     fontSize: '1rem',
-//     fontWeight: '500',
-//     transition: 'all 100ms ease',
-//     userSelect: 'none',
-//     cursor: 'pointer',
-//     '&:disabled': {
-//       cursor: 'default',
-//     },
-//   },
-//   space,
-//   layout,
-//   color,
-//   variant({ variants: buttonVariants }),
-//   (props) => props.fullwidth !== 'false' && { width: '100%' },
-// );
+    active: {
+      true: '',
+      false: '',
+    },
+  },
+  compoundVariants: [
+    {
+      class: 'hover:bg-blue-400', // hover 시 연한 파랑색 배경
+    },
+  ],
+  defaultVariants: {
+    size: 'md',
+    color: 'white',
+    bg: 'primary',
+    shape: 'square',
+    shadow: 'none',
+    active: false,
+  },
+});

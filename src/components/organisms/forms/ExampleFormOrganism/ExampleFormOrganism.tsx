@@ -2,11 +2,10 @@
 
 // 스타일을 적용한 컴포넌트를 반환하세요.
 
-import { Form } from '@/components/molecules';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-import { Button } from '@/components/atoms';
 import formConditions from '@/constants/formConditions';
+import { Button } from '@/components/atoms';
 
 type Inputs = {
   email: string;
@@ -31,34 +30,34 @@ export const ExampleFormOrganism = () => {
   // watch로 현재 input에 입력되고 있는 상태를 확인할 수 있음
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <InputWithLabelAndError
         {...register('email', { ...formConditions.email })}
-        errordisplay={errors.email}
+        errorDisplay={errors?.email?.message || ''}
         label="이메일"
       />
       <InputWithLabelAndError
         {...register('nickname', { ...formConditions.nickname })}
-        errordisplay={errors.nickname}
+        errorDisplay={errors?.nickname?.message || ''}
         label="닉네임"
       />
       <InputWithLabelAndError
         {...register('age', { ...formConditions.age })}
-        errordisplay={errors.age}
+        errorDisplay={errors?.age?.message || ''}
         label="나이"
       />
       <InputWithLabelAndError
         {...register('organization', { ...formConditions.organization })}
-        errordisplay={errors.organization}
+        errorDisplay={errors?.organization?.message || ''}
         label="조직"
       />
       <InputWithLabelAndError
         {...register('password', { ...formConditions.password })}
-        errordisplay={errors.password}
+        errorDisplay={errors?.password?.message || ''}
         label="비밀번호"
       />
       {/* errors will return when field validation fails  */}
       <Button>제출하기</Button>
-    </Form>
+    </form>
   );
 };

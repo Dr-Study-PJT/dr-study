@@ -1,7 +1,11 @@
 // src/components/atoms/Label.tsx
-import React from "react";
-import { LabelProps } from "./Label.types";
+import React from 'react';
+import { LabelProps } from './Label.types';
 
-export const Label = ({ htmlFor = "", children }: LabelProps) => {
-  return <label htmlFor={htmlFor}>{children}</label>;
+export const Label = ({ className, htmlFor = '', children }: LabelProps) => {
+  return (
+    <label className={className} htmlFor={htmlFor}>
+      {children}
+    </label>
+  );
 };
