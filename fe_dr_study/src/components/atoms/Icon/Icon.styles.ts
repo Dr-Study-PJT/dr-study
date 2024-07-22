@@ -1,8 +1,11 @@
 import { tv } from 'tailwind-variants';
 
 export const iconStyles = tv({
-    base: 'p-3 rounded-full',
+    base: 'p-3 rounded-full bg-[#393C49] text-[#007AFF] transition duration-200 hover:bg-blue-400',
     variants: {
+        cursor: {
+            pointer: 'cursor-pointer',
+        },
         size: {
             sm: 'text-[24px]',
             md: 'text-[36px]',
@@ -10,12 +13,10 @@ export const iconStyles = tv({
             xl: 'text-[60px]',
         },
         bg: {
-            active: '#007AFF', // active 상태의 배경색
-            inactive: '#393C49', // 비활성 상태의 배경색
+            gray: 'bg-[#393C49]',
         },
         text: {
-            active: 'text-white', // active 상태의 글자색
-            inactive: 'text-[#007AFF]', // 비활성 상태의 글자색
+            white: 'text-[#007AFF]',
         },
         active: {
             true: '',
@@ -27,14 +28,8 @@ export const iconStyles = tv({
             active: true,
             class: 'bg-[#007AFF] text-white',
         },
-        {
-            active: false,
-            class: 'bg-[#393C49] text-[#007AFF]',
-        },
     ],
     defaultVariants: {
-        bg: 'inactive',
-        text: 'inactive',
         active: false,
     },
 });

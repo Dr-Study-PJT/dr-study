@@ -67,7 +67,7 @@ export default function RootLayout({
                 <RQProvider>
                     <MSWComponent />
 
-                    <Navigation>네브바</Navigation>
+                    <Navigation />
                     <div>
                         본문래퍼
                         <div>사이드바</div>

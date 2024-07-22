@@ -20,12 +20,22 @@ const iconName: IconKeyValue = {
 
 // Icon 컴포넌트
 // any 타입 수정 !필요!
-export const Icon = ({ icon, size, bg }: IconInterface) => {
+export const Icon = ({
+    icon,
+    text,
+    size,
+    bg,
+    active,
+    cursor,
+}: IconInterface) => {
     return (
         <div
             className={iconStyles({
                 size,
+                text,
                 bg,
+                active,
+                cursor,
             })}
         >
             <div className=""></div>
