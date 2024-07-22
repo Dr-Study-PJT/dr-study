@@ -4,8 +4,8 @@ import { Button, Heading, Span } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
 import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
-import { PlainTextForm } from '@/components/organisms/Forms/PlainTextForm/PlainTextForm';
-import CreateStudyGroupProgress from '@/components/organisms/Forms/CreateStudyGroupProgress/CreateStudyGroupProgress';
+import { PlainTextForm } from '@/components/organisms/forms/PlainTextForm/PlainTextForm';
+import CreateStudyGroupProgress from '@/components/organisms/forms/CreateStudyGroupProgress/CreateStudyGroupProgress';
 
 const baseButton = tv({
     base: [
