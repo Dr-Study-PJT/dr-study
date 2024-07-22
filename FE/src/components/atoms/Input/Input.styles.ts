@@ -44,7 +44,7 @@ export const AtomInputStyles = tv({
             danger: 'bg-red-100 border-red-300 text-black',
             warning: 'bg-yellow-100 border-yellow-300 text-black',
         },
-        size: {
+        textSize: {
             sm: 'px-2 py-1 text-sm',
             md: 'px-4 py-2 text-md',
             lg: 'px-6 py-3 text-lg',

@@ -6,7 +6,7 @@ import Navigation from '@/components/organisms/Navigation/Navigation';
 
 import localFont from 'next/font/local';
 import { Box } from '../components/atoms/Box/Box';
-import CreateError from '../components/organisms/LoadingAndResult/LoadingAndResult';
+import { CreateError } from '@/components/organisms/LoadingAndResult/LoadingAndResult';
 
 const pretendard = localFont({
     src: [

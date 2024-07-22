@@ -1,6 +1,5 @@
 import { tv } from 'tailwind-variants';
-import LoadingAndResult from '../../organisms/LoadingAndResult/LoadingAndResult';
-import CreateFailBottom from '../../molecules/CreateFailBottom/CreateFailBottom';
+
 
 export const boxStyles = tv({
     base: 'w-full',
@@ -36,13 +35,20 @@ export const boxStyles = tv({
             createSuccessExceptForButton:
                 'w-[496px] h-[583px] p-[63px_121px]  flex flex-col justify-between justify-center items-center bg-[#282B30] border border-white rounded-[10px] ',
 
+            createSuccessWhole:
+                'w-[496px] h-[676px] flex flex-col items-center justify-center',
             createSuccessTop:
                 'w-[323px] h-[239px] flex flex-col items-center justify-center gap-[40px]',
             createSuccessBottom:
                 'w-[496px] h-[264px] p-[0px_40px] flex flex-col justify-between gap-[24px]',
 
-            createSuccessButton:
-                'w-[416px] h-[53px] p-[63px_121px]  flex justify-between bg-[#282B30] gap-[24px]',
+            createSuccessBottomMesssageContainer:
+                'w-[416px] h-[77px] gap-[8px]',
+            createSuccessBottomMesssage: 'w-[416px] h-[48px] gap-[4px]',
+            createSuccessBottomDescriptionContainer:
+                'w-[416px] h-[163px] gap-[8px]',
+            createSuccessBottomDescription: 'w-[416px] h-[134px] gap-[4px]',
+            createSuccessButton: 'w-[416px] h-[53px] gap-[24px]',
         },
         color: {
             primary: 'text-blue-500',
