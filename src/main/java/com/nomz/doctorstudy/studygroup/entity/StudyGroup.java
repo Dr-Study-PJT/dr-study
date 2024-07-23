@@ -1,14 +1,19 @@
-package com.nomz.doctorstudy.studygroup;
+package com.nomz.doctorstudy.studygroup.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity
 @Getter
-@Setter
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudyGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,19 +25,19 @@ public class StudyGroup {
     @Column(nullable = false)
     private Long imageId;
 
-    @Column(nullable = false)
-    private Long captainId;
+    //@Column(nullable = false)
+    //private Member captainId;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
     @Column(nullable = false, length = 256)
     private String description;
 
-    @Column(nullable = false, length = 64)
+    @Column(length = 64)
     private String goal;
 
     private LocalDateTime dueDate;
@@ -42,6 +47,9 @@ public class StudyGroup {
 
     private int memberCapacity;
 
-    // Getters and Setters
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL)
+    private List<StudyGroupTag> studyGroupTags;
+
+
 }
 

@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.studygroup;
+package com.nomz.doctorstudy.studygroup.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

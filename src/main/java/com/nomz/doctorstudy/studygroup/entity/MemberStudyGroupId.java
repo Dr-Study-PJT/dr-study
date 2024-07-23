@@ -1,10 +1,9 @@
-package com.nomz.doctorstudy.studygroup;
+package com.nomz.doctorstudy.studygroup.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor

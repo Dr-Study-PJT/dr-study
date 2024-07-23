@@ -1,80 +1,124 @@
 package com.nomz.doctorstudy.studygroup.service;
 
-import com.nomz.doctorstudy.studygroup.MemberStudyGroupApply;
-import com.nomz.doctorstudy.studygroup.StudyGroup;
-import com.nomz.doctorstudy.studygroup.repository.MemberStudyGroupApplyRepository;
-import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
-import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
-import com.nomz.doctorstudy.studygroup.request.AdmissionResponseRequest;
-import com.nomz.doctorstudy.studygroup.response.AdmissionResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
+import com.nomz.doctorstudy.studygroup.StudyGroupErrorCode;
+import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroupTag;
+import com.nomz.doctorstudy.studygroup.entity.Tag;
+import com.nomz.doctorstudy.studygroup.repository.*;
+import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
+import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class StudyGroupServiceImpl implements StudyGroupService {
 
-    @Autowired
-    private StudyGroupRepository studyGroupRepository;
-
-    @Autowired
-    private MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
-
-    @Override
-    public StudyGroup createStudyGroup(StudyGroup studyGroup) {
-        return studyGroupRepository.save(studyGroup);
-    }
+    private final StudyGroupRepository studyGroupRepository;
+    private final StudyGroupQueryRepository studyGroupQueryRepository;
+    private final TagRepository tagRepository;
+    private final StudyGroupTagRepository studyGroupTagRepository;
+    private final MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
 
     @Override
-    public StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails) {
-        StudyGroup existingStudyGroup = studyGroupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
+    public StudyGroup createStudyGroup(CreateStudyGroupRequest request) {
+        StudyGroup studyGroup = StudyGroup.builder()
+                .name(request.getName())
+                .imageId(request.getImageId())
+                .createdAt(LocalDateTime.now())
+                .isDeleted(false)
+                .description(request.getDescription())
+                .dueDate(request.getDueDate())
+                .memberCount(1)
+                .memberCapacity(request.getMemberCapacity())
+                .build();
+        studyGroupRepository.save(studyGroup);
+        log.info("[new studyGroup] id={}, title={}", studyGroup.getId(), studyGroup.getName());
 
-        existingStudyGroup.setName(studyGroupDetails.getName());
-        existingStudyGroup.setImageId(studyGroupDetails.getImageId());
-        existingStudyGroup.setCaptainId(studyGroupDetails.getCaptainId());
-        existingStudyGroup.setDescription(studyGroupDetails.getDescription());
-        existingStudyGroup.setGoal(studyGroupDetails.getGoal());
-        existingStudyGroup.setDueDate(studyGroupDetails.getDueDate());
-        existingStudyGroup.setMemberCapacity(studyGroupDetails.getMemberCapacity());
+        if(request.getTags() != null && !request.getTags().isEmpty()){
+            List<StudyGroupTag> studyGroupTags = request.getTags().stream()
+                    .map(name -> {
+                        Tag tag = tagRepository.findByName(name)
+                                .orElseGet(() -> tagRepository.save(new Tag(name)));
+                        return new StudyGroupTag(tag, studyGroup);
+                    }).collect(Collectors.toList());
 
-        return studyGroupRepository.save(existingStudyGroup);
+            studyGroupTagRepository.saveAll(studyGroupTags);
+        }
+
+        return studyGroup;
     }
+
 
     @Override
     public StudyGroup getStudyGroup(Long groupId) {
         return studyGroupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
+                .orElseThrow(() ->  new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
     }
 
     @Override
-    public List<StudyGroup> getAllStudyGroups() {
-        return studyGroupRepository.findAll();
+    public List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command) {
+        return studyGroupQueryRepository.getStudyGroupList(
+                StudyGroupSearchFilter.builder()
+                        .name(command.getName())
+                        .memberCapacity(command.getMemberCapacity())
+                        .build()
+        );
     }
 
-    @Override
-    public void deleteStudyGroup(Long groupId) {
-        StudyGroup existingStudyGroup = studyGroupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
-        studyGroupRepository.delete(existingStudyGroup);
-    }
 
-    @Override
-    public void applyForStudyGroup(AdmissionRequest admissionRequest) {
+//    @Override
+//    public StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails) {
+//        StudyGroup existingStudyGroup = studyGroupRepository.findById(groupId)
+//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
+//
+//        existingStudyGroup.setName(studyGroupDetails.getName());
+//     Group.setImageId(studyGroupDetails.getImageId());
+//        existingStudy   existingStudyGroup.setCaptainId(studyGroupDetails.getCaptainId());
+//        existingStudyGroup.setDescription(studyGroupDetails.getDescription());
+//        existingStudyGroup.setGoal(studyGroupDetails.getGoal());
+//        existingStudyGroup.setDueDate(studyGroupDetails.getDueDate());
+//        existingStudyGroup.setMemberCapacity(studyGroupDetails.getMemberCapacity());
+//
+//        return studyGroupRepository.save(existingStudyGroup);
+//    }
+//
 
-    }
-
-    @Override
-    public void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest) {
-
-    }
-
-    @Override
-    public List<AdmissionResponse> getAllStudyGroupApplications() {
-        return List.of();
-    }
+//
+//    @Override
+//    public List<StudyGroup> getAllStudyGroups() {
+//        return studyGroupRepository.findAll();
+//    }
+//
+//    @Override
+//    public void deleteStudyGroup(Long groupId) {
+//        StudyGroup existingStudyGroup = studyGroupRepository.findById(groupId)
+//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
+//        studyGroupRepository.delete(existingStudyGroup);
+//    }
+//
+//    @Override
+//    public void applyForStudyGroup(AdmissionRequest admissionRequest) {
+//
+//    }
+//
+//    @Override
+//    public void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest) {
+//
+//    }
+//
+//    @Override
+//    public List<AdmissionResponse> getAllStudyGroupApplications() {
+//        return List.of();
+//    }
 
 //    @Override
 //    public void applyForStudyGroup(AdmissionRequest admissionRequest) {
@@ -112,4 +156,5 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 //            return response;
 //        }).collect(Collectors.toList());
 //    }
+
 }
