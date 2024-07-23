@@ -11,7 +11,7 @@ export const buttonStyles = tv({
             something:
                 'w-[196px] h-[53px] bg-gray-500 hover:bg-gray-700 text-white text-lg rounded-[32px] py-2 px-6',
             check:
-             'w-[196px] h-[53px] bg-primary hover:bg-blue-400  text-white text-lg rounded-[32px] py-2 px-6',
+             'w-[196px] h-[53px] bg-[#007AFF] hover:bg-blue-400  text-white text-lg rounded-[32px] py-2 px-6',
         },
         color: {
             primary: 'text-blue-500',

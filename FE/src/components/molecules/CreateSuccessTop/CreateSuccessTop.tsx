@@ -2,7 +2,8 @@ import React from 'react';
 import { Box } from '../../atoms/Box/Box';
 import { Heading } from '@/components/atoms';
 import { SuccessLottie } from '@/app/_components/Lottie/Succecc2/SuccessLottie';
-const CreateFailTop: React.FC = () => {
+
+const CreateSuccessTop: React.FC = () => {
     return (
         <Box variant="createSuccessTop">
             <Box variant="Lottie">
@@ -15,4 +16,4 @@ const CreateFailTop: React.FC = () => {
     );
 };
 
-export default CreateFailTop;
+export default CreateSuccessTop;
