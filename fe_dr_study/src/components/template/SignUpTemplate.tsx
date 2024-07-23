@@ -1,5 +1,3 @@
-import { SignUpForm } from "../organisms";
-
 interface fieldProps {
   emailLabel: string;
   passwordLabel: string;
@@ -18,7 +16,6 @@ const SignUpTemplate: React.FC = () => {
   return (
     <div>
       <h1>회원가입 페이지</h1>
-      <SignUpForm field={field} />
     </div>
   );
 };

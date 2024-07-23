@@ -2,8 +2,8 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-import { ILogIn } from '@/interfaces/accounts';
-import { removeUserData, setSessionStorageItem } from '@/utils/sessionStorage';
+import { ILogInReq } from '@/interfaces/members'; 
+import { removeMemberData, setSessionStorageItem } from '@/utils/sessionStorage';
 
 const API = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_HOST}/auth`,
@@ -28,19 +28,19 @@ API.interceptors.response.use(
   },
 );
 
-export const login = async (userData: ILogIn) => {
-  const response = await API.post('/login', userData);
-  setSessionStorageItem('userData', {
+export const login = async (memerData: ILogInReq) => {
+  const response = await API.post('/login', memerData);
+  setSessionStorageItem('memberData', {
+    id: response.data.id,
     email: response.data.email,
     nickname: response.data.nickname,
-    imgUrl: response.data.imgUrl,
   });
   return response.data;
 };
 
-export const logout = async (userId: string) => {
-  await API.post('/logout', { userId });
-  removeUserData();
+export const logout = async (memberId: string) => {
+  await API.post('/logout', { memberId });
+  removeMemberData();
 };
 
 export const refreshAccessToken = async () => {

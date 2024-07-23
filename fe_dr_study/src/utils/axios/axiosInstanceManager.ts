@@ -6,17 +6,13 @@ import axios, { AxiosInstance } from 'axios';
 //  현재는 인스턴스를 마구 생성하지만, 더 높은 수준의 추상화가 가능할 것으로 보인다.
 
 export const GenerateAPI = (url?: string) => {
-  const API: AxiosInstance = axios.create({
-    baseURL: `${process.env.NEXT_PUBLIC_HOST}/${url}${url ? '/' : ''}`,
-    withCredentials: true, // 쿠키를 보내기 위해 설정
-  });
+    const API: AxiosInstance = axios.create({
+        baseURL: `${process.env.NEXT_PUBLIC_HOST}/${url}${url ? '/' : ''}`,
+        withCredentials: true, // 쿠키를 보내기 위해 설정
+    });
 
-  return API;
+    return API;
 };
 
-export const chatAPI = GenerateAPI('chatbot');
-export const chatPostAPI = GenerateAPI('chatposts');
 export const authAPI = GenerateAPI('auth');
-export const userAPI = GenerateAPI('user');
-export const commentAPI = GenerateAPI('comments');
-export const starAPI = GenerateAPI('stars');
+export const memberAPI = GenerateAPI('members');
