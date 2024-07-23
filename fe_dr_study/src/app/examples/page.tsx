@@ -68,11 +68,11 @@ const button = tv({
 const Examples = ({ children }: any) => {
     return (
         <div className="w-full">
-            <Icon icon="house" bg="black" size="xl" active shadow="lg" />
-            <Icon icon="people" bg="black" size="xl" shadow="lg" />
-            <Icon icon="person" bg="black" size="xl" shadow="lg" />
-            <Icon icon="globe" bg="black" size="xl" shadow="lg" />
-            <Icon icon="arrowLeft" bg="black" size="xl" shadow="lg" />
+            <Icon icon="house" bg="gray" size="xl" active />
+            <Icon icon="people" bg="gray" size="xl" />
+            <Icon icon="person" bg="gray" size="xl" />
+            <Icon icon="globe" bg="gray" size="xl" />
+            <Icon icon="arrowLeft" bg="gray" size="xl" />
             {/* <button className={baseButton()}>Button</button>
       <button className={buyButton()}>Buy button</button>
       <button className={button({ color: 'secondary' })}>variant button</button> */}
@@ -139,6 +139,30 @@ const Examples = ({ children }: any) => {
             </StepsBox>
 
             <CreateStudyGroupProgress />
+            <div className="bg-cs">dsad</div>
+            <div className="bg-coral-200">dsad</div>
+            <div className="bg-coral-300">dsad</div>
+            <div className="bg-gray-100">dsad</div>
+            <div className="bg-gray-200">dsad</div>
+            <div className="bg-gray-300">dsad</div>
+            <div className="bg-gray-400">dsad</div>
+            <div className="bg-gray-500">dsad</div>
+            <div className="text-lg">바디1</div>
+            <div className="text-dr-body-1">바디1</div>
+            <div className="text-dr-body-2">바디2</div>
+            <div className="text-dr-body-3">바디3</div>
+            <div className="text-dr-body-4">바디4</div>
+            <div className="text-dr-header-2">헤더2</div>
+            <div className="text-dr-header-3">바디3</div>
+            <div className="text-dr-header-4">바디4</div>
+            <div className="gap-dr-g25 bg-red-700">dsads</div>
+            <div className="gap-dr-g1   bg-red-700">dsads</div>
+            <div className="gap-dr-g1  bg-dr-red">dsads</div>
+            <div className="gap-dr-g1  text-dr-red">dsads</div>
+            <div className="gap-dr-g1  text-dr-red shadow-dr-rb-2">dsads</div>
+            <div className="gap-dr-g1  text-dr-red shadow-dr">dsads</div>
+            <div className="gap-dr-g1  text-dr-red shadow-dr-rb-2">dsads</div>
+            <div className="gap-dr-g1  text-dr-red shadow-dr-b-2">dsads</div>
         </div>
     );
 };
