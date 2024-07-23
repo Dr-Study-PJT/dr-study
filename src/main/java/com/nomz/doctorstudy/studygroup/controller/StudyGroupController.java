@@ -95,7 +95,6 @@ public class StudyGroupController {
                 studyGroup.getCreatedAt(),
                 studyGroup.getIsDeleted(),
                 studyGroup.getDescription(),
-                studyGroup.getTags(),
                 studyGroup.getMemberCount(),
                 studyGroup.getMemberCapacity());
 

@@ -36,6 +36,6 @@ public class CreateStudyGroupRequest {
     @Schema(description = "스터디 인원 수", example = "6")
     private final Integer memberCapacity;
 
-    @Schema(description = "태그", example = "#정처기")
-    private final List<Tag> tags;
+    @Schema(description = "태그", example = "[\"#정처기\", \"#스터디\"]")
+    private final List<String> tags;
 }

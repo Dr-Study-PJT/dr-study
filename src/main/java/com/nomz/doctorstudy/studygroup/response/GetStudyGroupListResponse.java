@@ -48,7 +48,7 @@ public class GetStudyGroupListResponse {
                 .createdAt(studyGroup.getCreatedAt())
                 .isDeleted(studyGroup.getIsDeleted())
                 .description(studyGroup.getDescription())
-                .tags(studyGroup.getTags())
+                //.tags(studyGroup.getTags())
                 .memberCount(studyGroup.getMemberCount())
                 .memberCapacity(studyGroup.getMemberCapacity())
                 .build();

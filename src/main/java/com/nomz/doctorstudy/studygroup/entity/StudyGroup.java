@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -46,9 +47,9 @@ public class StudyGroup {
 
     private int memberCapacity;
 
-    // 태그 객체 생성하기
-    @OneToMany(mappedBy = "studyGroup")
-    private String tags;
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL)
+    private List<StudyGroupTag> studyGroupTags;
+
 
 }
 

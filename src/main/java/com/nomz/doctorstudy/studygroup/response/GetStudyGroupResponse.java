@@ -27,8 +27,8 @@ public class GetStudyGroupResponse {
     @Schema(description = "조회된 스터디그룹 설명란", example = "정처기 합격을 위한 스터디입니다.")
     private final String description;
 
-    @Schema(description = "조회된 스터디그룹 태그", example = "#정처기")
-    private final String tags;
+    //@Schema(description = "조회된 스터디그룹 태그", example = "#정처기")
+    //private final String tags;
 
     //@Schema(description = "조회된 스터디그룹 아이디", example = "1")
     //private final Long captainId;

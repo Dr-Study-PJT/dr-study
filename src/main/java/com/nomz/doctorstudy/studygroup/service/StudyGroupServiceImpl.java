@@ -4,9 +4,9 @@ import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
-import com.nomz.doctorstudy.studygroup.repository.MemberStudyGroupApplyRepository;
-import com.nomz.doctorstudy.studygroup.repository.StudyGroupQueryRepository;
-import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroupTag;
+import com.nomz.doctorstudy.studygroup.entity.Tag;
+import com.nomz.doctorstudy.studygroup.repository.*;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,6 +24,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
     private final StudyGroupQueryRepository studyGroupQueryRepository;
+    private final TagRepository tagRepository;
+    private final StudyGroupTagRepository studyGroupTagRepository;
     private final MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
 
     @Override
@@ -36,11 +39,21 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .dueDate(request.getDueDate())
                 .memberCount(1)
                 .memberCapacity(request.getMemberCapacity())
-                // tag 다시 작성
-                .tags(request.getTags())
                 .build();
         studyGroupRepository.save(studyGroup);
         log.info("[new studyGroup] id={}, title={}", studyGroup.getId(), studyGroup.getName());
+
+        if(request.getTags() != null && !request.getTags().isEmpty()){
+            List<StudyGroupTag> studyGroupTags = request.getTags().stream()
+                    .map(name -> {
+                        Tag tag = tagRepository.findByName(name)
+                                .orElseGet(() -> tagRepository.save(new Tag(name)));
+                        return new StudyGroupTag(tag, studyGroup);
+                    }).collect(Collectors.toList());
+
+            studyGroupTagRepository.saveAll(studyGroupTags);
+        }
+
         return studyGroup;
     }
 
