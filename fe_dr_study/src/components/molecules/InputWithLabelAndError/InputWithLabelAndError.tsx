@@ -38,10 +38,13 @@ type HTMLInputType =
     | 'week';
 
 interface CommonProps {
-    textarea: boolean;
+    textarea?: boolean;
     label?: string;
     placeholder?: string;
-    errorDisplay?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
+    errorDisplay?:
+        | string
+        | FieldError
+        | Merge<FieldError, FieldErrorsImpl<any>>;
     inputType?: HTMLInputType;
 }
 
@@ -57,17 +60,20 @@ export const InputWithLabelAndError = forwardRef<
 >((props, ref) => {
     const { textarea, errorDisplay, label, placeholder, inputType, ...rest } =
         props;
-    
-     // errorDisplay에서 문자열 메시지 추출해서 string형으로 쓰게 했숴요
-     const errorMessage = typeof errorDisplay === 'string' ? errorDisplay
-     : errorDisplay?.message || '';  
 
-    
+    // errorDisplay에서 문자열 메시지 추출해서 string형으로 쓰게 했숴요
+    const errorMessage =
+        typeof errorDisplay === 'string'
+            ? errorDisplay
+            : errorDisplay?.message || '';
+
     return (
         <div className="w-full relative flex flex-col">
             {label && <Label className={labelStyles()}>{label}</Label>}
             {errorDisplay && (
-                <Paragraph className={errorStyles()}>{errorMessage as String}</Paragraph>
+                <Paragraph className={errorStyles()}>
+                    {errorMessage as String}
+                </Paragraph>
             )}
             {textarea ? (
                 <textarea
