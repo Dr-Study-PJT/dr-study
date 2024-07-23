@@ -5,6 +5,7 @@ import './globals.css';
 import Navigation from '@/components/organisms/Navigation/Navigation';
 
 import localFont from 'next/font/local';
+import SideBar from '@/components/organisms/SideBar/SideBar';
 
 const pretendard = localFont({
     src: [
@@ -66,11 +67,13 @@ export default function RootLayout({
             <body>
                 <RQProvider>
                     <MSWComponent />
-
-                    <Navigation>네브바</Navigation>
-                    <div>
-                        본문래퍼
-                        <div>사이드바</div>
+                    <div className="h-[5.8125rem]">
+                        <Navigation />
+                    </div>
+                    <div className="flex">
+                        <div className="bg-[#282B30] w-[7.5rem] h-[calc(100dvh-5.8125rem)]">
+                            <SideBar />
+                        </div>
                         {children}
                     </div>
                 </RQProvider>

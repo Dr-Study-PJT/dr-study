@@ -1,5 +1,8 @@
-const NewModeratorPage = () => { 
-    return <div>Create Moderator Page</div>
-}
+import CreateModeratorProgress from '@/components/organisms/forms/CreateModeratorProgress/CreateModeratorProgress';
+import React from 'react';
 
-export default NewModeratorPage
+const CreateModeratorPage = () => {
+    return <CreateModeratorProgress />;
+};
+
+export default CreateModeratorPage;
