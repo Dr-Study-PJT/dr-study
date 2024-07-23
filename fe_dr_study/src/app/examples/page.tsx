@@ -1,146 +1,106 @@
-import { tv } from 'tailwind-variants';
+'use client';
+import React from 'react';
+import { Button } from '@/components/atoms';
 
-import { Button, Heading, Span } from '@/components/atoms';
-import Icon from '@/components/atoms/Icon/Icon';
-import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
-import { StepsBox } from '@/components/molecules/StepsBox/StepsBox';
-import { PlainTextForm } from '@/components/organisms/forms/PlainTextForm/PlainTextForm';
-import CreateStudyGroupProgress from '@/components/organisms/forms/CreateStudyGroupProgress/CreateStudyGroupProgress';
-
-const baseButton = tv({
-    base: [
-        'font-semibold',
-        'dark:text-white',
-        'py-1',
-        'px-3',
-        'rounded-full',
-        'active:opacity-80',
-        'bg-zinc-100',
-        'hover:bg-zinc-200',
-        'dark:bg-zinc-800',
-        'dark:hover:bg-zinc-800',
-    ],
-});
-
-const buyButton = tv({
-    extend: baseButton,
-    base: [
-        'text-sm',
-        'text-white',
-        'rounded-lg',
-        'shadow-lg',
-        'uppercase',
-        'tracking-wider',
-        'bg-blue-500',
-        'hover:bg-blue-600',
-        'shadow-blue-500/50',
-        'dark:bg-blue-500',
-        'dark:hover:bg-blue-600',
-    ],
-});
-
-const button = tv({
-    base: 'font-medium bg-blue-500 text-white rounded-full active:opacity-80',
-    variants: {
-        color: {
-            primary: 'bg-blue-500 text-white',
-            secondary: 'bg-purple-500 text-white',
-        },
-        size: {
-            sm: 'text-sm',
-            md: 'text-base',
-            lg: 'px-4 py-3 text-lg',
-        },
-    },
-    compoundVariants: [
-        {
-            size: ['sm', 'md'],
-            class: 'px-3 py-1',
-        },
-    ],
-    defaultVariants: {
-        size: 'md',
-        color: 'primary',
-    },
-});
-
-// 타입작성 !필요!
-const Examples = ({ children }: any) => {
+const Example = () => {
     return (
-        <div className="w-full">
-            <Icon icon="house" bg="black" size="xl" active shadow="lg" />
-            <Icon icon="people" bg="black" size="xl" shadow="lg" />
-            <Icon icon="person" bg="black" size="xl" shadow="lg" />
-            <Icon icon="globe" bg="black" size="xl" shadow="lg" />
-            <Icon icon="arrowLeft" bg="black" size="xl" shadow="lg" />
-            {/* <button className={baseButton()}>Button</button>
-      <button className={buyButton()}>Buy button</button>
-      <button className={button({ color: 'secondary' })}>variant button</button> */}
-            <ul className="flex gap-1">
-                <li>
-                    <Button size="sm">sm 다음으로</Button>
-                </li>
-                <li>
-                    <Button size="md">md 다음으로</Button>
-                </li>
-                <li>
-                    <Button size="lg">lg 다음으로</Button>
-                </li>
-                <li>
-                    <Button size="xl">xl 다음으로</Button>
-                </li>
-            </ul>
+        <div className="p-8 space-y-4">
+            <h1 className="text-2xl font-bold">버튼 예시</h1>
+
+            {/* 기본 버튼 */}
             <div>
-                <Heading variant="h2">h2 스터디그룹 생성</Heading>
-                <Heading variant="h3" color="primary">
-                    h3 스터디그룹 생성
-                </Heading>
-                <Heading variant="h4" color="danger">
-                    h4 스터디그룹 생성
-                </Heading>
-            </div>
-            <ul>
-                <li>
-                    <Span variant="s1">
-                        s1 스터디 그룹 기본정보를 작성해주세요.
-                    </Span>
-                </li>
-                <li>
-                    <Span variant="b1">
-                        b1 스터디 그룹 기본정보를 작성해주세요.
-                    </Span>
-                </li>
-                <li>
-                    <Span variant="b2">
-                        b2 스터디 그룹 기본정보를 작성해주세요.
-                    </Span>
-                </li>
-                <li>
-                    <Span variant="b3" color="primary">
-                        b3 스터디 그룹 기본정보를 작성해주세요.
-                    </Span>
-                </li>
-                <li>
-                    <Span variant="b4" color="danger">
-                        b4 스터디 그룹 기본정보를 작성해주세요.
-                    </Span>
-                </li>
-            </ul>
-            <PlainTextForm />
-
-            <div className="p-4 flex gap-4">
-                <ImageUpload shape="circle" />
-                <ImageUpload shape="rounded-square" />
-                <ImageUpload shape="circle" />
+                <h2 className="font-semibold">기본 버튼</h2>
+                <Button onClick={() => alert('클릭되었습니다!')}>
+                    클릭하세요
+                </Button>
             </div>
 
-            <StepsBox title="제목" subTitle="부제목" steps={3} currentStep={1}>
-                본문
-            </StepsBox>
+            {/* 윤곽선이 있는 버튼 */}
+            <div>
+                <h2 className="font-semibold">윤곽선 버튼</h2>
+                <Button
+                    outlined
+                    onClick={() => alert('윤곽선 버튼이 클릭되었습니다!')}
+                >
+                    윤곽선 버튼
+                </Button>
+            </div>
 
-            <CreateStudyGroupProgress />
+            {/* 전체 폭 버튼 */}
+            <div>
+                <h2 className="font-semibold">전체 폭 버튼</h2>
+                <Button
+                    fullWidth
+                    onClick={() => alert('전체 폭 버튼이 클릭되었습니다!')}
+                >
+                    전체 폭 버튼
+                </Button>
+            </div>
+
+            {/* 둥근 버튼 */}
+            <div>
+                <h2 className="font-semibold">둥근 버튼</h2>
+                <Button
+                    rounded
+                    onClick={() => alert('둥근 버튼이 클릭되었습니다!')}
+                >
+                    둥근 버튼
+                </Button>
+            </div>
+
+            {/* 색상이 있는 버튼 */}
+            <div>
+                <h2 className="font-semibold">색상 버튼</h2>
+                <Button
+                    color="coral"
+                    onClick={() => alert('코랄 버튼이 클릭되었습니다!')}
+                >
+                    코랄
+                </Button>
+                <Button
+                    color="dark"
+                    onClick={() => alert('다크 버튼이 클릭되었습니다!')}
+                >
+                    다크
+                </Button>
+                <Button
+                    color="red"
+                    onClick={() => alert('레드 버튼이 클릭되었습니다!')}
+                >
+                    레드
+                </Button>
+            </div>
+
+            {/* 비활성화된 버튼 */}
+            <div>
+                <h2 className="font-semibold">비활성화된 버튼</h2>
+                <Button disabled>비활성화 버튼</Button>
+            </div>
+
+            {/* 사이즈에 따른 버튼 */}
+            <div>
+                <h2 className="font-semibold">사이즈별 버튼</h2>
+                <Button
+                    size="sm"
+                    onClick={() => alert('작은 버튼이 클릭되었습니다!')}
+                >
+                    작은 사이즈
+                </Button>
+                <Button
+                    size="md"
+                    onClick={() => alert('중간 버튼이 클릭되었습니다!')}
+                >
+                    중간 사이즈
+                </Button>
+                <Button
+                    size="lg"
+                    onClick={() => alert('큰 버튼이 클릭되었습니다!')}
+                >
+                    큰 사이즈
+                </Button>
+            </div>
         </div>
     );
 };
 
-export default Examples;
+export default Example;
