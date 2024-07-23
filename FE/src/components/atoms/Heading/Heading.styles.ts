@@ -3,6 +3,9 @@ import { tv } from 'tailwind-variants';
 export const headingStyles = tv({
   base: '',
   variants: {
+    size: {
+      
+    },
     variant: {
       h2: 'font-bold text-4xl',
       h3: 'font-bold text-2xl',
