@@ -5,7 +5,7 @@ import { ButtonProps } from './Button.types';
 
 export const Button = ({ onClick, size, bg, children }: ButtonProps) => {
     return (
-        <button className={buttonStyles({ size, bg })} onClick={onClick}>
+        <button className={buttonStyles({ size })} onClick={onClick}>
             {children}
         </button>
     );
