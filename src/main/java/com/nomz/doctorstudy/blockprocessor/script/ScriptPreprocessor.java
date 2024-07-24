@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -16,20 +17,47 @@ public class ScriptPreprocessor {
 
         script = preprocessVariables(script, varMap);
         script = preprocessFlowControl(script);
+        script = preprocessVariables(script, varMap);
 
         return script;
     }
 
     private String preprocessVariables(String script, Map<String, Object> varMap) {
-        final String getVarMethodName = "get_variable";
-        int getVarMethodIdx = script.indexOf(getVarMethodName);
-        while (getVarMethodIdx != -1) {
-            int bracketStartIdx = script.indexOf("(", getVarMethodIdx);
-            int bracketEndIdx = script.indexOf(")", getVarMethodIdx);
-            String varName = script.substring(bracketStartIdx + 1, bracketEndIdx);
-            String regex = getVarMethodName + "\\(" + varName + "\\)";
-            script = script.replaceFirst(regex, String.valueOf(varMap.get(varName)));
-            getVarMethodIdx = script.lastIndexOf(getVarMethodName);
+        // TODO: script 타입 StringBuilder로 변경
+        
+        final List<String> getVarMethodNameList = List.of("get_int_variable", "get_str_variable");
+        for (String getVarMethodName : getVarMethodNameList) {
+            int getVarMethodIdx = script.indexOf(getVarMethodName);
+            while (getVarMethodIdx != -1) {
+                int bracketStartIdx = script.indexOf("(", getVarMethodIdx);
+                int bracketEndIdx = script.indexOf(")", getVarMethodIdx);
+                String varName = script.substring(bracketStartIdx + 1, bracketEndIdx);
+                varName = removeParentheses(varName);
+                String regex = getVarMethodName + "\\('" + varName + "'\\)";
+                Object var = varMap.get(varName);
+                String replacement = String.valueOf(var);
+                if (var instanceof String) {
+                    replacement = addParentheses(replacement);
+                }
+                script = script.replaceFirst(regex, replacement);
+                getVarMethodIdx = script.lastIndexOf(getVarMethodName);
+            }
+        }
+
+
+        final List<String> setVarMethodNameList = List.of("get_int_variable", "get_str_variable");
+        for (String setVarMethodName : setVarMethodNameList) {
+            int setVarMethodIdx = script.indexOf(setVarMethodName);
+            while (setVarMethodIdx != -1) {
+                int bracketStartIdx = script.indexOf("(", setVarMethodIdx);
+                int bracketEndIdx = script.indexOf(")", setVarMethodIdx);
+                String varName = script.substring(bracketStartIdx + 1, bracketEndIdx);
+                varName = removeParentheses(varName);
+                String regex = setVarMethodName + "\\('" + varName + "'\\)";
+                Object var = varMap.get(varName);
+                script = script.replaceFirst(regex, "");
+                setVarMethodIdx = script.lastIndexOf(setVarMethodName);
+            }
         }
 
         log.info("after preprocess variables:\n{}", script);
@@ -89,7 +117,7 @@ public class ScriptPreprocessor {
         }
         StringBuilder builder = new StringBuilder();
         phaseMap.forEach((n, s) -> {
-            builder.append("set_phase(").append(n).append(");\n");
+            builder.append("set_int_variable(").append(n).append(");\n");
             builder.append(s);
         });
 
@@ -115,7 +143,19 @@ public class ScriptPreprocessor {
 
     private Integer getArgFromStatement(String stmt) {
         int firstIdxOfBracket = stmt.indexOf("(");
-        int endIdxOfBracket = stmt.indexOf(")");
+        int endIdxOfBracket = stmt.lastIndexOf(")");
         return Integer.parseInt(stmt.substring(firstIdxOfBracket + 1, endIdxOfBracket));
+    }
+
+    private String addParentheses(String str) {
+        return "(" + str + ")";
+    }
+
+    private String removeParentheses(String str) {
+        if (!str.startsWith("'") || !str.endsWith("'")) {
+            // TODO: 예외 추상화 맞추기
+            throw new RuntimeException("문자열 따옴표 감싸야함");
+        }
+        return str.substring(1, str.length() - 1);
     }
 }
