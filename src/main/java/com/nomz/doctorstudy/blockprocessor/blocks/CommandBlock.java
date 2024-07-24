@@ -7,5 +7,5 @@ public abstract class CommandBlock extends Block {
         super(returnType, parameterTypes);
     }
 
-    protected abstract void execute();
+    public abstract void execute();
 }

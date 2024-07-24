@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.conference.service;
 
-import com.nomz.doctorstudy.blockprocessor.BlockProcessService;
+import com.nomz.doctorstudy.blockprocessor.BlockProcessor;
+import com.nomz.doctorstudy.blockprocessor.script.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.Conference;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
@@ -11,7 +12,6 @@ import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,8 @@ import java.util.Map;
 public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceRepository conferenceRepository;
     private final ConferenceQueryRepository conferenceQueryRepository;
-    private final BlockProcessService blockProcessService;
+    private final BlockProcessor blockProcessor;
+    private final ScriptPreprocessor scriptPreprocessor;
 
     @Override
     public Long createConference(CreateConferenceRequest request) {
@@ -46,25 +47,26 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
-    public List<Conference> getConferenceList(GetConferenceListRequest command) {
+    public List<Conference> getConferenceList(GetConferenceListRequest request) {
         return conferenceQueryRepository.getConferenceList(
                 ConferenceSearchFilter.builder()
-                        .title(command.getTitle())
-                        .memberCapacity(command.getMemberCapacity())
+                        .title(request.getTitle())
+                        .memberCapacity(request.getMemberCapacity())
                         .build()
         );
     }
 
     @Override
     public void startConference(Long conferenceId) {
-        // 리포지토리에서 스크립트 불러오기
+        // Todo: 리포지토리에서 스크립트 불러오기
         String script = "asdf";
         Map<String, Object> varMap = new HashMap<>();
-        blockProcessService.startBlockProcessor(conferenceId, script, varMap);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script,varMap);
+        blockProcessor.init(conferenceId, preprocessedScript);
     }
 
     @Override
     public void finishConference(Long conferenceId) {
-
+        blockProcessor.close(conferenceId);
     }
 }

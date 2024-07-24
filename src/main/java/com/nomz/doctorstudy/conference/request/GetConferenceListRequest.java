@@ -1,10 +1,10 @@
 package com.nomz.doctorstudy.conference.request;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@Builder
+@RequiredArgsConstructor
 public class GetConferenceListRequest {
     private final String title;
     private final Integer memberCapacity;
