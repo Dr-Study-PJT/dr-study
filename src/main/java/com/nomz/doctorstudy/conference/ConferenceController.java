@@ -188,12 +188,7 @@ public class ConferenceController {
     public ResponseEntity<SuccessResponse<List<GetConferenceListResponse>>> getConferenceList(
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
-        GetConferenceListRequest command = GetConferenceListRequest.builder()
-                .title(request.getTitle())
-                .memberCapacity(request.getMemberCapacity())
-                .build();
-
-        List<Conference> conferenceList = conferenceService.getConferenceList(command);
+        List<Conference> conferenceList = conferenceService.getConferenceList(request);
 
         List<GetConferenceListResponse> responseList = conferenceList.stream().map(GetConferenceListResponse::of).toList();
 
