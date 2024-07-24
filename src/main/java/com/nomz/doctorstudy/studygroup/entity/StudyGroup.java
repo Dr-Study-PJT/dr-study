@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -47,9 +48,8 @@ public class StudyGroup {
 
     private int memberCapacity;
 
-    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL)
-    private List<StudyGroupTag> studyGroupTags;
-
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<StudyGroupTag> studyGroupTags;
 
 }
 

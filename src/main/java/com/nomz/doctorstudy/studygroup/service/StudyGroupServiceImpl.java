@@ -71,13 +71,13 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
     }
 
-
     @Override
     public List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command) {
         return studyGroupQueryRepository.getStudyGroupList(
                 StudyGroupSearchFilter.builder()
                         .name(command.getName())
                         .memberCapacity(command.getMemberCapacity())
+                        .tagName(command.getTagName())
                         .build()
         );
     }

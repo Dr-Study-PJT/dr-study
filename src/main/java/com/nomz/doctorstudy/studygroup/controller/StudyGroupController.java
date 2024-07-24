@@ -133,6 +133,7 @@ public class StudyGroupController {
         GetStudyGroupListRequest command = GetStudyGroupListRequest.builder()
                 .name(request.getName())
                 .memberCapacity(request.getMemberCapacity())
+                .tagName(request.getTagName())
                 .build();
 
         List<StudyGroup> studyGroupList = studyGroupService.getStudyGroupList(command);
