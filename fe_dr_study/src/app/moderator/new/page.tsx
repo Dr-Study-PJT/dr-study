@@ -115,7 +115,7 @@ const getBlockColor = (type: BlockType): string => {
         case 'block_command_letParticipant_speak':
             return 'blue';
         case 'block_getParticiapntRecord_recent':
-            return 'black';
+            return 'gray';
         default:
             return 'gray';
     }
@@ -156,17 +156,22 @@ const DroppableBlock: React.FC<{
     return (
         <div
             ref={drop}
-            className={`UNIT-BLOCK w-full min-h-14 p-2 relative ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''} rounded-md w-full my-2 min-h-20`}
+            className={`UNIT-BLOCK relative ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''} rounded-md w-full my-2 min-h-20 h-auto`}
             style={{ backgroundColor: getBlockColor(block.type) }}
         >
-            <button
-                className="absolute top-0 right-0 m-1 p-1 bg-gray-200 rounded-full hover:bg-red-500"
-                onClick={handleDelete}
-            >
-                <FaTrash />
-            </button>
-            {block.content}
-            <div className="children">{children}</div>
+            {' '}
+            <div className="flex flex-row h-auto gap-2 justify-between">
+                <div className="HEAD rounded-tl-md rounded-br-md bg-black h-full min-w-[100px] p-1">
+                    {block.content}
+                </div>
+                <div className="CHILDREN h-auto w-full">{children}</div>
+                <button
+                    className="w-6 h-6 m-1 p-1 bg-gray-200 rounded-full hover:bg-red-500"
+                    onClick={handleDelete}
+                >
+                    <FaTrash />
+                </button>
+            </div>
         </div>
     );
 };
@@ -198,9 +203,9 @@ const DroppableArea: React.FC<{
     return (
         <div
             ref={drop}
-            className={`DROPPABLE_AREA bg-dr-dark-300 w-full h-auto min-h-full flex flex-col px-2 py-2 ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''}`}
+            className={`DROPPABLE_AREA bg-dr-dark-200 w-full h-auto min-h-full flex flex-col px-2 py-2 ${isOver ? 'bg-dr-dark-100' : ''} ${canDrop ? 'border-2 border-green-500' : ''}`}
         >
-            {isOver ? 'Release to drop' : 'Drag a block here'}
+            {isOver ? '내려놓을 수 있음' : '블록 끌어오셈'}
             {children}
         </div>
     );
