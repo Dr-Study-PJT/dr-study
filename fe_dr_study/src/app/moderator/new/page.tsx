@@ -156,7 +156,7 @@ const DroppableBlock: React.FC<{
     return (
         <div
             ref={drop}
-            className={`UNIT-BLOCK relative ${isOver ? 'bg-dr-dark-200' : ''} border-opacity-0 border-dr-coral-300 ${canDrop ? 'border-2 border-opacity-100' : ''} rounded-md w-full my-2 min-h-20 h-auto transition-all duration-300`}
+            className={`UNIT-BLOCK  animate-popIn relative ${isOver ? 'bg-dr-dark-200' : ''} border-opacity-0 border-dr-coral-300 ${canDrop ? 'border-2 border-opacity-100' : ''} rounded-md w-full my-2 min-h-20 h-auto transition-all duration-300`}
             style={{ backgroundColor: getBlockColor(block.type) }}
         >
             {' '}

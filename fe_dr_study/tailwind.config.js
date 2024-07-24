@@ -55,6 +55,20 @@ module.exports = {
                     '0 4px 6px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.15)', // 기본 버튼 그림자
                 'dr-b-2': '0 4px 10px rgba(0, 0, 0, 0.15)', // 기본 버튼 그림자
             },
+            keyframes: {
+                popIn: {
+                    '0%': { transform: 'scale(0)' },
+                    '100%': { transform: 'scale(1)' },
+                },
+                fadeIn: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+            },
+            animation: {
+                popIn: 'popIn 0.1s ease-out',
+                fadeIn: 'fadeIn 2s ease-out',
+            },
         },
     },
     plugins: [],
