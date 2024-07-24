@@ -1,43 +1,47 @@
-package com.nomz.doctorstudy.bfscript.blocks;
+package com.nomz.doctorstudy.blockprocessor.script;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
 @Slf4j
+@Component
 public class ScriptPreprocessor {
-    Map<String, Integer> intEnvVars;
-    Map<String, String> strEnvVars;
-    Map<Integer, String> phases;
-
-    public ScriptPreprocessor() {
-        intEnvVars = new HashMap<>();
-        strEnvVars = new HashMap<>();
-        phases = new HashMap<>();
-    }
-
-    public String preprocessScript(String script) {
+    public String preprocessScript(String script, Map<String, Object> varMap) {
         log.info("before preprocess:\n{}", script);
         script = script.replaceAll(" ", "").replaceAll("\n", "");
 
-        preprocessFlowControl(script);
+        script = preprocessVariables(script, varMap);
+        script = preprocessFlowControl(script);
 
-        StringBuilder builder = new StringBuilder();
-        phases.forEach((n, s) -> {
-            builder.append("set_phase(").append(n).append(");\n");
-            builder.append(s);
-        });
-
-        log.info("after preprocess:\n{}", builder);
-        return builder.toString();
+        return script;
     }
 
-    private void preprocessFlowControl(String script) {
+    private String preprocessVariables(String script, Map<String, Object> varMap) {
+        final String getVarMethodName = "get_variable";
+        int getVarMethodIdx = script.indexOf(getVarMethodName);
+        while (getVarMethodIdx != -1) {
+            int bracketStartIdx = script.indexOf("(", getVarMethodIdx);
+            int bracketEndIdx = script.indexOf(")", getVarMethodIdx);
+            String varName = script.substring(bracketStartIdx + 1, bracketEndIdx);
+            String regex = getVarMethodName + "\\(" + varName + "\\)";
+            script = script.replaceFirst(regex, String.valueOf(varMap.get(varName)));
+            getVarMethodIdx = script.lastIndexOf(getVarMethodName);
+        }
+
+        log.info("after preprocess variables:\n{}", script);
+        return script;
+    }
+
+    private String preprocessFlowControl(String script) {
+        Map<Integer, String> phaseMap = new HashMap<>();
         Stack<ScriptContext> contextStack = new Stack<>();
         contextStack.push(new ScriptContext());
         StringBuilder methodNameBuffer = new StringBuilder();
+
         for (int cursor = 0; cursor< script.length(); cursor++) {
             final char ch = script.charAt(cursor);
             switch (ch) {
@@ -60,7 +64,7 @@ public class ScriptPreprocessor {
                     contextStack.pop();
                     switch (contextStack.peek().method) {
                         case "phase":
-                            phases.put(contextStack.peek().arg, topContext.buffer.toString());
+                            phaseMap.put(contextStack.peek().arg, topContext.buffer.toString());
                             break;
                         case "loop":
                             int loopCount = contextStack.peek().arg;
@@ -83,12 +87,14 @@ public class ScriptPreprocessor {
                     break;
             }
         }
-    }
-
-    private void preprocessVariables() {
-        phases.forEach((n, s) -> {
-
+        StringBuilder builder = new StringBuilder();
+        phaseMap.forEach((n, s) -> {
+            builder.append("set_phase(").append(n).append(");\n");
+            builder.append(s);
         });
+
+        log.info("after preprocess flow control:\n{}", builder);
+        return builder.toString();
     }
 
     private static class ScriptContext {
