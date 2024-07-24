@@ -1,6 +1,4 @@
-package com.nomz.doctorstudy.bfscript.blocks;
-
-import lombok.Getter;
+package com.nomz.doctorstudy.blockprocessor.blocks;
 
 import java.util.List;
 
@@ -24,6 +22,4 @@ public abstract class Block {
             }
         }
     }
-
-    protected abstract Object execute();
 }

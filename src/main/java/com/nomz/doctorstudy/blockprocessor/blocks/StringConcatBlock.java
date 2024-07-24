@@ -1,8 +1,8 @@
-package com.nomz.doctorstudy.bfscript.blocks;
+package com.nomz.doctorstudy.blockprocessor.blocks;
 
 import java.util.List;
 
-public class StringConcatBlock extends Block {
+public class StringConcatBlock extends ValueBlock {
     protected StringConcatBlock() {
         super(String.class, List.of(String.class));
     }
@@ -17,7 +17,7 @@ public class StringConcatBlock extends Block {
     }
 
     @Override
-    public Object execute() {
+    public Object getValue() {
         StringBuilder sb = new StringBuilder();
         args.forEach(sb::append);
         return sb.toString();

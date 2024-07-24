@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.bfscript.blocks;
+package com.nomz.doctorstudy.blockprocessor.blocks;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +23,18 @@ public class Blocks {
             throw new RuntimeException("No such method name " + methodName, e);
         }
     }
-    public static Block from(String stmt) {
+
+    public static CommandBlock cmdFromStatement(String stmt) {
+        Block block = Blocks.fromStatement(stmt);
+
+        if (!(block instanceof CommandBlock)) {
+            // TODO: 비지니스 예외로 변경할 것
+            throw new RuntimeException("No command block");
+        }
+        return (CommandBlock) block;
+    }
+
+    private static Block fromStatement(String stmt) {
         int bracketStartIdx = stmt.indexOf('(');
         int bracketEndIdx = stmt.lastIndexOf(')');
 
@@ -36,7 +47,7 @@ public class Blocks {
         StringTokenizer st = new StringTokenizer(argsContent, ",");
         while (st.hasMoreTokens()) {
             String arg = st.nextToken().strip();
-            block.args.add(Blocks.from(arg));
+            block.args.add(Blocks.fromStatement(arg));
         }
 
         block.validateArgs();
