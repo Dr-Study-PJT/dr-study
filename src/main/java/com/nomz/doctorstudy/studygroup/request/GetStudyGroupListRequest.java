@@ -8,4 +8,5 @@ import lombok.Getter;
 public class GetStudyGroupListRequest {
     private final String name;
     private final Integer memberCapacity;
+    private final String tagName;
 }

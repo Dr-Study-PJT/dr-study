@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Validated
 @RestController
@@ -88,6 +90,11 @@ public class StudyGroupController {
     public ResponseEntity<SuccessResponse<GetStudyGroupResponse>> getStudyGroup(
             @PathVariable("groupId") Long groupId) {
         StudyGroup studyGroup = studyGroupService.getStudyGroup(groupId);
+
+        List<String> tags = studyGroup.getStudyGroupTags().stream()
+                .map(studyGroupTag -> studyGroupTag.getTag().getName())
+                .collect(Collectors.toList());
+
         GetStudyGroupResponse response = new GetStudyGroupResponse(
                 studyGroup.getId(),
                 studyGroup.getName(),
@@ -96,7 +103,9 @@ public class StudyGroupController {
                 studyGroup.getIsDeleted(),
                 studyGroup.getDescription(),
                 studyGroup.getMemberCount(),
-                studyGroup.getMemberCapacity());
+                studyGroup.getMemberCapacity(),
+                tags
+        );
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -124,6 +133,7 @@ public class StudyGroupController {
         GetStudyGroupListRequest command = GetStudyGroupListRequest.builder()
                 .name(request.getName())
                 .memberCapacity(request.getMemberCapacity())
+                .tagName(request.getTagName())
                 .build();
 
         List<StudyGroup> studyGroupList = studyGroupService.getStudyGroupList(command);

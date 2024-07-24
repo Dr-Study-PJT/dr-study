@@ -1,8 +1,10 @@
 package com.nomz.doctorstudy.studygroup.repository;
 
-import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
@@ -11,6 +13,8 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 import static com.nomz.doctorstudy.studygroup.entity.QStudyGroup.studyGroup;
+import static com.nomz.doctorstudy.studygroup.entity.QStudyGroupTag.studyGroupTag;
+import static com.nomz.doctorstudy.studygroup.entity.QTag.tag;
 
 @Repository
 public class StudyGroupQueryRepository {
@@ -27,10 +31,28 @@ public class StudyGroupQueryRepository {
      */
 
     public List<StudyGroup> getStudyGroupList(StudyGroupSearchFilter filter){
-        return query.select(studyGroup)
-                .from(studyGroup)
-                .where(likeName(filter.getName()), equalMemberCapacity(filter.getMemberCapacity()))
+        JPAQuery<StudyGroup> queryBuilder = query.select(studyGroup).from(studyGroup);
+
+        if(StringUtils.hasText(filter.getTagName())){
+            queryBuilder.leftJoin(studyGroup.studyGroupTags, studyGroupTag)
+                    .leftJoin(studyGroupTag.tag, tag);
+        }
+
+        return queryBuilder.where(
+                likeName(filter.getName()),
+                equalMemberCapacity(filter.getMemberCapacity()),
+                likeTagName(filter.getTagName())
+        )
                 .fetch();
+
+//        return query.select(studyGroup)
+//                .from(studyGroup)
+//                .where(
+//                        likeName(filter.getName()),
+//                        equalMemberCapacity(filter.getMemberCapacity()),
+//                        likeTagName(filter.getTagName())
+//                        )
+//                .fetch();
     }
 
     private BooleanExpression likeName(String name){
@@ -39,13 +61,25 @@ public class StudyGroupQueryRepository {
         }else{
             return null;
         }
-
     }
     private BooleanExpression equalMemberCapacity(Integer memberCapacity) {
         if (memberCapacity != null) {
             return studyGroup.memberCapacity.eq(memberCapacity);
         }
         else {
+            return null;
+        }
+    }
+
+    private BooleanExpression likeTagName(String tagName) {
+        if (StringUtils.hasText(tagName)) {
+            return studyGroup.id.in(
+                    JPAExpressions.select(studyGroupTag.studyGroup.id)
+                            .from(studyGroupTag)
+                            .leftJoin(studyGroupTag.tag, tag)
+                            .where(tag.name.like("%" + tagName + "%"))
+            );
+        } else {
             return null;
         }
     }

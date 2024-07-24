@@ -9,6 +9,7 @@ import com.nomz.doctorstudy.studygroup.entity.Tag;
 import com.nomz.doctorstudy.studygroup.repository.*;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import com.nomz.doctorstudy.studygroup.response.GetStudyGroupResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -58,10 +59,16 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
 
+//    @Override
+//    public StudyGroup getStudyGroup(Long groupId) {
+//        return studyGroupRepository.findById(groupId)
+//                .orElseThrow(() ->  new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+//    }
+
     @Override
     public StudyGroup getStudyGroup(Long groupId) {
-        return studyGroupRepository.findById(groupId)
-                .orElseThrow(() ->  new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+        return studyGroupRepository.findByIdWithTags(groupId)
+                .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
     }
 
     @Override
@@ -70,6 +77,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 StudyGroupSearchFilter.builder()
                         .name(command.getName())
                         .memberCapacity(command.getMemberCapacity())
+                        .tagName(command.getTagName())
                         .build()
         );
     }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -29,7 +31,7 @@ public class GetStudyGroupListResponse {
     private final String description;
 
     @Schema(description = "조회된 스터디그룹 태그", example = "#정처기")
-    private final String tags;
+    private final List<String> tags;
 
     //@Schema(description = "조회된 스터디그룹 아이디", example = "1")
     //private final Long captainId;
@@ -41,6 +43,10 @@ public class GetStudyGroupListResponse {
     private final Integer memberCapacity;
 
     public static GetStudyGroupListResponse of(StudyGroup studyGroup){
+        List<String> tagNames = studyGroup.getStudyGroupTags().stream()
+                .map(studyGroupTag -> studyGroupTag.getTag().getName())
+                .collect(Collectors.toList());
+
         return builder()
                 .id(studyGroup.getId())
                 .name(studyGroup.getName())
@@ -48,7 +54,7 @@ public class GetStudyGroupListResponse {
                 .createdAt(studyGroup.getCreatedAt())
                 .isDeleted(studyGroup.getIsDeleted())
                 .description(studyGroup.getDescription())
-                //.tags(studyGroup.getTags())
+                .tags(tagNames)
                 .memberCount(studyGroup.getMemberCount())
                 .memberCapacity(studyGroup.getMemberCapacity())
                 .build();

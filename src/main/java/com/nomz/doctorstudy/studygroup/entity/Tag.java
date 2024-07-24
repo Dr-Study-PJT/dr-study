@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @Entity
 @Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class Tag {
     @Id
