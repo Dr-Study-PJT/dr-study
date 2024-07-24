@@ -15,7 +15,7 @@ type BlockType =
     | 'block_command_letParticipant_speak'
     | 'block_string_concat'
     | 'block_string_input'
-    | 'block_getParticiapntRecords_recent';
+    | 'block_getParticiapntRecord_recent';
 
 interface Block {
     id: string;
@@ -35,6 +35,11 @@ const blocks: Block[] = [
         id: uuidv4(),
         type: 'block_command_letParticipant_speak',
         content: '발화 시작',
+    },
+    {
+        id: uuidv4(),
+        type: 'block_getParticiapntRecord_recent',
+        content: '직전 발화자의 발화 내용',
     },
 ];
 
@@ -63,14 +68,17 @@ const validChildBlocks: Record<BlockType, BlockType[]> = {
         'block_command_queryToGPT',
         'block_command_letParticipant_speak',
     ],
-    block_command_queryToGPT: ['block_string_concat'],
-    block_command_letParticipant_speak: ['block_getParticiapntRecords_recent'],
+    block_command_queryToGPT: [
+        'block_string_concat',
+        'block_getParticiapntRecord_recent',
+    ],
+    block_command_letParticipant_speak: [],
     block_string_concat: [
         'block_string_input',
-        'block_getParticiapntRecords_recent',
+        'block_getParticiapntRecord_recent',
     ],
     block_string_input: [],
-    block_getParticiapntRecords_recent: [],
+    block_getParticiapntRecord_recent: [],
 };
 
 const DraggableBlock: React.FC<{ block: Block }> = ({ block }) => {
@@ -106,6 +114,8 @@ const getBlockColor = (type: BlockType): string => {
             return 'violet';
         case 'block_command_letParticipant_speak':
             return 'blue';
+        case 'block_getParticiapntRecord_recent':
+            return 'black';
         default:
             return 'gray';
     }
