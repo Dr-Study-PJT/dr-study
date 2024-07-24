@@ -1,15 +1,14 @@
-package com.nomz.doctorstudy.bfscript.blocks;
+package com.nomz.doctorstudy.blockprocessor.blocks;
 
 import java.util.List;
 
-public class WaitBlock extends Block {
+public class WaitBlock extends CommandBlock {
     WaitBlock() {
         super(void.class, List.of(Integer.class));
     }
 
     @Override
-    public Object execute() {
+    public void execute() {
         //wait;
-        return null;
     }
 }

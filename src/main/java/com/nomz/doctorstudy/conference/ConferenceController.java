@@ -4,10 +4,7 @@ import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
-import com.nomz.doctorstudy.conference.response.CreateConferenceResponse;
-import com.nomz.doctorstudy.conference.response.GetConferenceListResponse;
-import com.nomz.doctorstudy.conference.response.GetConferenceResponse;
-import com.nomz.doctorstudy.conference.response.FinishConferenceResponse;
+import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -61,12 +58,50 @@ public class ConferenceController {
     ) {
         log.info("CreateConferenceRequest = {}", request);
 
-        Long conferenceId = conferenceService.createConference(request).getId();
+        Long conferenceId = conferenceService.createConference(request);
         CreateConferenceResponse response = new CreateConferenceResponse(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 생성에 성공했습니다.",
+                        response
+                )
+        );
+    }
+
+    @PostMapping("/{conference_id}/start")
+    @Operation(summary = "Conference 시작", description = "Conference를 시작합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 시작 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "인증에 실패했습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "권한이 없습니다. 호스트 유저만이 시작시킬 수 있습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "존재하지 않는 Conference입니다.",
+                        "errors": { }
+                    }
+                    """))),
+    })
+    public ResponseEntity<SuccessResponse<StartConferenceResponse>> startConference(
+            @PathVariable("conference_id") Long conferenceId
+    ) {
+        // ConferenceService의 시작 로직 호출
+
+        StartConferenceResponse response = null;
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 시작에 성공했습니다.",
                         response
                 )
         );
@@ -99,13 +134,13 @@ public class ConferenceController {
     public ResponseEntity<SuccessResponse<FinishConferenceResponse>> finishConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
-        // ConferenceService의 수정 로직 호출
+        // ConferenceService의 종료 로직 호출
 
         FinishConferenceResponse response = null;
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Conference 수정에 성공했습니다.",
+                        "Conference 종료에 성공했습니다.",
                         response
                 )
         );
