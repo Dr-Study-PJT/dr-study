@@ -25,7 +25,7 @@ export const Button = ({
     const fontSize = {
         lg: '1.125rem',
         md: '0.875rem',
-        sm: '0.875rem',
+        sm: '0.700rem',
     };
 
     return (

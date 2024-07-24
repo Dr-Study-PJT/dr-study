@@ -36,7 +36,7 @@ module.exports = {
                 'dr-body-1': '1.125rem',
                 'dr-body-2': '1rem',
                 'dr-body-3': '0.875rem',
-                'dr-body-4': '0.875rem',
+                'dr-body-4': '0.700rem',
                 'dr-header-2': '1.3125rem',
                 'dr-header-3': '1.5rem',
                 'dr-header-4': '2.25rem',
