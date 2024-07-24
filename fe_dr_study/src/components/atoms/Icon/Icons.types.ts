@@ -17,6 +17,7 @@ export interface IconInterface {
     cursor?: keyof typeof iconStyles.variants.cursor;
     icon: keyof IconKeyValue;
     text?: keyof typeof iconStyles.variants.text;
+    shape?: keyof typeof iconStyles.variants.shape;
     bg?: keyof typeof iconStyles.variants.bg;
     active?: boolean;
     hover?: keyof typeof iconStyles.variants.hover;

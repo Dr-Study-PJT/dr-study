@@ -19,6 +19,9 @@ export const iconStyles = tv({
             white: 'text-[#007AFF]',
             gray: 'text-[#909090]',
         },
+        shape: {
+            contained: 'rounded-[0.3125rem]',
+        },
         active: {
             true: '',
             false: '',

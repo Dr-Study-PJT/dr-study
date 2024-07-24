@@ -67,11 +67,11 @@ export default function RootLayout({
             <body>
                 <RQProvider>
                     <MSWComponent />
-                    <div className="h-[5.8125rem]">
+                    <div className="pt-[4.375rem]">
                         <Navigation />
                     </div>
-                    <div className="flex">
-                        <div className="bg-[#282B30] w-[7.5rem] h-[calc(100dvh-5.8125rem)]">
+                    <div className="pl-[4.25rem]">
+                        <div className="relative bg-[#282B30] w-[4.575rem] h-[calc(100%)]">
                             <SideBar />
                         </div>
                         {children}
