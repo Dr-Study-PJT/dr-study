@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
+import { FaTrash } from 'react-icons/fa';
 
 type BlockType =
     | 'block_flow_phase_1'
@@ -113,7 +114,8 @@ const getBlockColor = (type: BlockType): string => {
 const DroppableBlock: React.FC<{
     block: Block;
     onDrop: (block: Block, targetBlock: Block) => void;
-}> = ({ block, onDrop, children }) => {
+    onDelete: (block: Block) => void;
+}> = ({ block, onDrop, onDelete, children }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: 'BLOCK',
         drop: (item: Block, monitor) => {
@@ -135,14 +137,26 @@ const DroppableBlock: React.FC<{
             validChildBlocks[block.type].includes(item.type),
     }));
 
+    const handleDelete = () => {
+        if (window.confirm('정말 삭제하시겠습니까?')) {
+            onDelete(block);
+        }
+    };
+
     return (
         <div
             ref={drop}
-            className={`UNIT-BLOCK w-full min-h-14 p-2 ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''}`}
+            className={`UNIT-BLOCK w-full min-h-14 p-2 relative ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''} rounded-md w-full my-2 min-h-20`}
             style={{ backgroundColor: getBlockColor(block.type) }}
         >
+            <button
+                className="absolute top-0 right-0 m-1 p-1 bg-gray-200 rounded-full hover:bg-red-500"
+                onClick={handleDelete}
+            >
+                <FaTrash />
+            </button>
             {block.content}
-            <div className="children pl-4">{children}</div>
+            <div className="children">{children}</div>
         </div>
     );
 };
@@ -150,7 +164,8 @@ const DroppableBlock: React.FC<{
 const DroppableArea: React.FC<{
     onDrop: (block: Block) => void;
     hasPhaseBlock: boolean;
-}> = ({ onDrop, hasPhaseBlock, children }) => {
+    onDelete: (block: Block) => void;
+}> = ({ onDrop, hasPhaseBlock, onDelete, children }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: 'BLOCK',
         drop: (item: Block, monitor) => {
@@ -173,7 +188,7 @@ const DroppableArea: React.FC<{
     return (
         <div
             ref={drop}
-            className={`DROPPABLE_AREA bg-dr-dark-300 w-full h-auto min-h-full flex flex-col gap-2 px-2 py-2 ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''}`}
+            className={`DROPPABLE_AREA bg-dr-dark-300 w-full h-auto min-h-full flex flex-col px-2 py-2 ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''}`}
         >
             {isOver ? 'Release to drop' : 'Drag a block here'}
             {children}
@@ -216,16 +231,31 @@ const CreateModeratorPage: React.FC = () => {
         }
     };
 
+    const deleteBlock = (block: Block) => {
+        const removeBlockById = (blocks: Block[], id: string): Block[] => {
+            return blocks
+                .filter((block) => block.id !== id)
+                .map((block) => ({
+                    ...block,
+                    children: block.children
+                        ? removeBlockById(block.children, id)
+                        : [],
+                }));
+        };
+
+        setDroppedBlocks((prevBlocks) => removeBlockById(prevBlocks, block.id));
+    };
+
     const hasPhaseBlock = droppedBlocks.some((block) =>
         block.type.startsWith('block_flow_phase'),
     );
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="LAYOUT-pageRoot flex flex-col items-center justify-center w-full h-full bg-dr-black">
-                <div className="LAYOUT-formBoxContentsArea bg-dr-dark-200 w-full max-w-[80%] min-h-full mx-auto p-8">
-                    <div className="flex flex-row w-full h-full justify-between">
-                        <div className="LEFT-BLOCK-CONTAINER w-[30%] h-full bg-dr-gray-500 p-4">
+            <div className="LAYOUT-pageRoot flex flex-col items-center justify-center w-full h-auto min-h-full bg-dr-black">
+                <div className="LAYOUT-formBoxContentsArea bg-dr-dark-200 w-full max-w-[80%] h-auto min-h-full mx-auto p-8">
+                    <div className="flex flex-row w-full h-auto min-h-full justify-between">
+                        <div className="LEFT-BLOCK-CONTAINER w-[30%] h-full bg-dr-gray-500 p-4 sticky top-8">
                             <div className="LEFT-BLOCKS-BOX bg-dr-dark-300 w-full h-full flex flex-col gap-2 px-2 py-2">
                                 {blocks.map((block) => (
                                     <DraggableBlock
@@ -236,16 +266,18 @@ const CreateModeratorPage: React.FC = () => {
                             </div>
                         </div>
                         <div className="DIVIDER-VERTICAL bg-dr-gray-500 w-[2px] rounded-full"></div>
-                        <div className="RIGHT-ASSEMBLY-CONTAINER w-[65%] h-full bg-dr-gray-500 p-4">
+                        <div className="RIGHT-ASSEMBLY-CONTAINER w-[65%] h-auto min-h-full bg-dr-gray-500 p-4">
                             <DroppableArea
                                 onDrop={handleDrop}
                                 hasPhaseBlock={hasPhaseBlock}
+                                onDelete={deleteBlock}
                             >
                                 {droppedBlocks.map((block) => (
                                     <DroppableBlock
                                         key={block.id}
                                         block={block}
                                         onDrop={handleDrop}
+                                        onDelete={deleteBlock}
                                     >
                                         {block.children &&
                                             block.children.map((child) => (
@@ -253,6 +285,7 @@ const CreateModeratorPage: React.FC = () => {
                                                     key={child.id}
                                                     block={child}
                                                     onDrop={handleDrop}
+                                                    onDelete={deleteBlock}
                                                 >
                                                     {child.children &&
                                                         child.children.map(
@@ -266,6 +299,9 @@ const CreateModeratorPage: React.FC = () => {
                                                                     }
                                                                     onDrop={
                                                                         handleDrop
+                                                                    }
+                                                                    onDelete={
+                                                                        deleteBlock
                                                                     }
                                                                 ></DroppableBlock>
                                                             ),
