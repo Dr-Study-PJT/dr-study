@@ -23,9 +23,9 @@ export const Button = ({
     });
 
     const fontSize = {
-        lg: '1.125rem',
-        md: '0.875rem',
-        sm: '0.700rem',
+        lg: '0.875rem',
+        md: '0.700rem',
+        sm: '0.500rem',
     };
 
     return (

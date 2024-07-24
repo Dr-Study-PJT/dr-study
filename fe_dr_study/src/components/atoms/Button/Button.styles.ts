@@ -38,9 +38,9 @@ export const buttonStyles = tv({
         bg: colorToBg,
         borderColor: colorToBorder,
         size: {
-            sm: 'px-2 py-1 text-dr-body-4',
+            sm: 'px-2 py-2 text-dr-body-4',
             md: 'px-4 py-2 text-dr-body-3',
-            lg: 'px-5 py-2 text-dr-body-1',
+            lg: 'px-6 py-2 text-dr-body-1',
         },
         rounded: {
             true: 'rounded-full',
