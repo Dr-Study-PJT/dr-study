@@ -156,7 +156,7 @@ const DroppableBlock: React.FC<{
     return (
         <div
             ref={drop}
-            className={`UNIT-BLOCK relative ${isOver ? 'bg-dr-dark-200' : ''} ${canDrop ? 'border-2 border-green-500' : ''} rounded-md w-full my-2 min-h-20 h-auto`}
+            className={`UNIT-BLOCK relative ${isOver ? 'bg-dr-dark-200' : ''} border-opacity-0 border-dr-coral-300 ${canDrop ? 'border-2 border-opacity-100' : ''} rounded-md w-full my-2 min-h-20 h-auto transition-all duration-300`}
             style={{ backgroundColor: getBlockColor(block.type) }}
         >
             {' '}
@@ -166,7 +166,7 @@ const DroppableBlock: React.FC<{
                 </div>
                 <div className="CHILDREN h-auto w-full">{children}</div>
                 <button
-                    className="w-6 h-6 m-1 p-1 bg-gray-200 rounded-full hover:bg-red-500"
+                    className="w-6 h-6 m-1 p-1  rounded-full hover:text-gray-500 transition-colors duration-200"
                     onClick={handleDelete}
                 >
                     <FaTrash />
@@ -203,7 +203,7 @@ const DroppableArea: React.FC<{
     return (
         <div
             ref={drop}
-            className={`DROPPABLE_AREA bg-dr-dark-200 w-full h-auto min-h-full flex flex-col px-2 py-2 ${isOver ? 'bg-dr-dark-100' : ''} ${canDrop ? 'border-2 border-green-500' : ''}`}
+            className={`DROPPABLE_AREA bg-dr-dark-200 w-full h-auto min-h-full flex flex-col px-2 py-2 ${isOver ? 'bg-dr-dark-100' : ''} border-opacity-0 border-dr-coral-300 ${canDrop ? 'border-2 border-opacity-100' : ''} transition-all duration-300`}
         >
             {isOver ? '내려놓을 수 있음' : '블록 끌어오셈'}
             {children}
