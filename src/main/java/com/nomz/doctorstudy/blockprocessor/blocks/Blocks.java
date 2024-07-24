@@ -10,8 +10,10 @@ import java.util.StringTokenizer;
 @Slf4j
 public class Blocks {
     private static final Map<String, Class<? extends Block>> registry = Map.of(
-            "wait", WaitBlock.class,
+            "wait",         WaitBlock.class,
             "get_record",   GetRecordBlock.class
+//            "start_record", StartRecordBlock.class,
+
     );
 
     private static Block getBlockInstance(String methodName) {
