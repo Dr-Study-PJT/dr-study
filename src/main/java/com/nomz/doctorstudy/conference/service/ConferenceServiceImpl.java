@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.conference.service;
 
+import com.nomz.doctorstudy.blockprocessor.BlockProcessService;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.Conference;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
@@ -14,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -22,15 +25,17 @@ import java.util.List;
 public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceRepository conferenceRepository;
     private final ConferenceQueryRepository conferenceQueryRepository;
+    private final BlockProcessService blockProcessService;
+
     @Override
-    public Conference createConference(CreateConferenceRequest request) {
+    public Long createConference(CreateConferenceRequest request) {
         Conference conference = Conference.builder()
                 .title(request.getTitle())
                 .memberCapacity(request.getMemberCapacity())
                 .build();
         conferenceRepository.save(conference);
         log.info("[new conference] id={}, title={}", conference.getId(), conference.getTitle());
-        return conference;
+        return conference.getId();
     }
 
     @Override
@@ -48,5 +53,18 @@ public class ConferenceServiceImpl implements ConferenceService {
                         .memberCapacity(command.getMemberCapacity())
                         .build()
         );
+    }
+
+    @Override
+    public void startConference(Long conferenceId) {
+        // 리포지토리에서 스크립트 불러오기
+        String script = "asdf";
+        Map<String, Object> varMap = new HashMap<>();
+        blockProcessService.startBlockProcessor(conferenceId, script, varMap);
+    }
+
+    @Override
+    public void finishConference(Long conferenceId) {
+
     }
 }
