@@ -3,10 +3,7 @@ package com.nomz.doctorstudy.blockprocessor.script;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -16,15 +13,22 @@ public class ScriptPreprocessor {
         script = script.replaceAll(" ", "").replaceAll("\n", "");
 
         script = preprocessVariables(script, varMap);
-        script = preprocessFlowControl(script);
+        script = preprocessLoop(script);
         script = preprocessVariables(script, varMap);
 
         return script;
     }
 
+    private String preprocessPhase(String script, Map<String, Object> varMap) {
+        /*
+        TODO: 단계문 전처리
+        phase(n) { ... } -> set_int_variable("current_phase", n);...
+        위 형태로 바꾼뒤 맵에 넣고 풀거나 해서 단계별로 순서 맞추기
+         */
+        return script;
+    }
+
     private String preprocessVariables(String script, Map<String, Object> varMap) {
-        // TODO: script 타입 StringBuilder로 변경
-        
         final List<String> getVarMethodNameList = List.of("get_int_variable", "get_str_variable");
         for (String getVarMethodName : getVarMethodNameList) {
             int getVarMethodIdx = script.indexOf(getVarMethodName);
@@ -45,17 +49,23 @@ public class ScriptPreprocessor {
         }
 
 
-        final List<String> setVarMethodNameList = List.of("get_int_variable", "get_str_variable");
+        final List<String> setVarMethodNameList = List.of("set_int_variable", "set_str_variable");
         for (String setVarMethodName : setVarMethodNameList) {
             int setVarMethodIdx = script.indexOf(setVarMethodName);
             while (setVarMethodIdx != -1) {
                 int bracketStartIdx = script.indexOf("(", setVarMethodIdx);
                 int bracketEndIdx = script.indexOf(")", setVarMethodIdx);
-                String varName = script.substring(bracketStartIdx + 1, bracketEndIdx);
-                varName = removeParentheses(varName);
+                StringTokenizer st =  new StringTokenizer(removeParentheses(script.substring(bracketStartIdx + 1, bracketEndIdx)), ",");
+                String varName = st.nextToken();
+                String varValue = st.nextToken();
                 String regex = setVarMethodName + "\\('" + varName + "'\\)";
-                Object var = varMap.get(varName);
                 script = script.replaceFirst(regex, "");
+                if (setVarMethodName.equals("set_int_variable")) {
+                    varMap.put(varName, Integer.parseInt(varValue));
+                }
+                if (setVarMethodName.equals("set_str_variable")) {
+                    varMap.put(varName, varValue);
+                }
                 setVarMethodIdx = script.lastIndexOf(setVarMethodName);
             }
         }
@@ -64,7 +74,7 @@ public class ScriptPreprocessor {
         return script;
     }
 
-    private String preprocessFlowControl(String script) {
+    private String preprocessLoop(String script) {
         Map<Integer, String> phaseMap = new HashMap<>();
         Stack<ScriptContext> contextStack = new Stack<>();
         contextStack.push(new ScriptContext());
@@ -87,7 +97,6 @@ public class ScriptPreprocessor {
                     methodNameBuffer = new StringBuilder();
                     break;
                 case '}':
-                    // 액션이 루프면 복사, 페이즈면 phase 맵에 올리기
                     ScriptContext topContext = contextStack.peek();
                     contextStack.pop();
                     switch (contextStack.peek().method) {
