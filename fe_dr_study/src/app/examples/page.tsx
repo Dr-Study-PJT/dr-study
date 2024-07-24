@@ -9,7 +9,7 @@ const Example = () => {
 
             {/* 기본 버튼 */}
             <div>
-                <h2 className="font-semibold">기본 버튼</h2>
+                <h2 className="font-semibold text-dr-coral-100">기본 버튼</h2>
                 <Button onClick={() => alert('클릭되었습니다!')}>
                     클릭하세요
                 </Button>

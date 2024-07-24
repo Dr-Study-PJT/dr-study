@@ -10,20 +10,31 @@ export const Button = ({
     disabled = false,
     outlined = false,
     rounded = false,
-    fullWidth = false, // 새로운 prop 추가
+    fullWidth = false,
 }: ButtonProps) => {
     const className = buttonStyles({
-        color,
+        color: outlined ? `outlined_${color}` : 'dark',
         size,
         bg: outlined ? 'none' : color,
         borderColor: outlined ? color : 'none',
         rounded,
         outlined,
-        fullWidth, // 스타일에 적용
+        fullWidth,
     });
 
+    const fontSize = {
+        lg: '1.125rem',
+        md: '0.875rem',
+        sm: '0.875rem',
+    };
+
     return (
-        <button className={className} onClick={onClick} disabled={disabled}>
+        <button
+            style={{ fontSize: fontSize[size] }}
+            className={className}
+            onClick={onClick}
+            disabled={disabled}
+        >
             {children}
         </button>
     );

@@ -12,5 +12,5 @@ export interface ButtonProps
     disabled?: boolean;
     outlined?: boolean;
     rounded?: boolean;
-    fullWidth?: boolean; // 새로운 속성 추가
+    fullWidth?: boolean;
 }
