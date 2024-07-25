@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
+import com.nomz.doctorstudy.member.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +17,13 @@ public class MemberStudyGroupApply {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @ManyToOne
+    @JoinColumn(name="member_id", nullable = false)
+    private Member member;
 
-    @Column(name = "study_group_id", nullable = false)
-    private Long studyGroupId;
+    @ManyToOne
+    @JoinColumn(name = "study_group_id", nullable = false)
+    private StudyGroup studyGroup;
 
     @Column(name = "status", nullable = false)
     private String status; // e.g., "PENDING", "APPROVED", "REJECTED"
@@ -32,5 +35,4 @@ public class MemberStudyGroupApply {
     @Column(name = "message", length = 256)
     private String message;
 
-    // Additional methods or business logic if needed
 }

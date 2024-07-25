@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
+import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
 import com.nomz.doctorstudy.studygroup.response.CreateStudyGroupResponse;
@@ -148,7 +149,44 @@ public class StudyGroupController {
         );
     }
 }
-
+//    @PostMapping("/admission/apply")
+//    @Operation(summary = "Study Group 지원")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Study Group 리스트 검색 성공", useReturnTypeSchema = true),
+//            @ApiResponse(responseCode = "400", description = "Study Group 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+//                    {
+//                        "message": "Study Group 조회에 실패했습니다.",
+//                        "errors": {
+//                        }
+//                    }
+//                    """)))
+//    })
+//    public ResponseEntity<Void> applyForStudyGroup(@RequestBody AdmissionRequest admissionRequest) {
+//        MemberStudyGroupApply apply = new MemberStudyGroupApply();
+//        apply.setMemberId(admissionRequest.getMemberId());
+//        apply.setStudyGroupId(admissionRequest.getStudyGroupId());
+//        apply.setMessage(admissionRequest.getMessage());
+//        apply.setStatus("PENDING");
+//        apply.setCreatedAt(new java.util.Date());
+//        memberStudyGroupApplyList.add(apply);
+//        return new ResponseEntity<>(HttpStatus.CREATED);
+//    }
+//
+////    @Operation(summary = "Respond to a study group application")
+////    @ApiResponses(value = {
+////            @ApiResponse(responseCode = "200", description = "Application response recorded"),
+////            @ApiResponse(responseCode = "404", description = "Application not found")
+////    })
+//    @PostMapping("/admission/reply")
+//    public ResponseEntity<Void> respondToStudyGroupApplication(@RequestBody AdmissionResponseRequest admissionResponseRequest) {
+//        for (MemberStudyGroupApply apply : memberStudyGroupApplyList) {
+//            if (apply.getId().equals(admissionResponseRequest.getAdmissionId())) {
+//                apply.setStatus(admissionResponseRequest.isApproved() ? "APPROVED" : "REJECTED");
+//                return ResponseEntity.ok().build();
+//            }
+//        }
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//    }
 
 
 //    @Operation(summary = "Update an existing study group")
@@ -196,38 +234,7 @@ public class StudyGroupController {
 //        return ResponseEntity.noContent().build();
 //    }
 //
-////    @Operation(summary = "Apply for a study group")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "201", description = "Application submitted successfully"),
-////            @ApiResponse(responseCode = "400", description = "Invalid input")
-////    })
-//    @PostMapping("/admission/apply")
-//    public ResponseEntity<Void> applyForStudyGroup(@RequestBody AdmissionRequest admissionRequest) {
-//        MemberStudyGroupApply apply = new MemberStudyGroupApply();
-//        apply.setMemberId(admissionRequest.getMemberId());
-//        apply.setStudyGroupId(admissionRequest.getStudyGroupId());
-//        apply.setMessage(admissionRequest.getMessage());
-//        apply.setStatus("PENDING");
-//        apply.setCreatedAt(new java.util.Date());
-//        memberStudyGroupApplyList.add(apply);
-//        return new ResponseEntity<>(HttpStatus.CREATED);
-//    }
-//
-////    @Operation(summary = "Respond to a study group application")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "200", description = "Application response recorded"),
-////            @ApiResponse(responseCode = "404", description = "Application not found")
-////    })
-//    @PostMapping("/admission/reply")
-//    public ResponseEntity<Void> respondToStudyGroupApplication(@RequestBody AdmissionResponseRequest admissionResponseRequest) {
-//        for (MemberStudyGroupApply apply : memberStudyGroupApplyList) {
-//            if (apply.getId().equals(admissionResponseRequest.getAdmissionId())) {
-//                apply.setStatus(admissionResponseRequest.isApproved() ? "APPROVED" : "REJECTED");
-//                return ResponseEntity.ok().build();
-//            }
-//        }
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//    }
+
 //
 ////    @Operation(summary = "Get all study group applications")
 ////    @ApiResponse(responseCode = "200", description = "List of all study group applications")
