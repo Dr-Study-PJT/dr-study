@@ -45,14 +45,6 @@ public class StudyGroupQueryRepository {
         )
                 .fetch();
 
-//        return query.select(studyGroup)
-//                .from(studyGroup)
-//                .where(
-//                        likeName(filter.getName()),
-//                        equalMemberCapacity(filter.getMemberCapacity()),
-//                        likeTagName(filter.getTagName())
-//                        )
-//                .fetch();
     }
 
     private BooleanExpression likeName(String name){
