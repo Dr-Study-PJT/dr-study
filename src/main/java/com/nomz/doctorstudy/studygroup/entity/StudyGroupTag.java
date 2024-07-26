@@ -19,7 +19,7 @@ public class StudyGroupTag {
     private Tag tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="studyGroup_id")
+    @JoinColumn(name="study_group_id")
     private StudyGroup studyGroup;
 
     public StudyGroupTag(Tag tag, StudyGroup studyGroup) {
