@@ -1,7 +1,15 @@
+'use client';
+
+import { PageContainer } from '@/components/atoms/PageContainer/PageContainer';
+import CreateStudyGroupProgress from '@/components/organisms/forms/CreateStudyGroupProgress/CreateStudyGroupProgress';
 import React from 'react';
 
 const MyPage: React.FC = () => {
-    return <div className="bg-white">메인 페이지</div>;
+    return (
+        <PageContainer className="bg-[#36393E]">
+            <CreateStudyGroupProgress />
+        </PageContainer>
+    );
 };
 
 export default MyPage;

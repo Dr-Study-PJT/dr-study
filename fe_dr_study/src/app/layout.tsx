@@ -1,3 +1,4 @@
+// layout.tsx
 import RQProvider from './_components/RQProvider';
 import { MSWComponent } from './_components/MSWComponent';
 
@@ -64,17 +65,15 @@ export default function RootLayout({
 }) {
     return (
         <html lang="ko" className={`${pretendard.className}`}>
-            <body>
+            <body className="h-screen overflow-hidden">
                 <RQProvider>
                     <MSWComponent />
-                    <div className="h-[5.8125rem]">
+                    <div className="pt-[3.75rem]">
                         <Navigation />
                     </div>
-                    <div className="flex">
-                        <div className="bg-[#282B30] w-[7.5rem] h-[calc(100dvh-5.8125rem)]">
-                            <SideBar />
-                        </div>
-                        {children}
+                    <SideBar />
+                    <div className="pl-[3.75rem] flex h-[calc(100vh-3.75rem)]">
+                        <div className="flex-1 overflow-auto">{children}</div>
                     </div>
                 </RQProvider>
             </body>

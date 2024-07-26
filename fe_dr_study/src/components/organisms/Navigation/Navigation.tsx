@@ -11,14 +11,15 @@ const Navigation = ({ children }: any) => {
         <Box variant="navigation">
             <Logo />
             <div className="w-full flex justify-between items-center ">
-                <ul className="flex gap-[1.85rem] pl-20">
+                <ul className="flex gap-3 pl-20">
                     <li>
                         <Link href="/">
                             <Icon
                                 icon="house"
                                 bg="gray"
                                 text="white"
-                                size="lg"
+                                size="sm"
+                                shape="contained"
                                 cursor="pointer"
                                 hover="blue"
                                 active
@@ -29,7 +30,8 @@ const Navigation = ({ children }: any) => {
                         <Icon
                             icon="people"
                             bg="gray"
-                            size="lg"
+                            size="sm"
+                            shape="contained"
                             cursor="pointer"
                             hover="blue"
                         />
@@ -38,7 +40,8 @@ const Navigation = ({ children }: any) => {
                         <Icon
                             icon="person"
                             bg="gray"
-                            size="lg"
+                            size="sm"
+                            shape="contained"
                             cursor="pointer"
                             hover="blue"
                         />
@@ -47,7 +50,8 @@ const Navigation = ({ children }: any) => {
                         <Icon
                             icon="globe"
                             bg="gray"
-                            size="lg"
+                            size="sm"
+                            shape="contained"
                             cursor="pointer"
                             hover="blue"
                         />
