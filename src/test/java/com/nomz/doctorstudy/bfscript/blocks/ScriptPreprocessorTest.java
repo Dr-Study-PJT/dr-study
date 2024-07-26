@@ -1,12 +1,24 @@
 package com.nomz.doctorstudy.bfscript.blocks;
 
 import com.nomz.doctorstudy.blockprocessor.script.ScriptPreprocessor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 class ScriptPreprocessorTest {
+    private Map<String, Object> varMap;
+
+    @BeforeEach
+    void initializeMap() {
+        varMap = new HashMap<>();
+        varMap.put("var1", "var2");
+        varMap.put("var2", 22);
+        varMap.put("num_of_participant", "15");
+    }
+
     @Test
     @DisplayName("흐름제어 풀기 테스트")
     void preprocessFlowControl() {
@@ -27,7 +39,7 @@ class ScriptPreprocessorTest {
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, Map.of());
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
     }
 
     @Test
@@ -37,16 +49,12 @@ class ScriptPreprocessorTest {
                 """
                 phase(1) {
                     asdf();
-                    print(get_variable(var1));
-                    print(get_variable(get_variable(var1)));
+                    print(get_string_variable('var1'));
+                    print(get_int_variable(get_string_variable('var1')));
                 }
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        Map<String, Object> varMap = Map.of(
-                "var1", "var2",
-                "var2", "12341234"
-        );
         String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
     }
 
@@ -59,7 +67,7 @@ class ScriptPreprocessorTest {
                 phase(2) {
                     loop(3) {
                         print(get_num_of_iteration());
-                        call_gpt(get_variable(var1));
+                        call_gpt(get_variable('var1'));
                     }
                 }
                 phase(1) {
@@ -68,9 +76,6 @@ class ScriptPreprocessorTest {
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        Map<String, Object> varMap = Map.of(
-                "var1", "신재민"
-        );
         String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
     }
 
@@ -79,7 +84,7 @@ class ScriptPreprocessorTest {
     void preprocessTest2() {
         String script =
                 """
-                phase( 1 ){
+        phase( 1 ){
             speak(
                     get_answer_from_gpt_query(
                             concat_string(
@@ -110,10 +115,6 @@ class ScriptPreprocessorTest {
         """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        Map<String, Object> varMap = Map.of(
-                "var1", "신재민",
-                "num_of_participant", 3
-        );
         String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
     }
 
@@ -187,10 +188,6 @@ phase( 4 ) {
 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        Map<String, Object> varMap = Map.of(
-                "var1", "신재민",
-                "num_of_participant", 3
-        );
         String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
     }
 
@@ -209,6 +206,6 @@ phase( 4 ) {
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, Map.of());
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
     }
 }
