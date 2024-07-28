@@ -1,6 +1,6 @@
+// src/app/auth/login/page.tsx
 'use client';
 
-import { tv } from 'tailwind-variants';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,32 +11,23 @@ import { login } from '../_api/login';
 import { useDispatch } from 'react-redux';
 import { setMemberState } from '@/store/slices/memberSlice';
 import { setIsSigned, TIsSigned } from '@/store/slices/authSlice';
+import useRedirectIfLoggedIn from '@/hooks/common/useRedirectIfLoggedIn';
 
-export const loginPage = tv({
-    base: 'flex justify-center items-center w-full h-full bg-gray-800',
-});
+const loginPageStyles =
+    'flex justify-center items-center w-full h-full bg-gray-800';
 
-export const loginContainer = tv({
-    base: 'w-3/5 flex bg-gray-900 text-white rounded-lg shadow-lg overflow-hidden border-[1px] border-dr-gray-300 relative',
-});
+const loginContainerStyles =
+    'w-3/5 flex bg-gray-900 text-white rounded-lg shadow-lg overflow-hidden border-[1px] border-dr-gray-300 relative';
 
-export const loginFormContainer = tv({
-    base: 'w-1/2 p-8 my-auto',
-});
+const loginFormContainerStyles = 'w-1/2 p-8 my-auto';
 
-export const loginImageContainer = tv({
-    base: 'w-1/2 relative',
-});
+const loginImageContainerStyles = 'w-1/2 relative';
 
-export const inputStyle = tv({
-    base: 'w-full px-1 py-2 mb-4 text-dr-body-4 border-b-2 border-gray-700 bg-transparent focus:outline-none focus:border-blue-500',
-});
+const inputStyleStyles =
+    'w-full px-1 py-2 mb-4 text-dr-body-4 border-b-2 border-gray-700 bg-transparent focus:outline-none focus:border-blue-500';
 
-export const buttonStyle = tv({
-    base: 'w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded',
-});
-
-const Login = () => {
+const LoginPage = () => {
+    useRedirectIfLoggedIn();
     const dispatch = useDispatch();
     const [formData, setFormData] = useState<ILogInReq>({
         email: '',
@@ -60,9 +51,9 @@ const Login = () => {
     };
 
     return (
-        <div className={loginPage()}>
-            <div className={loginContainer()}>
-                <div className={loginImageContainer()}>
+        <div className={loginPageStyles}>
+            <div className={loginContainerStyles}>
+                <div className={loginImageContainerStyles}>
                     <Image
                         src="/images/login_thumbnail.png"
                         width={526}
@@ -79,7 +70,7 @@ const Login = () => {
                         </p>
                     </div>
                 </div>
-                <div className={loginFormContainer()}>
+                <div className={loginFormContainerStyles}>
                     <h2 className="text-dr-header-2 text-dr-coral-200 font-bold mb-6">
                         로그인
                     </h2>
@@ -97,7 +88,7 @@ const Login = () => {
                             <input
                                 type="email"
                                 id="email"
-                                className={inputStyle()}
+                                className={inputStyleStyles}
                                 placeholder="이메일을 입력해주세요."
                                 value={formData.email}
                                 onChange={handleChange}
@@ -115,7 +106,7 @@ const Login = () => {
                             <input
                                 type="password"
                                 id="password"
-                                className={inputStyle()}
+                                className={inputStyleStyles}
                                 placeholder="비밀번호를 입력해주세요."
                                 value={formData.password}
                                 onChange={handleChange}
@@ -140,4 +131,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginPage;

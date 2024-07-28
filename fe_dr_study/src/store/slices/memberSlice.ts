@@ -1,3 +1,4 @@
+// src/store/slices/memberSlice.ts
 import { IMemberData } from '@/interfaces/members';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -16,8 +17,13 @@ const memberSlice = createSlice({
             state.email = action.payload.email;
             state.nickname = action.payload.nickname;
         },
+        clearMemberState: (state) => {
+            state.id = 0;
+            state.email = '';
+            state.nickname = '';
+        },
     },
 });
 
-export const { setMemberState } = memberSlice.actions;
+export const { setMemberState, clearMemberState } = memberSlice.actions;
 export default memberSlice.reducer;

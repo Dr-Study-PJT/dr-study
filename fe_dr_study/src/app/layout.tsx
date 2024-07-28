@@ -69,11 +69,11 @@ export default function RootLayout({
                 <Provider store={store}>
                     <RQProvider>
                         <MSWComponent />
-                        <div className="pt-[3.75rem]">
+                        <div className="APP-HEADER pt-[3rem]">
                             <Navigation />
                         </div>
                         <SideBar />
-                        <div className="pl-[3.75rem] flex h-[calc(100vh-3.75rem)]">
+                        <div className="pl-[3rem] flex h-[calc(100vh-3rem)]">
                             <div className="flex-1 overflow-auto">
                                 {children}
                             </div>

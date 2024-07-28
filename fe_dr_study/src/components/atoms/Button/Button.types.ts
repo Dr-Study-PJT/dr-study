@@ -6,7 +6,6 @@ export type ButtonVariant = 'contained' | 'outlined' | 'text';
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
-
     type?: 'button' | 'submit' | 'reset';
     color?: 'gray' | 'dark' | 'coral' | 'white' | 'red';
     size?: Size;

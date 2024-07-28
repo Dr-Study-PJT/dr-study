@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export enum TIsSigned {
+    unknown = 'unknown',
     F = 'F',
     T = 'T',
 }
