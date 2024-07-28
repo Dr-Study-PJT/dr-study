@@ -1,6 +1,12 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import React, {
+    useState,
+    useEffect,
+    ReactNode,
+    useRef,
+    MutableRefObject,
+} from 'react';
+import { DndProvider, useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
 import { FaTrash } from 'react-icons/fa';
@@ -15,7 +21,8 @@ type BlockType =
     | 'block_command_letParticipant_speak'
     | 'block_string_input'
     | 'block_getParticipantRecord_recent'
-    | 'block_int_variable_num_of_participants';
+    | 'block_int_variable_num_of_participants'
+    | 'block_iteration_index';
 
 interface Block {
     id: string;
@@ -78,6 +85,11 @@ const blocks: Block[] = [
         type: 'block_int_variable_num_of_participants',
         content: '현재 총 참여인원 수',
     },
+    {
+        id: uuidv4(),
+        type: 'block_iteration_index',
+        content: '반복회차 i',
+    },
 ];
 
 const validChildBlocks: Record<BlockType, BlockType[]> = {
@@ -113,6 +125,7 @@ const validChildBlocks: Record<BlockType, BlockType[]> = {
     block_string_input: [],
     block_getParticipantRecord_recent: [],
     block_int_variable_num_of_participants: [],
+    block_iteration_index: [],
 };
 
 const CreateModeratorPage: React.FC = () => {
@@ -146,6 +159,15 @@ const CreateModeratorPage: React.FC = () => {
                 prevBlocks.map((b) => addChildToBlock(b, newBlock)),
             );
         } else {
+            if (newBlock.type === 'block_flow_loop') {
+                newBlock.children = [
+                    {
+                        id: uuidv4(),
+                        type: 'block_iteration_index',
+                        content: '반복회차 i',
+                    },
+                ];
+            }
             setDroppedBlocks((prevBlocks) => [...prevBlocks, newBlock]);
         }
     };
@@ -304,7 +326,9 @@ const CreateModeratorPage: React.FC = () => {
                     break;
                 case 'block_command_letParticipant_speak':
                     const participant = block.participant
-                        ? `int_input(${block.participant})`
+                        ? block.participant === '반복회차 i'
+                            ? `get_num_of_iteration()`
+                            : `int_input(${block.participant})`
                         : '';
                     const duration = block.duration
                         ? `int_input(${block.duration})`
@@ -328,6 +352,9 @@ const CreateModeratorPage: React.FC = () => {
                     break;
                 case 'block_int_variable_num_of_participants':
                     script += `get_int_variable( 'num_of_participant' )`;
+                    break;
+                case 'block_iteration_index':
+                    script += `get_num_of_iteration()`;
                     break;
                 default:
                     break;
@@ -445,7 +472,41 @@ const CreateModeratorPage: React.FC = () => {
                                                                     onLoopInput={
                                                                         handleLoopInput
                                                                     }
-                                                                ></DroppableBlock>
+                                                                >
+                                                                    {grandchild.children &&
+                                                                        grandchild.children.map(
+                                                                            (
+                                                                                grandgrandchild,
+                                                                            ) => (
+                                                                                <DroppableBlock
+                                                                                    key={
+                                                                                        grandgrandchild.id
+                                                                                    }
+                                                                                    block={
+                                                                                        grandgrandchild
+                                                                                    }
+                                                                                    onDrop={
+                                                                                        handleDrop
+                                                                                    }
+                                                                                    onDelete={
+                                                                                        deleteBlock
+                                                                                    }
+                                                                                    onStringInput={
+                                                                                        handleStringInput
+                                                                                    }
+                                                                                    onParticipantInput={
+                                                                                        handleParticipantInput
+                                                                                    }
+                                                                                    onDurationInput={
+                                                                                        handleDurationInput
+                                                                                    }
+                                                                                    onLoopInput={
+                                                                                        handleLoopInput
+                                                                                    }
+                                                                                ></DroppableBlock>
+                                                                            ),
+                                                                        )}
+                                                                </DroppableBlock>
                                                             ),
                                                         )}
                                                 </DroppableBlock>
@@ -462,17 +523,20 @@ const CreateModeratorPage: React.FC = () => {
 };
 
 const DraggableBlock: React.FC<{ block: Block }> = ({ block }) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
+    const [{ isDragging }, drag] = useDrag({
         type: 'BLOCK',
         item: block,
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
-    }));
+    });
+
+    const dragRef = useRef<HTMLDivElement>(null);
+    drag(dragRef);
 
     return (
         <div
-            ref={drag}
+            ref={dragRef}
             className={`UNIT-BLOCK w-full min-h-14 p-2 cursor-pointer ${
                 isDragging ? 'opacity-50' : 'opacity-100'
             }`}
@@ -502,6 +566,8 @@ const getBlockColor = (type: BlockType): string => {
             return 'gray';
         case 'block_int_variable_num_of_participants':
             return 'green';
+        case 'block_iteration_index':
+            return 'orange';
         default:
             return 'gray';
     }
@@ -515,6 +581,7 @@ const DroppableBlock: React.FC<{
     onParticipantInput: (block: Block, value: string) => void;
     onDurationInput: (block: Block, value: string) => void;
     onLoopInput: (block: Block, value: string) => void;
+    children?: ReactNode;
 }> = ({
     block,
     onDrop,
@@ -525,15 +592,20 @@ const DroppableBlock: React.FC<{
     onLoopInput,
     children,
 }) => {
-    const [{ isOver, canDrop }, drop] = useDrop(() => ({
+    const [{ isOver, canDrop }, drop] = useDrop({
         accept: 'BLOCK',
-        drop: (item: Block, monitor) => {
+        drop: (item: Block, monitor: DropTargetMonitor) => {
             if (!monitor.didDrop()) {
                 if (
                     block.type === 'block_flow_loop' &&
                     item.type === 'block_int_variable_num_of_participants'
                 ) {
                     onLoopInput(block, '현재 총 참여인원 수');
+                } else if (
+                    block.type === 'block_command_letParticipant_speak' &&
+                    item.type === 'block_iteration_index'
+                ) {
+                    onParticipantInput(block, '반복회차 i');
                 } else if (validChildBlocks[block.type].includes(item.type)) {
                     onDrop({ ...item, id: uuidv4() }, block);
                 } else {
@@ -552,8 +624,13 @@ const DroppableBlock: React.FC<{
         canDrop: (item: Block) =>
             validChildBlocks[block.type].includes(item.type) ||
             (block.type === 'block_flow_loop' &&
-                item.type === 'block_int_variable_num_of_participants'),
-    }));
+                item.type === 'block_int_variable_num_of_participants') ||
+            (block.type === 'block_command_letParticipant_speak' &&
+                item.type === 'block_iteration_index'),
+    });
+
+    const dropRef = useRef<HTMLDivElement>(null);
+    drop(dropRef);
 
     const handleDelete = () => {
         if (window.confirm('정말 삭제하시겠습니까?')) {
@@ -581,7 +658,7 @@ const DroppableBlock: React.FC<{
 
     return (
         <div
-            ref={drop}
+            ref={dropRef}
             className={`UNIT-BLOCK animate-popIn relative ${
                 isOver ? 'bg-dr-dark-200' : ''
             } border-opacity-0 border-dr-coral-300 ${
@@ -612,28 +689,36 @@ const DroppableBlock: React.FC<{
                     <textarea
                         placeholder="입력 후 엔터"
                         onBlur={handleStringChange}
-                        className="bg-transparent border-none outline-none text-dr-black w-full resize-none h-16"
+                        className="bg-transparent border-none outline-none text-dr-black bg-white w-full resize-none h-16 p-2 text-dr-body-3"
                         rows={4}
                     />
                 )}
                 {block.type === 'block_command_letParticipant_speak' && (
                     <div className="flex flex-row gap-2">
                         <input
-                            type="number"
+                            type="text"
                             placeholder="번째 참가자"
-                            onBlur={handleParticipantChange}
-                            className="bg-transparent border-none outline-none text-dr-black w-1/2"
+                            value={
+                                block.participant === '반복회차 i'
+                                    ? '반복회차 i'
+                                    : block.participant || ''
+                            }
+                            onChange={handleParticipantChange}
+                            className="bg-transparent border-none outline-none text-dr-black bg-white rounded-md w-1/4 text-dr-body-4 text-center"
                         />
+                        <span>번째 참가자</span>
                         <input
                             type="number"
                             placeholder="초 동안"
-                            onBlur={handleDurationChange}
-                            className="bg-transparent border-none outline-none text-dr-black w-1/2"
+                            value={block.duration || ''}
+                            onChange={handleDurationChange}
+                            className="bg-transparent border-none outline-none text-dr-black bg-white rounded-md w-1/6 text-center text-dr-body-4"
                         />
+                        <span>초 동안</span>
                     </div>
                 )}
                 {block.type === 'block_flow_loop' && (
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-row gap-2 w-full">
                         <input
                             type="text"
                             placeholder="반복 회차"
@@ -643,8 +728,9 @@ const DroppableBlock: React.FC<{
                                     : block.loopCount || ''
                             }
                             onChange={handleLoopChange}
-                            className="bg-transparent border-none outline-none text-dr-black w-full"
+                            className="bg-transparent border-none outline-none text-dr-black bg-white w-1/3 rounded-md text-center text-dr-body-4"
                         />
+                        <div>번 반복</div>
                     </div>
                 )}
                 {children}
@@ -657,10 +743,11 @@ const DroppableArea: React.FC<{
     onDrop: (block: Block) => void;
     hasPhaseBlock: boolean;
     onDelete: (block: Block) => void;
+    children: ReactNode;
 }> = ({ onDrop, hasPhaseBlock, onDelete, children }) => {
-    const [{ isOver, canDrop }, drop] = useDrop(() => ({
+    const [{ isOver, canDrop }, drop] = useDrop({
         accept: 'BLOCK',
-        drop: (item: Block, monitor) => {
+        drop: (item: Block, monitor: DropTargetMonitor) => {
             if (!monitor.didDrop()) {
                 if (hasPhaseBlock || item.type.startsWith('block_flow_phase')) {
                     onDrop({ ...item, id: uuidv4() });
@@ -675,18 +762,24 @@ const DroppableArea: React.FC<{
         }),
         canDrop: (item: Block) =>
             hasPhaseBlock || item.type.startsWith('block_flow_phase'),
-    }));
+    });
+
+    const dropRef = useRef<HTMLDivElement>(null);
+    drop(dropRef);
 
     return (
         <div
-            ref={drop}
+            ref={dropRef}
             className={`DROPPABLE_AREA bg-dr-dark-200 w-full h-auto min-h-full flex flex-col px-2 py-2 ${
                 isOver ? 'bg-dr-dark-100' : ''
             } border-opacity-0 border-dr-coral-300 ${
                 canDrop ? 'border-2 border-opacity-100' : ''
             } transition-all duration-300`}
         >
-            {isOver ? '내려놓을 수 있음' : '블록 끌어오셈'}
+            <div className="text-dr-coral-200 font-bold">
+                {isOver ? '내려놓을 수 있음' : '블록 끌어오셈'}
+            </div>
+
             {children}
         </div>
     );
