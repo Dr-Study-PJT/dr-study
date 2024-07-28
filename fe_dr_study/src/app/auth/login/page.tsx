@@ -5,6 +5,7 @@ import React, { ChangeEvent, FormEvent, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
+import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { ILogInReq } from '@/interfaces/members';
 import { login } from '../_api/login';
@@ -23,9 +24,6 @@ const loginFormContainerStyles = 'w-1/2 p-8 my-auto';
 
 const loginImageContainerStyles = 'w-1/2 relative';
 
-const inputStyleStyles =
-    'w-full px-1 py-2 mb-4 text-dr-body-4 border-b-2 border-gray-700 bg-transparent focus:outline-none focus:border-blue-500';
-
 const LoginPage = () => {
     useRedirectIfLoggedIn();
     const dispatch = useDispatch();
@@ -33,9 +31,11 @@ const LoginPage = () => {
         email: '',
         password: '',
     });
+    const [errors, setErrors] = useState({ email: '', password: '' });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
+        setErrors({ ...errors, [e.target.id]: '' }); // Clear error on input change
     };
 
     const onClickLoginSubmit = async (e: FormEvent) => {
@@ -46,7 +46,10 @@ const LoginPage = () => {
             dispatch(setMemberState(memberData));
             dispatch(setIsSigned(TIsSigned.T));
         } catch (error) {
-            alert(`로그인 실패!, ${error}`);
+            setErrors({
+                email: '이메일이 잘못되었습니다.',
+                password: '비밀번호가 잘못되었습니다.',
+            });
         }
     };
 
@@ -78,41 +81,24 @@ const LoginPage = () => {
                         onSubmit={onClickLoginSubmit}
                         className="SECTION-INPUT-LIST flex flex-col gap-4"
                     >
-                        <div className="INPUT-BOX flex flex-col gap-1">
-                            <label
-                                htmlFor="email"
-                                className="block text-dr-body-4 "
-                            >
-                                이메일을 입력해주세요.
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                className={inputStyleStyles}
-                                placeholder="이메일을 입력해주세요."
-                                value={formData.email}
-                                onChange={handleChange}
-                                autoComplete="off"
-                            />
-                        </div>
-
-                        <div className="INPUT-BOX flex flex-col gap-1">
-                            <label
-                                htmlFor="password"
-                                className="block text-dr-body-4 mb-2"
-                            >
-                                비밀번호를 입력해주세요.
-                            </label>
-                            <input
-                                type="password"
-                                id="password"
-                                className={inputStyleStyles}
-                                placeholder="비밀번호를 입력해주세요."
-                                value={formData.password}
-                                onChange={handleChange}
-                                autoComplete="off"
-                            />
-                        </div>
+                        <InputWithLabelAndError
+                            label="이메일 입력"
+                            type="email"
+                            id="email"
+                            placeholder="이메일을 입력해주세요."
+                            value={formData.email}
+                            onChange={handleChange}
+                            error={errors.email}
+                        />
+                        <InputWithLabelAndError
+                            label="비밀번호 입력"
+                            type="password"
+                            id="password"
+                            placeholder="비밀번호를 입력해주세요."
+                            value={formData.password}
+                            onChange={handleChange}
+                            error={errors.password}
+                        />
                         <Button fullWidth type="submit">
                             로그인
                         </Button>

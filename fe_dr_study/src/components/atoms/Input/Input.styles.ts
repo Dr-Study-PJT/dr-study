@@ -1,29 +1,21 @@
-// import { background } from "styled-system";
+// src/components/atoms/Input/Input.styles.ts
+import { tv } from 'tailwind-variants';
 
-// 스타일 토큰 작성
-
-// StyledInput.tsx
-// import styled from "styled-components";
-import React from 'react';
-
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  borderColor?: string;
-  borderRadius?: string;
-  padding?: string;
-}
-
-// const StyledInput = styled.input<InputProps>`
-//   border: 2px solid ${(props) => props.borderColor || '#ccc'};
-//   border-radius: ${(props) => props.borderRadius || '4px'};
-//   padding: ${(props) => props.padding || '8px'};
-//   font-size: 16px;
-//   width: 100%;
-//   box-sizing: border-box;
-
-//   &:focus {
-//     border-color: ${(props) => props.borderColor || '#007BFF'};
-//     outline: none;
-//   }
-// `;
-
-// export default StyledInput;
+export const inputStyles = tv({
+    base: 'px-1 mb-1 py-2 text-dr-body-4 border-b-2 border-gray-700 bg-transparent focus:outline-none focus:border-blue-500 transition-colors duration-200',
+    variants: {
+        inputSize: {
+            sm: 'text-dr-body-5 py-1',
+            md: 'text-dr-body-4 py-2',
+            lg: 'text-dr-body-3 py-3',
+        },
+        fullWidth: {
+            true: 'w-full',
+            false: 'w-auto',
+        },
+    },
+    defaultVariants: {
+        inputSize: 'md',
+        fullWidth: true,
+    },
+});
