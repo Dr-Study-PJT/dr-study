@@ -43,7 +43,7 @@ export const RegisterConfirmStep = ({
                 {...register('email', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.email?.message || ''}
+                error={errors?.email?.message || ''}
                 label="이메일 확인"
                 disabled
             />
@@ -51,7 +51,7 @@ export const RegisterConfirmStep = ({
                 id="nickname"
                 type="nickname"
                 {...register('nickname', { ...formConditions.plainText })}
-                errorDisplay={errors?.nickname?.message || ''}
+                error={errors?.nickname?.message || ''}
                 label="닉네임 확인"
                 disabled
             />
