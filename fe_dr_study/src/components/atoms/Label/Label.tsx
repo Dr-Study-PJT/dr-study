@@ -1,12 +1,15 @@
-// src/components/atoms/Label.tsx
+// src/components/atoms/Label/Label.tsx
+'use client';
 import React from 'react';
-
 import { LabelProps } from './Label.types';
 
-export const Label = ({ className, htmlFor = '', children }: LabelProps) => {
-  return (
-    <label className={className} htmlFor={htmlFor}>
-      {children}
-    </label>
-  );
+export const Label = ({ htmlFor, children, className }: LabelProps) => {
+    return (
+        <label
+            htmlFor={htmlFor}
+            className={`block text-dr-body-4 text-dr-white ${className} text-left`}
+        >
+            {children}
+        </label>
+    );
 };

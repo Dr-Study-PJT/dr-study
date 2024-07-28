@@ -1,3 +1,4 @@
+// src/components/organisms/forms/CreateModeratorProgress/_component/steps/CustomModeratorStep.tsx
 import React, { useEffect } from 'react';
 import { FieldErrors, UseFormRegister, UseFormSetFocus } from 'react-hook-form';
 import Image from 'next/image';
@@ -33,7 +34,6 @@ export const CustomModeratorStep = ({
     register,
     errors,
 }: StudyBaseInfoStepProps) => {
-    // 포커스할 필드명
     useEffect(() => {
         setFocus('moderator_name');
     }, [setFocus]);
@@ -60,10 +60,11 @@ export const CustomModeratorStep = ({
                 </div>
             )}
             <InputWithLabelAndError
+                id="moderator_name"
                 {...register('moderator_name', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.moderator_name?.message || ''}
+                error={errors?.moderator_name?.message || ''}
                 label="AI 사회자 이름"
                 onKeyDown={(
                     e: React.KeyboardEvent<
@@ -72,10 +73,11 @@ export const CustomModeratorStep = ({
                 ) => handleKeyDownForNextInput(e, 'appearance', setFocus)}
             />
             <InputWithLabelAndError
+                id="appearance"
                 {...register('appearance', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.appearance?.message || ''}
+                error={errors?.appearance?.message || ''}
                 label="외형 타입"
                 onKeyDown={(
                     e: React.KeyboardEvent<
@@ -84,10 +86,11 @@ export const CustomModeratorStep = ({
                 ) => handleKeyDownForNextInput(e, 'voice', setFocus)}
             />
             <InputWithLabelAndError
+                id="voice"
                 {...register('voice', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.voice?.message || ''}
+                error={errors?.voice?.message || ''}
                 label="음성 타입"
                 onKeyDown={(
                     e: React.KeyboardEvent<
@@ -96,8 +99,9 @@ export const CustomModeratorStep = ({
                 ) => handleKeyDownForNextInput(e, 'tone', setFocus)}
             />
             <InputWithLabelAndError
+                id="tone"
                 {...register('tone', { ...formConditions.plainText })}
-                errorDisplay={errors?.tone?.message || ''}
+                error={errors?.tone?.message || ''}
                 label="어조 타입"
                 onKeyDown={(
                     e: React.KeyboardEvent<

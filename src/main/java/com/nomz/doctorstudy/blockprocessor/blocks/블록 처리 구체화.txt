@@ -1,0 +1,41 @@
+사실상 흐름제어문 없음
+루프 -> 실행하는 순간 횟수 결정됨
+그렇다면 단계 블록과 루프 블록 쭉 풀어서 나열 후 분기 없이 쭉 실행
+
+[해석 과정]
+토큰 하나씩 읽기
+기대 토큰 유형과 일치하지 않으면 에러
+
+[단계문 및 루프문 풀어내기]
+우선 단계문 해석해서
+Block(String method)
+
+
+[실행 준비 시작]
+Map<String, Integer> intEnv 준비
+Map<String, String> strEnv 준비
+Map<Integer, String> phases 생성
+
+[흐름제어 풀기]
+for문으로 스크립트 전체 char단위의 커서로 읽기
+buffer와 stack 사용
+중괄호 만나면 버퍼 스택에 담고 버퍼 초기화
+중괄호 끝났을 때, 흐름제어문 확인
+	loop (n) 일 경우:
+		버퍼에 담긴 { } 사이의 inner string을 커서위치에 (n - 1)번 append
+		커서 위치 += buffer * (n - 1)
+	phase(n) 일 경우:
+		inner string을 phases[n]에 저장
+
+	buffer = stack.top();
+	stack.pop();
+
+[변수 집어넣기]
+메서드 모두 탐색
+메서드 이름 == get_int_variable or get_string_variable:
+	get_int_variable("asdf") -> env["asdf"](실제 값)으로 대체
+
+[단계 풀기]
+phases에 있는 String 모두 이어붙이기
+
+[실행 준비 완료]

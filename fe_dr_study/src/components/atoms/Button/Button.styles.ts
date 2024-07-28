@@ -33,7 +33,7 @@ const colorToText = {
 };
 
 export const buttonStyles = tv({
-    base: 'flex items-center justify-center rounded-md focus:outline-none transition duration-200',
+    base: 'w-max flex items-center justify-center rounded-md focus:outline-none transition duration-200 shadow-sm hover:shadow-md active:shadow-sm',
     variants: {
         bg: colorToBg,
         borderColor: colorToBorder,
@@ -52,7 +52,7 @@ export const buttonStyles = tv({
         },
         fullWidth: {
             true: 'w-full',
-            false: 'w-auto',
+            false: 'w-max',
         },
         color: colorToText,
     },

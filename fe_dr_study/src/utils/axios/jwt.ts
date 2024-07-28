@@ -1,15 +1,12 @@
-// import { logout } from "../accounts/login/api/login";
-
 import { POST } from '@/utils/axios/routeModule';
 import { IMemberData } from '@/interfaces/members';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 
-
 import { authAPI as API } from './axiosInstanceManager';
-import { logout } from '@/app/auth/_api/login'; 
+import { logout } from '@/app/auth/_api/login';
 
 export const fetchAccessToken = async (
-    userId: string | null,
+    memberId: string | null,
 ): Promise<string> => {
     try {
         const response = await POST({
@@ -23,8 +20,8 @@ export const fetchAccessToken = async (
         if (error.response && error.response.data === 'Expired token') {
             // Refresh 토큰이 만료된 경우
             // 사용자 데이터를 가져와서 로그아웃 함수를 호출합니다.
-            if (userId) {
-                await logout(userId);
+            if (memberId) {
+                await logout(memberId);
                 return '토큰 만료로 로그아웃됩니다.';
             }
             return '유저 데이터를 찾을 수 없습니다.';

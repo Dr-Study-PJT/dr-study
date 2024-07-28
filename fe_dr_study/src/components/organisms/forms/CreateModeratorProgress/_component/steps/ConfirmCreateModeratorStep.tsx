@@ -48,7 +48,7 @@ export const ConfirmCreateModeratorStep = ({
                 {...register('moderator_name', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.moderator_name?.message || ''}
+                error={errors?.moderator_name?.message || ''}
                 label="AI 사회자 이름"
                 onKeyDown={(
                     e: React.KeyboardEvent<
@@ -60,7 +60,7 @@ export const ConfirmCreateModeratorStep = ({
                 {...register('appearance', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.appearance?.message || ''}
+                error={errors?.appearance?.message || ''}
                 label="외형 타입"
                 onKeyDown={(
                     e: React.KeyboardEvent<
@@ -72,7 +72,7 @@ export const ConfirmCreateModeratorStep = ({
                 {...register('voice', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.voice?.message || ''}
+                error={errors?.voice?.message || ''}
                 label="음성 타입"
                 onKeyDown={(
                     e: React.KeyboardEvent<
@@ -82,7 +82,7 @@ export const ConfirmCreateModeratorStep = ({
             />
             <InputWithLabelAndError
                 {...register('tone', { ...formConditions.plainText })}
-                errorDisplay={errors?.tone?.message || ''}
+                error={errors?.tone?.message || ''}
                 label="어조 타입"
                 onKeyDown={(
                     e: React.KeyboardEvent<
@@ -93,7 +93,7 @@ export const ConfirmCreateModeratorStep = ({
             <InputWithLabelAndError
                 {...register('pre_prompt', { ...formConditions.plainText })}
                 textarea
-                errorDisplay={errors?.pre_prompt?.message || ''}
+                error={errors?.pre_prompt?.message || ''}
                 label="사전 학습 프롬프트 입력창"
             />
             <div className="w-60 h-60 bg-gray-400">스크래치 컴포넌트</div>
