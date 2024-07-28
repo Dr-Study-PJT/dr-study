@@ -1,12 +1,14 @@
 'use client';
+import './globals.css';
+import localFont from 'next/font/local';
+
 import RQProvider from './_components/RQProvider';
 import { MSWComponent } from './_components/MSWComponent';
-import './globals.css';
-import Navigation from '@/components/organisms/Navigation/Navigation';
-import localFont from 'next/font/local';
-import SideBar from '@/components/organisms/SideBar/SideBar';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
+
+import Navigation from '@/components/organisms/Navigation';
+import SideBar from '@/components/organisms/SideBar';
 
 const pretendard = localFont({
     src: [
