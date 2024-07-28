@@ -14,13 +14,17 @@ type BlockType =
     | 'block_command_queryToGPT'
     | 'block_command_letParticipant_speak'
     | 'block_string_input'
-    | 'block_getParticipantRecord_recent';
+    | 'block_getParticipantRecord_recent'
+    | 'block_int_variable_num_of_participants';
 
 interface Block {
     id: string;
     type: BlockType;
     content: string;
     children?: Block[];
+    participant?: string;
+    duration?: string;
+    loopCount?: string;
 }
 
 const blocks: Block[] = [
@@ -69,6 +73,11 @@ const blocks: Block[] = [
         type: 'block_getParticipantRecord_recent',
         content: '직전 발화자의 발화 내용',
     },
+    {
+        id: uuidv4(),
+        type: 'block_int_variable_num_of_participants',
+        content: '현재 총 참여인원 수',
+    },
 ];
 
 const validChildBlocks: Record<BlockType, BlockType[]> = {
@@ -103,6 +112,7 @@ const validChildBlocks: Record<BlockType, BlockType[]> = {
     block_command_letParticipant_speak: [],
     block_string_input: [],
     block_getParticipantRecord_recent: [],
+    block_int_variable_num_of_participants: [],
 };
 
 const CreateModeratorPage: React.FC = () => {
@@ -184,6 +194,93 @@ const CreateModeratorPage: React.FC = () => {
         );
     };
 
+    const handleParticipantInput = (block: Block, participant: string) => {
+        const updateBlockParticipant = (
+            blocks: Block[],
+            id: string,
+            participant: string,
+        ): Block[] => {
+            return blocks.map((block) => {
+                if (block.id === id) {
+                    return { ...block, participant };
+                }
+                if (block.children) {
+                    return {
+                        ...block,
+                        children: updateBlockParticipant(
+                            block.children,
+                            id,
+                            participant,
+                        ),
+                    };
+                }
+                return block;
+            });
+        };
+
+        setDroppedBlocks((prevBlocks) =>
+            updateBlockParticipant(prevBlocks, block.id, participant),
+        );
+    };
+
+    const handleDurationInput = (block: Block, duration: string) => {
+        const updateBlockDuration = (
+            blocks: Block[],
+            id: string,
+            duration: string,
+        ): Block[] => {
+            return blocks.map((block) => {
+                if (block.id === id) {
+                    return { ...block, duration };
+                }
+                if (block.children) {
+                    return {
+                        ...block,
+                        children: updateBlockDuration(
+                            block.children,
+                            id,
+                            duration,
+                        ),
+                    };
+                }
+                return block;
+            });
+        };
+
+        setDroppedBlocks((prevBlocks) =>
+            updateBlockDuration(prevBlocks, block.id, duration),
+        );
+    };
+
+    const handleLoopInput = (block: Block, loopCount: string) => {
+        const updateBlockLoopCount = (
+            blocks: Block[],
+            id: string,
+            loopCount: string,
+        ): Block[] => {
+            return blocks.map((block) => {
+                if (block.id === id) {
+                    return { ...block, loopCount };
+                }
+                if (block.children) {
+                    return {
+                        ...block,
+                        children: updateBlockLoopCount(
+                            block.children,
+                            id,
+                            loopCount,
+                        ),
+                    };
+                }
+                return block;
+            });
+        };
+
+        setDroppedBlocks((prevBlocks) =>
+            updateBlockLoopCount(prevBlocks, block.id, loopCount),
+        );
+    };
+
     const generateScript = (blocks: Block[]): string => {
         const generateBlockScript = (
             block: Block,
@@ -199,10 +296,20 @@ const CreateModeratorPage: React.FC = () => {
                     script += `${indent}phase(${block.type.split('_').pop()}) {\n`;
                     break;
                 case 'block_flow_loop':
-                    script += `${indent}loop( get_int_variable( 'num_of_participant' ) ) {\n`;
+                    const loopCount =
+                        block.loopCount === '현재 총 참여인원 수'
+                            ? `get_int_variable( 'num_of_participant' )`
+                            : `int_input(${block.loopCount})`;
+                    script += `${indent}loop( ${loopCount} ) {\n`;
                     break;
                 case 'block_command_letParticipant_speak':
-                    script += `${indent}let_participant_speak( get_num_of_iteration(), int_input(30) );\n`;
+                    const participant = block.participant
+                        ? `int_input(${block.participant})`
+                        : '';
+                    const duration = block.duration
+                        ? `int_input(${block.duration})`
+                        : '';
+                    script += `${indent}let_participant_speak( ${participant} , ${duration} );\n`;
                     break;
                 case 'block_command_queryToGPT':
                     script += `${indent}let_ai_speak( get_answer_from_gpt_query( concat_string( `;
@@ -218,6 +325,9 @@ const CreateModeratorPage: React.FC = () => {
                     break;
                 case 'block_getParticipantRecord_recent':
                     script += `get_recent_record(1)`;
+                    break;
+                case 'block_int_variable_num_of_participants':
+                    script += `get_int_variable( 'num_of_participant' )`;
                     break;
                 default:
                     break;
@@ -281,6 +391,11 @@ const CreateModeratorPage: React.FC = () => {
                                         onDrop={handleDrop}
                                         onDelete={deleteBlock}
                                         onStringInput={handleStringInput}
+                                        onParticipantInput={
+                                            handleParticipantInput
+                                        }
+                                        onDurationInput={handleDurationInput}
+                                        onLoopInput={handleLoopInput}
                                     >
                                         {block.children &&
                                             block.children.map((child) => (
@@ -291,6 +406,15 @@ const CreateModeratorPage: React.FC = () => {
                                                     onDelete={deleteBlock}
                                                     onStringInput={
                                                         handleStringInput
+                                                    }
+                                                    onParticipantInput={
+                                                        handleParticipantInput
+                                                    }
+                                                    onDurationInput={
+                                                        handleDurationInput
+                                                    }
+                                                    onLoopInput={
+                                                        handleLoopInput
                                                     }
                                                 >
                                                     {child.children &&
@@ -311,6 +435,15 @@ const CreateModeratorPage: React.FC = () => {
                                                                     }
                                                                     onStringInput={
                                                                         handleStringInput
+                                                                    }
+                                                                    onParticipantInput={
+                                                                        handleParticipantInput
+                                                                    }
+                                                                    onDurationInput={
+                                                                        handleDurationInput
+                                                                    }
+                                                                    onLoopInput={
+                                                                        handleLoopInput
                                                                     }
                                                                 ></DroppableBlock>
                                                             ),
@@ -340,7 +473,9 @@ const DraggableBlock: React.FC<{ block: Block }> = ({ block }) => {
     return (
         <div
             ref={drag}
-            className={`UNIT-BLOCK w-full min-h-14 p-2 cursor-pointer ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+            className={`UNIT-BLOCK w-full min-h-14 p-2 cursor-pointer ${
+                isDragging ? 'opacity-50' : 'opacity-100'
+            }`}
             style={{ backgroundColor: getBlockColor(block.type) }}
         >
             {block.content}
@@ -365,6 +500,8 @@ const getBlockColor = (type: BlockType): string => {
             return 'yellow';
         case 'block_getParticipantRecord_recent':
             return 'gray';
+        case 'block_int_variable_num_of_participants':
+            return 'green';
         default:
             return 'gray';
     }
@@ -375,16 +512,35 @@ const DroppableBlock: React.FC<{
     onDrop: (block: Block, targetBlock: Block) => void;
     onDelete: (block: Block) => void;
     onStringInput: (block: Block, value: string) => void;
-}> = ({ block, onDrop, onDelete, onStringInput, children }) => {
+    onParticipantInput: (block: Block, value: string) => void;
+    onDurationInput: (block: Block, value: string) => void;
+    onLoopInput: (block: Block, value: string) => void;
+}> = ({
+    block,
+    onDrop,
+    onDelete,
+    onStringInput,
+    onParticipantInput,
+    onDurationInput,
+    onLoopInput,
+    children,
+}) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: 'BLOCK',
         drop: (item: Block, monitor) => {
             if (!monitor.didDrop()) {
-                if (validChildBlocks[block.type].includes(item.type)) {
+                if (
+                    block.type === 'block_flow_loop' &&
+                    item.type === 'block_int_variable_num_of_participants'
+                ) {
+                    onLoopInput(block, '현재 총 참여인원 수');
+                } else if (validChildBlocks[block.type].includes(item.type)) {
                     onDrop({ ...item, id: uuidv4() }, block);
                 } else {
                     alert(
-                        `유효하지 않은 블록입니다. ${block.type} 블록에는 ${validChildBlocks[block.type].join(', ')} 블록만 추가할 수 있습니다.`,
+                        `유효하지 않은 블록입니다. ${block.type} 블록에는 ${validChildBlocks[
+                            block.type
+                        ].join(', ')} 블록만 추가할 수 있습니다.`,
                     );
                 }
             }
@@ -394,7 +550,9 @@ const DroppableBlock: React.FC<{
             canDrop: monitor.canDrop(),
         }),
         canDrop: (item: Block) =>
-            validChildBlocks[block.type].includes(item.type),
+            validChildBlocks[block.type].includes(item.type) ||
+            (block.type === 'block_flow_loop' &&
+                item.type === 'block_int_variable_num_of_participants'),
     }));
 
     const handleDelete = () => {
@@ -403,46 +561,94 @@ const DroppableBlock: React.FC<{
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleParticipantChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        onParticipantInput(block, e.target.value);
+    };
+
+    const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onDurationInput(block, e.target.value);
+    };
+
+    const handleLoopChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onLoopInput(block, e.target.value);
+    };
+
+    const handleStringChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         onStringInput(block, e.target.value);
     };
 
     return (
         <div
             ref={drop}
-            className={`UNIT-BLOCK animate-popIn relative ${isOver ? 'bg-dr-dark-200' : ''} border-opacity-0 border-dr-coral-300 ${canDrop ? 'border-2 border-opacity-100' : ''} rounded-md w-full my-2 min-h-20 h-auto transition-all duration-300`}
+            className={`UNIT-BLOCK animate-popIn relative ${
+                isOver ? 'bg-dr-dark-200' : ''
+            } border-opacity-0 border-dr-coral-300 ${
+                canDrop ? 'border-2 border-opacity-100' : ''
+            } rounded-md w-full my-2 min-h-20 h-auto transition-all duration-300`}
             style={{ backgroundColor: getBlockColor(block.type) }}
         >
-            {block.type !== 'block_string_input' && (
-                <div className="flex flex-row h-auto gap-2 justify-between">
+            <div className="flex flex-row h-auto gap-2 justify-between">
+                {block.type !== 'block_string_input' && (
                     <div className="HEAD rounded-tl-md rounded-br-md bg-black text-dr-white h-full min-w-[100px] p-1">
                         {block.content}
                     </div>
-                    <div className="CHILDREN h-auto w-full">{children}</div>
-                    <button
-                        className="w-6 h-6 m-1 p-1  rounded-full hover:text-gray-500 transition-colors duration-200"
-                        onClick={handleDelete}
-                    >
-                        <FaTrash />
-                    </button>
-                </div>
-            )}
-            {block.type === 'block_string_input' && (
-                <div className="CHILDREN h-auto w-full p-2">
+                )}
+
+                <button
+                    className={`w-6 h-6 m-1 p-1  rounded-full hover:text-gray-500 transition-colors duration-200 justify-end ${
+                        block.type === 'block_string_input'
+                            ? 'w-full flex flex-row justify-end'
+                            : 'w-6'
+                    }`}
+                    onClick={handleDelete}
+                >
+                    <FaTrash />
+                </button>
+            </div>
+            <div className="CHILDREN h-auto w-full p-2">
+                {block.type === 'block_string_input' && (
                     <textarea
                         placeholder="입력 후 엔터"
-                        onBlur={handleInputChange}
-                        className="bg-transparent border-none outline-none text-dr-black w-full resize-none"
+                        onBlur={handleStringChange}
+                        className="bg-transparent border-none outline-none text-dr-black w-full resize-none h-16"
                         rows={4}
                     />
-                    <button
-                        className="w-6 h-6 m-1 p-1 rounded-full hover:text-gray-500 transition-colors duration-200 absolute top-2 right-2"
-                        onClick={handleDelete}
-                    >
-                        <FaTrash />
-                    </button>
-                </div>
-            )}
+                )}
+                {block.type === 'block_command_letParticipant_speak' && (
+                    <div className="flex flex-row gap-2">
+                        <input
+                            type="number"
+                            placeholder="번째 참가자"
+                            onBlur={handleParticipantChange}
+                            className="bg-transparent border-none outline-none text-dr-black w-1/2"
+                        />
+                        <input
+                            type="number"
+                            placeholder="초 동안"
+                            onBlur={handleDurationChange}
+                            className="bg-transparent border-none outline-none text-dr-black w-1/2"
+                        />
+                    </div>
+                )}
+                {block.type === 'block_flow_loop' && (
+                    <div className="flex flex-row gap-2">
+                        <input
+                            type="text"
+                            placeholder="반복 회차"
+                            value={
+                                block.loopCount === '현재 총 참여인원 수'
+                                    ? '현재 총 참여인원 수'
+                                    : block.loopCount || ''
+                            }
+                            onChange={handleLoopChange}
+                            className="bg-transparent border-none outline-none text-dr-black w-full"
+                        />
+                    </div>
+                )}
+                {children}
+            </div>
         </div>
     );
 };
@@ -474,7 +680,11 @@ const DroppableArea: React.FC<{
     return (
         <div
             ref={drop}
-            className={`DROPPABLE_AREA bg-dr-dark-200 w-full h-auto min-h-full flex flex-col px-2 py-2 ${isOver ? 'bg-dr-dark-100' : ''} border-opacity-0 border-dr-coral-300 ${canDrop ? 'border-2 border-opacity-100' : ''} transition-all duration-300`}
+            className={`DROPPABLE_AREA bg-dr-dark-200 w-full h-auto min-h-full flex flex-col px-2 py-2 ${
+                isOver ? 'bg-dr-dark-100' : ''
+            } border-opacity-0 border-dr-coral-300 ${
+                canDrop ? 'border-2 border-opacity-100' : ''
+            } transition-all duration-300`}
         >
             {isOver ? '내려놓을 수 있음' : '블록 끌어오셈'}
             {children}
