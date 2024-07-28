@@ -13,4 +13,4 @@ export interface IRegisterReq
     file: File | null;
 }
 
-export interface ILogInReq extends Pick<IMember, 'id' | 'email' | 'password'> {}
+export interface ILogInReq extends Pick<IMember, 'email' | 'password'> {}

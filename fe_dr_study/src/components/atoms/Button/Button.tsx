@@ -4,6 +4,7 @@ import { ButtonProps } from './Button.types';
 
 export const Button = ({
     children,
+    type = 'button',
     color = 'coral',
     size = 'md',
     onClick,
@@ -30,6 +31,7 @@ export const Button = ({
 
     return (
         <button
+            type={type}
             style={{ fontSize: fontSize[size] }}
             className={className}
             onClick={onClick}
