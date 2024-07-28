@@ -1,4 +1,3 @@
-// src/components/atoms/Input/Input.types.ts
 import React from 'react';
 
 export type InputSize = 'sm' | 'md' | 'lg';

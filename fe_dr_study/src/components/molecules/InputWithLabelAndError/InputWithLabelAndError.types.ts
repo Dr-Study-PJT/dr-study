@@ -1,4 +1,3 @@
-// src/components/molecules/InputWithLabelAndError/InputWithLabelAndError.types.ts
 import { InputProps, InputSize } from '@/components/atoms/Input/Input.types';
 import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
 
