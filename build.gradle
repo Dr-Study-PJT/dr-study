@@ -38,6 +38,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
 
 	//QueryDsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

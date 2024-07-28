@@ -28,5 +28,4 @@ public class MemberStudyGroup {
 
     private LocalDateTime leavedDate;
 
-    // Getters and Setters
 }
