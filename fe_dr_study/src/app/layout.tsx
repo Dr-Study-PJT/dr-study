@@ -1,12 +1,12 @@
-// layout.tsx
+'use client';
 import RQProvider from './_components/RQProvider';
 import { MSWComponent } from './_components/MSWComponent';
-
 import './globals.css';
 import Navigation from '@/components/organisms/Navigation/Navigation';
-
 import localFont from 'next/font/local';
 import SideBar from '@/components/organisms/SideBar/SideBar';
+import { Provider } from 'react-redux';
+import { store } from '@/store';
 
 const pretendard = localFont({
     src: [
@@ -66,16 +66,20 @@ export default function RootLayout({
     return (
         <html lang="ko" className={`${pretendard.className}`}>
             <body className="h-screen overflow-hidden">
-                <RQProvider>
-                    <MSWComponent />
-                    <div className="pt-[3.75rem]">
-                        <Navigation />
-                    </div>
-                    <SideBar />
-                    <div className="pl-[3.75rem] flex h-[calc(100vh-3.75rem)]">
-                        <div className="flex-1 overflow-auto">{children}</div>
-                    </div>
-                </RQProvider>
+                <Provider store={store}>
+                    <RQProvider>
+                        <MSWComponent />
+                        <div className="pt-[3.75rem]">
+                            <Navigation />
+                        </div>
+                        <SideBar />
+                        <div className="pl-[3.75rem] flex h-[calc(100vh-3.75rem)]">
+                            <div className="flex-1 overflow-auto">
+                                {children}
+                            </div>
+                        </div>
+                    </RQProvider>
+                </Provider>
             </body>
         </html>
     );
