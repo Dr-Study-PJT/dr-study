@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.member;
+package com.nomz.doctorstudy.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,6 +55,11 @@ public class Member {
         this.reg_date = regDate;
         this.leaved_date = leavedDate;
         this.is_leaved = isLeaved;
+    }
+
+
+    public void update(String password){
+        this.password = password;
     }
 }
 

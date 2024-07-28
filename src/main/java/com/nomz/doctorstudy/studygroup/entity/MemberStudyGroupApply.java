@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
-import com.nomz.doctorstudy.member.Member;
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
