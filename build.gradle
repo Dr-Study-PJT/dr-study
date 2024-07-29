@@ -52,6 +52,27 @@ dependencies {
 
 	//Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+	//Security
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	testImplementation "org.springframework.security:spring-security-test"
+
+	//JWT
+	implementation "com.auth0:java-jwt:3.10.3"
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+	//redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//메일 처리용 thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.thymeleaf:thymeleaf-spring6'
+	implementation 'jakarta.mail:jakarta.mail-api'
+
+
+
 }
 
 clean{

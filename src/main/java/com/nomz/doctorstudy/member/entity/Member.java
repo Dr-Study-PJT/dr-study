@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.member;
+package com.nomz.doctorstudy.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,23 +38,28 @@ public class Member {
 
     @CreatedDate
 //    @Column(updatable = false, nullable = false)
-    private LocalDateTime reg_date;
+    private LocalDateTime regDate;
 
-    private long image_id;
+    private Long imageId;
 
     @ColumnDefault("0")
-    private boolean is_leaved;
-    private LocalDateTime leaved_date;
+    private boolean isLeaved;
+    private LocalDateTime leavedDate;
 
     @Builder
-    public Member(String email, String password, String nickname, long imageId, LocalDateTime regDate, LocalDateTime leavedDate, boolean isLeaved){
+    public Member(String email, String password, String nickname, Long imageId, LocalDateTime regDate, LocalDateTime leavedDate, boolean isLeaved){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.image_id = imageId;
-        this.reg_date = regDate;
-        this.leaved_date = leavedDate;
-        this.is_leaved = isLeaved;
+        this.imageId = imageId;
+        this.regDate = regDate;
+        this.leavedDate = leavedDate;
+        this.isLeaved = isLeaved;
+    }
+
+
+    public void update(String password){
+        this.password = password;
     }
 }
 

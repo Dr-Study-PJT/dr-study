@@ -37,12 +37,12 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler
-    public ResponseEntity<?> handleException(Exception e) {
-        return ResponseEntity.internalServerError()
-                .body(new ErrorResponse<>(
-                        "죄송합니다. 서버 내부에 오류가 발생했습니다.",
-                        Map.of()
-                ));
-    }
+//    @ExceptionHandler
+//    public ResponseEntity<?> handleException(Exception e) {
+//        return ResponseEntity.internalServerError()
+//                .body(new ErrorResponse<>(
+//                        "죄송합니다. 서버 내부에 오류가 발생했습니다.",
+//                        Map.of()
+//                ));
+//    }
 }

@@ -1,0 +1,78 @@
+version: "3.2"
+
+services:
+  database:
+    image: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - /home/ubuntu/data/db/mysql:/var/lib/mysql/
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    container_name: mysql_container
+    environment:
+      - MYSQL_DATABASE=mzstop
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD='${MYSQL_ROOT_PASSWORD}'
+      # - MYSQL_PASSWORD=123455
+    command: [ '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci' ]
+    networks:
+      - custom_network
+
+  redis:
+    image: redis:alpine
+    # command: redis-server --port 6379
+    container_name: redis_container
+    hostname: localhost
+    ports:
+      - "6379:6379"
+    networks:
+      - custom_network
+
+  spring:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    container_name: spring_container
+    environment:
+      SPRING_DATASOURCE_URL: '${SPRING_DATASOURCE_URL}'
+      SPRING_DATASOURCE_USERNAME: '${SPRING_DATASOURCE_USERNAME}'
+      SPRING_DATASOURCE_PASSWORD: '${SPRING_DATASOURCE_PASSWORD}'
+      SPRING_REDIS_HOST: '${SPRING_REDIS_HOST}'
+      SPRING_REDIS_PORT: '${SPRING_REDIS_PORT}'
+      SPRING_MAIL_HOST: '${SPRING_MAIL_HOST}'
+      SPRING_MAIL_PORT: '${SPRING_MAIL_PORT}'
+      SPRING_MAIL_USERNAME: '${SPRING_MAIL_USERNAME}'
+      SPRING_MAIL_PASSWORD: '${SPRING_MAIL_PASSWORD}'
+      JWT_SECRET: '${JWT_SECRET}'
+      JWT_ACCESS-TOKEN-EXPIRATION: '${JWT_ACCESS-TOKEN-EXPIRATION}'
+      JWT_REFRESH-TOKEN-EXPIRATION: '${JWT_REFRESH-TOKEN-EXPIRATION}'
+
+
+    networks:
+      - custom_network
+
+  nginx:
+    restart: always
+    image: nginx:latest
+    depends_on:
+      - spring
+    container_name: nginx_container
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt/live/api.dr-study.kro.kr/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/api.dr-study.kro.kr/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+    ports:
+      - "80:80"
+      - "443:443" # Nginx가 443 포트(HTTPS 기본 포트)에서도 수신 대기하도록 PORTS 추가
+    networks:
+      - custom_network
+
+volumes:
+  mysql_data:
+networks:
+  custom_network:
+
