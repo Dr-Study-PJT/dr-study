@@ -24,7 +24,7 @@ export const WritePrePromptStep = ({
             <InputWithLabelAndError
                 {...register('pre_prompt', { ...formConditions.plainText })}
                 textarea
-                errorDisplay={errors?.pre_prompt?.message || ''}
+                error={errors?.pre_prompt?.message || ''}
                 label="사전 학습 프롬프트 입력창"
             />
         </form>

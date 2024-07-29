@@ -1,3 +1,4 @@
+// src/components/organisms/forms/RegisterProgress/_component/steps/MemberBaseInfoStep.tsx
 import React, { useEffect } from 'react';
 import { FieldErrors, UseFormRegister, UseFormSetFocus } from 'react-hook-form';
 import Image from 'next/image';
@@ -59,52 +60,46 @@ export const MemberBaseInfoStep = ({
                 </div>
             )}
             <InputWithLabelAndError
-                textarea={false}
+                id="email"
+                label="이메일 입력"
+                placeholder="이메일을 입력해주세요."
                 {...register('email', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.email?.message || ''}
-                label="이메일 입력"
-                onKeyDown={(
-                    e: React.KeyboardEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                    >,
-                ) => handleKeyDownForNextInput(e, 'nickname', setFocus)}
+                error={errors.email}
+                onKeyDown={(e) =>
+                    handleKeyDownForNextInput(e, 'nickname', setFocus)
+                }
             />
             <InputWithLabelAndError
-                textarea={false}
-                {...register('nickname', { ...formConditions.plainText })}
-                errorDisplay={errors?.nickname?.message || ''}
+                id="nickname"
                 label="닉네임 입력"
-                onKeyDown={(
-                    e: React.KeyboardEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                    >,
-                ) => handleKeyDownForNextInput(e, 'password', setFocus)}
+                placeholder="닉네임을 입력해주세요."
+                {...register('nickname', { ...formConditions.plainText })}
+                error={errors.nickname}
+                onKeyDown={(e) =>
+                    handleKeyDownForNextInput(e, 'password', setFocus)
+                }
             />
             <InputWithLabelAndError
-                textarea={false}
-                {...register('password', { ...formConditions.password })}
-                errorDisplay={errors?.password?.message || ''}
+                id="password"
                 label="비밀번호 입력"
-                inputType="password"
-                onKeyDown={(
-                    e: React.KeyboardEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                    >,
-                ) => handleKeyDownForNextInput(e, 'rePassword', setFocus)}
+                type="password"
+                placeholder="비밀번호를 입력해주세요."
+                {...register('password', { ...formConditions.password })}
+                error={errors.password}
+                onKeyDown={(e) =>
+                    handleKeyDownForNextInput(e, 'rePassword', setFocus)
+                }
             />
             <InputWithLabelAndError
-                textarea={false}
-                {...register('rePassword', { ...formConditions.password })}
-                errorDisplay={errors?.rePassword?.message || ''}
+                id="rePassword"
                 label="비밀번호 재입력"
-                inputType="password"
-                onKeyDown={(
-                    e: React.KeyboardEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                    >,
-                ) => handleKeyDownForSubmit(e, handleSubmit)}
+                type="password"
+                placeholder="비밀번호를 다시 입력해주세요."
+                {...register('rePassword', { ...formConditions.password })}
+                error={errors.rePassword}
+                onKeyDown={(e) => handleKeyDownForSubmit(e, handleSubmit)}
             />
         </form>
     );

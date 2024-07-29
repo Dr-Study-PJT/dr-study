@@ -38,22 +38,22 @@ export const RegisterConfirmStep = ({
                 </div>
             )}
             <InputWithLabelAndError
+                id="email"
+                type="email"
                 {...register('email', {
                     ...formConditions.plainText,
                 })}
-                errorDisplay={errors?.email?.message || ''}
-                label="이메일 입력"
+                error={errors?.email?.message || ''}
+                label="이메일 확인"
+                disabled
             />
             <InputWithLabelAndError
+                id="nickname"
+                type="nickname"
                 {...register('nickname', { ...formConditions.plainText })}
-                errorDisplay={errors?.nickname?.message || ''}
-                label="닉네임 입력"
-            />
-            <InputWithLabelAndError
-                {...register('password', { ...formConditions.password })}
-                errorDisplay={errors?.password?.message || ''}
-                label="비밀번호 입력"
-                inputType="password"
+                error={errors?.nickname?.message || ''}
+                label="닉네임 확인"
+                disabled
             />
         </form>
     );
