@@ -4,15 +4,20 @@ import Step1 from './_components/Step1';
 import Step2 from './_components/Step2';
 
 import { CreateFormPageProps, FormData } from './_components/type';
+import Step3 from './_components/Step3';
 
-const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full h-full bg-gray-800`;
-const containerStyles = `CONTAINER-FORM min-w-[60%] w-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
+const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full min-h-full h-max bg-gray-800 py-12`;
+const containerStyles = `CONTAINER-FORM min-w-[60%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
 
 const steps = [
     { title: '마음에 드는 사회자의 모습을 선택해보세요.', component: Step1 },
     {
         title: 'AI에게 사회자의 역할, 노하우, 스터디 진행 단계를 설명하세요.',
         component: Step2,
+    },
+    {
+        title: '블록 쌓기로 더욱 자세한 스터디 진행방식을 만들어보세요.',
+        component: Step3,
     },
     // {
     //     title: '블록 쌓기로 더욱 자세한 스터디 진행방식을 만들어보세요.',
@@ -59,7 +64,7 @@ const CreateModeratorPage: React.FC<CreateFormPageProps> = ({
     return (
         <div className={pageStyles}>
             <div className={containerStyles}>
-                <div className="min-h-[70vh] w-full flex flex-col justify-start items-center gap-4 ">
+                <div className="h-max min-h-[70vh] w-full flex flex-col justify-start items-center gap-4 ">
                     <section className="TITLE-SECTION w-1/2 h-1/4 flex flex-col justify-center">
                         <div className="TITLE-AND-PAHSE items-center flex flex-col justify-center w-full h-max">
                             <div className="TITLE-TEXT text-dr-header-2 font-bold w-full text-center">
@@ -85,7 +90,7 @@ const CreateModeratorPage: React.FC<CreateFormPageProps> = ({
                             </div>
                         </div>
                     </section>
-                    <section className="CONTENTS-SECTION-STEP1-AVATAR animate-fadeIn  min-w-[75%] h-max min-h-[50%] flex flex-col gap-2 transition-all duration-200">
+                    <section className="CONTENTS-SECTION-STEP1-AVATAR  animate-fadeIn w-max min-w-[75%] h-max min-h-[50%] flex flex-col gap-2 transition-all duration-200">
                         <StepComponent
                             onNext={handleNext}
                             onBack={handleBack}
