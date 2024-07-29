@@ -1,16 +1,13 @@
-import React from 'react';
+import React, { FormEvent } from 'react';
 import { Button, Label } from '@/components/atoms';
 import { StepProps } from './type';
+import { createModerator } from '../../_api';
 
 const Step4: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-        const { name, value } = e.target;
-        setData({
-            ...data,
-            [name]: value,
-        });
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+
+        await createModerator(data);
     };
 
     return (
@@ -22,7 +19,9 @@ const Step4: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                 <Button size="md" onClick={onBack} color="dark">
                     이전으로
                 </Button>
-                <Button size="md">제출하기</Button>
+                <Button size="md" onClick={handleSubmit}>
+                    제출하기
+                </Button>
             </div>
         </>
     );

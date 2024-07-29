@@ -271,6 +271,142 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
         return blocks.map((block) => generateBlockScript(block)).join('');
     };
 
+    const parseScript = (script: string): Block[] => {
+        const blocks: Block[] = [];
+        const lines = script
+            .split('}')
+            .map((line) => line.trim() + '}')
+            .filter((line) => line.trim() !== '}');
+
+        const parseBlock = (
+            lines: string[],
+            indentLevel: number = 0,
+        ): Block[] => {
+            const result: Block[] = [];
+            while (lines.length > 0) {
+                const line = lines.shift()?.trim();
+                if (!line) continue;
+                const indent = line.match(/^\s*/)?.[0].length ?? 0;
+
+                if (indent / 2 < indentLevel) break;
+
+                const content = line.replace(/[{}]/g, '').trim();
+                const [type, ...rest] = content.split(/\s+/);
+
+                let block: Block;
+                switch (type) {
+                    case 'phase(1)':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_flow_phase_1',
+                            content: '1단계',
+                        };
+                        break;
+                    case 'phase(2)':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_flow_phase_2',
+                            content: '2단계',
+                        };
+                        break;
+                    case 'phase(3)':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_flow_phase_3',
+                            content: '3단계',
+                        };
+                        break;
+                    case 'phase(4)':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_flow_phase_4',
+                            content: '4단계',
+                        };
+                        break;
+                    case 'loop':
+                        const loopCount =
+                            rest.join(' ').match(/int_input\((.*)\)/)?.[1] ||
+                            '';
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_flow_loop',
+                            content: '반복 블록',
+                            loopCount,
+                        };
+                        break;
+                    case 'let_participant_speak':
+                        const participant =
+                            rest[0] === 'get_num_of_iteration()'
+                                ? '반복회차 i'
+                                : rest[0];
+                        const duration = rest[1];
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_command_letParticipant_speak',
+                            content: '발화 시작',
+                            participant,
+                            duration,
+                        };
+                        break;
+                    case 'let_ai_speak':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_command_queryToGPT',
+                            content: 'GPT 블록',
+                        };
+                        break;
+                    case 'string_input':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_string_input',
+                            content: rest.join(' '),
+                        };
+                        break;
+                    case 'get_recent_record':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_getParticipantRecord_recent',
+                            content: '직전 발화자의 발화 내용',
+                        };
+                        break;
+                    case 'get_int_variable':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_int_variable_num_of_participants',
+                            content: '현재 총 참여인원 수',
+                        };
+                        break;
+                    case 'get_num_of_iteration':
+                        block = {
+                            id: uuidv4(),
+                            type: 'block_iteration_index',
+                            content: '반복회차 i',
+                        };
+                        break;
+                    default:
+                        continue;
+                }
+
+                if (line.endsWith('{')) {
+                    block.children = parseBlock(lines, indent / 2 + 1);
+                }
+
+                result.push(block);
+            }
+            return result;
+        };
+
+        blocks.push(...parseBlock(lines));
+        return blocks;
+    };
+
+    // useEffect(() => {
+    //     if (data.fb_script && droppedBlocks.length === 0) {
+    //         const parsedBlocks = parseScript(data.fb_script);
+    //         setDroppedBlocks(parsedBlocks);
+    //     }
+    // }, [data.fb_script, droppedBlocks.length]);
+
     useEffect(() => {
         setFbScript(generateScript(droppedBlocks));
     }, [droppedBlocks]);
@@ -411,7 +547,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             </DroppableArea>
                         </div>
                     </div>
-                    <div className="w-full h-max flex flex-row justify-end gap-2 mt-6">
+                    <div className="w-full h-max flex flex-row justify-end gap-2">
                         <Button size="md" onClick={onBack} color="dark">
                             이전으로
                         </Button>

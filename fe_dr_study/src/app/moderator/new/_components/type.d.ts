@@ -1,4 +1,7 @@
-interface FormData {
+import { ICreateModeratorReq } from '../../_types';
+
+export interface FormData {
+    [x: string]: string | number | readonly string[] | undefined;
     name: string;
     type_voice: string;
     type_tone: string;
@@ -7,14 +10,14 @@ interface FormData {
     pre_promptDetails?: string;
 }
 
-interface StepProps {
+export interface StepProps {
     onNext: () => void;
     onBack: () => void;
-    data: FormData;
-    setData: (data: FormData) => void;
+    data: ICreateModeratorReq;
+    setData: (data: ICreateModeratorReq) => void;
 }
 
-interface CreateFormPageProps {
+export interface CreateFormPageProps {
     title: string;
-    initialFormData: FormData;
+    initialFormData: ICreateModeratorReq;
 }
