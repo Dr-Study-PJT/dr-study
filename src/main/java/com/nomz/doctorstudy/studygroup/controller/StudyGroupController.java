@@ -4,9 +4,11 @@ import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
-import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
+//import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
+import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import com.nomz.doctorstudy.studygroup.response.CreateApplyResponse;
 import com.nomz.doctorstudy.studygroup.response.CreateStudyGroupResponse;
 import com.nomz.doctorstudy.studygroup.response.GetStudyGroupListResponse;
 import com.nomz.doctorstudy.studygroup.response.GetStudyGroupResponse;
@@ -148,30 +150,36 @@ public class StudyGroupController {
                 )
         );
     }
+
+    @PostMapping("/admission/apply")
+    @Operation(summary = "Study Group 지원")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 리스트 지원 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 리스트 지원 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 지원에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<CreateApplyResponse>> CreateApply
+            (@Valid @RequestBody CreateApplyRequest request) {
+
+        log.info("CreateApplyRequest = {}", request);
+
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request);
+        CreateApplyResponse response = new CreateApplyResponse(memberStudyGroupApply.getId());
+        log.info("CreateApplyResponse = {}", response);
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Apply 생성에 성공했습니다.",
+                        response
+                )
+        );
+    }
 }
-//    @PostMapping("/admission/apply")
-//    @Operation(summary = "Study Group 지원")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Study Group 리스트 검색 성공", useReturnTypeSchema = true),
-//            @ApiResponse(responseCode = "400", description = "Study Group 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
-//                    {
-//                        "message": "Study Group 조회에 실패했습니다.",
-//                        "errors": {
-//                        }
-//                    }
-//                    """)))
-//    })
-//    public ResponseEntity<Void> applyForStudyGroup(@RequestBody AdmissionRequest admissionRequest) {
-//        MemberStudyGroupApply apply = new MemberStudyGroupApply();
-//        apply.setMemberId(admissionRequest.getMemberId());
-//        apply.setStudyGroupId(admissionRequest.getStudyGroupId());
-//        apply.setMessage(admissionRequest.getMessage());
-//        apply.setStatus("PENDING");
-//        apply.setCreatedAt(new java.util.Date());
-//        memberStudyGroupApplyList.add(apply);
-//        return new ResponseEntity<>(HttpStatus.CREATED);
-//    }
-//
+
 ////    @Operation(summary = "Respond to a study group application")
 ////    @ApiResponses(value = {
 ////            @ApiResponse(responseCode = "200", description = "Application response recorded"),
@@ -236,21 +244,6 @@ public class StudyGroupController {
 //
 
 //
-////    @Operation(summary = "Get all study group applications")
-////    @ApiResponse(responseCode = "200", description = "List of all study group applications")
-//    @GetMapping("/admission")
-//    public ResponseEntity<List<AdmissionResponse>> getAllStudyGroupApplications() {
-//        List<AdmissionResponse> responses = new ArrayList<>();
-//        for (MemberStudyGroupApply apply : memberStudyGroupApplyList) {
-//            AdmissionResponse response = new AdmissionResponse();
-//            response.setAdmissionId(apply.getId());
-//            response.setMemberId(apply.getMemberId());
-//            response.setStudyGroupId(apply.getStudyGroupId());
-//            response.setMessage(apply.getMessage());
-//            response.setApproved("APPROVED".equals(apply.getStatus()));
-//            responses.add(response);
-//        }
-//        return ResponseEntity.ok(responses);
-//    }
+
 //
 //}

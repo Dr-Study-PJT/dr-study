@@ -1,6 +1,8 @@
 package com.nomz.doctorstudy.studygroup.service;
 
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
+import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
 
@@ -16,6 +18,9 @@ public interface StudyGroupService {
     // 스터디 그룹 조건 검색
     List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command);
 
+    // 스터디 그룹 지원 요청 생성
+    MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest);
+
     // Update an existing study group
     // StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails);
 
@@ -23,8 +28,7 @@ public interface StudyGroupService {
     // Delete a study group by its ID
     // void deleteStudyGroup(Long groupId);
 
-    // Apply for a study group
-    // void applyForStudyGroup(AdmissionRequest admissionRequest);
+
 
     // Respond to a study group application
     // void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest);
