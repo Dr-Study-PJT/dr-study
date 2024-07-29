@@ -65,18 +65,21 @@ public class MemberController {
     @GetMapping()
     @Operation(summary = "Member 조회", description = "로그인된 Member를 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Member 생성 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+            @ApiResponse(responseCode = "200", description = "조회되었습니다.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "조회에 실패했습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
                         "message": "유효하지 않은 입력입니다.",
                         "errors": {
-                            "email": "이메일은 필수 입력값입니다.",
-                            "password": "비밀번호는 필수 입력값입니다.",
-                            "nickname" : "닉네임은 필수 입력값입니다."
                         }
                     }
-                    """)))
-    })
+                    """))),
+            @ApiResponse(responseCode = "401", description = "다시 로그인해주세요.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 유저입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),    })
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
         /**
          * 요청 헤더 액세스 토큰이 포함된 경우에만 실행되는 인증 처리이후, 리턴되는 인증 정보 객체(authentication) 통해서 요청한 유저 식별.
