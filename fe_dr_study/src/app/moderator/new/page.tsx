@@ -5,6 +5,7 @@ import Step2 from './_components/Step2';
 
 import { CreateFormPageProps, FormData } from './_components/type';
 import Step3 from './_components/Step3';
+import Step4 from './_components/Step4';
 
 const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full min-h-full h-max bg-gray-800 py-12`;
 const containerStyles = `CONTAINER-FORM min-w-[60%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
@@ -19,14 +20,10 @@ const steps = [
         title: '블록 쌓기로 더욱 자세한 스터디 진행방식을 만들어보세요.',
         component: Step3,
     },
-    // {
-    //     title: '블록 쌓기로 더욱 자세한 스터디 진행방식을 만들어보세요.',
-    //     component: Step3,
-    // },
-    // {
-    //     title: '작성하신 내용이 맞는지 확인하고 제출해주세요.',
-    //     component: Step4,
-    // },
+    {
+        title: '작성하신 내용이 맞는지 확인하고 제출해주세요.',
+        component: Step4,
+    },
 ];
 
 const initialFormData: FormData = {

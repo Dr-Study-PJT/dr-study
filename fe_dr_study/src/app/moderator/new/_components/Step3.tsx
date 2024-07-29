@@ -411,7 +411,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             </DroppableArea>
                         </div>
                     </div>
-                    <div className="w-full h-max flex flex-row justify-end gap-2">
+                    <div className="w-full h-max flex flex-row justify-end gap-2 mt-6">
                         <Button size="md" onClick={onBack} color="dark">
                             이전으로
                         </Button>
