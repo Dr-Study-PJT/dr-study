@@ -1,8 +1,8 @@
 package com.nomz.doctorstudy.studygroup.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
-import com.nomz.doctorstudy.member.Member;
-import com.nomz.doctorstudy.member.MemberRepository;
+import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.StudyGroupErrorCode;
