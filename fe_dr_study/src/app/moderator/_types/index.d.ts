@@ -9,9 +9,6 @@ export interface IModerator {
     type_tone: string;
 }
 
-// export interface IModeratorData
-//     extends Pick<IModerator, 'id' | 'email' | 'nickname'> {}
-
 export interface ICreateModeratorReq
     extends Pick<
         IModerator,

@@ -18,6 +18,6 @@ export interface StepProps {
 }
 
 export interface CreateFormPageProps {
-    title: string;
-    initialFormData: ICreateModeratorReq;
+    // title?: string;
+    // initialFormData?: ICreateModeratorReq;
 }

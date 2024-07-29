@@ -37,11 +37,11 @@ const initialFormData: ICreateModeratorReq = {
     fb_script: '',
 };
 
-const CreateModeratorPage: React.FC<CreateFormPageProps> = ({
-    title = 'AI 사회자 생성',
-}) => {
+const CreateModeratorPage: React.FC<CreateFormPageProps> = () => {
+    const title = 'AI 사회자 생성';
     const [currentStep, setCurrentStep] = useState(0);
-    const [formData, setFormData] = useState(initialFormData);
+    const [formData, setFormData] =
+        useState<ICreateModeratorReq>(initialFormData);
 
     const handleNext = () => {
         console.log(formData);
