@@ -19,6 +19,6 @@ public class MemberRegisterPostReq {
 	@NotBlank(message = "닉네임을 잘 입력해주세요")
 	private String nickname;
 
-	private long image_id;
+	private Long image_id;
 
 }

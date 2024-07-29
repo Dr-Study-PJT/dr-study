@@ -23,17 +23,17 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Long> image_id = createNumber("image_id", Long.class);
+    public final NumberPath<Long> imageId = createNumber("imageId", Long.class);
 
-    public final BooleanPath is_leaved = createBoolean("is_leaved");
+    public final BooleanPath isLeaved = createBoolean("isLeaved");
 
-    public final DateTimePath<java.time.LocalDateTime> leaved_date = createDateTime("leaved_date", java.time.LocalDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> leavedDate = createDateTime("leavedDate", java.time.LocalDateTime.class);
 
     public final StringPath nickname = createString("nickname");
 
     public final StringPath password = createString("password");
 
-    public final DateTimePath<java.time.LocalDateTime> reg_date = createDateTime("reg_date", java.time.LocalDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));
