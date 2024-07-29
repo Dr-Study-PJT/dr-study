@@ -1,23 +1,34 @@
 package com.nomz.doctorstudy.moderator.entity;
 
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-// TODO: prePrompt와 script의 최대 길이는 10,000이 적당한가?
-
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Processor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 10000)
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    //TODO: 길이 확인
+    @Column(length = 5000)
     private String prePrompt;
 
-    @Column(length = 10000)
+    //TODO: 길이 확인
+    @Column(length = 5000)
     private String script;
 
     @Column

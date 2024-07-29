@@ -10,6 +10,9 @@ import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
+import com.nomz.doctorstudy.conference.response.CreateConferenceResponse;
+import com.nomz.doctorstudy.conference.response.GetConferenceListResponse;
+import com.nomz.doctorstudy.conference.response.GetConferenceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,31 +32,45 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ScriptPreprocessor scriptPreprocessor;
 
     @Override
-    public Long createConference(CreateConferenceRequest request) {
+    public CreateConferenceResponse createConference(CreateConferenceRequest request) {
         Conference conference = Conference.builder()
                 .title(request.getTitle())
                 .memberCapacity(request.getMemberCapacity())
                 .build();
         conferenceRepository.save(conference);
+
         log.info("[new conference] id={}, title={}", conference.getId(), conference.getTitle());
-        return conference.getId();
+
+        return CreateConferenceResponse.builder()
+                .conferenceId(conference.getId())
+                .build();
     }
 
     @Override
     @Transactional
-    public Conference getConference(Long conferenceId) {
-        return conferenceRepository.findById(conferenceId)
+    public GetConferenceResponse getConference(Long conferenceId) {
+        Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
+        return GetConferenceResponse.builder()
+                .id(conference.getId())
+                .title(conference.getTitle())
+                .memberCapacity(conference.getMemberCapacity())
+                .build();
     }
 
     @Override
-    public List<Conference> getConferenceList(GetConferenceListRequest request) {
-        return conferenceQueryRepository.getConferenceList(
+    public List<GetConferenceListResponse> getConferenceList(GetConferenceListRequest request) {
+        List<Conference> conferenceList = conferenceQueryRepository.getConferenceList(
                 ConferenceSearchFilter.builder()
                         .title(request.getTitle())
                         .memberCapacity(request.getMemberCapacity())
                         .build()
         );
+
+        return conferenceList.stream()
+                .map(GetConferenceListResponse::of)
+                .toList();
     }
 
     @Override

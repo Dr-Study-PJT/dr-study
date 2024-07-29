@@ -1,11 +1,16 @@
 package com.nomz.doctorstudy.moderator.entity;
 
-import com.nomz.doctorstudy.moderator.Avatar;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Moderator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

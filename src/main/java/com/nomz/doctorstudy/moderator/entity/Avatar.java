@@ -1,11 +1,17 @@
-package com.nomz.doctorstudy.moderator;
+package com.nomz.doctorstudy.moderator.entity;
 
 import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Avatar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

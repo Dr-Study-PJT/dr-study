@@ -58,8 +58,7 @@ public class ConferenceController {
     ) {
         log.info("CreateConferenceRequest = {}", request);
 
-        Long conferenceId = conferenceService.createConference(request);
-        CreateConferenceResponse response = new CreateConferenceResponse(conferenceId);
+        CreateConferenceResponse response = conferenceService.createConference(request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -161,8 +160,7 @@ public class ConferenceController {
     })
     public ResponseEntity<SuccessResponse<GetConferenceResponse>> getConference(
             @PathVariable("conferenceId") Long conferenceId) {
-        Conference conference = conferenceService.getConference(conferenceId);
-        GetConferenceResponse response = new GetConferenceResponse(conferenceId, conference.getTitle(), conference.getMemberCapacity());
+        GetConferenceResponse response = conferenceService.getConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -188,14 +186,12 @@ public class ConferenceController {
     public ResponseEntity<SuccessResponse<List<GetConferenceListResponse>>> getConferenceList(
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
-        List<Conference> conferenceList = conferenceService.getConferenceList(request);
-
-        List<GetConferenceListResponse> responseList = conferenceList.stream().map(GetConferenceListResponse::of).toList();
+        List<GetConferenceListResponse> responses = conferenceService.getConferenceList(request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 리스트 조회에 성공했습니다.",
-                        responseList
+                        responses
                 )
         );
     }
