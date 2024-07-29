@@ -1,6 +1,5 @@
-package com.nomz.doctorstudy.bfscript.blocks;
+package com.nomz.doctorstudy.blockinterpreter;
 
-import com.nomz.doctorstudy.blockprocessor.script.ScriptPreprocessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,7 @@ class ScriptPreprocessorTest {
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
     @Test
@@ -55,7 +54,7 @@ class ScriptPreprocessorTest {
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
 
@@ -76,7 +75,7 @@ class ScriptPreprocessorTest {
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
     @Test
@@ -115,7 +114,7 @@ class ScriptPreprocessorTest {
         """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
 
@@ -164,7 +163,7 @@ phase( 3 ){
                         get_num_of_iteration(),
                         string_input('번째 발표자의 피드백이 끝났어.\\n'),
                         get_recent_record(1),
-                        string_input('다음 단계를 진행해줘\\n'),
+                        string_input('다음 단계를 진행해줘\\n')
                 )
             )
         );
@@ -188,7 +187,7 @@ phase( 4 ) {
 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
     @Test
@@ -206,6 +205,6 @@ phase( 4 ) {
                 """;
 
         ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script, varMap);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 }
