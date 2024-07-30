@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -18,15 +20,18 @@ public class Avatar {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member creator;
 
-    @Column(length = 32)
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false, length = 32)
     private String voiceType;
 
-    @Column(length = 32)
+    @Column(nullable = false, length = 32)
     private String characterType;
 
-    @Column(length = 32)
+    @Column(nullable = false, length = 32)
     private String modelType;
 }

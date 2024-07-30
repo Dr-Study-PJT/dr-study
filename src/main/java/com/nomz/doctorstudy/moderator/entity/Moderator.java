@@ -1,10 +1,13 @@
 package com.nomz.doctorstudy.moderator.entity;
 
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -17,10 +20,17 @@ public class Moderator {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "processor_id")
+    @JoinColumn(nullable = false)
+    private Member creator;
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "processor_id", nullable = false)
     private Processor processor;
 
     @ManyToOne
-    @JoinColumn(name = "avatar_id")
+    @JoinColumn(name = "avatar_id", nullable = false)
     private Avatar avatar;
 }

@@ -20,23 +20,23 @@ public class Processor {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member creator;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
     //TODO: 길이 확인
-    @Column(length = 5000)
+    @Column(length = 5000, nullable = false)
     private String prePrompt;
 
     //TODO: 길이 확인
-    @Column(length = 5000)
+    @Column(length = 5000, nullable = false)
     private String script;
 
-    @Column
-    private LocalDateTime createdAt;
-
-    @Column(length = 128)
+    @Column(length = 128, nullable = false)
     private String description;
 
-    @Column
+    @Column(nullable = false)
     private String gptApiKey;
 }
