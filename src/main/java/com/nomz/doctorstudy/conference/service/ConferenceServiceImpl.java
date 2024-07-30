@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.conference.service;
 
-import com.nomz.doctorstudy.blockprocessor.BlockProcessor;
-import com.nomz.doctorstudy.blockprocessor.script.ScriptPreprocessor;
+import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
+import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.Conference;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
@@ -25,7 +25,7 @@ import java.util.Map;
 public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceRepository conferenceRepository;
     private final ConferenceQueryRepository conferenceQueryRepository;
-    private final BlockProcessor blockProcessor;
+    private final BlockInterpreter blockInterpreter;
     private final ScriptPreprocessor scriptPreprocessor;
 
     @Override
@@ -61,12 +61,12 @@ public class ConferenceServiceImpl implements ConferenceService {
         // Todo: 리포지토리에서 스크립트 불러오기
         String script = "asdf";
         Map<String, Object> varMap = new HashMap<>();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script,varMap);
-        blockProcessor.init(conferenceId, preprocessedScript);
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
+        blockInterpreter.init(conferenceId, preprocessedScript, varMap);
     }
 
     @Override
     public void finishConference(Long conferenceId) {
-        blockProcessor.close(conferenceId);
+        blockInterpreter.close(conferenceId);
     }
 }

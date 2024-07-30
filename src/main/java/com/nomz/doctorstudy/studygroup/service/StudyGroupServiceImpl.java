@@ -1,15 +1,18 @@
 package com.nomz.doctorstudy.studygroup.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.repository.MemberRepository;
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroupTag;
 import com.nomz.doctorstudy.studygroup.entity.Tag;
 import com.nomz.doctorstudy.studygroup.repository.*;
+import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
-import com.nomz.doctorstudy.studygroup.response.GetStudyGroupResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final StudyGroupQueryRepository studyGroupQueryRepository;
     private final TagRepository tagRepository;
     private final StudyGroupTagRepository studyGroupTagRepository;
+    private final MemberRepository memberRepository;
     private final MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
 
     @Override
@@ -82,6 +86,32 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         );
     }
 
+    @Override
+    public MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest) {
+        Member member = memberRepository.findById(createApplyRequest.getMemberId())
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        StudyGroup studyGroup = studyGroupRepository.findById(createApplyRequest.getStudyGroupId())
+                .orElseThrow(() -> new RuntimeException("Study group not found"));
+
+        if(memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(createApplyRequest.getMemberId(), createApplyRequest.getStudyGroupId()).isPresent()){
+            throw new RuntimeException("이미 해당 스터디 그룹에 지원했습니다.");
+        }
+
+        // 새로운 멤버-그룹-지원 엔티티 생성
+        MemberStudyGroupApply apply = MemberStudyGroupApply.builder()
+                .member(member)
+                .studyGroup(studyGroup)
+                .message(createApplyRequest.getMessage())
+                .status("PENDING")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        // Save
+        return memberStudyGroupApplyRepository.save(apply);
+
+    }
+
 
 //    @Override
 //    public StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails) {
@@ -128,17 +158,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 //        return List.of();
 //    }
 
-//    @Override
-//    public void applyForStudyGroup(AdmissionRequest admissionRequest) {
-//        // Handle the application process
-//        MemberStudyGroupApply apply = new MemberStudyGroupApply();
-//        apply.setMemberId(admissionRequest.getMemberId());
-//        apply.setStudyGroupId(admissionRequest.getStudyGroupId());
-//        apply.setMessage(admissionRequest.getMessage());
-//        apply.setStatus("PENDING"); // Initial status
-//        apply.setCreatedAt(new java.util.Date());
-//        memberStudyGroupApplyRepository.save(apply);
-//    }
+
 //
 //    @Override
 //    public void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest) {
