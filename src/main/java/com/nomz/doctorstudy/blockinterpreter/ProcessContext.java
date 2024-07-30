@@ -9,6 +9,7 @@ public class ProcessContext {
     private final List<Map<String, Object>> variableMapStack;
     private final Map<String, Integer> labelMap;
     private final Map<String, String> transcriptionMap;
+    public ProcessMode mode;
 
     public ProcessContext(List<Block> commandBlocks, Map<String, Object> varMap, Map<String, Integer> labelMap) {
         this.commandBlocks = commandBlocks;
