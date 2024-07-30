@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,9 +27,14 @@ public class SwaggerConfig {
                 .in(SecurityScheme.In.HEADER).name("Authorization");
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
+        Server server = new Server();
+        server.setUrl("https://api.dr-study.kro.kr");
+
         return new OpenAPI()
                 .info(info)
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
-                .security(List.of(securityRequirement));
+                .security(List.of(securityRequirement))
+                .servers(List.of(server))
+                ;
     }
 }
