@@ -1,24 +1,20 @@
 package com.nomz.doctorstudy.ai;
 
 import com.nomz.doctorstudy.ai.request.AudioRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.util.Map;
+import java.io.File;
 
 @Slf4j
-@RestController
-@RequestMapping("/api")
-public class AudioController {
+@Service
+@RequiredArgsConstructor
+public class AiServiceImpl implements AiService{
 
-    @PostMapping("/receive-audio")
-    public ResponseEntity<String> receiveAudio(
-            @RequestPart("json_data") AudioRequest audioData,
-            @RequestPart("file") MultipartFile file) {
-
+    @Override
+    public void processAudioData(AudioRequest audioData, MultipartFile file) {
         // Log or print the JSON data received
         String transcribedText = audioData.getTranscribed_text();
         String fixedText = audioData.getFixed_text();
@@ -31,23 +27,16 @@ public class AudioController {
         // Log or print the file details
         log.info("Received file: {} with size {} bytes", file.getOriginalFilename(), file.getSize());
 
-        // 파일 저장 or 실행
+        // 파일 저장
         try {
-            // Ex: 파일 저장
-
             // 루트 디렉토리
             String rootPath = System.getProperty("user.dir");
-
             // Define the file path relative to the root directory
             String filePath = rootPath + "/uploaded_files/" + file.getOriginalFilename();
-
-            file.transferTo(new java.io.File(filePath));
+            file.transferTo(new File(filePath));
             log.info("File saved to: {}", filePath);
         } catch (Exception e) {
             log.error("Error saving file: {}", e.getMessage());
         }
-
-        // Return a success message
-        return ResponseEntity.ok("JSON and file received successfully");
     }
 }
