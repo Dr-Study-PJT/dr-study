@@ -20,10 +20,9 @@ services:
       - custom_network
 
   redis:
-    image: redis:alpine
+    image: redis
     # command: redis-server --port 6379
     container_name: redis_container
-    hostname: localhost
     ports:
       - "6379:6379"
     networks:
@@ -48,8 +47,8 @@ services:
       SPRING_MAIL_USERNAME: '${SPRING_MAIL_USERNAME}'
       SPRING_MAIL_PASSWORD: '${SPRING_MAIL_PASSWORD}'
       JWT_SECRET: '${JWT_SECRET}'
-      JWT_ACCESS-TOKEN-EXPIRATION: '${JWT_ACCESS-TOKEN-EXPIRATION}'
-      JWT_REFRESH-TOKEN-EXPIRATION: '${JWT_REFRESH-TOKEN-EXPIRATION}'
+#      JWT_ACCESS-TOKEN-EXPIRATION: '${JWT_ACCESS-TOKEN-EXPIRATION}'
+#      JWT_REFRESH-TOKEN-EXPIRATION: '${JWT_REFRESH-TOKEN-EXPIRATION}'
 
 
     networks:

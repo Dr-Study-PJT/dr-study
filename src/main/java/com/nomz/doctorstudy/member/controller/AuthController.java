@@ -304,14 +304,4 @@ public class AuthController {
         );
     }
 
-
-
-
-
-
-//	private void setValueWithTTL(String key, String value, Duration ttl) {
-//		ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
-//		valueOps.set(key, value);
-//		redisTemplate.expire(key, ttl);
-//	}
 }

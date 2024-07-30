@@ -26,8 +26,8 @@ import java.util.Date;
 @Slf4j
 public class JwtUtil {
     private String secretKey;
-    private Integer accessExpirationTime;
-    private Integer refreshExpirationTime;
+//    private Integer accessExpirationTime;
+//    private Integer refreshExpirationTime;
     private RedisTemplate<String, String> redisTemplate;
 
     public final String TOKEN_PREFIX = "Bearer ";
@@ -39,14 +39,14 @@ public class JwtUtil {
     @Autowired
 	public JwtUtil(
             @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.access-token-expiration}") Integer accessTokenExpiration,
-            @Value("${jwt.refresh-token-expiration}") Integer refreshTokenExpiration,
+//            @Value("${jwt.access-token-expiration}") Integer accessTokenExpiration,
+//            @Value("${jwt.refresh-token-expiration}") Integer refreshTokenExpiration,
             RedisTemplate<String, String> redisTemplate
             )
     {
 		this.secretKey = secretKey;
-        this.accessExpirationTime = accessTokenExpiration;
-        this.refreshExpirationTime = refreshTokenExpiration;
+//        this.accessExpirationTime = accessTokenExpiration;
+//        this.refreshExpirationTime = refreshTokenExpiration;
         this.redisTemplate = redisTemplate;
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -65,7 +65,7 @@ public class JwtUtil {
                 .build();
     }
 
-    public String getToken(Integer expirationTime, String userId) {
+    public String getToken(Long expirationTime, String userId) {
 //        Date expires = getTokenExpiration(expirationTime);
 
 //        return JWT.create()
@@ -100,11 +100,11 @@ public class JwtUtil {
     }
 
     public String getRefreshToken(String userId){
-        return getToken(refreshExpirationTime, userId);
+        return getToken(2 * 60 * 60 * 1000L, userId);
     }
 
     public String getAccessToken(String userId){
-        return getToken(accessExpirationTime, userId);
+        return getToken(2 * 7 * 24 * 60 * 60 * 1000L, userId);
     }
 
 //    public static String getToken(Instant expires, String userId) {
@@ -116,7 +116,7 @@ public class JwtUtil {
 //                .sign(Algorithm.HMAC512(secretKey.getBytes()));
 //    }
 
-    public Date getTokenExpiration(int expirationTime) {
+    public Date getTokenExpiration(Long expirationTime) {
     		Date now = new Date();
     		return new Date(now.getTime() + expirationTime);
     }
