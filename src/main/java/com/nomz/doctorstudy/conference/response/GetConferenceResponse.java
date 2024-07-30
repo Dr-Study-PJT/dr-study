@@ -1,11 +1,12 @@
 package com.nomz.doctorstudy.conference.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class GetConferenceResponse {
     @Schema(description = "조회된 컨퍼런스 아이디", example = "1")
     private final Long id;

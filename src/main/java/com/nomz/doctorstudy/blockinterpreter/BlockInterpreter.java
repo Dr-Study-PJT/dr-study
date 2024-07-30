@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
-
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.*;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
@@ -28,7 +27,7 @@ public class BlockInterpreter {
         processContextManager.add(processContextId, blocks, varMap, labelMap);
     }
 
-    //@Async
+    @Async
     public void interpret(Long processContextId) {
         log.debug("processContextId={} started to run", processContextId);
 
