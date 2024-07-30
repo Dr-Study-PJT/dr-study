@@ -26,8 +26,6 @@ import java.util.Date;
 @Slf4j
 public class JwtUtil {
     private String secretKey;
-//    private Integer accessExpirationTime;
-//    private Integer refreshExpirationTime;
     private RedisTemplate<String, String> redisTemplate;
 
     public final String TOKEN_PREFIX = "Bearer ";

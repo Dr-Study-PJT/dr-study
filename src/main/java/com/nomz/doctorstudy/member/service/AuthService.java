@@ -30,9 +30,6 @@ public class AuthService {
     private final RedisUtil redisUtil;
     private final RedisTemplate<String, String> redisTemplate;
 
-//    @Value("${jwt.refresh-token-expiration}")
-//    private Integer refreshTokenExpiration;
-
     public String getAccessToken(String email, String refreshToken){
 
         if(!jwtUtil.correctRefreshToken(email, refreshToken)){
