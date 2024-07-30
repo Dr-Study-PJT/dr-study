@@ -1,5 +1,6 @@
-package com.nomz.doctorstudy.blockinterpreter.blockexecutors;
+package com.nomz.doctorstudy.blockinterpreter.blockexecutors.value;
 
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class CompareIntBlockExecutor extends BlockExecutor{
+public class CompareIntBlockExecutor extends BlockExecutor {
     public CompareIntBlockExecutor() {
         super(Boolean.class, List.of(Integer.class, String.class, Integer.class));
     }

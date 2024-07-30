@@ -1,6 +1,8 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.*;
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.command.*;
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.value.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
