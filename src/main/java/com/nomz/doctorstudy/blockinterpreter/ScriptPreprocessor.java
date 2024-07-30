@@ -24,8 +24,18 @@ public class ScriptPreprocessor {
         StringBuilder sb = new StringBuilder();
 
         boolean single_quotation_mark = false;
+        boolean escape_flag = false;
         for (char ch : script.toCharArray()) {
+            if (escape_flag) {
+                sb.append(ch);
+                escape_flag = false;
+                continue;
+            }
             switch (ch) {
+                case '\\':
+                    escape_flag = true;
+                    break;
+
                 case '\'':
                     single_quotation_mark ^= true;
                     sb.append(ch);
