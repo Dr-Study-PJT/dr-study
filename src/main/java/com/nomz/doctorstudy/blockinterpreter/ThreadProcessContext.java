@@ -2,12 +2,18 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ThreadProcessContext {
     private final ThreadLocal<ProcessContext> processContext = new ThreadLocal<>();
 
     public void init(ProcessContext processContext) {
         this.processContext.set(processContext);
+    }
+
+    public void close() {
+        processContext.remove();
     }
 
     public int getLabelIndex(String name) {
@@ -58,7 +64,11 @@ public class ThreadProcessContext {
         return processContext.get().currentBlock();
     }
 
-    public void close() {
-        processContext.remove();
+    public void addProgrammeInfo(String info) {
+        processContext.get().addProgrammeInfo(info);
+    }
+
+    public List<String> getProgramme() {
+        return processContext.get().getProgramme();
     }
 }
