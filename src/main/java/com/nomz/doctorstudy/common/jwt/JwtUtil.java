@@ -26,8 +26,8 @@ import java.util.Date;
 @Slf4j
 public class JwtUtil {
     private String secretKey;
-    private Integer accessExpirationTime;
-    private Integer refreshExpirationTime;
+//    private Integer accessExpirationTime;
+//    private Integer refreshExpirationTime;
     private RedisTemplate<String, String> redisTemplate;
 
     public final String TOKEN_PREFIX = "Bearer ";
@@ -39,24 +39,15 @@ public class JwtUtil {
     @Autowired
 	public JwtUtil(
             @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.access-token-expiration}") Integer accessTokenExpiration,
-            @Value("${jwt.refresh-token-expiration}") Integer refreshTokenExpiration,
             RedisTemplate<String, String> redisTemplate
             )
     {
 		this.secretKey = secretKey;
-        this.accessExpirationTime = accessTokenExpiration;
-        this.refreshExpirationTime = refreshTokenExpiration;
         this.redisTemplate = redisTemplate;
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
-
-//	public void setExpirationTime() {
-//    		//JwtTokenUtil.expirationTime = Integer.parseInt(expirationTime);
-//    		JwtTokenUtil.expirationTime = expirationTime;
-//	}
 
 	public JWTVerifier getVerifier() {
         return JWT
@@ -65,29 +56,11 @@ public class JwtUtil {
                 .build();
     }
 
-    public String getToken(Integer expirationTime, String userId) {
-//        Date expires = getTokenExpiration(expirationTime);
-
-//        return JWT.create()
-//                .withSubject(userId)
-//                .withExpiresAt(expires)
-//                .withIssuer(ISSUER)
-//                .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-//                .sign(Algorithm.HMAC512(secretKey.getBytes()));
-
-
+    public String getToken(Long expirationTime, String userId) {
         Claims claims = Jwts.claims();
-
         claims.put("email", userId);
-//        claims.put("email", member.getUserId());
-//        claims.put("role", member.getRole());
-
         ZonedDateTime now = ZonedDateTime.now();
-//        ZonedDateTime tokenValidity = now.plusSeconds(expirationTime);
-//        Date expires = JwtUtil.getTokenExpiration(expirationTime);
         Date expires = getTokenExpiration(expirationTime);
-
-
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -100,23 +73,14 @@ public class JwtUtil {
     }
 
     public String getRefreshToken(String userId){
-        return getToken(refreshExpirationTime, userId);
+        return getToken(2 * 60 * 60 * 1000L, userId);
     }
 
     public String getAccessToken(String userId){
-        return getToken(accessExpirationTime, userId);
+        return getToken(2 * 7 * 24 * 60 * 60 * 1000L, userId);
     }
 
-//    public static String getToken(Instant expires, String userId) {
-//        return JWT.create()
-//                .withSubject(userId)
-//                .withExpiresAt(Date.from(expires))
-//                .withIssuer(ISSUER)
-//                .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-//                .sign(Algorithm.HMAC512(secretKey.getBytes()));
-//    }
-
-    public Date getTokenExpiration(int expirationTime) {
+    public Date getTokenExpiration(Long expirationTime) {
     		Date now = new Date();
     		return new Date(now.getTime() + expirationTime);
     }
@@ -186,48 +150,6 @@ public class JwtUtil {
 
         return clientRefreshToken.equals(serverRefreshToken);
     }
-
-
-
-
-
-
-
-//    /**
-//     * Access Token 생성
-//     * @param member
-//     * @return Access Token String
-//     */
-//    public String createAccessToken(Member member) {
-//        return createToken(member, accessExpirationTime);
-//    }
-//
-//
-//
-//    /**
-//     * JWT 생성
-//     * @param member
-//     * @param expireTime
-//     * @return JWT String
-//     */
-//    private String createToken(Member member, long expireTime) {
-//        Claims claims = Jwts.claims();
-//
-//        claims.put("memberId", member.getId());
-//        claims.put("email", member.getUserId());
-////        claims.put("role", member.getRole());
-//
-//        ZonedDateTime now = ZonedDateTime.now();
-//        ZonedDateTime tokenValidity = now.plusSeconds(expireTime);
-//
-//
-//        return Jwts.builder()
-//                .setClaims(claims)
-//                .setIssuedAt(Date.from(now.toInstant()))
-//                .setExpiration(Date.from(tokenValidity.toInstant()))
-//                .signWith(key, SignatureAlgorithm.HS512)
-//                .compact();
-//    }
 
 
     /**
