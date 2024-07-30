@@ -10,17 +10,17 @@ import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
+import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.response.CreateConferenceResponse;
 import com.nomz.doctorstudy.conference.response.GetConferenceListResponse;
 import com.nomz.doctorstudy.conference.response.GetConferenceResponse;
+import com.nomz.doctorstudy.conference.response.JoinConferenceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -30,6 +30,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceQueryRepository conferenceQueryRepository;
     private final BlockInterpreter blockInterpreter;
     private final ScriptPreprocessor scriptPreprocessor;
+    private final ConferenceRoomManager conferenceRoomManager;
 
     @Override
     public CreateConferenceResponse createConference(CreateConferenceRequest request) {
@@ -75,15 +76,20 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     public void startConference(Long conferenceId) {
-        // Todo: 리포지토리에서 스크립트 불러오기
-        String script = "asdf";
-        Map<String, Object> varMap = new HashMap<>();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
-        blockInterpreter.init(conferenceId, preprocessedScript, varMap);
+        conferenceRoomManager.createRoom(conferenceId);
     }
 
     @Override
     public void finishConference(Long conferenceId) {
-        blockInterpreter.close(conferenceId);
+        conferenceRoomManager.removeRoom(conferenceId);
+    }
+
+    @Override
+    public JoinConferenceResponse joinConference(Long conferenceId, JoinConferenceRequest request) {
+        List<String> peerIds = conferenceRoomManager.getPeerList(conferenceId);
+        conferenceRoomManager.addPeer(conferenceId, request.getPeerId());
+        return JoinConferenceResponse.builder()
+                .existingPeerIds(peerIds)
+                .build();
     }
 }
