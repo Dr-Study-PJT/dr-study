@@ -46,8 +46,8 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                         />
                     </div>
                 </section>
-                <div className="DIVIDER-VERTICAL h-100% border-[1px] border-dr-indigo-100"></div>
-                <section className="RIGHT-CONTENT w-full h-full">
+                <div className="DIVIDER-VERTICAL h-auto border-[1px] border-dr-indigo-100"></div>
+                <section className="RIGHT-CONTENT w-full h-auto">
                     <div className="w-full h-full flex flex-col justify-between gap-6 items-center">
                         <InputWithLabelAndError
                             id="member_capacity"

@@ -10,8 +10,10 @@ export interface ButtonProps
     color?: 'gray' | 'dark' | 'coral' | 'white' | 'red';
     size?: Size;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
+
     disabled?: boolean;
     outlined?: boolean;
     rounded?: boolean;
     fullWidth?: boolean;
+    classNameStyles?: string;
 }

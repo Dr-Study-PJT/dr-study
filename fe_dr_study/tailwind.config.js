@@ -74,8 +74,8 @@ module.exports = {
             },
             animation: {
                 popIn: 'popIn 0.1s ease-out',
-                fadeIn: 'fadeIn 1s ease-out',
-                fadeIn: 'fadeOut 1s ease-out',
+                fadeIn: 'fadeIn 0.15s ease-out',
+                fadeIn: 'fadeOut 0.15s ease-out',
             },
         },
     },

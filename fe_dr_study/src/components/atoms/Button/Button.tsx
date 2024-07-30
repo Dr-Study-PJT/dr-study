@@ -12,6 +12,7 @@ export const Button = ({
     outlined = false,
     rounded = false,
     fullWidth = false,
+    classNameStyles,
 }: ButtonProps) => {
     const className = buttonStyles({
         color: outlined ? `outlined_${color}` : 'dark',
@@ -33,7 +34,7 @@ export const Button = ({
         <button
             type={type}
             style={{ fontSize: fontSize[size] }}
-            className={className}
+            className={`${className} ${classNameStyles}`}
             onClick={onClick}
             disabled={disabled}
         >
