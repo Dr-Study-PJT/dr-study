@@ -240,4 +240,24 @@ class BlockInterpreterTest {
         blockInterpreter.init(id, preprocessedScript1, Map.of());
         blockInterpreter.interpret(id);
     }
+    
+    @Test
+    @DisplayName("Programme 모드 테스트")
+    public void programmeTest() {
+        String script1 =
+                """
+                phase(1) {
+                    loop(2) {
+                        let_avatar_speak('hi I\\'m A');
+                        loop(3) {
+                            let_participant_speak(1, 3);
+                        }
+                    }
+                }
+                """;
+        long id = getProcessContextIdSequence();
+        String preprocessedScript1 = scriptPreprocessor.preprocessScript(script1);
+        blockInterpreter.init(id, preprocessedScript1, Map.of());
+        blockInterpreter.interpret(id);
+    }
 }
