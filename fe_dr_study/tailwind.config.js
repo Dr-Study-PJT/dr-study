@@ -15,6 +15,7 @@ module.exports = {
                 pretendard: ['var(--font-pretendard)'],
             },
             colors: {
+                'dr-coral-50': '#B1D0FF',
                 'dr-coral-100': '#4B9CFF',
                 'dr-coral-200': '#2E8CFF',
                 'dr-coral-300': '#0E78F9',
