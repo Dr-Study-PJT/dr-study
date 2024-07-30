@@ -1,9 +1,9 @@
 package com.nomz.doctorstudy.studygroup.service;
 
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
-import com.nomz.doctorstudy.studygroup.entity.Tag;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class StudyGroupServiceImplTest {
     @Autowired
@@ -22,6 +20,7 @@ class StudyGroupServiceImplTest {
 
     @Test
     @DisplayName("그룹 태그로 검색")
+    @Transactional
     void searchGroupByTag() {
         // given
         studyGroupService.createStudyGroup(new CreateStudyGroupRequest(
@@ -50,4 +49,18 @@ class StudyGroupServiceImplTest {
         // then
         Assertions.assertThat(searchResult.size()).isEqualTo(1);
     }
+    
+    /*
+        신청 테스트
+        given
+        1. 멤버 만들기
+        2. 스터디그룹 만들기
+
+        when
+        3. 가입 신청 호출하기
+
+        then
+        4. 신청 조회하기 했을 때 조회 되는지 확인
+     */
 }
+

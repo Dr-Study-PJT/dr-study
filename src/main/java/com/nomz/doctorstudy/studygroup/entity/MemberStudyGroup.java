@@ -1,21 +1,19 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@IdClass(MemberStudyGroupId.class)
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberStudyGroup {
-    @Id
-    private Long memberId;
-
-    @Id
-    private Long studyGroupId;
+    @EmbeddedId
+    private MemberStudyGroupId memberStudyGroupId;
 
     @Column(nullable = false, length = 32)
     private String role;
@@ -27,5 +25,4 @@ public class MemberStudyGroup {
     private boolean isLeaved;
 
     private LocalDateTime leavedDate;
-
 }
