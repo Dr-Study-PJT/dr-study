@@ -3,16 +3,17 @@ package com.nomz.doctorstudy.studygroup.service;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
-import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
-import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
+import com.nomz.doctorstudy.studygroup.Status;
 import com.nomz.doctorstudy.studygroup.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
-import com.nomz.doctorstudy.studygroup.entity.StudyGroupTag;
-import com.nomz.doctorstudy.studygroup.entity.Tag;
+import com.nomz.doctorstudy.studygroup.entity.*;
 import com.nomz.doctorstudy.studygroup.repository.*;
 import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
+import com.nomz.doctorstudy.studygroup.request.CreateReplyRequest;
 import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import com.nomz.doctorstudy.studygroup.response.CreateReplyResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final StudyGroupTagRepository studyGroupTagRepository;
     private final MemberRepository memberRepository;
     private final MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
+    private final MemberStudyGroupRepository memberStudyGroupRepository;
 
     @Override
     public StudyGroup createStudyGroup(CreateStudyGroupRequest request) {
@@ -63,11 +65,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
 
-//    @Override
-//    public StudyGroup getStudyGroup(Long groupId) {
-//        return studyGroupRepository.findById(groupId)
-//                .orElseThrow(() ->  new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
-//    }
 
     @Override
     public StudyGroup getStudyGroup(Long groupId) {
@@ -103,13 +100,44 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .member(member)
                 .studyGroup(studyGroup)
                 .message(createApplyRequest.getMessage())
-                .status("PENDING")
+                .status(Status.WAITING)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         // Save
         return memberStudyGroupApplyRepository.save(apply);
 
+    }
+
+    @Override
+    public MemberStudyGroupApply getApply(Long userId, Long groupId) {
+        return memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(userId, groupId)
+                .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
+    }
+
+    @Override
+    @Transactional
+    public MemberStudyGroupApply processReply(CreateReplyRequest createReplyRequest) {
+         // 1. 지원 정보 가져오기
+        MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(createReplyRequest.getApplyId())
+                .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
+
+        // 2. status 변경
+        apply.setStatus(createReplyRequest.getStatus());
+        memberStudyGroupApplyRepository.save(apply);
+
+        // 3. 사용자 - 스터디 그룹 테이블에 데이터 저장
+        if(createReplyRequest.getStatus() == Status.APPROVED){
+            MemberStudyGroupId memberStudyGroupIdObject  = new MemberStudyGroupId(apply.getMember().getId(), apply.getStudyGroup().getId());
+            MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
+                    .memberStudyGroupId(memberStudyGroupIdObject)
+                    .role("MEMBER") // 기본 역할 설정
+                    .joinDate(LocalDateTime.now())
+                    .isLeaved(false)
+                    .build();
+            memberStudyGroupRepository.save(memberStudyGroup);
+        }
+        return apply;
     }
 
 
@@ -128,7 +156,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 //
 //        return studyGroupRepository.save(existingStudyGroup);
 //    }
-//
 
 //
 //    @Override

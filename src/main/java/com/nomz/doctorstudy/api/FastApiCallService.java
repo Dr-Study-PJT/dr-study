@@ -3,12 +3,7 @@ package com.nomz.doctorstudy.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Base64;
 
 @Service
 public class FastApiCallService implements ExternalApiCallService{
