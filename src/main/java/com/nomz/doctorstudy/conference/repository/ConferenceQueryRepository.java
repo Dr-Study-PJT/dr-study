@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.conference.repository;
 
-import com.nomz.doctorstudy.conference.Conference;
+import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,7 +8,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import static com.nomz.doctorstudy.conference.QConference.conference;
+import static com.nomz.doctorstudy.conference.entity.QConference.conference;
 
 import java.util.List;
 

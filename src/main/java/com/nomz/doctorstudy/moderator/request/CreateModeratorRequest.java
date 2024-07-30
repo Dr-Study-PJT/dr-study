@@ -17,6 +17,4 @@ public class CreateModeratorRequest {
     private final String script;
 
     private final String description;
-
-    private final String gptKey;
 }

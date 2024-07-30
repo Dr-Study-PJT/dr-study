@@ -1,12 +1,15 @@
 package com.nomz.doctorstudy.conference;
 
+import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
+import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
+import com.nomz.doctorstudy.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -19,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +60,7 @@ public class ConferenceController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateConferenceResponse>> createConference(
+            Authentication authentication,
             @Valid @RequestBody CreateConferenceRequest request
     ) {
         log.info("CreateConferenceRequest = {}", request);
@@ -222,11 +228,57 @@ public class ConferenceController {
             @PathVariable Long conferenceId,
             @RequestBody JoinConferenceRequest request
             ) {
-        JoinConferenceResponse response = conferenceService.joinConference(conferenceId, request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        Member requester = memberDetails.getUser();
+
+        JoinConferenceResponse response = conferenceService.joinConference(requester, conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 참여에 성공했습니다.",
+                        response
+                )
+        );
+    }
+
+    
+    @PostMapping("/{conferenceId}/invite")
+    @Operation(summary = "Conference 멤버 초대", description = "Conference에 멤버를 초대합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 멤버 초대 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "인증에 실패했습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "권한이 없습니다. Conference 방장만이 초대할 수 있습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "Conference 참여 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "존재하지 않는 Conference입니다.",
+                        "errors": { }
+                    }
+                    """))),
+    })
+    public ResponseEntity<SuccessResponse<InviteMemberConferenceResponse>> inviteMemberConference(
+            @PathVariable Long conferenceId,
+            @RequestBody InviteMemberConferenceRequest request
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        Member requester = memberDetails.getUser();
+
+        InviteMemberConferenceResponse response = conferenceService.inviteMemberConference(requester, conferenceId, request);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 멤버 초대에 성공했습니다.",
                         response
                 )
         );

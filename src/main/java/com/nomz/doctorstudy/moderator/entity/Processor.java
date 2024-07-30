@@ -36,7 +36,4 @@ public class Processor {
 
     @Column(length = 128, nullable = false)
     private String description;
-
-    @Column(nullable = false)
-    private String gptApiKey;
 }
