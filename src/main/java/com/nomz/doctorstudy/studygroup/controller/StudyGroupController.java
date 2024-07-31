@@ -4,11 +4,7 @@ import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
-//import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateReplyRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
-import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import com.nomz.doctorstudy.studygroup.request.*;
 import com.nomz.doctorstudy.studygroup.response.*;
 import com.nomz.doctorstudy.studygroup.service.StudyGroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,11 +58,10 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateStudyGroupResponse>> createStudyGroup(
-            @Valid @RequestBody CreateStudyGroupRequest request
+            @Valid @RequestBody CreateStudyGroupRequest request, Authentication authentication
     ) {
         log.info("CreateStudyGroupRequest = {}", request);
-
-        StudyGroup studyGroup = studyGroupService.createStudyGroup(request);
+        StudyGroup studyGroup = studyGroupService.createStudyGroup(request, authentication);
         CreateStudyGroupResponse response = new CreateStudyGroupResponse(studyGroup.getId());
         log.info("CreateStudyGroupResponse = {}", response);
         return ResponseEntity.ok(
@@ -148,6 +144,34 @@ public class StudyGroupController {
                 )
         );
     }
+    @PatchMapping("/{groupId}")
+    @Operation(summary = "Study Group 업데이트", description = "Study Group 정보를 업데이트합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 업데이트 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 업데이트 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 업데이트에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse> updateStudyGroup(
+            @PathVariable Long groupId,
+            @RequestBody UpdateStudyGroupRequest request) {
+        log.info("UpdateStudyGroupRequest = {}", request);
+
+        // 서비스 호출
+        StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request);
+
+        // service 요청
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Apply 생성에 성공했습니다.",
+                        ""
+                )
+        );
+    }
 
     @PostMapping("/admission/apply")
     @Operation(summary = "Study Group 지원")
@@ -161,12 +185,14 @@ public class StudyGroupController {
                     }
                     """)))
     })
+
+    // 사용자는 스터디 그룹에 지원 할 수 있다.
+    // 이미 지원 신청 한 사용자는 중복 지원이 불가능 하다 -> 구현 o
+    // 이미 그룹에 속해 있는 사람들은 자신의 그룹에 지원이 불가능 하다 -> 구현 X
     public ResponseEntity<SuccessResponse<CreateApplyResponse>> createApply
-            (@Valid @RequestBody CreateApplyRequest request) {
-
+            (@Valid @RequestBody CreateApplyRequest request, Authentication authentication) {
         log.info("CreateApplyRequest = {}", request);
-
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request);
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request, authentication);
         CreateApplyResponse response = new CreateApplyResponse(memberStudyGroupApply.getId());
         log.info("CreateApplyResponse = {}", response);
         return ResponseEntity.ok(
@@ -233,31 +259,6 @@ public class StudyGroupController {
 }
 
 
-
-
-//    @Operation(summary = "Update an existing study group")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Study group updated successfully"),
-//            @ApiResponse(responseCode = "404", description = "Study group not found")
-//    })
-//    @PatchMapping("/{groupId}")
-//    public ResponseEntity<StudyGroup> updateStudyGroup(
-//            @PathVariable Long groupId,
-//            @RequestBody StudyGroup studyGroupDetails) {
-//        StudyGroup existingGroup = studyGroupRepository.findById(groupId)
-//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
-//        existingGroup.setName(studyGroupDetails.getName());
-//        existingGroup.setImageId(studyGroupDetails.getImageId());
-//        existingGroup.setCaptainId(studyGroupDetails.getCaptainId());
-//        existingGroup.setDescription(studyGroupDetails.getDescription());
-//        existingGroup.setGoal(studyGroupDetails.getGoal());
-//        existingGroup.setDueDate(studyGroupDetails.getDueDate());
-//        existingGroup.setMemberCapacity(studyGroupDetails.getMemberCapacity());
-//        studyGroupRepository.save(existingGroup);
-//        return ResponseEntity.ok(existingGroup);
-//    }
-//
-
 //
 ////    @Operation(summary = "Get all study groups")
 ////    @ApiResponse(responseCode = "200", description = "List of all study groups")
@@ -280,8 +281,6 @@ public class StudyGroupController {
 //        return ResponseEntity.noContent().build();
 //    }
 //
-
 //
-
 //
 //}

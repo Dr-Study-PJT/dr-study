@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,8 +24,9 @@ public class StudyGroup {
     @Column(nullable = false)
     private Long imageId;
 
-    //@Column(nullable = false)
-    //private Member captainId;
+    @ManyToOne
+    @JoinColumn(name= "captain", nullable = false)
+    private Member captain;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -41,12 +43,11 @@ public class StudyGroup {
     private LocalDateTime dueDate;
 
     @Column(nullable = false)
-    private int memberCount;
+    private Integer memberCount;
 
-    private int memberCapacity;
+    private Integer memberCapacity;
 
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<StudyGroupTag> studyGroupTags;
-
 }
 
