@@ -15,5 +15,4 @@ public class NeedAuthController {
                 new SuccessResponse<>("로그인 필요한 api", null)
         );
     }
-
 }
