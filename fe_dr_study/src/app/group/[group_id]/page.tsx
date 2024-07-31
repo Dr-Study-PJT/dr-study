@@ -1,9 +1,15 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import StudyGroupTemplate from '@/components/template/study-group/StudyGroupTemplate';
 import Image from 'next/image';
-import { Button, Label, Paragraph } from '@/components/atoms';
+import { Button, Label } from '@/components/atoms';
+import { ArticleData, ConferenceData, GroupData } from './_types';
+import {
+    dummyArticlesData,
+    dummyConferenceListData,
+    dummyGroupData,
+} from './dummy';
+import { fetchGroupData } from './_api';
 
 function trimString(input: string, length: number) {
     const maxLength = length;
@@ -13,68 +19,27 @@ function trimString(input: string, length: number) {
     return input.slice(0, maxLength) + '...';
 }
 
-const dummyData = {
-    title: '삼성전자 면접 스터디',
-    created_at: '2024.07.22',
-    due_date: '2024.08.16',
-    description:
-        '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
-};
+const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
+    const groupId = params.group_id;
 
-const articlesDummyData = [
-    {
-        title: '스터디 운영방식에 대한 논의 필요성',
-        content:
-            '지금까지 1달 가량 스터디를 진행해왔는데, 스터디 방식에 대한 고민과 개선의 필요성을 느껴',
-        tags: ['스터디 운영', '공지사항'],
-        timeAgo: '3시간 전',
-        member: {
-            id: 1,
-            nickname: '조성우',
-        },
-    },
-    {
-        title: '스터디 운영방식에 대한 논의 필요성',
-        content:
-            '지금까지 1달 가량 스터디를 진행해왔는데, 스터디 방식에 대한 고민과 개선의 필요성을 느껴',
-        tags: ['스터디 운영', '공지사항'],
-        timeAgo: '3시간 전',
-        member: {
-            id: 1,
-            nickname: '조성우',
-        },
-    },
-    {
-        title: '스터디 운영방식에 대한 논의 필요성',
-        content:
-            '지금까지 1달 가량 스터디를 진행해왔는데, 스터디 방식에 대한 고민과 개선의 필요성을 느껴',
-        tags: ['스터디 운영', '공지사항'],
-        timeAgo: '3시간 전',
-        member: {
-            id: 1,
-            nickname: '조성우',
-        },
-    },
-];
+    const [group, setGroup] = useState<GroupData | null>(null);
+    const [articles, setArticles] = useState<ArticleData[]>([]);
+    const [conferences, setConferences] = useState<ConferenceData[]>([]);
+    const [activeTab, setActiveTab] = useState<
+        '게시판' | '채팅방' | '스터디 이력'
+    >('게시판');
 
-const GroupPage = () => {
-    const conferenceListDummyData = [
-        {
-            title: '일일 정기 면접 스터디',
-            isEnd: true,
-            startTime: '10:00',
-            targetEndTime: '11:30',
-            participantData: [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }],
-        },
-        {
-            title: '주간 토론면접 대비 스터디',
-            isEnd: false,
-            startTime: '14:30',
-            targetEndTime: null,
-            participantData: [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }],
-        },
-    ];
-    const [activeTab, setActiveTab] = useState('게시판');
+    useEffect(() => {
+        if (groupId) {
+            if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+                setGroup(dummyGroupData);
+                setArticles(dummyArticlesData);
+                setConferences(dummyConferenceListData);
+            } else {
+                const response = fetchGroupData(groupId);
+            }
+        }
+    }, [groupId]);
 
     const renderContent = () => {
         switch (activeTab) {
@@ -82,7 +47,7 @@ const GroupPage = () => {
                 return (
                     <div className="bg-dr-dark-200 p-6 rounded-xl border-[1px] border-dr-gray-500 animate-fadeIn">
                         <div className="flex flex-col justify-start gap-4">
-                            {articlesDummyData.map((article, index) => (
+                            {articles.map((article, index) => (
                                 <div
                                     key={index}
                                     className="p-4 bg-dr-dark-100 hover:bg-dr-dark-300 transition-colors duration-200 border-[1px] border-dr-gray-500 rounded-lg flex flex-col gap-4 cursor-pointer"
@@ -133,18 +98,15 @@ const GroupPage = () => {
                     </div>
                 );
             case '채팅방':
-                return <div></div>; // Placeholder for Chatroom content
+                return <div></div>;
             case '스터디 이력':
-                return <div></div>; // Placeholder for Study History content
+                return <div></div>;
             default:
                 return null;
         }
     };
     return (
-        <div
-            // className={pageStyles}
-            className="w-full bg-dr-indigo-200 flex flex-col"
-        >
+        <div className="w-full bg-dr-indigo-200 flex flex-col">
             <div className="SECTION-THUMBNAIL w-full h-max flex flex-row bg-dr-dark-300 rounded-l-xl">
                 <div className="LEFT-IMAGE-THUMBNAIL w-1/3 h-[50vh] rounded-l-xl bg-red-200 relative overflow-hidden">
                     <Image
@@ -158,11 +120,11 @@ const GroupPage = () => {
                         <div className="TOP-INFO-GROUP w-full h-1/2  flex flex-row justify-between">
                             <div className="TL-LIST-INFO-BASE flex flex-col justify-between gap-3  w-max h-full max-w-[33%]">
                                 <div className="INFO-TITLE text-dr-header-3 text-dr-white font-bold w-">
-                                    {dummyData.title}
+                                    {group?.title}
                                 </div>
-                                <div className="INFO-DUE-DATE text-dr-body-4 text-dr-gray-100">{`${dummyData.created_at} ~ ${dummyData.due_date} | 1일째 진행 중`}</div>
+                                <div className="INFO-DUE-DATE text-dr-body-4 text-dr-gray-100">{`${group?.created_at} ~ ${group?.due_date} | 1일째 진행 중`}</div>
                                 <div className="INFO-DESCRIPTION text-dr-body-4 text-dr-gray-100">
-                                    {dummyData.description}
+                                    {group?.description}
                                 </div>
                             </div>
                             <div className="TR-BUTTON">
@@ -223,7 +185,7 @@ const GroupPage = () => {
                         </div>
                     </div>
                     <div className="LIST-CONFERENCE-TODAY space-y-4">
-                        {conferenceListDummyData.map((conference, index) => (
+                        {conferences.map((conference, index) => (
                             <div
                                 key={index}
                                 className={`CONFERENCE-CARD h-max min-h-32 p-6 rounded-lg shadow-md cursor-pointer transition-colors duration-200 ${
@@ -255,33 +217,20 @@ const GroupPage = () => {
                                             6 / 8
                                         </div>
                                         <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
-                                            {conference.participantData
+                                            {conference.participants
                                                 .slice(0, 3)
                                                 .map((participant, i) => (
                                                     <li key={i}>
                                                         <div className="relative overflow-hidden w-10 h-10 rounded-xl">
                                                             <Image
                                                                 alt="avatar"
-                                                                src={`/images/member_thumbnail_${i + 1}.png`}
+                                                                src={`/images/member_thumbnail_${participant.id}.png`}
                                                                 // src={`https://example-s3-url.com/avatars/${participant.id}`}
                                                                 layout="fill"
                                                             />
                                                         </div>
                                                     </li>
                                                 ))}
-                                            {conference.participantData.length >
-                                                3 && (
-                                                <li key="extra">
-                                                    <button className="relative overflow-hidden w-10 h-10 rounded-xl border-[1px] border-dr-coral-100 bg-dr-coral-200 hover:bg-dr-coral-100 transition-colors duration-200 flex items-center justify-center">
-                                                        <span className="text-white font-semibold text-dr-body-3">
-                                                            +
-                                                            {conference
-                                                                .participantData
-                                                                .length - 3}
-                                                        </span>
-                                                    </button>
-                                                </li>
-                                            )}
                                         </ul>
                                     </div>
                                     {!conference.isEnd && (
@@ -362,4 +311,4 @@ const GroupPage = () => {
     );
 };
 
-export default GroupPage;
+export default GroupDetailPage;
