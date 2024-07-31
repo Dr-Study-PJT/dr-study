@@ -25,14 +25,14 @@ const Room = ({
     const [videoEnabled, setVideoEnabled] = useState(true); // 비디오 상태
     const [audioEnabled, setAudioEnabled] = useState(true); // 오디오 상태
 
-    console.log(myPeer, 'myPeer');
-    console.log(myPeerId, 'myPeerId');
-    console.log(localStream, 'localStream');
-    console.log(initialPeers, 'initialPeers');
-    console.log(connectedPeers, 'connectedPeers');
-    Object.keys(connectedPeers).forEach((peer) => {
-        console.log(peer, 'eachPeer');
-    });
+    // console.log(myPeer, 'myPeer');
+    // console.log(myPeerId, 'myPeerId');
+    // console.log(localStream, 'localStream');
+    // console.log(initialPeers, 'initialPeers');
+    // console.log(connectedPeers, 'connectedPeers');
+    // Object.keys(connectedPeers).forEach((peer) => {
+    //     console.log(peer, 'eachPeer');
+    // });
 
     // 초기 스트림 peer 설정
     useEffect(() => {
