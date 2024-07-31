@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.studygroup.controller;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.*;
@@ -253,6 +254,53 @@ public class StudyGroupController {
                 new SuccessResponse<>(
                         "성공적으로 그룹 가입 신청을 처리하였습니다.",
                         response
+                )
+        );
+    }
+
+    @GetMapping("/{studyGroupId}/members")
+    @Operation(summary = "Study Group 가입자 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 가입자 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 가입자 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 가입자 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@PathVariable Long studyGroupId) {
+        List<MemberStudyGroup> memberList = studyGroupService.getMemberListByStudyGroupId(studyGroupId);
+        List<GetMemberListResponse> responseList = memberList.stream().map(GetMemberListResponse::of).toList();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        responseList
+                )
+        );
+    }
+
+    @GetMapping("/waiters")
+    @Operation(summary = "Study Group 장이 자신의 그룹에 승인 대기중인 멤버를 조회 ", description = "Study Group 승인 대기자를 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 승인 대기자 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 승인 대기자 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 승인 대기자 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getWaiterList(Authentication authentication) {
+        List<MemberStudyGroupApply> waiterList = studyGroupService.getWaiterList(authentication);
+        List<GetWaiterListResponse> responseList = waiterList.stream().map(GetWaiterListResponse::of).toList();
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        responseList
                 )
         );
     }
