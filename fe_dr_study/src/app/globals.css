@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #2e2e2e #1a1a1a;
+}
+
+/* Chrome, Edge, and Safari */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px; /* height도 같게 설정하여 동그랗게 보이도록 */
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #2e2e2e;
+    border-radius: 9999px; /* 최대 반경으로 둥글게 설정 */
+    border: 3px solid #1a1a1a; /* 트랙과 같은 색상으로 배경과 어우러지도록 */
+}
+
 :root {
     --max-width: 1100px;
     --border-radius: 12px;

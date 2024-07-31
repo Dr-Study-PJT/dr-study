@@ -76,6 +76,6 @@ const isTokenValid = (token: string): boolean => {
         return decodedPayload.exp > currentTime;
     } catch (e) {
         console.error('Error while checking token:', e);
-        return false; // 토큰이 유효하지 않거나 파싱 중 오류 시
+        return false;
     }
 };
