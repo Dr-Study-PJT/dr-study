@@ -77,7 +77,7 @@ public class AuthController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<Map<String,String>>> login(@RequestBody MemberLoginPostReq loginInfo, HttpServletResponse response) {
+    public ResponseEntity<SuccessResponse<?>> login(@RequestBody MemberLoginPostReq loginInfo, HttpServletResponse response) {
 
         // 유효한 패스워드가 맞는 경우, 로그인 성공으로 응답.(액세스 토큰을 포함하여 응답값 전달)
         Map<String, String> tokens = authService.login(loginInfo);
@@ -102,8 +102,10 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
 
+        Member loginMember = memberService.getUserByEmail(loginInfo.getEmail());
+
         return ResponseEntity.ok(
-                new SuccessResponse<>("로그인 되었습니다.", tokens)
+                new SuccessResponse<>("로그인 되었습니다.", loginMember)
         );
     }
 
@@ -166,7 +168,7 @@ public class AuthController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<String>> getAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<SuccessResponse<?>> getAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletRequest request, HttpServletResponse response){
 
         String email = refreshTokenRequest.getEmail();
         String refreshToken = request.getHeader(jwtUtil.HEADER_STRING);
