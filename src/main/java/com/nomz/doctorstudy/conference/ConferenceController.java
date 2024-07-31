@@ -11,7 +11,6 @@ import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
 import com.nomz.doctorstudy.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -61,12 +60,11 @@ public class ConferenceController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateConferenceResponse>> createConference(
-            Authentication authentication,
+            //Authentication authentication,
             @Valid @RequestBody CreateConferenceRequest request
     ) {
-        log.info("CreateConferenceRequest = {}", request);
-        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
-        CreateConferenceResponse response = conferenceService.createConference(member, request);
+        //Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
+        CreateConferenceResponse response = conferenceService.createConference(/*member, */request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -230,9 +228,9 @@ public class ConferenceController {
             Authentication authentication,
             @RequestBody JoinConferenceRequest request
             ) {
-        Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
+        //Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
 
-        JoinConferenceResponse response = conferenceService.joinConference(requester, conferenceId, request);
+        JoinConferenceResponse response = conferenceService.joinConference(/*requester, */conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -279,6 +277,21 @@ public class ConferenceController {
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 멤버 초대에 성공했습니다.",
+                        response
+                )
+        );
+    }
+
+
+    @GetMapping("/{conferenceId}/participants")
+    public ResponseEntity<SuccessResponse<List<GetConferenceParticipantListResponseItem>>> getConferenceParticipantsList(
+            @PathVariable Long conferenceId
+    ) {
+        List<GetConferenceParticipantListResponseItem> response = conferenceService.getConferenceParticipantList(conferenceId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 참여자 조회에 성공했습니다.",
                         response
                 )
         );

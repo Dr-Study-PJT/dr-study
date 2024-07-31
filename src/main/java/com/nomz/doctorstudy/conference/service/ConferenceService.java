@@ -10,17 +10,19 @@ import com.nomz.doctorstudy.member.entity.Member;
 import java.util.List;
 
 public interface ConferenceService {
-    CreateConferenceResponse createConference(Member requester, CreateConferenceRequest request);
+    CreateConferenceResponse createConference(/*Member requester, */CreateConferenceRequest request);
 
     GetConferenceResponse getConference(Long conferenceId);
 
     List<GetConferenceListResponse> getConferenceList(GetConferenceListRequest request);
 
+    List<GetConferenceParticipantListResponseItem> getConferenceParticipantList(Long conferenceId);
+
     void startConference(Long conferenceId);
 
     void finishConference(Long conferenceId);
 
-    JoinConferenceResponse joinConference(Member requester, Long conferenceId, JoinConferenceRequest request);
+    JoinConferenceResponse joinConference(/*Member requester, */Long conferenceId, JoinConferenceRequest request);
 
-    InviteMemberConferenceResponse inviteMemberConference(Member member, Long conferenceId, InviteMemberConferenceRequest request);
+    InviteMemberConferenceResponse inviteMemberConference(Member requester, Long conferenceId, InviteMemberConferenceRequest request);
 }

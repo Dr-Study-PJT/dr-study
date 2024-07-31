@@ -42,10 +42,10 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
 
     @Override
-    public CreateConferenceResponse createConference(Member requester, CreateConferenceRequest request) {
+    public CreateConferenceResponse createConference(/*Member requester, */CreateConferenceRequest request) {
         Conference conference = Conference.builder()
                 .title(request.getTitle())
-                .host(requester)
+                //.host(requester)
                 .memberCapacity(request.getMemberCapacity())
                 .build();
         conferenceRepository.save(conference);
@@ -85,9 +85,22 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
+    public List<GetConferenceParticipantListResponseItem> getConferenceParticipantList(Long conferenceId) {
+        List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByConferenceId(conferenceId);
+
+        return conferenceMembers.stream()
+                .map(ConferenceMember::getMember)
+                .map(GetConferenceParticipantListResponseItem::of)
+                .toList();
+    }
+
+    @Override
     public void startConference(Long conferenceId) {
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
         if (joinLockMap.containsKey(conferenceId)) {
-            throw new BusinessException(CommonErrorCode.BAD_REQUEST);
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
         }
         joinLockMap.put(conferenceId, new ReentrantLock());
         roomService.createRoom(conferenceId);
@@ -95,15 +108,25 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     public void finishConference(Long conferenceId) {
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
+        if (!joinLockMap.containsKey(conferenceId)) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_IN_PROCESS);
+        }
+
         roomService.removeRoom(conferenceId);
         joinLockMap.remove(conferenceId);
     }
 
     @Override
     @Transactional
-    public JoinConferenceResponse joinConference(Member requester, Long conferenceId, JoinConferenceRequest request) {
-        List<String> peerIds = null;
+    public JoinConferenceResponse joinConference(/*Member requester, */Long conferenceId, JoinConferenceRequest request) {
+        List<String> peerIds;
         ReentrantLock lock = joinLockMap.get(conferenceId);
+        if (lock == null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_IN_PROCESS);
+        }
 
         lock.lock();
         try {
@@ -116,12 +139,14 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        /*
         ConferenceMember conferenceMember = ConferenceMember.builder()
                 .id(new ConferenceMember.ConferenceMemberId(conferenceId, requester.getId()))
                 .conference(conference)
-                .member(requester)
+                //.member(requester)
                 .build();
         conferenceMemberRepository.save(conferenceMember);
+        */
 
         return JoinConferenceResponse.builder()
                 .existingPeerIds(peerIds)
