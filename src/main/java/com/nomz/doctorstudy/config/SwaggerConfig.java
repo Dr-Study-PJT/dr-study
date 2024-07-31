@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import jakarta.servlet.ServletContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public OpenAPI openAPI() {
+    public OpenAPI openAPI(ServletContext servletContext) {
         Info info = new Info()
                 .version("v1.0")
                 .title("Doctor Study API")
@@ -27,8 +28,8 @@ public class SwaggerConfig {
                 .in(SecurityScheme.In.HEADER).name("Authorization");
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
-        Server server = new Server();
-        server.setUrl("https://api.dr-study.kro.kr");
+        Server server = new Server()
+                .url(servletContext.getContextPath());
 
         return new OpenAPI()
                 .info(info)
