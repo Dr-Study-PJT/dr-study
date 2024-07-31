@@ -2,7 +2,7 @@ import { POST } from '@/utils/axios/routeModule';
 import { IMemberData } from '@/interfaces/members';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 
-import { authAPI as API } from './axiosInstanceManager';
+import { authAPI as API } from '../../utils/axios/axiosInstanceManager';
 import { logout } from '@/app/auth/_api/login';
 
 export const fetchAccessToken = async (

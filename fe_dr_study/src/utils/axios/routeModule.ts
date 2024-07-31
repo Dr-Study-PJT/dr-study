@@ -1,147 +1,147 @@
 import { AxiosInstance } from 'axios';
 
-import { handleAuthentication } from './jwt';
+import { handleAuthentication } from '../../app/api/jwt';
 
 export async function GET(
-  endPoint: string,
-  {
-    params = '',
-    isAuth = false,
-    revalidateTime = 10,
-  }: {
-    params?: string | null | undefined;
-    isAuth?: boolean;
-    revalidateTime?: number;
-  } = {
-    params: '',
-    isAuth: false,
-    revalidateTime: 10,
-  },
+    endPoint: string,
+    {
+        params = '',
+        isAuth = false,
+        revalidateTime = 10,
+    }: {
+        params?: string | null | undefined;
+        isAuth?: boolean;
+        revalidateTime?: number;
+    } = {
+        params: '',
+        isAuth: false,
+        revalidateTime: 10,
+    },
 ): Promise<any> {
-  const headers = await handleAuthentication(isAuth);
+    const headers = await handleAuthentication(isAuth);
 
-  const reqPath = params
-    ? `${process.env.NEXT_PUBLIC_HOST}/${endPoint}/${params}`
-    : `${process.env.NEXT_PUBLIC_HOST}/${endPoint}`;
+    const reqPath = params
+        ? `${process.env.NEXT_PUBLIC_HOST}/${endPoint}/${params}`
+        : `${process.env.NEXT_PUBLIC_HOST}/${endPoint}`;
 
-  const res = await fetch(reqPath, {
-    method: 'GET',
-    headers,
-    next: { revalidate: revalidateTime },
-  });
-  const data = await res.json();
-  return data;
+    const res = await fetch(reqPath, {
+        method: 'GET',
+        headers,
+        next: { revalidate: revalidateTime },
+    });
+    const data = await res.json();
+    return data;
 }
 
 interface IPostReqProps {
-  API: AxiosInstance;
-  endPoint: string;
-  isAuth?: boolean;
-  body?: any;
+    API: AxiosInstance;
+    endPoint: string;
+    isAuth?: boolean;
+    body?: any;
 }
 
 interface IUpdateReqProps extends IPostReqProps {
-  params?: string | null | undefined;
-  query?: string;
+    params?: string | null | undefined;
+    query?: string;
 }
 
 export function POST({
-  API,
-  endPoint,
-  isAuth = false,
-  body,
+    API,
+    endPoint,
+    isAuth = false,
+    body,
 }: IPostReqProps): Promise<any> {
-  return REQUEST({ API, method: 'POST', endPoint, isAuth, body });
+    return REQUEST({ API, method: 'POST', endPoint, isAuth, body });
 }
 
 export function PUT({
-  API,
-  endPoint,
-  isAuth = false,
-  body,
-  params,
-  query,
-}: IUpdateReqProps): Promise<any> {
-  return REQUEST({
     API,
-    method: 'PUT',
     endPoint,
+    isAuth = false,
     body,
-    isAuth,
     params,
     query,
-  });
+}: IUpdateReqProps): Promise<any> {
+    return REQUEST({
+        API,
+        method: 'PUT',
+        endPoint,
+        body,
+        isAuth,
+        params,
+        query,
+    });
 }
 
 export function PATCH({
-  API,
-  endPoint,
-  isAuth = false,
-  body,
-  params,
+    API,
+    endPoint,
+    isAuth = false,
+    body,
+    params,
 }: IUpdateReqProps): Promise<any> {
-  return REQUEST({ API, method: 'PATCH', endPoint, body, isAuth, params });
+    return REQUEST({ API, method: 'PATCH', endPoint, body, isAuth, params });
 }
 
 export function DELETE({
-  API,
-  endPoint,
-  isAuth = false,
-  body,
-  params,
-}: IUpdateReqProps): Promise<any> {
-  return REQUEST({
     API,
-    method: 'DELETE',
     endPoint,
+    isAuth = false,
     body,
-    isAuth,
     params,
-  });
+}: IUpdateReqProps): Promise<any> {
+    return REQUEST({
+        API,
+        method: 'DELETE',
+        endPoint,
+        body,
+        isAuth,
+        params,
+    });
 }
 
 // POST, PUT, PATCH의 평가부 추상화
 async function REQUEST({
-  API,
-  method,
-  endPoint,
-  isAuth,
-  body,
-  params,
-  query,
-}: {
-  API: AxiosInstance;
-  method: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  endPoint: string;
-  isAuth: boolean;
-  body?: any;
-  params?: string | undefined | null;
-  query?: string;
-}): Promise<any> {
-  const headers = await handleAuthentication(isAuth);
-
-  const cleanedEndPoint = endPoint.endsWith('/')
-    ? endPoint.slice(0, -1)
-    : endPoint;
-  let url = params ? `${cleanedEndPoint}/${params}` : cleanedEndPoint;
-
-  if (query) {
-    url = `${url}?${query}`;
-  }
-
-  const response = await API.request({
-    url,
+    API,
     method,
-    data: body,
-    headers,
-  });
+    endPoint,
+    isAuth,
+    body,
+    params,
+    query,
+}: {
+    API: AxiosInstance;
+    method: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    endPoint: string;
+    isAuth: boolean;
+    body?: any;
+    params?: string | undefined | null;
+    query?: string;
+}): Promise<any> {
+    const headers = await handleAuthentication(isAuth);
 
-  const acceptedStatus = [200, 201, 204];
+    const cleanedEndPoint = endPoint.endsWith('/')
+        ? endPoint.slice(0, -1)
+        : endPoint;
+    let url = params ? `${cleanedEndPoint}/${params}` : cleanedEndPoint;
 
-  if (!acceptedStatus.includes(response.status)) {
-    return `${response.status}: 오류좀보소`;
-  }
+    if (query) {
+        url = `${url}?${query}`;
+    }
 
-  console.log(`IN ${method}`, response);
-  return response;
+    const response = await API.request({
+        url,
+        method,
+        data: body,
+        headers,
+    });
+
+    const acceptedStatus = [200, 201, 204];
+
+    if (!acceptedStatus.includes(response.status)) {
+        return `${response.status}: 오류좀보소`;
+    }
+
+    console.log(`IN ${method}`, response);
+    return response;
 }
