@@ -27,7 +27,10 @@ API.interceptors.response.use(
 );
 
 export const login = async (memerData: ILogInReq) => {
-    const response = await API.post('/login', memerData);
+    const response = await API.post(
+        'http://192.168.100.77:8080/v1/auth/login',
+        memerData,
+    );
     setSessionStorageItem('memberData', {
         id: response.data.id,
         email: response.data.email,

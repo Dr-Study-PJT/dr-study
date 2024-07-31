@@ -9,6 +9,7 @@ import { store } from '@/store';
 
 import Navigation from '@/components/organisms/Navigation';
 import SideBar from '@/components/organisms/SideBar';
+import worker from '@/mocks/browser';
 
 const pretendard = localFont({
     src: [
