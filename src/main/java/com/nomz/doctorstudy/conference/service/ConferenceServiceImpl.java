@@ -1,7 +1,5 @@
 package com.nomz.doctorstudy.conference.service;
 
-import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
-import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -18,6 +16,7 @@ import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
 import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.response.*;
+import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceRepository conferenceRepository;
     private final ConferenceQueryRepository conferenceQueryRepository;
-    private final BlockInterpreter blockInterpreter;
-    private final ScriptPreprocessor scriptPreprocessor;
-    private final ConferenceRoomManager conferenceRoomManager;
+    private final RoomService roomService;
     private final ConferenceMemberRepository conferenceMemberRepository;
     private final ConferenceMemberInviteRepository conferenceMemberInviteRepository;
     private final MemberRepository memberRepository;
@@ -89,12 +86,12 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     public void startConference(Long conferenceId) {
         joinLockMap.put(conferenceId, new ReentrantLock());
-        conferenceRoomManager.createRoom(conferenceId);
+        roomService.createRoom(conferenceId);
     }
 
     @Override
     public void finishConference(Long conferenceId) {
-        conferenceRoomManager.removeRoom(conferenceId);
+        roomService.removeRoom(conferenceId);
         joinLockMap.remove(conferenceId);
     }
 
@@ -106,8 +103,8 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         lock.lock();
         try {
-            peerIds = conferenceRoomManager.getPeerList(conferenceId);
-            conferenceRoomManager.addPeer(conferenceId, request.getPeerId());
+            peerIds = roomService.getPeerList(conferenceId);
+            roomService.addPeer(conferenceId, request.getPeerId());
         } finally {
             lock.unlock();
         }

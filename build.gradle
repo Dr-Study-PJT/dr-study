@@ -29,10 +29,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
-	//STOMP 관련 프론트 라이브러리
-	implementation 'org.webjars:sockjs-client:1.1.2'
-	implementation 'org.webjars:stomp-websocket:2.3.3-1'
-
 	compileOnly 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'

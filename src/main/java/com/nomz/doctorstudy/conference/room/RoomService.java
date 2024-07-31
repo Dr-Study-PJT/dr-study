@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.conference.service;
+package com.nomz.doctorstudy.conference.room;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ConferenceRoomManager {
+public class RoomService {
     private final Map<Long, Set<String>> conferencePeerMap = new ConcurrentHashMap<>();
 
     public void createRoom(Long conferenceId) {
