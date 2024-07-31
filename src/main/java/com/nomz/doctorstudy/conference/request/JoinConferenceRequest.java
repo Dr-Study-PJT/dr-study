@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class JoinConferenceRequest {
-    private final String peerId;
-
-    @JsonCreator
-    public JoinConferenceRequest(@JsonProperty String peerId) {
-        this.peerId = peerId;
-    }
+    private String peerId;
 }

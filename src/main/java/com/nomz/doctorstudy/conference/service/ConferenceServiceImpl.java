@@ -42,9 +42,10 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
 
     @Override
-    public CreateConferenceResponse createConference(CreateConferenceRequest request) {
+    public CreateConferenceResponse createConference(Member requester, CreateConferenceRequest request) {
         Conference conference = Conference.builder()
                 .title(request.getTitle())
+                .host(requester)
                 .memberCapacity(request.getMemberCapacity())
                 .build();
         conferenceRepository.save(conference);
@@ -85,6 +86,9 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     public void startConference(Long conferenceId) {
+        if (joinLockMap.containsKey(conferenceId)) {
+            throw new BusinessException(CommonErrorCode.BAD_REQUEST);
+        }
         joinLockMap.put(conferenceId, new ReentrantLock());
         roomService.createRoom(conferenceId);
     }
