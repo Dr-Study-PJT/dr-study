@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: application-secret.yml
   application:
     name: doctor-study
   datasource:
