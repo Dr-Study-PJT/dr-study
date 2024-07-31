@@ -1,5 +1,4 @@
 package com.nomz.doctorstudy.studygroup.service;
-
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
@@ -36,8 +35,8 @@ public interface StudyGroupService {
     //스터디 그룹장이 속한 스터디 그룹의 대기자 리스트 찾기
     List<MemberStudyGroupApply> getWaiterList(Authentication authentication);
 
-    // Delete a study group by its ID
-    // void deleteStudyGroup(Long groupId);
+    // ID로 Study group 탈퇴 (소프트 탈퇴)
+    StudyGroup deleteStudyGroup(Long groupId);
 
     // Respond to a study group application
     // void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest);

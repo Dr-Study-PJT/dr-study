@@ -41,7 +41,8 @@ public class StudyGroupQueryRepository {
         return queryBuilder.where(
                 likeName(filter.getName()),
                 equalMemberCapacity(filter.getMemberCapacity()),
-                likeTagName(filter.getTagName())
+                likeTagName(filter.getTagName()),
+                isNotDeleted()  // isDeleted 필터 추가
         )
                 .fetch();
 
@@ -74,5 +75,9 @@ public class StudyGroupQueryRepository {
         } else {
             return null;
         }
+    }
+
+    private BooleanExpression isNotDeleted() {
+        return studyGroup.isDeleted.isFalse();
     }
 }
