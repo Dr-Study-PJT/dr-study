@@ -156,7 +156,7 @@ public class AuthController {
 
 
 
-    @GetMapping("/access-token")
+    @PostMapping("/access-token")
     @Operation(summary = "AccessToken 재발급 ", description = "RefreshToken을 통해서 AccessToken을 재발급 받습니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "AccessToken 재발급 성공", useReturnTypeSchema = true),
