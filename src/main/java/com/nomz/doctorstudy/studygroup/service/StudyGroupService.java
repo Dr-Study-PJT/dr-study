@@ -35,9 +35,11 @@ public interface StudyGroupService {
     //스터디 그룹장이 속한 스터디 그룹의 대기자 리스트 찾기
     List<MemberStudyGroupApply> getWaiterList(Authentication authentication);
 
-    // ID로 Study group 탈퇴 (소프트 탈퇴)
+    // ID로 Study group 삭제 (소프트 삭제)
     StudyGroup deleteStudyGroup(Long groupId);
 
+    // 유저가 그룹 ID로 Study group 탈퇴 (소프트 탈퇴)
+    MemberStudyGroup leaveStudyGroup(Long groupId, Authentication authentication);
     // Respond to a study group application
     // void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest);
 

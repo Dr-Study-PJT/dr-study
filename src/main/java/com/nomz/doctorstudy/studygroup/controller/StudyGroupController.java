@@ -326,11 +326,33 @@ public class StudyGroupController {
                 )
         );
     }
+    @PutMapping("/member/{groupId}")
+    @Operation(summary = "유저가 스터디 그룹을 탈퇴(소프트 탈퇴)", description = "유저가 스터디 그룹에서 탈퇴합니다.(소프트 탈퇴)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 탈퇴 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 탈퇴 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                        {
+                            "message": "Study Group 탈퇴에 실패했습니다.",
+                            "errors": {
+                            }
+                        }
+                        """)))
+    })
+    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable Long groupId, Authentication authentication) {
+        MemberStudyGroup memberStudyGroup = studyGroupService.leaveStudyGroup(groupId, authentication);
+        LeaveGroupResponse response = new LeaveGroupResponse(memberStudyGroup.getStudyGroup().getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 탈퇴에 성공했습니다.",
+                        response
+                )
+        );
+    }
 }
 
 
 
-//
+
 ////    @Operation(summary = "Get all study groups")
 ////    @ApiResponse(responseCode = "200", description = "List of all study groups")
 //    @GetMapping
@@ -339,12 +361,6 @@ public class StudyGroupController {
 //        return ResponseEntity.ok(groups);
 //    }
 //
-////    @Operation(summary = "Delete a study group by ID")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "200", description = "Study group deleted successfully"),
-////            @ApiResponse(responseCode = "404", description = "Study group not found")
-////    })
-
 //
 //
 //

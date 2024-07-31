@@ -197,7 +197,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Override
     public List<MemberStudyGroup> getMemberListByStudyGroupId(Long studyGroupId) {
-        return memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupId(studyGroupId);
+        return memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(studyGroupId);
     }
 
     @Override
@@ -231,6 +231,34 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
         studyGroup.setIsDeleted(Boolean.TRUE);
         return studyGroupRepository.save(studyGroup);
+    }
+
+    @Override
+    public MemberStudyGroup leaveStudyGroup(Long groupId, Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        MemberStudyGroupId memberStudyGroupId = new MemberStudyGroupId(member.getId(), groupId);
+
+        MemberStudyGroup memberStudyGroup = memberStudyGroupRepository.findById(memberStudyGroupId)
+                .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
+
+        memberStudyGroup.setIsLeaved(Boolean.TRUE);
+        memberStudyGroup.setLeavedDate(LocalDateTime.now());
+
+        StudyGroup studyGroup = studyGroupRepository.findById(memberStudyGroup.getStudyGroup().getId())
+                        .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
+        studyGroup.setMemberCount(studyGroup.getMemberCount() -1);
+
+        memberStudyGroupRepository.save(memberStudyGroup);
+        studyGroupRepository.save(studyGroup);
+        return memberStudyGroup;
     }
 
 //    @Override
