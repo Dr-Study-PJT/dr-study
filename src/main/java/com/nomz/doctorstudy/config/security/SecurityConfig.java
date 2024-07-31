@@ -30,8 +30,8 @@ public class SecurityConfig  {
     //여기에 있는 애만 프리패스
     private static final String[] AUTH_WHITELIST = {
             "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
-            "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/v1/auth/**",
-            "/v1/no-auth/**"
+            "/api-docs/**", "/swagger-ui.html", "/v1/auth/login", "/v1/auth/email-code", "/v1/auth/find-password", "/v1/auth/reset-password",
+            "/v1/no-auth/**", "/v1/email/**", "/v1/members/**"
     };
 
     @Bean
@@ -61,8 +61,8 @@ public class SecurityConfig  {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
-                        .anyRequest().permitAll()
-//                        .anyRequest().authenticated()
+//                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
         );
 
         return http.build();

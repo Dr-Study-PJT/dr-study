@@ -7,6 +7,7 @@ import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
+import com.nomz.doctorstudy.member.request.EmailSendRequest;
 import com.nomz.doctorstudy.member.request.MemberRegisterPostReq;
 import com.nomz.doctorstudy.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,8 +80,9 @@ public class MemberController {
                         "errors": {
                         }
                     }
-                    """))),    })
-    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+                    """))),
+    })
+    public ResponseEntity<?> getLoginMemberInfo(Authentication authentication) {
         /**
          * 요청 헤더 액세스 토큰이 포함된 경우에만 실행되는 인증 처리이후, 리턴되는 인증 정보 객체(authentication) 통해서 요청한 유저 식별.
          * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
@@ -93,6 +95,39 @@ public class MemberController {
         String email = memberDetails.getUsername();
 
         Member member = memberService.getUserByEmail(email);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>("조회되었습니다.", member)
+        );
+    }
+
+    @GetMapping("/{memberEmail}")
+    @Operation(summary = "Member 조회", description = "Member를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회되었습니다.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "조회에 실패했습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 입력입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "다시 로그인해주세요.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 유저입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+    })
+    public ResponseEntity<?> getMemberInfo(@PathVariable(name = "memberEmail") @Valid EmailSendRequest emailSendRequest) {
+        /**
+         * 요청 헤더 액세스 토큰이 포함된 경우에만 실행되는 인증 처리이후, 리턴되는 인증 정보 객체(authentication) 통해서 요청한 유저 식별.
+         * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
+         */
+
+//        log.info("memberEMAIL = {}", emailSendRequest.getEmail());
+        Member member = memberService.getUserByEmail(emailSendRequest.getEmail());
 
         return ResponseEntity.ok(
                 new SuccessResponse<>("조회되었습니다.", member)
