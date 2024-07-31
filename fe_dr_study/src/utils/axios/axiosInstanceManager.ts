@@ -22,3 +22,4 @@ export const GenerateAPI = (url?: string) => {
 export const authAPI = GenerateAPI('auth');
 export const memberAPI = GenerateAPI('members');
 export const moderatorAPI = GenerateAPI('moderators');
+export const groupAPI = GenerateAPI('groups');

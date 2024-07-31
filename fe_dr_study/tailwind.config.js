@@ -15,6 +15,7 @@ module.exports = {
                 pretendard: ['var(--font-pretendard)'],
             },
             colors: {
+                'dr-coral-50': '#B1D0FF',
                 'dr-coral-100': '#4B9CFF',
                 'dr-coral-200': '#2E8CFF',
                 'dr-coral-300': '#0E78F9',
@@ -73,8 +74,8 @@ module.exports = {
             },
             animation: {
                 popIn: 'popIn 0.1s ease-out',
-                fadeIn: 'fadeIn 1s ease-out',
-                fadeIn: 'fadeOut 1s ease-out',
+                fadeIn: 'fadeIn 0.15s ease-out',
+                fadeIn: 'fadeOut 0.15s ease-out',
             },
         },
     },
