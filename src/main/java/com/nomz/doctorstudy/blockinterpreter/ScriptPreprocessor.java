@@ -15,7 +15,7 @@ public class ScriptPreprocessor {
         script = preprocessPhase(script);
         script = preprocessLoop(script);
 
-        log.info("after preprocess:\n{}", formatScript(script));
+        log.debug("after preprocess:\n{}", formatScript(script));
 
         return script;
     }

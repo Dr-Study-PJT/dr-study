@@ -258,6 +258,6 @@ class BlockInterpreterTest {
         long id = getProcessContextIdSequence();
         String preprocessedScript1 = scriptPreprocessor.preprocessScript(script1);
         blockInterpreter.init(id, preprocessedScript1, Map.of());
-        blockInterpreter.interpret(id);
+        blockInterpreter.interpret(id, ProcessMode.PROGRAMME);
     }
 }
