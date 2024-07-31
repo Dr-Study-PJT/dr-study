@@ -1,10 +1,11 @@
 package com.nomz.doctorstudy.conference.request;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class InviteMemberConferenceRequest {
-    private final Long inviteeId;
+    private Long inviteeId;
 }

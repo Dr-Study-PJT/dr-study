@@ -11,6 +11,7 @@ import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
 import com.nomz.doctorstudy.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -64,8 +65,8 @@ public class ConferenceController {
             @Valid @RequestBody CreateConferenceRequest request
     ) {
         log.info("CreateConferenceRequest = {}", request);
-
-        CreateConferenceResponse response = conferenceService.createConference(request);
+        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
+        CreateConferenceResponse response = conferenceService.createConference(member, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -225,12 +226,11 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<JoinConferenceResponse>> joinConference(
-            @PathVariable Long conferenceId,
+            @PathVariable("conferenceId") Long conferenceId,
+            Authentication authentication,
             @RequestBody JoinConferenceRequest request
             ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        Member requester = memberDetails.getUser();
+        Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
 
         JoinConferenceResponse response = conferenceService.joinConference(requester, conferenceId, request);
 
