@@ -1,6 +1,7 @@
-package com.nomz.doctorstudy.blockinterpreter.blockexecutors;
+package com.nomz.doctorstudy.blockinterpreter.blockexecutors.command;
 
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

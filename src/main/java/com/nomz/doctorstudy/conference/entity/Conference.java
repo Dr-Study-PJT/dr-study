@@ -1,5 +1,6 @@
-package com.nomz.doctorstudy.conference;
+package com.nomz.doctorstudy.conference.entity;
 
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +17,13 @@ public class Conference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @ManyToOne
+    @JoinColumn(name = "member_id",nullable = false)
+    private Member host;
+
+    @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     private Integer memberCapacity;
 }

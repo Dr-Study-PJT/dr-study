@@ -19,7 +19,7 @@ public class BlockFactory {
 
         final String method = stmt.substring(0, bracketStartIdx);
         final String argsStr = stmt.substring(bracketStartIdx + 1, bracketEndIdx);
-        log.info("parsed: method={}, args={}", method, argsStr);
+        log.debug("parsed: method={}, args={}", method, argsStr);
 
         List<Block> argBlocks = new ArrayList<>();
         List<String> args = argsTokenizer(argsStr);

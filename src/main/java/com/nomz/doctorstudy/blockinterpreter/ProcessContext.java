@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
+import lombok.Getter;
+
 import java.util.*;
 
 public class ProcessContext {
@@ -9,7 +11,9 @@ public class ProcessContext {
     private final List<Map<String, Object>> variableMapStack;
     private final Map<String, Integer> labelMap;
     private final Map<String, String> transcriptionMap;
-    public ProcessMode mode;
+
+    @Getter
+    private final List<String> programme;
 
     public ProcessContext(List<Block> commandBlocks, Map<String, Object> varMap, Map<String, Integer> labelMap) {
         this.commandBlocks = commandBlocks;
@@ -19,6 +23,7 @@ public class ProcessContext {
         this.variableMapStack.add(new HashMap<>(varMap)); // TODO: deepCopy 필요 여부 확인하기
         this.labelMap = new HashMap<>(labelMap);
         this.transcriptionMap = new LinkedHashMap<>();
+        this.programme = new ArrayList<>();
     }
 
     public void increaseScopeDepth() {
@@ -71,5 +76,9 @@ public class ProcessContext {
 
     public Block currentBlock() {
         return commandBlocks.get(cursor);
+    }
+
+    public void addProgrammeInfo(String info) {
+        programme.add(info);
     }
 }

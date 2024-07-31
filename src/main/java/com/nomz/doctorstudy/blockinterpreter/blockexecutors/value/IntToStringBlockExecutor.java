@@ -1,5 +1,6 @@
-package com.nomz.doctorstudy.blockinterpreter.blockexecutors;
+package com.nomz.doctorstudy.blockinterpreter.blockexecutors.value;
 
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

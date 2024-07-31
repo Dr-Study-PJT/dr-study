@@ -1,13 +1,11 @@
 package com.nomz.doctorstudy.conference.service;
 
-import com.nomz.doctorstudy.conference.Conference;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
+import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
-import com.nomz.doctorstudy.conference.response.CreateConferenceResponse;
-import com.nomz.doctorstudy.conference.response.GetConferenceListResponse;
-import com.nomz.doctorstudy.conference.response.GetConferenceResponse;
-import com.nomz.doctorstudy.conference.response.JoinConferenceResponse;
+import com.nomz.doctorstudy.conference.response.*;
+import com.nomz.doctorstudy.member.entity.Member;
 
 import java.util.List;
 
@@ -22,5 +20,7 @@ public interface ConferenceService {
 
     void finishConference(Long conferenceId);
 
-    JoinConferenceResponse joinConference(Long conferenceId, JoinConferenceRequest request);
+    JoinConferenceResponse joinConference(Member requester, Long conferenceId, JoinConferenceRequest request);
+
+    InviteMemberConferenceResponse inviteMemberConference(Member member, Long conferenceId, InviteMemberConferenceRequest request);
 }

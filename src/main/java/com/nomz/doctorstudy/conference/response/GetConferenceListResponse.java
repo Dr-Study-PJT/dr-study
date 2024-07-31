@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.conference.response;
 
-import com.nomz.doctorstudy.conference.Conference;
+import com.nomz.doctorstudy.conference.entity.Conference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

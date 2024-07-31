@@ -2,8 +2,6 @@ package com.nomz.doctorstudy.moderator.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.member.entity.Member;
-import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
-import com.nomz.doctorstudy.member.exception.member.MemberException;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Avatar;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -82,7 +79,6 @@ public class ModeratorServiceImpl implements ModeratorService {
                 .prePrompt(request.getPrePrompt())
                 .script(request.getScript())
                 .description(request.getDescription())
-                .gptApiKey(request.getGptKey())
                 .build();
 
         processorRepository.save(processor);

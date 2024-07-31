@@ -29,6 +29,11 @@ public class BlockInterpreter {
 
     @Async
     public void interpret(Long processContextId) {
+        interpret(processContextId, ProcessMode.RUN);
+    }
+
+    @Async
+    public void interpret(Long processContextId, ProcessMode processMode) {
         log.debug("processContextId={} started to run", processContextId);
 
         ProcessContext processContext = processContextManager.getProcessContext(processContextId);
@@ -49,6 +54,7 @@ public class BlockInterpreter {
                     String value = stack.peek().block.getMethod();
 
                     Object result = null;
+
                     if (value.startsWith("'") && value.endsWith("'")) {
                         result = value.substring(1, value.length() - 1);
                     }
@@ -62,8 +68,7 @@ public class BlockInterpreter {
                         result = false;
                     }
                     if (result == null) {
-                        // TODO: 비지니스 예외코드로 변경 : Unexpected Token
-                        throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+                        throw new BusinessException(BlockErrorCode.UNEXPECTED_TOKEN);
                     }
 
                     stack.pop();
@@ -78,7 +83,8 @@ public class BlockInterpreter {
                     continue;
                 }
 
-                Object result = blockExecutor.execute(stack.peek().args);
+                Object result = blockExecutor.execute(stack.peek().args, processMode);
+
                 if (result == null || stack.size() == 1) {
                     if (!(result == null && stack.size() == 1)) {
                         // TODO: 비지니스 예외코드로 변경
@@ -92,6 +98,10 @@ public class BlockInterpreter {
             }
 
             threadProcessContext.increaseCursor();
+        }
+
+        if (processMode == ProcessMode.PROGRAMME) {
+            log.info("Block Script Programme\n{}", threadProcessContext.getProgramme());
         }
 
         threadProcessContext.close();
