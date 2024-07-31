@@ -27,9 +27,14 @@ public class CreateStudyGroupRequest {
     private final Long imageId;
 
     @NotNull(message = "스터디 설명은 반드시 포함되어야 합니다.")
-    @Size(min = 1, max =256, message = "스터디 그룹 이름은 1자 이상 256자 이하여야 합니다.")
+    @Size(min = 1, max =256, message = "스터디 설명은 1자 이상 256자 이하여야 합니다.")
     @Schema(description = "스터디 그룹 설명", example = "정보처리기사 합격을 위한 스터디입니다.")
     private final String description;
+
+//    @NotNull(message = "스터디 목표는 반드시 포함되어야 합니다.")
+//    @Size(min = 1, max =64, message = "스터디 목표는 1자 이상 64자 이하여야 합니다.")
+//    @Schema(description = "스터디 그룹 목표", example = "정보처리기사 전원 합격")
+//    private final String goal;
 
     @Schema(description = "스터디 종료 날짜", example = "2024-07-22")
     private final LocalDateTime dueDate;
