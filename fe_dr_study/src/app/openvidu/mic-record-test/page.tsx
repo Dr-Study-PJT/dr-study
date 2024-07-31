@@ -66,7 +66,7 @@
 //                 const formData = new FormData();
 //                 formData.append('audio', e.data, 'recording.webm');
 
-//                 fetch('http://localhost:6080/audio', {
+//                 fetch('https://www.dr-study.kro.kr/audio', {
 //                     method: 'POST',
 //                     body: formData,
 //                 })
@@ -78,7 +78,7 @@
 //                         console.error('Error uploading audio:', error);
 //                     });
 //                 // }
-//                 // post('http://localhost:6080/audio',body:{data: e.data});
+//                 // post('https://www.dr-study.kro.kr/audio',body:{data: e.data});
 //             };
 //         }
 //     };

@@ -1,6 +1,6 @@
 'use client';
 
-import { Paragraph, Span } from '@/components/atoms';
+import { Button, Paragraph, Span } from '@/components/atoms';
 import Room from '@/components/organisms/Room/Room';
 import axios from 'axios';
 import Peer from 'peerjs';
@@ -37,6 +37,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const [isPeerIdsRequested, setIsPeerIdsRequested] = useState(false); // 다른 이용자 peerIds 요청
 
     const [isFlag, setIsFlag] = useState(0);
+
+    const [videoEnabled, setVideoEnabled] = useState(true); // 비디오 상태
+    const [audioEnabled, setAudioEnabled] = useState(true); // 오디오 상태
 
     const onClickStart = (e: React.MouseEvent<HTMLElement>) => {
         setIsFlag(1);
@@ -134,7 +137,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         console.log(peerId, 'join conference');
         try {
             const response = await axios.post(
-                `http://172.30.1.81:8080/v1/conferences/${conferenceId}/join`,
+                `https://www.dr-study.kro.kr/v1/conferences/${conferenceId}/join`,
                 {
                     peerId,
                 },
@@ -170,7 +173,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     // const startConference = async () => {
     //     try {
     //         const response = await axios.post(
-    //             `http://172.30.1.81:8080/v1/conferences/${conferenceId}/start`,
+    //             `https://www.dr-study.kro.kr/v1/conferences/${conferenceId}/start`,
     //         ); // API 요청
     //         console.log('컨퍼런스 시작 성공:', response);
     //     } catch (error) {
@@ -182,7 +185,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     // const viewConference = async () => {
     //     try {
     //         const response = await axios.get(
-    //             `http://172.30.1.81:8080/v1/conferences/${conferenceId}`,
+    //             `https://www.dr-study.kro.kr/v1/conferences/${conferenceId}`,
     //         );
     //         console.log('컨퍼런스 조회 성공:', response);
     //         const { data } = response.data; // 응답 데이터에서 data를 추출
@@ -201,7 +204,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     // const quitConference = async () => {
     //     try {
     //         const response = await axios.post(
-    //             `http://192.168.100.77:8080/v1/conferences/${conferenceId}/quit`,
+    //             `https://www.dr-study.kro.kr/v1/conferences/${conferenceId}/quit`,
     //             {
     //                 peerId: myPeerId,
     //             },
@@ -294,7 +297,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     //       );
 
     //       myCall?.on('stream', (stream) => {
-    //         setConnectedPeers(
+    //         setExistingPeers(
     //           (prevPeers) => (
     //             console.log(prevPeers, 'prevPeers-----------------------'),
     //             {
@@ -327,6 +330,49 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     //     console.log(existingPeers, 'existingPeers');
     // }, [existingPeers]);
 
+    // 통화 종료 기능
+    const disconnectCall = (peerId: string) => {
+        if (existingPeers[peerId]) {
+            // 연결된 사용자 스트림 종료
+            const peer = existingPeers[peerId];
+            peer.getTracks().forEach((track) => track.stop());
+
+            // 연결된 사용자 목록에서 제거
+            setExistingPeers((prevPeers) => {
+                const updatedPeers = { ...prevPeers };
+                delete updatedPeers[peerId];
+                return updatedPeers;
+            });
+        }
+    };
+
+    // 비디오 토글 핸들러
+    const toggleVideo = () => {
+        console.log('toggleVideo: 클릭', localStream.current?.getAudioTracks());
+        if (localStream) {
+            localStream.current?.getVideoTracks().forEach((track) => {
+                track.enabled = !track.enabled;
+            });
+            setVideoEnabled((prev) => !prev);
+        }
+    };
+
+    // 오디오 토글 핸들러
+    const toggleAudio = () => {
+        if (localStream) {
+            localStream.current?.getAudioTracks().forEach((track) => {
+                track.enabled = !track.enabled;
+            });
+            setAudioEnabled((prev) => !prev);
+        }
+    };
+
+    const handleDisconnectAll = () => {
+        // 모든 연결된 사용자와의 통화 종료
+        Object.keys(existingPeers).forEach((peerId) => disconnectCall(peerId));
+        // (home 같은 경로로 주소 이동)
+    };
+
     return (
         <div>
             <h1>컨퍼런스 페이지 제목 : {roomInfo.title}</h1>
@@ -343,6 +389,16 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             <button onClick={(e) => makeCall()}>Call</button> */}
 
             <Span>최대 인원 : {roomInfo.memberCapacity}</Span>
+
+            <div className="controls">
+                <Button onClick={toggleVideo}>
+                    {videoEnabled ? 'Turn Off Video' : 'Turn On Video'}
+                </Button>
+                <Button onClick={toggleAudio}>
+                    {audioEnabled ? 'Mute' : 'Unmute'}
+                </Button>
+                <Button onClick={handleDisconnectAll}>Disconnect All</Button>
+            </div>
             {/* <Room
                 myPeer={myPeer.current}
                 myPeerId={myPeerId}
