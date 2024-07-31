@@ -67,7 +67,6 @@ dependencies {
 	implementation 'org.thymeleaf:thymeleaf-spring6'
 	implementation 'jakarta.mail:jakarta.mail-api'
 
-
 	//s3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
