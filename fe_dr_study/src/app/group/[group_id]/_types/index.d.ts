@@ -15,6 +15,7 @@ export interface Member {
 }
 
 export interface ArticleData {
+    id: number;
     title: string;
     content: string;
     tags: string[];
@@ -23,9 +24,15 @@ export interface ArticleData {
 }
 
 export interface ConferenceData {
+    id: number;
     title: string;
     isEnd: boolean;
     startTime: string;
     targetEndTime: string;
     participants: Member[];
+}
+
+export interface IGroupAdmissionApplyReq {
+    groupId: string;
+    message: string;
 }

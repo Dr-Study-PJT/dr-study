@@ -2,6 +2,7 @@ import { GroupData, ArticleData, ConferenceData } from '../_types';
 
 export const dummyConferenceListData: ConferenceData[] = [
     {
+        id: 1,
         title: '일일 정기 면접 스터디',
         isEnd: true,
         startTime: '10:00',
@@ -14,9 +15,11 @@ export const dummyConferenceListData: ConferenceData[] = [
         ],
     },
     {
+        id: 1,
         title: '주간 토론면접 대비 스터디',
         isEnd: false,
         startTime: '14:30',
+        targetEndTime: '16:30',
         participants: [
             { id: 1, nickname: '조성우', avatarUrl: '/images/member_1.png' },
             { id: 1, nickname: '조성우', avatarUrl: '/images/member_1.png' },
@@ -43,6 +46,7 @@ export const dummyGroupData: GroupData = {
 
 export const dummyArticlesData: ArticleData[] = [
     {
+        id: 1,
         title: '스터디 운영방식에 대한 논의 필요성',
         content:
             '지금까지 1달 가량 스터디를 진행해왔는데, 스터디 방식에 대한 고민과 개선의 필요성을 느껴',
@@ -55,6 +59,7 @@ export const dummyArticlesData: ArticleData[] = [
         },
     },
     {
+        id: 2,
         title: '스터디 운영방식에 대한 논의 필요성',
         content:
             '지금까지 1달 가량 스터디를 진행해왔는데, 스터디 방식에 대한 고민과 개선의 필요성을 느껴',
@@ -67,6 +72,7 @@ export const dummyArticlesData: ArticleData[] = [
         },
     },
     {
+        id: 3,
         title: '스터디 운영방식에 대한 논의 필요성',
         content:
             '지금까지 1달 가량 스터디를 진행해왔는데, 스터디 방식에 대한 고민과 개선의 필요성을 느껴',

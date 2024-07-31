@@ -9,7 +9,8 @@ import {
     dummyConferenceListData,
     dummyGroupData,
 } from './dummy';
-import { fetchGroupData } from './_api';
+import { fetchGroupData, postGroupAdmissionApply } from './_api';
+import { useRouter } from 'next/navigation';
 
 function trimString(input: string, length: number) {
     const maxLength = length;
@@ -20,7 +21,19 @@ function trimString(input: string, length: number) {
 }
 
 const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
+    const router = useRouter();
+
     const groupId = params.group_id;
+
+    const onClickRouteToGroupManage = (e: React.MouseEvent<HTMLElement>) => {
+        router.push(`/group/${groupId}/edit`);
+    };
+    const onClickRouteToMemberManage = (e: React.MouseEvent<HTMLElement>) => {
+        router.push(`/group/${groupId}/member`);
+    };
+    const onClickRouteToLeave = (e: React.MouseEvent<HTMLElement>) => {
+        router.push(`/group/${groupId}/leave`);
+    };
 
     const [group, setGroup] = useState<GroupData | null>(null);
     const [articles, setArticles] = useState<ArticleData[]>([]);
@@ -29,6 +42,12 @@ const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
         '게시판' | '채팅방' | '스터디 이력'
     >('게시판');
 
+    const onClickApplyHandler = async (e: React.MouseEvent<HTMLElement>) => {
+        await postGroupAdmissionApply({
+            groupId,
+            message: '스터디 그룹 가입 신청합니다!',
+        });
+    };
     useEffect(() => {
         if (groupId) {
             if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
@@ -49,6 +68,11 @@ const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
                         <div className="flex flex-col justify-start gap-4">
                             {articles.map((article, index) => (
                                 <div
+                                    onClick={(e) => {
+                                        router.push(
+                                            `/group/${groupId}/article/${article.id}`,
+                                        );
+                                    }}
                                     key={index}
                                     className="p-4 bg-dr-dark-100 hover:bg-dr-dark-300 transition-colors duration-200 border-[1px] border-dr-gray-500 rounded-lg flex flex-col gap-4 cursor-pointer"
                                 >
@@ -128,7 +152,9 @@ const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
                                 </div>
                             </div>
                             <div className="TR-BUTTON">
-                                <Button>스터디 가입 신청</Button>
+                                <Button onClick={onClickApplyHandler}>
+                                    스터디 가입 신청
+                                </Button>
                             </div>
                         </div>
                         <div className="BOTTOM-INFO-GROUP w-full h-max flex flex-row justify-between items-end">
@@ -166,9 +192,24 @@ const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
                                 </ul>
                             </div>
                             <div className="BR-LIST-BUTTON flex flex-row gap-3 h-8">
-                                <Button color="dark">그룹 관리</Button>
-                                <Button color="dark">팀원 관리</Button>
-                                <Button color="dark">탈퇴</Button>
+                                <Button
+                                    color="dark"
+                                    onClick={onClickRouteToGroupManage}
+                                >
+                                    그룹 관리
+                                </Button>
+                                <Button
+                                    color="dark"
+                                    onClick={onClickRouteToMemberManage}
+                                >
+                                    팀원 관리
+                                </Button>
+                                <Button
+                                    color="dark"
+                                    onClick={onClickRouteToLeave}
+                                >
+                                    탈퇴
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -188,6 +229,13 @@ const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
                         {conferences.map((conference, index) => (
                             <div
                                 key={index}
+                                onClick={(e: React.MouseEvent<HTMLElement>) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    alert(
+                                        `컨퍼런스ID : ${conference.id} \n컨퍼런스 PDP 정보 모달로 띄워주는 창 구현해야함`,
+                                    );
+                                }}
                                 className={`CONFERENCE-CARD h-max min-h-32 p-6 rounded-lg shadow-md cursor-pointer transition-colors duration-200 ${
                                     conference.isEnd
                                         ? 'bg-[#212534] hover:bg-[#2125347c]'
@@ -234,7 +282,16 @@ const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
                                         </ul>
                                     </div>
                                     {!conference.isEnd && (
-                                        <Button classNameStyles="!h-8 bg-dr-coral-100">
+                                        <Button
+                                            classNameStyles="!h-8 bg-dr-coral-100"
+                                            onClick={(
+                                                e: React.MouseEvent<HTMLElement>,
+                                            ) => {
+                                                router.push(
+                                                    `/conference/${conference.id}`,
+                                                );
+                                            }}
+                                        >
                                             스터디 참여
                                         </Button>
                                     )}
@@ -244,6 +301,11 @@ const GroupDetailPage = ({ params }: { params: { group_id: string } }) => {
                     </div>
                     <div className="mt-6 text-center">
                         <Button
+                            onClick={(e: React.MouseEvent<HTMLElement>) => {
+                                alert(
+                                    '새 컨퍼런스 생성 모달 만들어서 띄워줘야함.',
+                                );
+                            }}
                             outlined
                             rounded
                             fullWidth
