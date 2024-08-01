@@ -143,7 +143,7 @@ public class JwtUtil {
         ValueOperations<String, String> vop = redisTemplate.opsForValue();
         // userId를 파라미터로 넘겨서 비교하기
         //
-        String serverRefreshToken = vop.get(userId);
+        String serverRefreshToken = vop.get(userId).substring(7);
         log.info("server refreshToken = {}", serverRefreshToken);
 
         return clientRefreshToken.equals(serverRefreshToken);
