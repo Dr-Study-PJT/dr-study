@@ -86,9 +86,18 @@ public class BlockInterpreter {
                 Object result = blockExecutor.execute(stack.peek().args, processMode);
 
                 if (result == null || stack.size() == 1) {
+                    if (result != null) {
+                        throw new BusinessException(
+                                CommonErrorCode.BAD_REQUEST,
+                                "Line " + threadProcessContext.getCursor() + ": 값 블록은 인수로만 사용되어야 합니다."
+                        );
+                    }
+                    if (stack.size() > 1) {
+                        throw new BusinessException(CommonErrorCode.BAD_REQUEST, "명령블록은 인수로 사용될 수 없습니다.");
+                    }
                     if (!(result == null && stack.size() == 1)) {
                         // TODO: 비지니스 예외코드로 변경
-                        throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+                        throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "명령블록은 인수로 포함되어 있거나");
                     }
                     break;
                 }

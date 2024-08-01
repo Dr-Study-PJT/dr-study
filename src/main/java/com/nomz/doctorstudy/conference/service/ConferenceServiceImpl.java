@@ -18,6 +18,7 @@ import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,13 +147,13 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         if (requester.getId() != conference.getHost().getId()) {
             // TODO: MemberErrorCode로 변경
-            throw new BusinessException(CommonErrorCode.FORBIDDEN);
+            throw new BusinessException(CommonErrorCode.FORBIDDEN, "호스트 유저만이 초대할 수 있습니다.");
         }
 
         // TODO: Member 에러코드 변경
         Long inviteeId = request.getInviteeId();
         Member member = memberRepository.findById(inviteeId)
-                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST));
+                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "초대할 멤버의 아이디를 찾을 수 없습니다."));
 
         ConferenceMemberInvite conferenceMemberInvite = ConferenceMemberInvite.builder()
                 .id(new ConferenceMemberInviteId(conferenceId, inviteeId))

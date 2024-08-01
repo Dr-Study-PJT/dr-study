@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.conference.room;
 
+import com.nomz.doctorstudy.common.audio.AudioUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Base64;
 
 @Slf4j
 @RestController
@@ -27,6 +30,12 @@ public class RoomController {
     @MessageMapping("/signal/{conferenceId}")
     public void message(@DestinationVariable("conferenceId") Long conferenceId, Signal signal) {
         log.debug("sender:{} sent signal message:{} from conference:{}", signal.getSenderId(), signal, conferenceId);
+
+        if (signal.getSignal().equals("audio")) {
+            String rawAudioStr = signal.getRawAudio();
+            log.debug("rawAudioStr={}", rawAudioStr.substring(0, rawAudioStr.indexOf("//")));
+            AudioUtils.playAudioFromByteArr(Base64.getDecoder().decode(rawAudioStr));
+        }
     }
 
     @PostMapping("/signal-send/{conferenceId}")
