@@ -51,13 +51,10 @@ const Signal = ({
 
     const [stompClient, setStompClient] = useState<any>(null); // Stomp 클라이언트 상태
 
-    const TARGET_HOST = process.env.NEXT_PUBLIC_HOST;
-    const endpoint = 'room';
     // 소켓 생성 및 Stomp 클라이언트 생성
     useEffect(() => {
-        const socket = new SockJS(`${TARGET_HOST}/${endpoint}`); // SockJS 소켓 생성
-        console.log(socket);
-
+        const socket = new SockJS('http://192.168.163.126:8080/room'); // SockJS 소켓 생성
+        // const socket = new SockJS(`${TARGET_HOST}/${endpoint}`); // SockJS 소켓 생성
         const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
 
         setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장

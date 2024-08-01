@@ -154,6 +154,8 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             '로컬 스트림 아이디(localStream.current.id) =>',
             localStream.current?.id,
         );
+        console.log(myPeer, '마이피어');
+        console.log(localStream.current, '로컬 스트림');
 
         client.current = {
             memberId,
@@ -171,9 +173,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             console.log(response, '조인 결과');
             const { data } = response.data;
             console.log(data, '조인 결과 data');
-            data.existingPeerIds.forEach((remotePeerId: string) =>
-                makeCall(remotePeerId),
-            );
+            data.forEach((remotePeerId: string) => makeCall(remotePeerId));
             // letPeers.push(...existingPeerIds, ...data.existingPeerIds);
             setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
         } catch (error) {
