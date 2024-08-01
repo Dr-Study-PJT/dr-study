@@ -1,4 +1,4 @@
-import { groupAPI as API } from '@/utils/axios/axiosInstanceManager';
+import { groupAPI as API } from '@/app/api/axiosInstanceManager';
 import { ICreateGroupReq } from '../_types';
 
 export const createGroup = async (createGroupData: ICreateGroupReq) => {

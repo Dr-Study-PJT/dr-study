@@ -1,4 +1,4 @@
-import { moderatorAPI as API } from '@/utils/axios/axiosInstanceManager';
+import { moderatorAPI as API } from '@/app/api/axiosInstanceManager';
 import { ICreateModeratorReq } from '../_types';
 
 export const createModerator = async (
