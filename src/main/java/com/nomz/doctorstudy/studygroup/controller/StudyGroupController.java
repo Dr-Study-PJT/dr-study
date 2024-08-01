@@ -214,8 +214,8 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<GetApplyResponse>> getApply
-            (@RequestParam("user_id") Long userId,
-             @RequestParam("group_id") Long groupId){
+            (@RequestParam("userId") Long userId,
+             @RequestParam("groupId") Long groupId){
 
         // Service 로직
         MemberStudyGroupApply memberStudyGroupApply = studyGroupService.getApply(userId, groupId);
@@ -256,7 +256,7 @@ public class StudyGroupController {
         );
     }
 
-    @GetMapping("/{studyGroupId}/members")
+    @GetMapping("/{groupId}/members")
     @Operation(summary = "Study Group 가입자 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 가입자 조회 성공", useReturnTypeSchema = true),
