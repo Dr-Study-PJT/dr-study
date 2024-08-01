@@ -190,6 +190,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
