@@ -28,7 +28,11 @@ public class ConferenceQueryRepository {
     public List<Conference> getConferenceList(ConferenceSearchFilter filter) {
         return query.select(conference)
                 .from(conference)
-                .where(likeTitle(filter.getTitle()), equalMemberCapacity(filter.getMemberCapacity()))
+                .where(
+                        likeTitle(filter.getTitle()),
+                        equalMemberCapacity(filter.getMemberCapacity()),
+                        equalIsFinished(filter.getIsFinished())
+                )
                 .fetch();
     }
 
@@ -44,6 +48,15 @@ public class ConferenceQueryRepository {
     private BooleanExpression equalMemberCapacity(Integer memberCapacity) {
         if (memberCapacity != null) {
             return conference.memberCapacity.eq(memberCapacity);
+        }
+        else {
+            return null;
+        }
+    }
+
+    private BooleanExpression equalIsFinished(Boolean isFinished) {
+        if (isFinished != null) {
+            return conference.isFinished.eq(isFinished);
         }
         else {
             return null;

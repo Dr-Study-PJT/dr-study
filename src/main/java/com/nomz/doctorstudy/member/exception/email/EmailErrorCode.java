@@ -13,5 +13,5 @@ public enum EmailErrorCode implements ErrorCode {
     NO_VALID_RESET_PASSWORD_EMAIL(HttpStatus.BAD_REQUEST, "만료된 링크이거나 잘못된 링크입니다."),
     ;
     private final HttpStatus httpStatus;
-    private final String message;
+    private final String defaultMessage;
 }

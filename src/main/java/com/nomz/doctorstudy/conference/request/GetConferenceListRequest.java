@@ -1,11 +1,16 @@
 package com.nomz.doctorstudy.conference.request;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class GetConferenceListRequest {
-    private final String title;
-    private final Integer memberCapacity;
+    @Schema(description = "제목", example = "")
+    private String title;
+
+    @Schema(description = " 종료 여부 (0 or 1)", example = "")
+    private Boolean isFinished;
 }

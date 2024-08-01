@@ -19,7 +19,7 @@ public class MemberExceptionHandler {
     public ResponseEntity<?> MemberExceptionHandler1(MemberException e){
         log.info("member error");
         return new ResponseEntity<>(
-                new ErrorResponse<>(e.getErrorCode().getMessage(), Map.of()), e.getErrorCode().getHttpStatus()
+                new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
     }
 
@@ -27,7 +27,7 @@ public class MemberExceptionHandler {
     public ResponseEntity<?> AuthExceptionHandler(AuthException e){
         log.info("Auth error");
         return new ResponseEntity<>(
-                new ErrorResponse<>(e.getErrorCode().getMessage(), Map.of()), e.getErrorCode().getHttpStatus()
+                new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
     }
 
@@ -35,7 +35,7 @@ public class MemberExceptionHandler {
     public ResponseEntity<?> EmailExceptionHandler(EmailException e){
         log.info("email error");
         return new ResponseEntity<>(
-                new ErrorResponse<>(e.getErrorCode().getMessage(), Map.of()), e.getErrorCode().getHttpStatus()
+                new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
     }
 

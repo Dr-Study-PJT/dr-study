@@ -2,13 +2,10 @@ package com.nomz.doctorstudy.studygroup.controller;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
-//import com.nomz.doctorstudy.studygroup.request.AdmissionRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateReplyRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
-import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import com.nomz.doctorstudy.studygroup.request.*;
 import com.nomz.doctorstudy.studygroup.response.*;
 import com.nomz.doctorstudy.studygroup.service.StudyGroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,10 +20,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +35,6 @@ import java.util.stream.Collectors;
 @Tag(name ="StudyGroup API", description = "StudyGroup API 입니다.")
 public class StudyGroupController {
     private final StudyGroupService studyGroupService;
-    private final List<MemberStudyGroupApply> memberStudyGroupApplyList = new ArrayList<>();
 
     @PostMapping
     @Operation(summary = "Study Group 생성", description = "Study Group 정보를 생성합니다.")
@@ -61,11 +57,10 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateStudyGroupResponse>> createStudyGroup(
-            @Valid @RequestBody CreateStudyGroupRequest request
+            @Valid @RequestBody CreateStudyGroupRequest request, Authentication authentication
     ) {
         log.info("CreateStudyGroupRequest = {}", request);
-
-        StudyGroup studyGroup = studyGroupService.createStudyGroup(request);
+        StudyGroup studyGroup = studyGroupService.createStudyGroup(request, authentication);
         CreateStudyGroupResponse response = new CreateStudyGroupResponse(studyGroup.getId());
         log.info("CreateStudyGroupResponse = {}", response);
         return ResponseEntity.ok(
@@ -79,10 +74,10 @@ public class StudyGroupController {
     @GetMapping("/{groupId}")
     @Operation(summary = "Study Group 조회", description = "Study Group 정보를 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conference 조회 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+            @ApiResponse(responseCode = "200", description = "Study Group 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "message": "Conference 조회에 실패했습니다.",
+                        "message": "Study Group 조회에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -99,10 +94,12 @@ public class StudyGroupController {
         GetStudyGroupResponse response = new GetStudyGroupResponse(
                 studyGroup.getId(),
                 studyGroup.getName(),
-                studyGroup.getImageId(),
+                studyGroup.getImage().getImageUrl(),
                 studyGroup.getCreatedAt(),
                 studyGroup.getIsDeleted(),
                 studyGroup.getDescription(),
+                studyGroup.getDueDate(),
+                studyGroup.getCaptain().getId(),
                 studyGroup.getMemberCount(),
                 studyGroup.getMemberCapacity(),
                 tags
@@ -148,6 +145,34 @@ public class StudyGroupController {
                 )
         );
     }
+    @PatchMapping("/{groupId}")
+    @Operation(summary = "Study Group 업데이트", description = "Study Group 정보를 업데이트합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 업데이트 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 업데이트 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 업데이트에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse> updateStudyGroup(
+            @PathVariable Long groupId,
+            @RequestBody UpdateStudyGroupRequest request) {
+        log.info("UpdateStudyGroupRequest = {}", request);
+
+        // 서비스 호출
+        StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request);
+
+        // service 요청
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Apply 생성에 성공했습니다.",
+                        ""
+                )
+        );
+    }
 
     @PostMapping("/admission/apply")
     @Operation(summary = "Study Group 지원")
@@ -161,12 +186,14 @@ public class StudyGroupController {
                     }
                     """)))
     })
+
+    // 사용자는 스터디 그룹에 지원 할 수 있다.
+    // 이미 지원 신청 한 사용자는 중복 지원이 불가능 하다 -> 구현 o
+    // 이미 그룹에 속해 있는 사람들은 자신의 그룹에 지원이 불가능 하다 -> 구현 X
     public ResponseEntity<SuccessResponse<CreateApplyResponse>> createApply
-            (@Valid @RequestBody CreateApplyRequest request) {
-
+            (@Valid @RequestBody CreateApplyRequest request, Authentication authentication) {
         log.info("CreateApplyRequest = {}", request);
-
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request);
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request, authentication);
         CreateApplyResponse response = new CreateApplyResponse(memberStudyGroupApply.getId());
         log.info("CreateApplyResponse = {}", response);
         return ResponseEntity.ok(
@@ -189,8 +216,8 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<GetApplyResponse>> getApply
-            (@RequestParam("user_id") Long userId,
-             @RequestParam("group_id") Long groupId){
+            (@RequestParam("userId") Long userId,
+             @RequestParam("groupId") Long groupId){
 
         // Service 로직
         MemberStudyGroupApply memberStudyGroupApply = studyGroupService.getApply(userId, groupId);
@@ -230,58 +257,95 @@ public class StudyGroupController {
                 )
         );
     }
+
+    @GetMapping("/{groupId}/members")
+    @Operation(summary = "Study Group 가입자 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 가입자 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 가입자 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 가입자 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@PathVariable(name = "groupId") Long groupId) {
+        List<MemberStudyGroup> memberList = studyGroupService.getMemberListByStudyGroupId(groupId);
+        List<GetMemberListResponse> responseList = memberList.stream().map(GetMemberListResponse::of).toList();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        responseList
+                )
+        );
+    }
+
+    @GetMapping("/waiters")
+    @Operation(summary = "Study Group 장이 자신의 그룹에 승인 대기중인 멤버를 조회", description = "Study Group 승인 대기자를 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 승인 대기자 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 승인 대기자 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 승인 대기자 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getWaiterList(Authentication authentication) {
+        List<MemberStudyGroupApply> waiterList = studyGroupService.getWaiterList(authentication);
+        List<GetWaiterListResponse> responseList = waiterList.stream().map(GetWaiterListResponse::of).toList();
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        responseList
+                )
+        );
+    }
+    @PutMapping("/{groupId}")
+    @Operation(summary = "스터디 그룹 삭제(소프트 삭제)", description = "Study Group을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 삭제 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 삭제 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                        {
+                            "message": "Study Group 삭제에 실패했습니다.",
+                            "errors": {
+                            }
+                        }
+                        """)))
+    })
+    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(@PathVariable Long groupId) {
+        StudyGroup group = studyGroupService.deleteStudyGroup(groupId);
+        DeleteGroupResponse response = new DeleteGroupResponse( group.getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 삭제에 성공했습니다.",
+                        response
+                )
+        );
+    }
+    @PutMapping("/member/{groupId}")
+    @Operation(summary = "유저가 스터디 그룹을 탈퇴(소프트 탈퇴)", description = "유저가 스터디 그룹에서 탈퇴합니다.(소프트 탈퇴)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 탈퇴 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 탈퇴 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                        {
+                            "message": "Study Group 탈퇴에 실패했습니다.",
+                            "errors": {
+                            }
+                        }
+                        """)))
+    })
+    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable Long groupId, Authentication authentication) {
+        MemberStudyGroup memberStudyGroup = studyGroupService.leaveStudyGroup(groupId, authentication);
+        LeaveGroupResponse response = new LeaveGroupResponse(memberStudyGroup.getStudyGroup().getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 탈퇴에 성공했습니다.",
+                        response
+                )
+        );
+    }
 }
-
-
-
-
-//    @Operation(summary = "Update an existing study group")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Study group updated successfully"),
-//            @ApiResponse(responseCode = "404", description = "Study group not found")
-//    })
-//    @PatchMapping("/{groupId}")
-//    public ResponseEntity<StudyGroup> updateStudyGroup(
-//            @PathVariable Long groupId,
-//            @RequestBody StudyGroup studyGroupDetails) {
-//        StudyGroup existingGroup = studyGroupRepository.findById(groupId)
-//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
-//        existingGroup.setName(studyGroupDetails.getName());
-//        existingGroup.setImageId(studyGroupDetails.getImageId());
-//        existingGroup.setCaptainId(studyGroupDetails.getCaptainId());
-//        existingGroup.setDescription(studyGroupDetails.getDescription());
-//        existingGroup.setGoal(studyGroupDetails.getGoal());
-//        existingGroup.setDueDate(studyGroupDetails.getDueDate());
-//        existingGroup.setMemberCapacity(studyGroupDetails.getMemberCapacity());
-//        studyGroupRepository.save(existingGroup);
-//        return ResponseEntity.ok(existingGroup);
-//    }
-//
-
-//
-////    @Operation(summary = "Get all study groups")
-////    @ApiResponse(responseCode = "200", description = "List of all study groups")
-//    @GetMapping
-//    public ResponseEntity<List<StudyGroup>> getAllStudyGroups() {
-//        List<StudyGroup> groups = studyGroupRepository.findAll();
-//        return ResponseEntity.ok(groups);
-//    }
-//
-////    @Operation(summary = "Delete a study group by ID")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "200", description = "Study group deleted successfully"),
-////            @ApiResponse(responseCode = "404", description = "Study group not found")
-////    })
-//    @DeleteMapping("/{groupId}")
-//    public ResponseEntity<Void> deleteStudyGroup(@PathVariable Long groupId) {
-//        StudyGroup group = studyGroupRepository.findById(groupId)
-//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
-//        studyGroupRepository.delete(group);
-//        return ResponseEntity.noContent().build();
-//    }
-//
-
-//
-
-//
-//}

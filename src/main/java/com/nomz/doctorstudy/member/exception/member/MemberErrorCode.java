@@ -13,5 +13,5 @@ public enum MemberErrorCode implements ErrorCode {
     MEMBER_EMAIL_NOT_EXIST_ERROR(HttpStatus.BAD_REQUEST, "존재하지 않은 이메일입니다.")
     ;
     private final HttpStatus httpStatus;
-    private final String message;
+    private final String defaultMessage;
 }

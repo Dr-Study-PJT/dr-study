@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.Multipart;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/v1/images")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Image API", description = "Image(S3) API")
 public class ImageController {
     private final ImageService imageService;
 

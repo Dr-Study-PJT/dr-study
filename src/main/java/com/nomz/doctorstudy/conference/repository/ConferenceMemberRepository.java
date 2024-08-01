@@ -1,8 +1,11 @@
 package com.nomz.doctorstudy.conference.repository;
 
 import com.nomz.doctorstudy.conference.entity.ConferenceMember;
+import com.nomz.doctorstudy.conference.entity.ConferenceMemberId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ConferenceMemberRepository extends JpaRepository<ConferenceMember, ConferenceMember.ConferenceMemberId> {
+import java.util.List;
 
+public interface ConferenceMemberRepository extends JpaRepository<ConferenceMember, ConferenceMemberId> {
+    List<ConferenceMember> findByConferenceId(Long conferenceId);
 }

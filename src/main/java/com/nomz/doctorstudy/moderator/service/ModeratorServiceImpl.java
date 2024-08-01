@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,35 +28,32 @@ public class ModeratorServiceImpl implements ModeratorService {
 
     @Transactional
     @Override
-    public CreateModeratorResponse createModerator(Member requester, CreateModeratorRequest request) {
+    public Long createModerator(Member requester, CreateModeratorRequest request) {
         Avatar avatar = createAvatar(requester, request);
         Processor processor = createProcessor(requester, request);
 
         Moderator moderator = Moderator.builder()
-                .creator(requester)
-                .createdAt(LocalDateTime.now())
                 .avatar(avatar)
                 .processor(processor)
+                .name(request.getName())
+                .creator(requester)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         moderatorRepository.save(moderator);
 
-        return CreateModeratorResponse.builder()
-                .id(moderator.getId())
-                .build();
+        return moderator.getId();
     }
 
     @Override
-    public GetModeratorResponse getModerator(Long moderatorId) {
-        Moderator moderator = moderatorRepository.findById(moderatorId)
+    public Moderator getModerator(Long moderatorId) {
+        return moderatorRepository.findById(moderatorId)
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
+    }
 
-        return GetModeratorResponse.builder()
-                .creatorId(moderator.getCreator().getId())
-                .createdAt(moderator.getCreatedAt())
-                .processorId(moderator.getProcessor().getId())
-                .avatarId(moderator.getAvatar().getId())
-                .build();
+    @Override
+    public List<Moderator> getModeratorList() {
+        return moderatorRepository.findAll();
     }
 
     private Avatar createAvatar(Member requester, CreateModeratorRequest request) {

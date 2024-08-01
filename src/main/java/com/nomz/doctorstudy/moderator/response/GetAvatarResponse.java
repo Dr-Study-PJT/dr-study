@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 public class GetAvatarResponse {
     private Long id;
+    private String name;
     private Member creator;
     private String voiceType;
     private String characterType;

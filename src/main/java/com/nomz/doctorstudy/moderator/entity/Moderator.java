@@ -20,17 +20,21 @@ public class Moderator {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
-    private Member creator;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @ManyToOne
     @JoinColumn(name = "processor_id", nullable = false)
     private Processor processor;
 
     @ManyToOne
     @JoinColumn(name = "avatar_id", nullable = false)
     private Avatar avatar;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Member creator;
+
+    @Column
+    private String name;
+
+    @Column
+    private LocalDateTime createdAt;
+
 }

@@ -3,12 +3,14 @@ package com.nomz.doctorstudy.conference;
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
+import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
 import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
+import com.nomz.doctorstudy.image.service.ImageService;
 import com.nomz.doctorstudy.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -37,6 +40,7 @@ import java.util.List;
 @Tag(name = "Conference API", description = "Conference API 입니다.")
 public class ConferenceController {
     private final ConferenceService conferenceService;
+    private final ImageService imageService;
 
 
     @PostMapping
@@ -63,9 +67,11 @@ public class ConferenceController {
             Authentication authentication,
             @Valid @RequestBody CreateConferenceRequest request
     ) {
-        log.info("CreateConferenceRequest = {}", request);
-
-        CreateConferenceResponse response = conferenceService.createConference(request);
+        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
+        Long conferenceId = conferenceService.createConference(member, request);
+        CreateConferenceResponse response = CreateConferenceResponse.builder()
+                .conferenceId(conferenceId)
+                .build();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -90,7 +96,13 @@ public class ConferenceController {
     })
     public ResponseEntity<SuccessResponse<GetConferenceResponse>> getConference(
             @PathVariable("conferenceId") Long conferenceId) {
-        GetConferenceResponse response = conferenceService.getConference(conferenceId);
+        Conference conference = conferenceService.getConference(conferenceId);
+
+        GetConferenceResponse response = GetConferenceResponse.builder()
+                .id(conference.getId())
+                .title(conference.getTitle())
+                .memberCapacity(conference.getMemberCapacity())
+                .build();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -113,15 +125,61 @@ public class ConferenceController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetConferenceListResponse>>> getConferenceList(
+    public ResponseEntity<SuccessResponse<List<GetConferenceListResponseItem>>> getConferenceList(
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
-        List<GetConferenceListResponse> responses = conferenceService.getConferenceList(request);
+        // TODO: 조인으로 성능 최적화 필요
+        List<GetConferenceListResponseItem> responses = new ArrayList<>();
+        for (Conference conference : conferenceService.getConferenceList(request)) {
+            List<GetConferenceListResponseItem.MemberInfo> participants = new ArrayList<>();
+            for (Member member : conferenceService.getConferenceParticipantList(conference.getId())) {
+                String imageUrl = imageService.get(member.getImageId());
+                participants.add(GetConferenceListResponseItem.MemberInfo.of(member, imageUrl));
+            }
+            responses.add(GetConferenceListResponseItem.of(conference, participants));
+        }
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 리스트 조회에 성공했습니다.",
                         responses
+                )
+        );
+    }
+
+
+    @PostMapping("/{conference_id}/open")
+    @Operation(summary = "Conference 개최", description = "Conference를 개최합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 개최 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "인증에 실패했습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "권한이 없습니다. 호스트 유저만이 개최할 수 있습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "존재하지 않는 Conference입니다.",
+                        "errors": { }
+                    }
+                    """))),
+    })
+    public ResponseEntity<SuccessResponse<?>> openConference(
+            @PathVariable("conference_id") Long conferenceId
+    ) {
+        conferenceService.openConference(conferenceId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 개최에 성공했습니다.",
+                        null
                 )
         );
     }
@@ -150,14 +208,14 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<StartConferenceResponse>> startConference(
+    public ResponseEntity<SuccessResponse<?>> startConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.startConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Conference 시작에 성공했습니다.",
+                        "Conference 시작에 성곻했습니다.",
                         null
                 )
         );
@@ -187,7 +245,7 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<FinishConferenceResponse>> finishConference(
+    public ResponseEntity<SuccessResponse<?>> finishConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.finishConference(conferenceId);
@@ -224,20 +282,19 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<JoinConferenceResponse>> joinConference(
-            @PathVariable Long conferenceId,
+    public ResponseEntity<SuccessResponse<List<String>>> joinConference(
+            @PathVariable("conferenceId") Long conferenceId,
+            Authentication authentication,
             @RequestBody JoinConferenceRequest request
             ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        Member requester = memberDetails.getUser();
+        //Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
 
-        JoinConferenceResponse response = conferenceService.joinConference(requester, conferenceId, request);
+        List<String> existingParticipants = conferenceService.joinConference(/*requester, */conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 참여에 성공했습니다.",
-                        response
+                        existingParticipants
                 )
         );
     }
@@ -266,7 +323,7 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<InviteMemberConferenceResponse>> inviteMemberConference(
+    public ResponseEntity<SuccessResponse<?>> inviteMemberConference(
             @PathVariable Long conferenceId,
             @RequestBody InviteMemberConferenceRequest request
     ) {
@@ -274,12 +331,33 @@ public class ConferenceController {
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         Member requester = memberDetails.getUser();
 
-        InviteMemberConferenceResponse response = conferenceService.inviteMemberConference(requester, conferenceId, request);
+        conferenceService.inviteMemberConference(requester, conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 멤버 초대에 성공했습니다.",
-                        response
+                        null
+                )
+        );
+    }
+
+
+    @GetMapping("/{conferenceId}/participants")
+    public ResponseEntity<SuccessResponse<List<GetConferenceParticipantListResponseItem>>> getConferenceParticipantsList(
+            @PathVariable Long conferenceId
+    ) {
+        List<Member> participants = conferenceService.getConferenceParticipantList(conferenceId);
+
+        List<GetConferenceParticipantListResponseItem> responses = new ArrayList<>();
+        for (Member member : participants) {
+            String imageUrl = imageService.get(member.getImageId());
+            responses.add(GetConferenceParticipantListResponseItem.of(member, imageUrl));
+        }
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 참여자 조회에 성공했습니다.",
+                        responses
                 )
         );
     }
