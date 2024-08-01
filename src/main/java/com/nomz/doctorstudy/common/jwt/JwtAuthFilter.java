@@ -1,7 +1,12 @@
 package com.nomz.doctorstudy.common.jwt;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nomz.doctorstudy.common.auth.MemberDetailService;
+import com.nomz.doctorstudy.common.dto.ErrorResponse;
+import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
+import com.nomz.doctorstudy.member.exception.auth.AuthException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.jar.JarException;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -29,6 +35,10 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
+
+        if(authorizationHeader == null){
+            log.info("asdjfsfnsalfeststes");
+        }
         //JWT가 헤더에 있는 경우
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
@@ -46,9 +56,27 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                     //현재 Request의 Security Context에 접근권한 설정
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
+            } else{
+                log.info("----------------- jwt error -------------------");
+                jwtExceptionHandler(response, AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
             }
         }
 
         filterChain.doFilter(request, response); // 다음 필터로 넘기기
+    }
+
+
+    private void jwtExceptionHandler(HttpServletResponse response, AuthErrorCode errorCode){
+        response.setStatus(403);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        try {
+            String json = new ObjectMapper().writeValueAsString("다시 로그인해주세요~!");
+            response.getWriter().write(json);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
     }
 }

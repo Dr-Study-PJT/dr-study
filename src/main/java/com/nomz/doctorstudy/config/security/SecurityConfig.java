@@ -29,10 +29,10 @@ public class SecurityConfig  {
 
     //여기에 있는 애만 프리패스
     private static final String[] AUTH_WHITELIST = {
-//            "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
+            "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/api-docs/**", "/swagger-ui.html", "/v1/auth/login", "/v1/auth/email-code", "/v1/auth/find-password", "/v1/auth/reset-password",
             "/v1/no-auth/**", "/v1/email/**", "/v1/images/**", "/v1/images", "/v1/need-auth",
-            "/v1/members/**",
+            "/v1/members/**", "/error",
     };
 
     @Bean
@@ -53,10 +53,12 @@ public class SecurityConfig  {
         //JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
         http.addFilterBefore(new JwtAuthFilter(memberDetailService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-        http.exceptionHandling((exceptionHandling) -> exceptionHandling
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler)
-        );
+
+        //이거 문제
+//        http.exceptionHandling((exceptionHandling) -> exceptionHandling
+//                .authenticationEntryPoint(authenticationEntryPoint)
+//                .accessDeniedHandler(accessDeniedHandler)
+//        );
 
 
         // 권한 규칙 작성

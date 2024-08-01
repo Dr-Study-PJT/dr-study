@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class ImageUploadRequest {
 
-    @NotBlank(message = "이미지를 업로드해주세요")
     private MultipartFile file;
 
     @NotBlank(message = "이미지 타입을 선택해주세요")

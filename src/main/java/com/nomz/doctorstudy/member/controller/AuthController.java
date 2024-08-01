@@ -172,6 +172,7 @@ public class AuthController {
 
         String email = refreshTokenRequest.getEmail();
         String refreshToken = request.getHeader(jwtUtil.HEADER_STRING);
+        log.info("refreshToken = {}", refreshToken);
 
         String accessToken = authService.getAccessToken(email, refreshToken);
 
