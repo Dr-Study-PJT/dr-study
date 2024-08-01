@@ -1,20 +1,20 @@
 'use client';
 
-import { Button } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
-import Peer from 'peerjs';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 interface ConferenceControlBarProps {
     localStream: MediaStream | null;
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
+    isMutedBySystem: boolean;
 }
 
 const ConferenceControlBar = ({
     localStream,
     existingPeers,
     setExistingPeers,
+    isMutedBySystem,
 }: ConferenceControlBarProps) => {
     const [videoEnabled, setVideoEnabled] = useState(true); // 비디오 상태
     const [audioEnabled, setAudioEnabled] = useState(true); // 오디오 상태
@@ -48,7 +48,7 @@ const ConferenceControlBar = ({
 
     // 오디오 토글 핸들러
     const toggleAudio = () => {
-        if (localStream) {
+        if (!isMutedBySystem && localStream) {
             localStream.getAudioTracks().forEach((track) => {
                 track.enabled = !track.enabled;
             });
@@ -63,23 +63,66 @@ const ConferenceControlBar = ({
     };
 
     return (
-        <div className="flex justify-center bg-dr-dark-300 p-2 gap-dr-10">
-            <button onClick={toggleVideo}>
+        <div className="flex justify-center bg-dr-dark-300 gap-dr-10 h-full">
+            <button className="cursor-auto" onClick={toggleVideo}>
                 {videoEnabled ? (
-                    <Icon size="sm" icon="videoOn" />
+                    <Icon
+                        cursor="pointer"
+                        size="sm"
+                        hover="gray"
+                        bg="gray"
+                        text="blue"
+                        icon="videoOn"
+                    />
                 ) : (
-                    <Icon size="sm" icon="videoOff" />
+                    <Icon
+                        cursor="pointer"
+                        size="sm"
+                        hover="gray"
+                        bg="gray"
+                        text="blue"
+                        icon="videoOff"
+                    />
                 )}
             </button>
-            <button onClick={toggleAudio}>
+            <button onClick={toggleAudio} className="relative group">
                 {audioEnabled ? (
-                    <Icon className="bg-dr-white" size="sm" icon="micOn" />
+                    <>
+                        {isMutedBySystem && (
+                            <span className="tooltip-text absolute hidden group-hover:block bg-black text-white text-xs rounded py-1 px-3 -mt-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                시스템에 의해 제어할 수 없는 상태입니다.
+                            </span>
+                        )}
+                        <Icon
+                            cursor="pointer"
+                            disabled={isMutedBySystem}
+                            size="sm"
+                            hover="gray"
+                            bg="gray"
+                            text="blue"
+                            icon={isMutedBySystem ? 'micOff' : 'micOn'}
+                        />
+                    </>
                 ) : (
-                    <Icon className="bg-dr-white" size="sm" icon="micOff" />
+                    <Icon
+                        cursor="pointer"
+                        size="sm"
+                        hover="gray"
+                        bg="gray"
+                        text="blue"
+                        icon="micOff"
+                    />
                 )}
             </button>
-            <button onClick={handleDisconnectAll}>
-                <Icon icon="phoneCall" size="sm" />
+
+            <button className="cursor-auto" onClick={handleDisconnectAll}>
+                <Icon
+                    cursor="pointer"
+                    icon="phoneCall"
+                    text="white"
+                    bg="red"
+                    size="sm"
+                />
             </button>
         </div>
     );

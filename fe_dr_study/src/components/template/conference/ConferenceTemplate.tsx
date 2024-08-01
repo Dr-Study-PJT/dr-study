@@ -1,17 +1,18 @@
 'use client';
 
 import { Button, Paragraph, Span } from '@/components/atoms';
-import ConferenceControlBar from '@/components/organisms/ConferenceControlBar';
-import ConferenceProgress from '@/components/organisms/ConferenceProgress';
-import ModeratorAvatar from '@/components/organisms/ModeratorAvatar';
+import ConferenceControlBar from '@/components/organisms/ConferenceControlBar/ConferenceControlBar';
+import ConferenceProgress from '@/components/organisms/ConferenceProgress/ConferenceProgress';
+import ModeratorAvatar from '@/components/organisms/ModeratorAvatar/Mod';
 import Signal from '@/components/organisms/Signal/Signal';
-import Video from '@/components/organisms/Video';
+import Video from '@/components/organisms/Video/Video';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
 import axios from 'axios';
 import Peer from 'peerjs';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface ConferenceTemplateProps {
-    conferenceId: string;
+    conferenceId: number;
 }
 
 interface RoomInfoInterface {
@@ -19,30 +20,50 @@ interface RoomInfoInterface {
     memberCapacity: number;
 }
 
+interface clientInterface {
+    memberId: string;
+    peerId: string;
+    streamId: string;
+}
+
 const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const DEPLOY_URL = 'https://www.dr-study.kro.kr/v1';
     const LOCAL_URL = 'http://192.168.100.77:8080/v1';
 
+    // 방 정보 상태
     const [roomInfo, setRoomInfo] = useState<RoomInfoInterface>({
-        title: '',
-        memberCapacity: 0,
+        title: '', // 방 제목
+        memberCapacity: 0, // 방의 최대 인원 수
     });
 
+    // 기존 피어 상태
     const [existingPeers, setExistingPeers] = useState<
         Record<string, MediaStream>
-    >({});
-    const [existingPeerIds, setExistingPeerIds] = useState<string[]>([]);
-    const [myPeerId, setMyPeerId] = useState<string>('');
+    >({}); // 현재 방에 있는 피어들의 미디어 스트림
+    const [existingPeerIds, setExistingPeerIds] = useState<string[]>([]); // 현재 방에 있는 피어들의 ID
+    const [myPeerId, setMyPeerId] = useState<string>(''); // 내 피어 ID
 
-    const [isPeerCreated, setIsPeerCreate] = useState(false); // 내 peer 생성
-    const [isMadeLocalStream, setIsMadeLocalStream] = useState(false); // 내 localStream 생성
+    // 피어 생성 여부 상태
+    const [isPeerCreated, setIsPeerCreate] = useState(false); // 내 피어가 생성되었는지 여부
+    const [isMadeLocalStream, setIsMadeLocalStream] = useState(false); // 내 로컬 스트림이 생성되었는지 여부
+    const [isFlag, setIsFlag] = useState(0); // 플래그 상태 (사용 용도에 따라 다름)
 
-    const [isFlag, setIsFlag] = useState(0);
+    // 시스템에 의해 음소거 상태
+    const [isMutedBySystem, setIsMutedBySystem] = useState(false); // 시스템에 의해 음소거되었는지 여부
+    const [focusingMemberId, setFocusingMemberId] = useState(''); // 현재 화면에 표시되는 멤버의 ID
 
-    const myPeer = useRef<Peer | null>(null);
-    const localStream = useRef<MediaStream | null>(null);
+    // 피어와 로컬 스트림 참조
+    const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
+    const localStream = useRef<MediaStream | null>(null); // 로컬 미디어 스트림을 참조
 
-    // // 1. new Peer 내 피어 생성
+    // 클라이언트 정보 참조
+    const client = useRef<clientInterface>({
+        memberId: '', // 클라이언트 멤버 ID
+        peerId: '', // 클라이언트 피어 ID
+        streamId: '', // 클라이언트 스트림 ID
+    });
+
+    // 1. new Peer 내 피어 생성
     const onClickStart = (e: React.MouseEvent<HTMLElement>) => {
         setIsFlag(1);
 
@@ -53,7 +74,6 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             console.log(`2. 피어 오픈됨, 피어아이디->${id}`);
             setMyPeerId(id);
             setIsPeerCreate(true);
-            console.log(myPeer.current, '피어 오픈 여부 확인');
         });
 
         myPeer.current.on('call', (call: any) => {
@@ -70,22 +90,17 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 });
         });
 
-        console.log('myPeer.current' + myPeer.current.open);
+        console.log('myPeer.current.open 여부 :' + myPeer.current.open);
     };
 
     // 2. 스트림 생성 및 설정
     useEffect(() => {
         if (!isFlag) return;
 
-        console.log(myPeerId, 'myPeerId 체크');
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
             .then((stream) => {
                 localStream.current = stream;
-                console.log(
-                    localStream.current,
-                    '2번 localStream.current 확인',
-                );
                 setExistingPeers((prevPeers) => ({
                     ...prevPeers,
                     [myPeerId]: stream,
@@ -122,12 +137,24 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             });
         }
     };
-
+    const memberId = getSessionStorageItem('memberData');
     const joinConference = async (peerId: string) => {
         if (!isFlag) return;
 
         // 참여할때 peerId 넘기기 함수
-        console.log(peerId, 'join conference');
+        console.log('멤버 아이디(memberId) =>', memberId);
+        console.log('피어 아이디(peerId) =>', peerId);
+        console.log(
+            '로컬 스트림 아이디(localStream.current.id) =>',
+            localStream.current?.id,
+        );
+
+        client.current = {
+            memberId,
+            peerId,
+            streamId: localStream.current?.id as string,
+        };
+
         try {
             const response = await axios.post(
                 `${LOCAL_URL}/conferences/${conferenceId}/join`,
@@ -169,10 +196,10 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
     // 컨퍼런스 룸 시작 함수 (방장만 가능, id가 방장과 일치할 때 조건)
     // 참여할때 peerId 넘기기 함수
-    const startConference = async () => {
+    const openConference = async () => {
         try {
             const response = await axios.post(
-                `${LOCAL_URL}/conferences/${conferenceId}/start`,
+                `${LOCAL_URL}/conferences/${conferenceId}/open`,
             ); // API 요청
             console.log('컨퍼런스 시작 성공:', response);
         } catch (error) {
@@ -197,53 +224,34 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         }
     };
 
-    // 자신이 나갔음을 서버에 알리는 함수
-    const quitConference = async () => {
-        try {
-            const response = await axios.post(
-                `${LOCAL_URL}/conferences/${conferenceId}/quit`,
-                {
-                    peerId: myPeerId,
-                },
-            ); // API 요청
-            // setRoomList(response.data); // roomList에 저장
-            //
-        } catch (error) {
-            console.error('Error fetching room list:', error);
-        }
-    };
-
     return (
-        <div className="p-[30px] flex items-center justify-center bg-dr-indigo-200 h-[100%] w-full">
-            <div className="video-container grid grid-cols-2 gap-4 h-[80%]">
-                {Object.keys(existingPeers).map((peerId) => (
-                    <div
-                        key={peerId}
-                        className="w-full h-full rounded-xl overflow-hidden"
-                    >
-                        <video
-                            ref={(el) => {
-                                if (el) {
-                                    el.srcObject = existingPeers[peerId];
-                                    el.play();
-                                }
-                            }}
-                            autoPlay
-                        ></video>
-                    </div>
-                ))}
-            </div>
+        <div className="flex bg-dr-indigo-200 h-[100%] w-full">
+            <div className="flex flex-col h-full w-full">
+                <div className="w-full h-[10%] bg-dr-gray-500">
+                    <ConferenceProgress />
+                </div>
 
-            {/* <div className="fixed top-0 left-0 w-full h-[10%] bg-dr-gray-500">
-                <ConferenceProgress />
-            </div> */}
+                <div className="flex flex-wrap w-full h-[80%]">
+                    {Object.keys(existingPeers).map((peerId) => (
+                        <>
+                            <Video
+                                key={peerId}
+                                existingPeers={existingPeers}
+                                peerId={peerId}
+                                focusing={memberId === focusingMemberId}
+                            />
+                        </>
+                    ))}
+                </div>
 
-            <div className="fixed bottom-0 left-0 right-0 bg-dr-white shadow-md z-50 ">
-                <ConferenceControlBar
-                    localStream={localStream.current}
-                    existingPeers={existingPeers}
-                    setExistingPeers={setExistingPeers}
-                />
+                <div className="h-[10%]">
+                    <ConferenceControlBar
+                        localStream={localStream.current}
+                        existingPeers={existingPeers}
+                        setExistingPeers={setExistingPeers}
+                        isMutedBySystem={isMutedBySystem}
+                    />
+                </div>
             </div>
 
             <div className="fixed bottom-0 left-[50%] w-[10%]">
@@ -258,7 +266,11 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 </Button>
             </div>
 
-            <Signal conferenceId={1} memberId={1} />
+            <Signal
+                conferenceId={conferenceId}
+                memberId={memberId}
+                setIsMutedBySystem={setIsMutedBySystem}
+            />
         </div>
     );
 };

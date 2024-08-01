@@ -9,6 +9,7 @@ const ModeratorAvatar = ({}: ModeratorAvatarProps) => {
         useState<boolean>(false);
     const [isHovered, setIsHovered] = useState<boolean>(false);
 
+    // 사회자 말하도록 하기
     const toggleSpeaking = () => {
         setIsModeratorSpeaking((prev) => !prev);
     };
@@ -40,9 +41,6 @@ const ModeratorAvatar = ({}: ModeratorAvatarProps) => {
                         : 'Moderator Not Speaking'
                 }
             />
-            <button onClick={toggleSpeaking}>
-                {isModeratorSpeaking ? 'Stop Speaking' : 'Start Speaking'}
-            </button>
         </div>
     );
 };

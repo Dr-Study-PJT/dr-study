@@ -41,6 +41,7 @@ export const Icon = ({
     active,
     cursor,
     hover,
+    disabled,
     className,
 }: IconInterface) => {
     return (
@@ -52,6 +53,7 @@ export const Icon = ({
                 shape,
                 active,
                 cursor,
+                disabled,
                 hover,
             })}
         >

@@ -27,4 +27,5 @@ export interface IconInterface {
     active?: boolean;
     hover?: keyof typeof iconStyles.variants.hover;
     className?: string;
+    disabled?: boolean;
 }
