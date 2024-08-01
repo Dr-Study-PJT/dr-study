@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client';
 import { Frame } from 'stompjs';
 import Recorder from './Recorder';
 import { Button } from '@/components/atoms';
+import Icon from '@/components/atoms/Icon/Icon';
 
 interface Message {
     id: number;
@@ -211,14 +212,14 @@ const Signal = ({
     return (
         <div className="flex flex-col h-[100%] bg-dr-gray-100">
             <div className="flex h-full w-full">
-                <div className="h-full w-full bg-dr-coral-50">
+                <div className="h-full w-full bg-dr-gray-500">
                     {messages.map((msg, index) => (
                         <div key={index}>
                             ({msg.id}) : {msg.message}
                         </div>
                     ))}
                 </div>
-                <div className="h-full w-full bg-dr-coral-300">
+                <div className="h-full w-full bg-dr-gray-500">
                     {signals.map((msg, index) => (
                         <div key={index}>
                             <div>Id : {msg.id || 'no id'}</div>
@@ -229,16 +230,16 @@ const Signal = ({
                 </div>
             </div>
 
-            <div className="flex">
-                <div className="p-4">
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Enter message"
-                    />
-                    <button onClick={sendMessage}>Send</button>
-                </div>
+            <div className="flex h-[10%] p-2 bg-dr-dark-300 gap-dr-10">
+                <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Enter message"
+                    className="bg-dr-dark-300 border border-dr-coral-200 rounded-[10px] p-2 text-white" // 배경색, 테두리, 둥근 모서리 추가
+                />
+                <Button onClick={sendMessage} size="sm">
+                    전송
+                </Button>
             </div>
 
             <div className="fixed left-32 bottom-32 bg-dr-gray-200">

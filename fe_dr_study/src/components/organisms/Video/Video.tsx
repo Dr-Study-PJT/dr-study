@@ -33,7 +33,7 @@ const Video = ({ existingPeers, peerId, focusing }: VideoProps) => {
 
     return (
         <div
-            className={`${videoDimensions()} flex border-2 items-center justify-center self-center border-blue-500 rounded-xl overflow-hidden ${focusing ? 'border-2 border-blue-500' : ''}`}
+            className={`${videoDimensions()} flex border-2 items-center justify-center self-center rounded-xl overflow-hidden ${focusing ? 'border-2 border-blue-500' : ''}`}
         >
             <video
                 ref={(el) => {

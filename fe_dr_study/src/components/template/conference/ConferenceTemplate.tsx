@@ -242,6 +242,20 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                             />
                         </>
                     ))}
+                    {/* <div
+                        key={peerId}
+                        className="w-full h-full rounded-xl overflow-hidden"
+                    >
+                        <video
+                            ref={(el) => {
+                                if (el) {
+                                    el.srcObject = existingPeers[peerId];
+                                    el.play();
+                                }
+                            }}
+                            autoPlay
+                        ></video>
+                    </div> */}
                 </div>
 
                 <div className="h-[10%]">

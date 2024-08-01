@@ -26,7 +26,7 @@ export const TextareaWithLabel = React.forwardRef<
         return (
             <div className={fullWidth ? 'w-full' : 'w-max'}>
                 <div className="flex flex-col gap-1">
-                    <Label htmlFor={id} className={labelClassName}>
+                    <Label htmlFor={id as string} className={labelClassName}>
                         {label}
                     </Label>
                     <div className="flex flex-col">
