@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class GetApplyResponse {
     @Schema(description = "조회한 멤버 아이디", example = "1")
-    private final Long member_id;
+    private final Long memberId;
 
     @Schema(description = "조회한 그룹 아이디", example = "2")
-    private final Long group_id;
+    private final Long groupId;
 
     @Schema(description = "그룹 가입 상태", example = "APPROVED")
     private final Status status;
@@ -23,5 +23,5 @@ public class GetApplyResponse {
     private final String message;
 
     @Schema(description = "그룹 가입 신청 일시", example = "2024-07-29")
-    private final LocalDateTime created_at;
+    private final LocalDateTime createdAt;
 }

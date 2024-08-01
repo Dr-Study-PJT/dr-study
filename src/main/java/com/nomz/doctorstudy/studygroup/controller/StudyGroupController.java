@@ -24,7 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 @Tag(name ="StudyGroup API", description = "StudyGroup API 입니다.")
 public class StudyGroupController {
     private final StudyGroupService studyGroupService;
-    private final List<MemberStudyGroupApply> memberStudyGroupApplyList = new ArrayList<>();
 
     @PostMapping
     @Operation(summary = "Study Group 생성", description = "Study Group 정보를 생성합니다.")
@@ -216,8 +214,8 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<GetApplyResponse>> getApply
-            (@RequestParam("user_id") Long userId,
-             @RequestParam("group_id") Long groupId){
+            (@RequestParam("userId") Long userId,
+             @RequestParam("groupId") Long groupId){
 
         // Service 로직
         MemberStudyGroupApply memberStudyGroupApply = studyGroupService.getApply(userId, groupId);
@@ -258,7 +256,7 @@ public class StudyGroupController {
         );
     }
 
-    @GetMapping("/{studyGroupId}/members")
+    @GetMapping("/{groupId}/members")
     @Operation(summary = "Study Group 가입자 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 가입자 조회 성공", useReturnTypeSchema = true),
@@ -349,19 +347,3 @@ public class StudyGroupController {
         );
     }
 }
-
-
-
-
-////    @Operation(summary = "Get all study groups")
-////    @ApiResponse(responseCode = "200", description = "List of all study groups")
-//    @GetMapping
-//    public ResponseEntity<List<StudyGroup>> getAllStudyGroups() {
-//        List<StudyGroup> groups = studyGroupRepository.findAll();
-//        return ResponseEntity.ok(groups);
-//    }
-//
-//
-//
-//
-//}
