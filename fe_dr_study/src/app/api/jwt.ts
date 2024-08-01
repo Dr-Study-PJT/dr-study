@@ -17,9 +17,6 @@ export const fetchAccessToken = async (
             body: {
                 email: member.email,
             },
-            options: {
-                credentials: 'include', // 쿠키 포함
-            },
         });
         const newAccessToken: string = response.data;
         return newAccessToken;

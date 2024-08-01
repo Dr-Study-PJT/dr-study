@@ -1,5 +1,4 @@
-import { AxiosInstance, AxiosRequestConfig } from 'axios';
-
+import { AxiosInstance } from 'axios';
 import { handleAuthentication } from './jwt';
 
 export async function GET(
@@ -38,7 +37,6 @@ interface IPostReqProps {
     endPoint: string;
     isAuth?: boolean;
     body?: any;
-    options?: any;
 }
 
 interface IUpdateReqProps extends IPostReqProps {
@@ -130,31 +128,19 @@ async function REQUEST({
         url = `${url}?${query}`;
     }
 
-    console.log('url' + url);
-
-    // Axios 요청 설정
-    const config: AxiosRequestConfig = {
+    const response = await API.request({
         url,
         method,
         data: body,
         headers,
-        withCredentials: true, // 쿠키를 포함
-    };
+    });
 
-    try {
-        console.log('config.url' + config.url);
-        const response = await API.request(config);
+    const acceptedStatus = [200, 201, 204];
 
-        const acceptedStatus = [200, 201, 204];
-
-        if (!acceptedStatus.includes(response.status)) {
-            return `${response.status}: 오류좀보소`;
-        }
-
-        console.log(`IN ${method}`, response);
-        return response;
-    } catch (error) {
-        console.error(`Error in ${method} request:`, error);
-        throw error;
+    if (!acceptedStatus.includes(response.status)) {
+        return `${response.status}: 오류좀보소`;
     }
+
+    console.log(`IN ${method}`, response);
+    return response;
 }

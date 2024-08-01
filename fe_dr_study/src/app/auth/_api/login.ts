@@ -8,6 +8,7 @@ import {
 
 import { authAPI as API } from '@/app/api/axiosInstanceManager';
 import { GET } from '@/app/api/routeModule';
+import { setAccessToken } from '@/app/api/jwt';
 
 API.interceptors.response.use(
     (response) => {
@@ -36,6 +37,7 @@ export const login = async (memerData: ILogInReq) => {
         memerData,
     );
     console.log(response.data.data);
+    setAccessToken(response.data.data.tokens.accessToken);
     setSessionStorageItem('memberData', {
         id: response.data.data.member.id,
         email: response.data.data.member.email,
