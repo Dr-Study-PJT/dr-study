@@ -1,10 +1,12 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
+import com.nomz.doctorstudy.article.entity.Article;
 import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -49,5 +51,8 @@ public class StudyGroup {
 
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<StudyGroupTag> studyGroupTags;
+
+    @OneToMany(mappedBy = "studyGroup")
+    private List<Article> articles;
 }
 
