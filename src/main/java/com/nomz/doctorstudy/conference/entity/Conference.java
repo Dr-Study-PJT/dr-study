@@ -19,7 +19,7 @@ public class Conference {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id",nullable = true)
+    @JoinColumn(name = "member_id",nullable = false)
     private Member host;
 
     @Column(nullable = false)
@@ -27,6 +27,9 @@ public class Conference {
 
     @Column(nullable = false)
     private Integer memberCapacity;
+
+    @Column
+    private Long imageId;
 
     @Column
     private Boolean isFinished;
