@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,17 +23,22 @@ public class GetConferenceListResponseItem {
     @Schema(description = "컨퍼런스 최대 인원수", example = "10")
     private final Integer memberCapacity;
 
-    @Schema(description = "시작 시간", example = "2024-08-01T22:20:42.483173")
+    @Schema(description = "컨퍼런스 시작 시간", example = "2024-08-01T22:20:42.483173")
     private final LocalDateTime startTime;
 
-    @Schema(description = "시작 시간", example = "2024-08-04T01:51:32.483173")
+    @Schema(description = "컨퍼런스 종료 시간", example = "2024-08-04T01:51:32.483173")
     private final LocalDateTime finishTime;
 
+    @Schema(description = "컨퍼런스 이미지 URL", example = "[image URL]")
+    private final String imageUrl;
+
+    @Schema(description = "참여자 목록", example = "")
     private final List<MemberInfo> participants;
+
 
     @Getter
     @Builder
-    private static class MemberInfo {
+    public static class MemberInfo {
         @Schema(description = "참여자 아이디", example = "1")
         private final Long id;
         
@@ -45,26 +51,25 @@ public class GetConferenceListResponseItem {
         @Schema(description = "참여자 이미지 URL", example = "[image URL]")
         private final String imageUrl;
 
-        public static MemberInfo of(Member member) {
+        public static MemberInfo of(Member member, String imageUrl) {
             return builder()
                     .id(member.getId())
                     .email(member.getEmail())
                     .nickname(member.getEmail())
-                    //TODO: Member의 image 필드 생기면 변경.imageUrl(member.getImage())
-                    .imageUrl(null)
+                    .imageUrl(imageUrl)
                     .build();
 
         }
     }
 
-    public static GetConferenceListResponseItem of(Conference conference, List<Member> members) {
+    public static GetConferenceListResponseItem of(Conference conference, List<MemberInfo> memberInfoList) {
         return builder()
                 .id(conference.getId())
                 .title(conference.getTitle())
                 .memberCapacity(conference.getMemberCapacity())
                 .startTime(conference.getStartTime())
                 .finishTime(conference.getFinishTime())
-                .participants(members.stream().map(MemberInfo::of).toList())
+                .participants(memberInfoList)
                 .build();
     }
 }

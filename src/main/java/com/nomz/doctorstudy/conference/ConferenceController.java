@@ -10,6 +10,7 @@ import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
+import com.nomz.doctorstudy.image.service.ImageService;
 import com.nomz.doctorstudy.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,6 +40,7 @@ import java.util.List;
 @Tag(name = "Conference API", description = "Conference API 입니다.")
 public class ConferenceController {
     private final ConferenceService conferenceService;
+    private final ImageService imageService;
 
 
     @PostMapping
@@ -129,7 +131,11 @@ public class ConferenceController {
         // TODO: 조인으로 성능 최적화 필요
         List<GetConferenceListResponseItem> responses = new ArrayList<>();
         for (Conference conference : conferenceService.getConferenceList(request)) {
-            List<Member> participants = conferenceService.getConferenceParticipantList(conference.getId());
+            List<GetConferenceListResponseItem.MemberInfo> participants = new ArrayList<>();
+            for (Member member : conferenceService.getConferenceParticipantList(conference.getId())) {
+                String imageUrl = imageService.get(member.getImageId());
+                participants.add(GetConferenceListResponseItem.MemberInfo.of(member, imageUrl));
+            }
             responses.add(GetConferenceListResponseItem.of(conference, participants));
         }
 
@@ -165,14 +171,14 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<OpenConferenceResponse>> initConference(
+    public ResponseEntity<SuccessResponse<?>> openConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.openConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Conference 시작에 성공했습니다.",
+                        "Conference 개최에 성공했습니다.",
                         null
                 )
         );
@@ -202,7 +208,7 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<StartConferenceResponse>> startConference(
+    public ResponseEntity<SuccessResponse<?>> startConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.startConference(conferenceId);
@@ -239,7 +245,7 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<FinishConferenceResponse>> finishConference(
+    public ResponseEntity<SuccessResponse<?>> finishConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.finishConference(conferenceId);
@@ -317,7 +323,7 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<InviteMemberConferenceResponse>> inviteMemberConference(
+    public ResponseEntity<SuccessResponse<?>> inviteMemberConference(
             @PathVariable Long conferenceId,
             @RequestBody InviteMemberConferenceRequest request
     ) {
@@ -342,9 +348,11 @@ public class ConferenceController {
     ) {
         List<Member> participants = conferenceService.getConferenceParticipantList(conferenceId);
 
-        List<GetConferenceParticipantListResponseItem> responses = participants.stream()
-                .map(GetConferenceParticipantListResponseItem::of)
-                .toList();
+        List<GetConferenceParticipantListResponseItem> responses = new ArrayList<>();
+        for (Member member : participants) {
+            String imageUrl = imageService.get(member.getImageId());
+            responses.add(GetConferenceParticipantListResponseItem.of(member, imageUrl));
+        }
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(

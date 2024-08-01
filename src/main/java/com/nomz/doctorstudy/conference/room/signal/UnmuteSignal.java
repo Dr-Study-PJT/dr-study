@@ -1,11 +1,10 @@
 package com.nomz.doctorstudy.conference.room.signal;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class MuteSignal implements Signal {
+public class UnmuteSignal implements Signal {
     private Long id;
 }

@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.common.audio.AudioUtils;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
 import com.nomz.doctorstudy.conference.room.signal.ParticipantAudioSignal;
 import com.nomz.doctorstudy.conference.room.signal.SignalSender;
+import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -38,11 +39,20 @@ public class RoomController {
     @PostMapping("/send-mute-signal/{conferenceId}")
     public ResponseEntity<?> sendMuteSignal(
             @PathVariable("conferenceId") Long conferenceId,
-            @RequestParam Long memberId
+            @RequestBody MuteSignal muteSignal
     ) {
-        MuteSignal muteSignal = new MuteSignal(memberId);
         log.debug("trying to send SignalMessage:{} to conference:{}", muteSignal, conferenceId);
-        signalSender.sendSignal(conferenceId, muteSignal);
+        signalSender.sendMuteSignal(conferenceId, muteSignal);
         return ResponseEntity.ok(muteSignal);
+    }
+
+    @PostMapping("/send-unmute-signal/{conferenceId}")
+    public ResponseEntity<?> sendUnmuteSignal(
+            @PathVariable("conferenceId") Long conferenceId,
+            @RequestBody UnmuteSignal unmuteSignal
+    ) {
+        log.debug("trying to send Unmute to conference:{}", conferenceId);
+        signalSender.sendUnmuteSignal(conferenceId, unmuteSignal);
+        return ResponseEntity.ok(unmuteSignal);
     }
 }

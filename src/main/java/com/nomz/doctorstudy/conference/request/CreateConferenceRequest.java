@@ -19,7 +19,7 @@ public class CreateConferenceRequest {
 
     @NotNull(message = "이미지 아이디는 반드시 포함되어야 합니다.")
     @Schema(description = "이미지 아이디", example = "1")
-    private Long thumbnailImageId;
+    private Long imageId;
 
     @NotBlank(message = "컨퍼런스 제목은 반드시 포함되어야 합니다.")
     @Size(min = 1, max = 64, message = "컨퍼런스 제목은 1자이상 64자 이하여야 합니다.")

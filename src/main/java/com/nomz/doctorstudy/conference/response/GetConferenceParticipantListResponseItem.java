@@ -16,16 +16,17 @@ public class GetConferenceParticipantListResponseItem {
     
     @Schema(description = "참여자 닉네임", example = "good guy")
     private final String nickname;
-    
-    @Schema(description = "참여자 이미지 아이디", example = "1")
-    private final Long imageId;
 
-    public static GetConferenceParticipantListResponseItem of(Member member) {
+    @Schema(description = "참여자 이미지 URL", example = "[imageURL]")
+    private final String imageUrl;
+
+    public static GetConferenceParticipantListResponseItem of(Member member, String imageUrl) {
         return  GetConferenceParticipantListResponseItem.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
-                .imageId(member.getImageId())
+                // TODO: imageUrl 넣기
+                .imageUrl(null)
                 .build();
     }
 }

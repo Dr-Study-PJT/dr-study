@@ -1,13 +1,17 @@
 package com.nomz.doctorstudy.moderator.service;
 
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.nomz.doctorstudy.moderator.request.CreateModeratorRequest;
 import com.nomz.doctorstudy.moderator.response.CreateAvatarResponse;
 import com.nomz.doctorstudy.moderator.response.CreateModeratorResponse;
 import com.nomz.doctorstudy.moderator.response.GetAvatarResponse;
 import com.nomz.doctorstudy.moderator.response.GetModeratorResponse;
 
+import java.util.List;
+
 public interface ModeratorService {
-    CreateModeratorResponse createModerator(Member requester, CreateModeratorRequest request);
-    GetModeratorResponse getModerator(Long moderatorId);
+    Long createModerator(Member requester, CreateModeratorRequest request);
+    Moderator getModerator(Long moderatorId);
+    List<Moderator> getModeratorList();
 }
