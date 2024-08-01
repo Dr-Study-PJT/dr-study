@@ -28,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -125,11 +126,12 @@ public class ConferenceController {
     public ResponseEntity<SuccessResponse<List<GetConferenceListResponseItem>>> getConferenceList(
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
-        List<Conference> conferences = conferenceService.getConferenceList(request);
-
-        List<GetConferenceListResponseItem> responses = conferences.stream()
-                .map(GetConferenceListResponseItem::of)
-                .toList();
+        // TODO: 조인으로 성능 최적화 필요
+        List<GetConferenceListResponseItem> responses = new ArrayList<>();
+        for (Conference conference : conferenceService.getConferenceList(request)) {
+            List<Member> participants = conferenceService.getConferenceParticipantList(conference.getId());
+            responses.add(GetConferenceListResponseItem.of(conference, participants));
+        }
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -177,6 +179,29 @@ public class ConferenceController {
     }
 
 
+    @PostMapping("/{conference_id}/start")
+    @Operation(summary = "Conference 시작", description = "Conference를 시작합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 시작 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "인증에 실패했습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "권한이 없습니다. 호스트 유저만이 시작시킬 수 있습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "존재하지 않는 Conference입니다.",
+                        "errors": { }
+                    }
+                    """))),
+    })
     public ResponseEntity<SuccessResponse<StartConferenceResponse>> startConference(
             @PathVariable("conference_id") Long conferenceId
     ) {

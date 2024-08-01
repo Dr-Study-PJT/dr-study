@@ -8,4 +8,5 @@ import lombok.Getter;
 public class ConferenceSearchFilter {
     private final String title;
     private final Integer memberCapacity;
+    private final Boolean isFinished;
 }

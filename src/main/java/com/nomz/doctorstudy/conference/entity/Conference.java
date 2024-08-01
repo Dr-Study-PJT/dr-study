@@ -2,13 +2,13 @@ package com.nomz.doctorstudy.conference.entity;
 
 import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
+import java.time.LocalDateTime;
+
 @Entity
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,4 +26,13 @@ public class Conference {
 
     @Column(nullable = false)
     private Integer memberCapacity;
+
+    @Column
+    private Boolean isFinished;
+
+    @Column
+    private LocalDateTime startTime;
+
+    @Column
+    private LocalDateTime finishTime;
 }

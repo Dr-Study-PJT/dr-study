@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -13,13 +14,13 @@ public class ConferenceMember {
     @EmbeddedId
     private ConferenceMemberId id;
 
-    @ManyToOne
     @MapsId("conferenceId")
-    @JoinColumn(name = "confernce_id")
+    @ManyToOne
+    @JoinColumn(name = "conference_id")
     private Conference conference;
 
-    @ManyToOne
     @MapsId("memberId")
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 }

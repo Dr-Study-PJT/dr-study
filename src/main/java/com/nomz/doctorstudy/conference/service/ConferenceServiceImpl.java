@@ -48,6 +48,7 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .title(request.getTitle())
                 .host(requester)
                 .memberCapacity(request.getMemberCapacity())
+                .isFinished(false)
                 .build();
         conferenceRepository.save(conference);
 
@@ -68,7 +69,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         return conferenceQueryRepository.getConferenceList(
                 ConferenceSearchFilter.builder()
                         .title(request.getTitle())
-                        .memberCapacity(request.getMemberCapacity())
+                        .isFinished(request.getIsFinished())
                         .build()
         );
     }
@@ -83,7 +84,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
-    public void startConference(Long conferenceId) {
+    public void openConference(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
@@ -92,6 +93,14 @@ public class ConferenceServiceImpl implements ConferenceService {
         }
         joinLockMap.put(conferenceId, new ReentrantLock());
         roomService.createRoom(conferenceId);
+    }
+
+    @Override
+    public void startConference(Long conferenceId) {
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
+
     }
 
     @Override
