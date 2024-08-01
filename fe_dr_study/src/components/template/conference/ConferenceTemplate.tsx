@@ -5,6 +5,7 @@ import ConferenceControlBar from '@/components/organisms/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress';
 import ModeratorAvatar from '@/components/organisms/ModeratorAvatar';
 import Signal from '@/components/organisms/Signal/Signal';
+import Video from '@/components/organisms/Video';
 import axios from 'axios';
 import Peer from 'peerjs';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -213,14 +214,13 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     };
 
     return (
-        <div className="p-[30px] flex items-center justify-center bg-dr-indigo-200 h-[100%]">
-            <div className="video-container h-[80%]">
+        <div className="p-[30px] flex items-center justify-center bg-dr-indigo-200 h-[100%] w-full">
+            <div className="video-container grid grid-cols-2 gap-4 h-[80%]">
                 {Object.keys(existingPeers).map((peerId) => (
                     <div
                         key={peerId}
-                        className="w-[100%] h-[100%] rounded-xl overflow-hidden"
+                        className="w-full h-full rounded-xl overflow-hidden"
                     >
-                        {/* <h3>User: {peerId}</h3> */}
                         <video
                             ref={(el) => {
                                 if (el) {
@@ -229,7 +229,6 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                                 }
                             }}
                             autoPlay
-                            // muted
                         ></video>
                     </div>
                 ))}

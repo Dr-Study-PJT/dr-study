@@ -1,8 +1,13 @@
 import { Button } from '@/components/atoms';
 import React, { useState, useRef, useEffect } from 'react';
 
-function Recorder({ stompClient, memberId }: any) {
-    console.log('stompClient:', stompClient);
+interface RecorderProps {
+    memberId: number;
+    conferenceId: number;
+    stompClient: any;
+}
+
+function Recorder({ memberId, conferenceId, stompClient }: RecorderProps) {
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -50,11 +55,10 @@ function Recorder({ stompClient, memberId }: any) {
                         // STOMP를 통해 오디오 전송
                         if (stompClient) {
                             stompClient.send(
-                                `/pub/signal/1`, // 적절한 STOMP 경로 설정
+                                `/pub/signal/${conferenceId}/participant-audio`, // 적절한 STOMP 경로 설정
                                 {},
                                 JSON.stringify({
-                                    senderId: memberId,
-                                    signal: 'audio',
+                                    id: memberId,
                                     rawAudio: base64String as string, // ArrayBuffer로 전송
                                 }),
                             );

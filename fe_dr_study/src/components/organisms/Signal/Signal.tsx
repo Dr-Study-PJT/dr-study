@@ -1,18 +1,19 @@
 import { Stomp } from '@stomp/stompjs';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Frame } from 'stompjs';
 import Recorder from './Recorder';
+import { Button } from '@/components/atoms';
 
 interface Message {
-    senderId: number;
+    id: number;
     message: string;
 }
 
 interface Signal {
-    senderId: number;
-    signal: string;
-    rawAudio?: string; // rawAudio를 선택적으로 추가
+    id?: number;
+    time?: number; // 발화 시간 또는 아바타 움직임 시간
+    content?: string; // GPT 요약
 }
 
 interface SignalProps {
@@ -21,125 +22,172 @@ interface SignalProps {
 }
 
 const Signal = ({ conferenceId = 1, memberId = 1 }: SignalProps) => {
-    const [message, setMessage] = useState<string>('');
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [signal, setSignal] = useState<string>('');
-    const [signals, setSignals] = useState<Signal[]>([]);
-    const [audioFile, setAudioFile] = useState<File | null>(null); // 선택된 오디오 파일
+    const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
+    const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
+    const [sendingSignal, setSendingSignal] = useState<Signal>({}); // 송신할 신호를 저장하는 상태
+    const [signals, setSignals] = useState<Signal[]>([]); // 수신된 신호 목록을 저장하는 상태
 
-    const [stompClient, setStompClient] = useState<any>(null); // 타입을 명시적으로 설정
+    const [stompClient, setStompClient] = useState<any>(null); // Stomp 클라이언트 상태
 
-    const CHANNEL = 'topic';
+    const CHANNEL = 'topic'; // 채널 이름
 
     // 소켓 생성 및 Stomp 클라이언트 생성
     useEffect(() => {
-        const socket = new SockJS('http://192.168.100.77:8080/room');
+        const socket = new SockJS('http://192.168.100.77:8080/room'); // SockJS 소켓 생성
 
-        const clientStomp = Stomp.over(socket);
+        const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
 
-        setStompClient(clientStomp);
+        setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
     }, []);
 
     // 소켓 연결 및 메시지 수신
     useEffect(() => {
         stompClient?.connect({}, (frame: Frame) => {
-            console.log('Connected: ' + `/${CHANNEL}/chat/${conferenceId}`);
+            console.log('Connected: ' + `/${CHANNEL}/chat/${conferenceId}`); // 연결 확인 로그
+
+            // 채팅 메시지를 수신하여 채팅방에 띄우기
             stompClient?.subscribe(
                 `/${CHANNEL}/chat/${conferenceId}`,
                 (message: any) => {
-                    const newMessage: Message = JSON.parse(message.body);
+                    const newMessage: Message = JSON.parse(message.body); // 수신된 메시지 파싱
                     console.log('message received:');
                     Object.entries(newMessage).forEach(([key, value]) => {
-                        console.log(`${key}: ${value}`);
+                        console.log(`${key}: ${value}`); // 수신된 메시지 로그
                     });
                     setMessages((prevMessages) => [
                         ...prevMessages,
                         newMessage,
-                    ]);
-
-                    console.log(...messages, newMessage);
+                    ]); // 수신된 메시지를 메시지 목록에 추가
                 },
             );
+
+            // Mute 신호를 수신하여 대상 id를 찾아 mute
             stompClient?.subscribe(
                 `/${CHANNEL}/signal/${conferenceId}/mute`,
                 (signal: any) => {
-                    const newSignal: Signal = JSON.parse(signal.body);
+                    const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
                     console.log('mute signal received:');
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        console.log(`${key}: ${value}`);
+                        console.log(`${key}: ${value}`); // 수신된 신호 로그
                     });
-                    setSignals((prevSignals) => [...prevSignals, newSignal]);
-
-                    console.log(...messages, newSignal);
+                    setSignals((prevSignals) => [...prevSignals, newSignal]); // 수신된 신호를 신호 목록에 추가
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
                 },
             );
+
+            // Unmute 신호 수신하여 대상 id를 찾아 unmute
             stompClient?.subscribe(
                 `/${CHANNEL}/signal/${conferenceId}/unmute`,
                 (signal: any) => {
-                    const newSignal: Signal = JSON.parse(signal.body);
+                    const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
                     console.log('unmute signal received:');
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        console.log(`${key}: ${value}`);
+                        console.log(`${key}: ${value}`); // 수신된 신호 로그
                     });
-                    setSignals((prevSignals) => [...prevSignals, newSignal]);
-
-                    console.log(...messages, newSignal);
+                    setSignals((prevSignals) => [...prevSignals, newSignal]); // 수신된 신호를 신호 목록에 추가
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
                 },
             );
+
+            // 발화 신호 수신
             stompClient?.subscribe(
-                `/${CHANNEL}/signal/${conferenceId}/participant-speak-order`,
+                `/${CHANNEL}/signal/${conferenceId}/participant-speak`,
                 (signal: any) => {
-                    const newSignal: Signal = JSON.parse(signal.body);
-                    console.log('participant-speak-order signal received:');
+                    const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
+                    console.log('participant-speak signal received:');
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        console.log(`${key}: ${value}`);
+                        console.log(`${key}: ${value}`); // 수신된 신호 로그
                     });
-                    setSignals((prevSignals) => [...prevSignals, newSignal]);
-
-                    console.log(...messages, newSignal);
+                    setSignals((prevSignals) => [...prevSignals, newSignal]); // 수신된 신호를 신호 목록에 추가
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
                 },
             );
+            // avatar-speak 오디오 재생
             stompClient?.subscribe(
-                `/${CHANNEL}/signal/${conferenceId}/avatar-speak-order`,
+                `/${CHANNEL}/signal/${conferenceId}/avatar-speak`,
                 (signal: any) => {
-                    const newSignal: Signal = JSON.parse(signal.body);
-                    console.log('avatar-speak-order signal received:');
+                    const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
+                    console.log('avatar-speak signal received:'); // 신호 수신 로그
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        console.log(`${key}: ${value}`);
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
                     });
-                    setSignals((prevSignals) => [...prevSignals, newSignal]);
-
-                    console.log(...messages, newSignal);
+                    setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
                 },
             );
+
+            // gpt-summary 신호 수신하여 요약 보여주기
             stompClient?.subscribe(
                 `/${CHANNEL}/signal/${conferenceId}/gpt-summary`,
                 (signal: any) => {
-                    const newSignal: Signal = JSON.parse(signal.body);
-                    console.log('gpt-summary signal received:');
+                    const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
+                    console.log('gpt-summary signal received:'); // 신호 수신 로그
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        console.log(`${key}: ${value}`);
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
                     });
-                    setSignals((prevSignals) => [...prevSignals, newSignal]);
+                    setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                },
+            );
 
-                    console.log(...messages, newSignal);
+            // next-step 신호 수신하여 다음 발화자로 넘기기
+            stompClient?.subscribe(
+                `/${CHANNEL}/signal/${conferenceId}/next-step`,
+                (signal: any) => {
+                    const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
+                    console.log('next-step signal received:'); // 신호 수신 로그
+                    Object.entries(newSignal).forEach(([key, value]) => {
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
+                    });
+                    setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                },
+            );
+
+            // death-signal 신호 수신하여 해당 id 찾아 방송 종료
+            stompClient?.subscribe(
+                `/${CHANNEL}/signal/${conferenceId}/death-signal`,
+                (signal: any) => {
+                    const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
+                    console.log('death-signal signal received:'); // 신호 수신 로그
+                    Object.entries(newSignal).forEach(([key, value]) => {
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
+                    });
+                    setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
                 },
             );
         });
     }, [stompClient]);
 
-    // 메시지 전송
+    // 메시지 전송 함수
     const sendMessage = () => {
         if (stompClient) {
+            // Stomp 클라이언트가 존재할 때
             stompClient?.send(
-                `/pub/chat/${conferenceId}/participant-speak-answer`,
+                `/pub/chat/${conferenceId}`, // 메시지를 보낼 경로
                 {},
                 JSON.stringify({
-                    senderId: memberId,
-                    message,
+                    id: memberId, // 송신자 ID
+                    message, // 송신할 메시지
                 }),
             );
-            setMessage('');
+            setMessage(''); // 메시지 입력 필드 초기화
+        }
+    };
+
+    // 10초마다 생존 신고
+    const sendHeartbeat = (memberId: number) => {
+        if (stompClient) {
+            // Stomp 클라이언트가 존재할 때
+            stompClient?.send(
+                `/pub/signal/${conferenceId}/heartbeat`, // 메시지를 보낼 경로
+                {},
+                JSON.stringify({
+                    id: memberId, // 송신자 ID
+                }),
+            );
+            setMessage(''); // 메시지 입력 필드 초기화
         }
     };
 
@@ -149,27 +197,21 @@ const Signal = ({ conferenceId = 1, memberId = 1 }: SignalProps) => {
                 <div className="h-full w-full bg-dr-coral-50">
                     {messages.map((msg, index) => (
                         <div key={index}>
-                            ({msg.senderId}) : {msg.message}
+                            ({msg.id}) : {msg.message}
                         </div>
                     ))}
                 </div>
                 <div className="h-full w-full bg-dr-coral-300">
                     {signals.map((msg, index) => (
                         <div key={index}>
-                            ({msg.senderId}) : {msg.signal}
-                            {signal.rawAudio && (
-                                <audio controls>
-                                    <source
-                                        src={signal.rawAudio}
-                                        type="audio/mpeg"
-                                    />
-                                    Your browser does not support the audio tag.
-                                </audio>
-                            )}
+                            <div>Id : {msg.id || 'no id'}</div>
+                            <div>Time : {msg.time || 'no time'}</div>
+                            <div>Content : {msg.content || 'no content'}</div>
                         </div>
                     ))}
                 </div>
             </div>
+
             <div className="flex">
                 <div className="p-4">
                     <input
@@ -180,30 +222,14 @@ const Signal = ({ conferenceId = 1, memberId = 1 }: SignalProps) => {
                     />
                     <button onClick={sendMessage}>Send</button>
                 </div>
-                <div className="p-4">
-                    <input
-                        type="text"
-                        value={signal}
-                        onChange={(e) => setSignal(e.target.value)}
-                        placeholder="Enter Signal"
-                    />
-                </div>
-                {/* <div className="p-4">
-                    <input
-                        type="file"
-                        accept="audio/*"
-                        onChange={(e) => {
-                            if (e.target.files) {
-                                setAudioFile(e.target.files[0]);
-                            }
-                        }}
-                    />
-                    <button onClick={sendAudioFile}>Send Audio</button>
-                </div> */}
             </div>
 
             <div className="fixed left-32 bottom-32 bg-dr-gray-200">
-                <Recorder memberId={memberId} stompClient={stompClient} />
+                <Recorder
+                    conferenceId={conferenceId}
+                    memberId={memberId}
+                    stompClient={stompClient}
+                />
             </div>
         </div>
     );
