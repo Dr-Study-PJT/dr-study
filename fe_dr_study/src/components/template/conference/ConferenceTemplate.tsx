@@ -48,9 +48,15 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const [isMadeLocalStream, setIsMadeLocalStream] = useState(false); // 내 로컬 스트림이 생성되었는지 여부
     const [isFlag, setIsFlag] = useState(0); // 플래그 상태 (사용 용도에 따라 다름)
 
-    // 시스템에 의해 음소거 상태
-    const [isMutedBySystem, setIsMutedBySystem] = useState(false); // 시스템에 의해 음소거되었는지 여부
-    const [focusingMemberId, setFocusingMemberId] = useState(''); // 현재 화면에 표시되는 멤버의 ID
+    // 시스템에 의한 상태
+    const [isMutedBySystem, setIsMutedBySystem] = useState<boolean>(false); // 시스템에 의해 음소거되었는지 여부
+    const [focusingMemberId, setFocusingMemberId] = useState<number>(0); // 현재 화면에 표시되는 멤버의 ID
+    const [isAvatarSpeaking, setIsAvatarSpeaking] = useState<boolean>(false); // 현재 화면에 표시되는 멤버의 ID
+    const [gptSummaryBySystem, setGPTSummaryBySystem] =
+        useState<string>('서마리'); // 현재 화면에 표시되는 멤버의 ID
+    const [isStartRecordingAudio, setIsStartRecordingAudio] =
+        useState<boolean>(false); // 오디오 스트림 시작 신호
+    const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
 
     // 피어와 로컬 스트림 참조
     const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
@@ -157,7 +163,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
         try {
             const response = await axios.post(
-                `${LOCAL_URL}/conferences/${conferenceId}/join`,
+                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/join`,
                 {
                     peerId,
                 },
@@ -199,7 +205,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const openConference = async () => {
         try {
             const response = await axios.post(
-                `${LOCAL_URL}/conferences/${conferenceId}/open`,
+                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/open`,
             ); // API 요청
             console.log('컨퍼런스 시작 성공:', response);
         } catch (error) {
@@ -211,7 +217,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const viewConference = async () => {
         try {
             const response = await axios.get(
-                `${LOCAL_URL}/conferences/${conferenceId}`,
+                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}`,
             );
             console.log('컨퍼런스 조회 성공:', response);
             const { data } = response.data; // 응답 데이터에서 data를 추출
@@ -227,11 +233,11 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     return (
         <div className="flex bg-dr-indigo-200 h-[100%] w-full">
             <div className="flex flex-col h-full w-full">
-                <div className="w-full h-[10%] bg-dr-gray-500">
+                <div className="fixed w-full h-[10%] bg-dr-dark-200 ">
                     <ConferenceProgress />
                 </div>
 
-                <div className="flex flex-wrap w-full h-[80%]">
+                <div className="fixed top-[10%] left-0 flex flex-wrap w-[85%] h-[80%]">
                     {Object.keys(existingPeers).map((peerId) => (
                         <>
                             <Video
@@ -258,21 +264,23 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     </div> */}
                 </div>
 
-                <div className="h-[10%]">
+                <div className="fixed left-0 bottom-0 w-full h-[10%] ">
                     <ConferenceControlBar
                         localStream={localStream.current}
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}
                         isMutedBySystem={isMutedBySystem}
                     />
+                    <div className="fixed bottom-[10%] left-[50%] w-[10%]">
+                        <ModeratorAvatar
+                            isAvatarSpeaking={isAvatarSpeaking}
+                            gptSummaryBySystem={gptSummaryBySystem}
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className="fixed bottom-0 left-[50%] w-[10%]">
-                <ModeratorAvatar />
-            </div>
-
-            <div className="fixed top-16 left-16 p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
+            <div className="fixed top-8 left-8 p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
                 <Paragraph>컨퍼런스 페이지 제목 : {roomInfo.title}</Paragraph>
                 <Span color="white">최대 인원 : {roomInfo.memberCapacity}</Span>
                 <Button fullWidth onClick={onClickStart}>
@@ -280,11 +288,20 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 </Button>
             </div>
 
-            <Signal
-                conferenceId={conferenceId}
-                memberId={memberId}
-                setIsMutedBySystem={setIsMutedBySystem}
-            />
+            <div className="absolute w-[15%] h-[80%] right-0 top-[10%]">
+                <Signal
+                    conferenceId={conferenceId}
+                    memberId={1}
+                    setIsMutedBySystem={setIsMutedBySystem}
+                    setFocusingMemberId={setFocusingMemberId}
+                    setIsAvatarSpeaking={setIsAvatarSpeaking}
+                    setGPTSummaryBySystem={setGPTSummaryBySystem}
+                    timeForAudioRecord={timeForAudioRecord}
+                    setTimeForAudioRecord={setTimeForAudioRecord}
+                    isStartRecordingAudio={isStartRecordingAudio}
+                    setIsStartRecordingAudio={setIsStartRecordingAudio}
+                />
+            </div>
         </div>
     );
 };

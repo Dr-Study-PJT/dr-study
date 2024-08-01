@@ -7,15 +7,17 @@ interface VideoProps {
 }
 
 const Video = ({ existingPeers, peerId, focusing }: VideoProps) => {
-    const [peerCount, setPeerCount] = useState<number>(
-        Object.keys(existingPeers).length,
-    );
+    // const [peerCount, setPeerCount] = useState<number>(
+    //     Object.keys(existingPeers).length,
+    // );
+    const [peerCount, setPeerCount] = useState<number>(10);
 
     const videoDimensions = () => {
         switch (peerCount) {
             case 1:
                 return 'h-full w-full'; // 1명일 때 전체 크기
             case 2:
+                return 'h-full w-1/2'; // 2명, 3명, 4명일 때 각각 세로의 50%
             case 3:
             case 4:
                 return 'h-1/2 w-1/2'; // 2명, 3명, 4명일 때 각각 세로의 50%
@@ -33,7 +35,7 @@ const Video = ({ existingPeers, peerId, focusing }: VideoProps) => {
 
     return (
         <div
-            className={`${videoDimensions()} flex border-2 items-center justify-center self-center rounded-xl overflow-hidden ${focusing ? 'border-2 border-blue-500' : ''}`}
+            className={`${videoDimensions()} flex border-[1px] border-dr-gray-500 items-center justify-center self-center rounded-lg overflow-hidden ${focusing ? 'border-2 border-blue-500' : ''}`}
         >
             <video
                 ref={(el) => {

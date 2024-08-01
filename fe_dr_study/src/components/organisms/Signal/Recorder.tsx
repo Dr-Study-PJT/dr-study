@@ -5,13 +5,39 @@ interface RecorderProps {
     memberId: number;
     conferenceId: number;
     stompClient: any;
+    timeForAudioRecord: number;
+    setTimeForAudioRecord: React.Dispatch<React.SetStateAction<number>>;
+    isStartRecordingAudio: boolean;
 }
 
-function Recorder({ memberId, conferenceId, stompClient }: RecorderProps) {
+function Recorder({
+    memberId,
+    conferenceId,
+    stompClient,
+    timeForAudioRecord,
+    setTimeForAudioRecord,
+    isStartRecordingAudio,
+}: RecorderProps) {
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+
+    useEffect(() => {
+        if (timeForAudioRecord) {
+            startAudioStream();
+
+            const timeout = setTimeout(() => {
+                stopAudioStream();
+            }, timeForAudioRecord * 1000);
+
+            return () => {
+                clearTimeout(timeout);
+                stopAudioStream();
+                setTimeForAudioRecord(0);
+            };
+        }
+    }, [isStartRecordingAudio]);
 
     // 오디오 스트림 시작
     const startAudioStream = async () => {
@@ -93,16 +119,15 @@ function Recorder({ memberId, conferenceId, stompClient }: RecorderProps) {
     };
 
     return (
-        <div className="">
-            <header className="Recorder-header">
-                <h1>Audio Recorder</h1>
-                <Button onClick={startAudioStream} disabled={isRecording}>
-                    Start Audio Stream
-                </Button>
-                <Button onClick={stopAudioStream} disabled={!isRecording}>
-                    Stop Audio Stream
-                </Button>
-            </header>
+        <div className="flex flex-col gap-dr-5">
+            <h1>Audio Recorder</h1>
+            <Button onClick={startAudioStream} disabled={isRecording}>
+                Start Audio Stream
+            </Button>
+
+            <Button onClick={stopAudioStream} disabled={!isRecording}>
+                Stop Audio Stream
+            </Button>
         </div>
     );
 }
