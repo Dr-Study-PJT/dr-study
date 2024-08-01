@@ -89,6 +89,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", tokens.get("refreshToken"))
@@ -97,6 +98,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 7 * 24 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
