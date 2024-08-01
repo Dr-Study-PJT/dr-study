@@ -6,6 +6,11 @@ import {
     BsGlobe2,
     BsArrowLeft,
     BsFillGearFill,
+    BsFillTelephoneFill,
+    BsCameraVideo,
+    BsCameraVideoOff,
+    BsFillMicFill,
+    BsFillMicMuteFill,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -18,6 +23,11 @@ const iconName: IconKeyValue = {
     globe: <BsGlobe2 />,
     arrowLeft: <BsArrowLeft />,
     gear: <BsFillGearFill />,
+    phoneCall: <BsFillTelephoneFill />,
+    videoOn: <BsCameraVideo />,
+    videoOff: <BsCameraVideoOff />,
+    micOn: <BsFillMicFill />,
+    micOff: <BsFillMicMuteFill />,
 };
 
 // Icon 컴포넌트
@@ -31,6 +41,8 @@ export const Icon = ({
     active,
     cursor,
     hover,
+    disabled,
+    className,
 }: IconInterface) => {
     return (
         <div
@@ -41,10 +53,11 @@ export const Icon = ({
                 shape,
                 active,
                 cursor,
+                disabled,
                 hover,
             })}
         >
-            <div className=""></div>
+            <div className={className}></div>
             {iconName[icon]}
         </div>
     );

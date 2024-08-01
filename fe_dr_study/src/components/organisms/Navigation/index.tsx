@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation'; // usePathname 훅 사용
-import { Box } from '@/components/atoms/Box/Box';
-import Icon from '@/components/atoms/Icon/Icon';
 import { Logo } from '@/components/atoms/Logo/Logo';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';

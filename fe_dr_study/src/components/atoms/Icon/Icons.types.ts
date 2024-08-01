@@ -9,10 +9,15 @@ export type IconKeyValue = {
     globe: ReactNode;
     arrowLeft: ReactNode;
     gear: ReactNode;
+    phoneCall: ReactNode;
+    videoOn: ReactNode;
+    videoOff: ReactNode;
+    micOn: ReactNode;
+    micOff: ReactNode;
+    // 아이콘 이름 추가
 };
 
 export interface IconInterface {
-    // 아이콘 이름 추가
     size: keyof typeof iconStyles.variants.size;
     cursor?: keyof typeof iconStyles.variants.cursor;
     icon: keyof IconKeyValue;
@@ -21,4 +26,6 @@ export interface IconInterface {
     bg?: keyof typeof iconStyles.variants.bg;
     active?: boolean;
     hover?: keyof typeof iconStyles.variants.hover;
+    className?: string;
+    disabled?: boolean;
 }

@@ -1,7 +1,7 @@
 import { tv } from 'tailwind-variants';
 
 export const iconStyles = tv({
-    base: 'p-3 rounded-full bg-[#393C49] text-[#007AFF] transition duration-200',
+    base: 'p-3 rounded-full transition duration-200 relative group', // group 추가
     variants: {
         cursor: {
             pointer: 'cursor-pointer',
@@ -13,21 +13,30 @@ export const iconStyles = tv({
             xl: 'text-[60px]',
         },
         bg: {
-            gray: 'bg-[#393C49]',
+            blue: 'text-dr-coral-200',
+            gray: 'bg-dr-gray-500',
+            red: 'bg-dr-red',
         },
         text: {
-            white: 'text-[#007AFF]',
+            blue: 'text-[#007AFF]',
             gray: 'text-[#909090]',
+            white: 'text-dr-white',
         },
         shape: {
             contained: 'rounded-[0.3125rem]',
+            rounded: 'rounded-full',
         },
         active: {
             true: '',
             false: '',
         },
         hover: {
-            blue: 'hover:bg-blue-400',
+            blue: 'hover:bg-dr-coral-400',
+            gray: 'hover:bg-dr-gray-400', // 호버 시 배경색 추가
+            red: 'hover:bg-dr-red', // 호버 시 배경색 추가
+        },
+        disabled: {
+            true: 'bg-gray-300 text-gray-500 cursor-not-allowed',
         },
     },
     compoundVariants: [
