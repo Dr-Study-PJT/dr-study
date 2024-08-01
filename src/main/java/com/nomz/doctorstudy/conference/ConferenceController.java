@@ -171,14 +171,14 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<?>> initConference(
+    public ResponseEntity<SuccessResponse<?>> openConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.openConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Conference 시작에 성공했습니다.",
+                        "Conference 개최에 성공했습니다.",
                         null
                 )
         );

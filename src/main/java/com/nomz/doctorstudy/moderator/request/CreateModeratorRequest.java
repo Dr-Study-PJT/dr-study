@@ -1,20 +1,23 @@
 package com.nomz.doctorstudy.moderator.request;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateModeratorRequest {
-    private final String voiceType;
+    private String name;
 
-    private final String characterType;
+    private String voiceType;
 
-    private final String modelType;
+    private String characterType;
 
-    private final String prePrompt;
+    private String modelType;
 
-    private final String script;
+    private String prePrompt;
 
-    private final String description;
+    private String script;
+
+    private String description;
 }
