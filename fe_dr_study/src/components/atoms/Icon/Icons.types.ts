@@ -15,6 +15,7 @@ export type IconKeyValue = {
     micOn: ReactNode;
     micOff: ReactNode;
     xMark: ReactNode;
+    send: ReactNode;
     // 아이콘 이름 추가 해주셔야 오타 방지 할 수 있습니다.
 };
 

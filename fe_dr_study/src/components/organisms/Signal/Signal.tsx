@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client';
 import { Frame } from 'stompjs';
 import Recorder from './Recorder';
 import { Button } from '@/components/atoms';
+import Icon from '@/components/atoms/Icon/Icon';
 
 interface Message {
     id: number;
@@ -63,17 +64,16 @@ const Signal = ({
     // 소켓 연결 및 메시지 수신
     useEffect(() => {
         stompClient?.connect({}, (frame: Frame) => {
-            openConsoleLogs &&
-                console.log('Connected: ' + `/${CHANNEL}/chat/${conferenceId}`); // 연결 확인 로그
+            console.log('Connected: ' + `/${CHANNEL}/chat/${conferenceId}`); // 연결 확인 로그
 
             // 채팅 메시지를 수신하여 채팅방에 띄우기
             stompClient?.subscribe(
                 `/${CHANNEL}/chat/${conferenceId}`,
                 (message: any) => {
                     const newMessage: Message = JSON.parse(message.body); // 수신된 메시지 파싱
-                    openConsoleLogs && console.log('message received:');
+                    console.log('message received:');
                     Object.entries(newMessage).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 수신된 메시지 로그
+                        console.log(`${key}: ${value}`); // 수신된 메시지 로그
                     });
                     setMessages((prevMessages) => [
                         ...prevMessages,
@@ -87,12 +87,12 @@ const Signal = ({
                 `/${CHANNEL}/signal/${conferenceId}/mute`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
-                    openConsoleLogs && console.log('mute signal received:');
+                    console.log('mute signal received:');
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 수신된 신호 로그
+                        console.log(`${key}: ${value}`); // 수신된 신호 로그
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 수신된 신호를 신호 목록에 추가
-                    openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
 
                     newSignal.id === memberId && setIsMutedBySystem(true); // mute 상태로 변경
                 },
@@ -103,12 +103,12 @@ const Signal = ({
                 `/${CHANNEL}/signal/${conferenceId}/unmute`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
-                    openConsoleLogs && console.log('unmute signal received:');
+                    console.log('unmute signal received:');
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 수신된 신호 로그
+                        console.log(`${key}: ${value}`); // 수신된 신호 로그
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 수신된 신호를 신호 목록에 추가
-                    openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
 
                     newSignal.id === memberId && setIsMutedBySystem(false); // unmute 상태로 변경
                 },
@@ -119,13 +119,13 @@ const Signal = ({
                 `/${CHANNEL}/signal/${conferenceId}/participant-speak`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
-                    openConsoleLogs &&
-                        console.log('participant-speak signal received:');
+
+                    console.log('participant-speak signal received:');
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 수신된 신호 로그
+                        console.log(`${key}: ${value}`); // 수신된 신호 로그
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 수신된 신호를 신호 목록에 추가
-                    openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
 
                     setFocusingMemberId(newSignal.id as number); // 발화자 id로 포커싱
                     setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 시작
@@ -137,13 +137,13 @@ const Signal = ({
                 `/${CHANNEL}/signal/${conferenceId}/avatar-speak`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
-                    openConsoleLogs &&
-                        console.log('avatar-speak signal received:'); // 신호 수신 로그
+
+                    console.log('avatar-speak signal received:'); // 신호 수신 로그
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 신호 내용 로그
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
-                    openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
 
                     setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
                 },
@@ -154,13 +154,13 @@ const Signal = ({
                 `/${CHANNEL}/signal/${conferenceId}/gpt-summary`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
-                    openConsoleLogs &&
-                        console.log('gpt-summary signal received:'); // 신호 수신 로그
+
+                    console.log('gpt-summary signal received:'); // 신호 수신 로그
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 신호 내용 로그
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
-                    openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
 
                     setGPTSummaryBySystem(newSignal.content as string); // 요약 내용 설정
                 },
@@ -171,13 +171,13 @@ const Signal = ({
                 `/${CHANNEL}/signal/${conferenceId}/next-step`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
-                    openConsoleLogs &&
-                        console.log('next-step signal received:'); // 신호 수신 로그
+
+                    console.log('next-step signal received:'); // 신호 수신 로그
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 신호 내용 로그
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
-                    openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
                 },
             );
 
@@ -186,13 +186,13 @@ const Signal = ({
                 `/${CHANNEL}/signal/${conferenceId}/death-signal`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
-                    openConsoleLogs &&
-                        console.log('death-signal signal received:'); // 신호 수신 로그
+
+                    console.log('death-signal signal received:'); // 신호 수신 로그
                     Object.entries(newSignal).forEach(([key, value]) => {
-                        openConsoleLogs && console.log(`${key}: ${value}`); // 신호 내용 로그
+                        console.log(`${key}: ${value}`); // 신호 내용 로그
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
-                    openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+                    console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
                 },
             );
         });
@@ -232,20 +232,35 @@ const Signal = ({
 
     return (
         <div className="flex flex-col h-full bg-dr-dark-300">
-            <div className="flex h-full w-full ">
-                <div className="h-full w-full  ">
+            <div className="flex h-full w-full overflow-y-scroll">
+                <div className="px-[10px] flex gap-dr-10 flex-col  h-full w-full ">
                     {messages.map((msg, index) => (
-                        <div key={index}>
-                            ({msg.id}) : {msg.message}
-                        </div>
-                    ))}
-                </div>
-                <div className="h-full w-full ">
-                    {signals.map((msg, index) => (
-                        <div key={index}>
-                            <div>Id : {msg.id || 'no id'}</div>
-                            <div>Time : {msg.time || 'no time'}</div>
-                            <div>Content : {msg.content || 'no content'}</div>
+                        <div
+                            key={index}
+                            className="flex items-start p-2 bg-gray-800 rounded-lg"
+                        >
+                            <div className="mr-2">
+                                {/* 프로필 사진 또는 아이콘을 추가할 수 있습니다. */}
+                                <img
+                                    src="/images/member_thumbnail_1.png"
+                                    alt="Profile"
+                                    className="w-8 h-8 rounded-full"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <div className="flex items-center">
+                                    <span className="font-semibold text-white">
+                                        {msg.id}
+                                    </span>
+                                    <span className="text-gray-400 text-sm ml-2">
+                                        10:30 AM
+                                    </span>{' '}
+                                    {/* 시간 표시 추가 */}
+                                </div>
+                                <div className="text-gray-200">
+                                    {msg.message}
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -259,7 +274,7 @@ const Signal = ({
                     className="bg-dr-dark-300 border border-dr-coral-200 rounded-[10px] p-2 text-white" // 배경색, 테두리, 둥근 모서리 추가
                 />
                 <Button onClick={sendMessage} size="sm">
-                    전송
+                    <Icon icon="send" size="sm" shape="contained" />
                 </Button>
             </div>
 

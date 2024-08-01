@@ -12,6 +12,7 @@ import {
     BsFillMicFill,
     BsFillMicMuteFill,
     BsXLg,
+    BsFillSendFill,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -30,6 +31,7 @@ const iconName: IconKeyValue = {
     micOn: <BsFillMicFill />,
     micOff: <BsFillMicMuteFill />,
     xMark: <BsXLg />,
+    send: <BsFillSendFill />,
 };
 
 // Icon 컴포넌트
