@@ -46,7 +46,7 @@ public class ConferenceController {
             @ApiResponse(responseCode = "200", description = "Conference 생성 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "유효하지 않은 입력입니다.",
+                        "message": "유효하지 않은 입력입니다.",
                         "errors": {
                             "title": "제목은 1자이상 64자 이하여야 합니다.",
                             "thumbnailImageId": "썸네일 이미지 아이디는 반드시 포함되어야 합니다."
@@ -55,7 +55,7 @@ public class ConferenceController {
                     """))),
             @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증에 실패했습니다.",
+                        "message": "인증에 실패했습니다.",
                         "errors": { }
                     }
                     """)))
@@ -85,7 +85,7 @@ public class ConferenceController {
             @ApiResponse(responseCode = "200", description = "Conference 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "Conference 조회에 실패했습니다.",
+                        "message": "Conference 조회에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -116,7 +116,7 @@ public class ConferenceController {
             @ApiResponse(responseCode = "200", description = "Conference 리스트 검색 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "Conference 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "Conference 조회에 실패했습니다.",
+                        "message": "Conference 조회에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -140,29 +140,43 @@ public class ConferenceController {
     }
 
 
-    @PostMapping("/{conference_id}/start")
-    @Operation(summary = "Conference 시작", description = "Conference를 시작합니다.")
+    @PostMapping("/{conference_id}/open")
+    @Operation(summary = "Conference 개최", description = "Conference를 개최합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conference 시작 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "200", description = "Conference 개최 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증에 실패했습니다.",
+                        "message": "인증에 실패했습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "권한이 없습니다. 호스트 유저만이 시작시킬 수 있습니다.",
+                        "message": "권한이 없습니다. 호스트 유저만이 개최할 수 있습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "404", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "존재하지 않는 Conference입니다.",
+                        "message": "존재하지 않는 Conference입니다.",
                         "errors": { }
                     }
                     """))),
     })
+    public ResponseEntity<SuccessResponse<OpenConferenceResponse>> initConference(
+            @PathVariable("conference_id") Long conferenceId
+    ) {
+        conferenceService.openConference(conferenceId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 시작에 성공했습니다.",
+                        null
+                )
+        );
+    }
+
+
     public ResponseEntity<SuccessResponse<StartConferenceResponse>> startConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
@@ -170,7 +184,7 @@ public class ConferenceController {
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Conference 시작에 성공했습니다.",
+                        "Conference 시작에 성곻했습니다.",
                         null
                 )
         );
@@ -183,19 +197,19 @@ public class ConferenceController {
             @ApiResponse(responseCode = "200", description = "Conference 종료 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증에 실패했습니다.",
+                        "message": "인증에 실패했습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "권한이 없습니다. 호스트 유저만이 종료시킬 수 있습니다.",
+                        "message": "권한이 없습니다. 호스트 유저만이 종료시킬 수 있습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "404", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "존재하지 않는 Conference입니다.",
+                        "message": "존재하지 않는 Conference입니다.",
                         "errors": { }
                     }
                     """))),
@@ -220,19 +234,19 @@ public class ConferenceController {
             @ApiResponse(responseCode = "200", description = "Conference 참여 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증에 실패했습니다.",
+                        "message": "인증에 실패했습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "권한이 없습니다. 초대받은 유저만이 참여할 수 있습니다.",
+                        "message": "권한이 없습니다. 초대받은 유저만이 참여할 수 있습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "404", description = "Conference 참여 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "존재하지 않는 Conference입니다.",
+                        "message": "존재하지 않는 Conference입니다.",
                         "errors": { }
                     }
                     """))),
@@ -261,19 +275,19 @@ public class ConferenceController {
             @ApiResponse(responseCode = "200", description = "Conference 멤버 초대 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증에 실패했습니다.",
+                        "message": "인증에 실패했습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "권한이 없습니다. Conference 방장만이 초대할 수 있습니다.",
+                        "message": "권한이 없습니다. Conference 방장만이 초대할 수 있습니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "404", description = "Conference 참여 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "존재하지 않는 Conference입니다.",
+                        "message": "존재하지 않는 Conference입니다.",
                         "errors": { }
                     }
                     """))),

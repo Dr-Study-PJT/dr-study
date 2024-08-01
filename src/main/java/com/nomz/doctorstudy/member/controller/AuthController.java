@@ -63,7 +63,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "로그인 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "유효하지 않은 입력입니다.",
+                        "message": "유효하지 않은 입력입니다.",
                         "errors": {
                             "email": "이메일은 필수 입력값입니다.",
                             "password": "비밀번호는 6자에서 12자 숫자 + 영어 + 특수기호를 넣어주세요.(임시)"
@@ -72,7 +72,7 @@ public class AuthController {
                     """))),
             @ApiResponse(responseCode = "401", description = "로그인 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "아이디 또는 비밀번호를 확인해주세요.",
+                        "message": "아이디 또는 비밀번호를 확인해주세요.",
                         "errors": { }
                     }
                     """)))
@@ -116,7 +116,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "로그아웃 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "로그아웃 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "잘못된 토큰입니다.",
+                        "message": "잘못된 토큰입니다.",
                         "errors": {
                         }
                     }
@@ -160,7 +160,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "AccessToken 재발급 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "AccessToken 재발급 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "유효하지 않은 토큰입니다.",
+                        "message": "유효하지 않은 토큰입니다.",
                         "errors": {
                         }
                     }
@@ -197,7 +197,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "인증번호 전송 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "409", description = "이미 가입된 이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "이미 가입된 이메일입니다.",
+                        "message": "이미 가입된 이메일입니다.",
                         "errors": { }
                     }
                     """))),
@@ -224,13 +224,13 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "인증번호 일치", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "인증번호 불일치", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증번호가 일치하지 않습니다. 다시 입력해주세요",
+                        "message": "인증번호가 일치하지 않습니다. 다시 입력해주세요",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "410", description = "인증번호 만료", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증번호가 만료되었습니다. 다시 요청해주세요",
+                        "message": "인증번호가 만료되었습니다. 다시 요청해주세요",
                         "errors": { }
                     }
                     """))),
@@ -251,13 +251,13 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "비밀번호 변경 링크 전송 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "비밀번호 변경 링크 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "잘못된 링크입니다.",
+                        "message": "잘못된 링크입니다.",
                         "errors": { }
                     }
                     """))),
             @ApiResponse(responseCode = "404", description = "비밀번호 변경 링크 만료", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "링크가 만료되었습니다. 다시 요청해주세요",
+                        "message": "링크가 만료되었습니다. 다시 요청해주세요",
                         "errors": { }
                     }
                     """))),
@@ -280,7 +280,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "비밀번호 변경 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "유효하지 않은 입력입니다.",
+                        "message": "유효하지 않은 입력입니다.",
                         "errors": {
                             "password": "비밀번호는 6자에서 12자 숫자 + 영어 + 특수기호를 넣어주세요.(임시)"
                          }
@@ -288,7 +288,7 @@ public class AuthController {
                     """))),
             @ApiResponse(responseCode = "404", description = "비밀번호 변경 링크 만료", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "존재하지 않는 링크입니다. 다시 요청해주세요",
+                        "message": "존재하지 않는 링크입니다. 다시 요청해주세요",
                         "errors": { }
                     }
                     """))),

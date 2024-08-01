@@ -46,7 +46,7 @@ public class StudyGroupController {
             @ApiResponse(responseCode = "201", description = "Study Group 생성 성공"),
             @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "유효하지 않은 입력입니다.",
+                        "message": "유효하지 않은 입력입니다.",
                         "errors": {
                             "title": "제목은 1자이상 64자 이하여야 합니다.",
                             "thumbnailImageId": "썸네일 이미지 아이디는 반드시 포함되어야 합니다."
@@ -55,7 +55,7 @@ public class StudyGroupController {
                     """))),
             @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "인증에 실패했습니다.",
+                        "message": "인증에 실패했습니다.",
                         "errors": { }
                     }
                     """)))
@@ -82,7 +82,7 @@ public class StudyGroupController {
             @ApiResponse(responseCode = "200", description = "Conference 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "Conference 조회에 실패했습니다.",
+                        "message": "Conference 조회에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -122,7 +122,7 @@ public class StudyGroupController {
             @ApiResponse(responseCode = "200", description = "Study Group 리스트 검색 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "Study Group 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "Study Group 조회에 실패했습니다.",
+                        "message": "Study Group 조회에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -155,7 +155,7 @@ public class StudyGroupController {
             @ApiResponse(responseCode = "200", description = "Study Group 리스트 지원 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "Study Group 리스트 지원 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "Study Group 지원에 실패했습니다.",
+                        "message": "Study Group 지원에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -182,7 +182,7 @@ public class StudyGroupController {
             @ApiResponse(responseCode = "200", description = "Study Group 지원 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "Study Group 지원 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "Study Group 지원 조회에 실패했습니다.",
+                        "message": "Study Group 지원 조회에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -213,7 +213,7 @@ public class StudyGroupController {
             @ApiResponse(responseCode = "200", description = "Study Group 지원 Reply 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "Study Group 지원 Reply 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "chatMessage": "Study Group 지원 Reply에 실패했습니다.",
+                        "message": "Study Group 지원 Reply에 실패했습니다.",
                         "errors": {
                         }
                     }
