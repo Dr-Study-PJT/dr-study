@@ -4,7 +4,6 @@ import { Button, Paragraph, Span } from '@/components/atoms';
 import ConferenceControlBar from '@/components/organisms/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress';
 import ModeratorAvatar from '@/components/organisms/ModeratorAvatar';
-import Room from '@/components/organisms/Room/Room';
 import Signal from '@/components/organisms/Signal/Signal';
 import axios from 'axios';
 import Peer from 'peerjs';
@@ -32,18 +31,15 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         Record<string, MediaStream>
     >({});
     const [existingPeerIds, setExistingPeerIds] = useState<string[]>([]);
-    const [remotePeerId, setRemotePeerId] = useState('');
-
-    const myPeer = useRef<Peer | null>(null);
     const [myPeerId, setMyPeerId] = useState<string>('');
-    const myPeerIdRef = useRef<string>('');
-    const localStream = useRef<MediaStream | null>(null);
 
     const [isPeerCreated, setIsPeerCreate] = useState(false); // 내 peer 생성
     const [isMadeLocalStream, setIsMadeLocalStream] = useState(false); // 내 localStream 생성
-    const [isPeerIdsRequested, setIsPeerIdsRequested] = useState(false); // 다른 이용자 peerIds 요청
 
     const [isFlag, setIsFlag] = useState(0);
+
+    const myPeer = useRef<Peer | null>(null);
+    const localStream = useRef<MediaStream | null>(null);
 
     // // 1. new Peer 내 피어 생성
     const onClickStart = (e: React.MouseEvent<HTMLElement>) => {
@@ -218,7 +214,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
     return (
         <div className="p-[30px] flex items-center justify-center bg-dr-indigo-200 h-[100%]">
-            <div className="video-container">
+            <div className="video-container h-[80%]">
                 {Object.keys(existingPeers).map((peerId) => (
                     <div
                         key={peerId}
@@ -243,7 +239,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 <ConferenceProgress />
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 bg-dr-white shadow-md z-50">
+            <div className="fixed bottom-0 left-0 right-0 bg-dr-white shadow-md z-50 ">
                 <ConferenceControlBar
                     localStream={localStream.current}
                     existingPeers={existingPeers}
@@ -263,7 +259,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 </Button>
             </div>
 
-            <Signal />
+            <Signal conferenceId={1} memberId={1} />
         </div>
     );
 };

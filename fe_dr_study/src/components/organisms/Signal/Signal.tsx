@@ -2,6 +2,7 @@ import { Stomp } from '@stomp/stompjs';
 import { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Frame } from 'stompjs';
+import Recorder from './Recorder';
 
 interface Message {
     senderId: number;
@@ -14,31 +15,36 @@ interface Signal {
     rawAudio?: string; // rawAudio를 선택적으로 추가
 }
 
-interface ChatMessageProps {
+interface SignalProps {
     conferenceId: number;
     memberId: number;
 }
 
-const Signal = ({ conferenceId = 1, memberId = 1 }: ChatMessageProps) => {
+const Signal = ({ conferenceId = 1, memberId = 1 }: SignalProps) => {
     const [message, setMessage] = useState<string>('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [signal, setSignal] = useState<string>('');
     const [signals, setSignals] = useState<Signal[]>([]);
     const [audioFile, setAudioFile] = useState<File | null>(null); // 선택된 오디오 파일
 
-    const stompClient = useRef();
+    const [stompClient, setStompClient] = useState<any>(null); // 타입을 명시적으로 설정
 
     const CHANNEL = 'topic';
 
+    // 소켓 생성 및 Stomp 클라이언트 생성
     useEffect(() => {
         const socket = new SockJS('http://192.168.100.77:8080/room');
 
-        stompClient.current = Stomp.over(socket);
-        console.log('stomp.over' + socket);
+        const clientStomp = Stomp.over(socket);
 
-        stompClient.current.connect({}, (frame: Frame) => {
+        setStompClient(clientStomp);
+    }, []);
+
+    // 소켓 연결 및 메시지 수신
+    useEffect(() => {
+        stompClient?.connect({}, (frame: Frame) => {
             console.log('Connected: ' + `/${CHANNEL}/chat/${conferenceId}`);
-            stompClient.current.subscribe(
+            stompClient?.subscribe(
                 `/${CHANNEL}/chat/${conferenceId}`,
                 (message: any) => {
                     const newMessage: Message = JSON.parse(message.body);
@@ -54,11 +60,63 @@ const Signal = ({ conferenceId = 1, memberId = 1 }: ChatMessageProps) => {
                     console.log(...messages, newMessage);
                 },
             );
-            stompClient.current.subscribe(
-                `/${CHANNEL}/signal/${conferenceId}`,
+            stompClient?.subscribe(
+                `/${CHANNEL}/signal/${conferenceId}/mute`,
                 (signal: any) => {
                     const newSignal: Signal = JSON.parse(signal.body);
-                    console.log('signal received:');
+                    console.log('mute signal received:');
+                    Object.entries(newSignal).forEach(([key, value]) => {
+                        console.log(`${key}: ${value}`);
+                    });
+                    setSignals((prevSignals) => [...prevSignals, newSignal]);
+
+                    console.log(...messages, newSignal);
+                },
+            );
+            stompClient?.subscribe(
+                `/${CHANNEL}/signal/${conferenceId}/unmute`,
+                (signal: any) => {
+                    const newSignal: Signal = JSON.parse(signal.body);
+                    console.log('unmute signal received:');
+                    Object.entries(newSignal).forEach(([key, value]) => {
+                        console.log(`${key}: ${value}`);
+                    });
+                    setSignals((prevSignals) => [...prevSignals, newSignal]);
+
+                    console.log(...messages, newSignal);
+                },
+            );
+            stompClient?.subscribe(
+                `/${CHANNEL}/signal/${conferenceId}/participant-speak-order`,
+                (signal: any) => {
+                    const newSignal: Signal = JSON.parse(signal.body);
+                    console.log('participant-speak-order signal received:');
+                    Object.entries(newSignal).forEach(([key, value]) => {
+                        console.log(`${key}: ${value}`);
+                    });
+                    setSignals((prevSignals) => [...prevSignals, newSignal]);
+
+                    console.log(...messages, newSignal);
+                },
+            );
+            stompClient?.subscribe(
+                `/${CHANNEL}/signal/${conferenceId}/avatar-speak-order`,
+                (signal: any) => {
+                    const newSignal: Signal = JSON.parse(signal.body);
+                    console.log('avatar-speak-order signal received:');
+                    Object.entries(newSignal).forEach(([key, value]) => {
+                        console.log(`${key}: ${value}`);
+                    });
+                    setSignals((prevSignals) => [...prevSignals, newSignal]);
+
+                    console.log(...messages, newSignal);
+                },
+            );
+            stompClient?.subscribe(
+                `/${CHANNEL}/signal/${conferenceId}/gpt-summary`,
+                (signal: any) => {
+                    const newSignal: Signal = JSON.parse(signal.body);
+                    console.log('gpt-summary signal received:');
                     Object.entries(newSignal).forEach(([key, value]) => {
                         console.log(`${key}: ${value}`);
                     });
@@ -68,12 +126,13 @@ const Signal = ({ conferenceId = 1, memberId = 1 }: ChatMessageProps) => {
                 },
             );
         });
-    }, []);
+    }, [stompClient]);
 
+    // 메시지 전송
     const sendMessage = () => {
         if (stompClient) {
-            stompClient.current.send(
-                `/pub/chat/${conferenceId}`,
+            stompClient?.send(
+                `/pub/chat/${conferenceId}/participant-speak-answer`,
                 {},
                 JSON.stringify({
                     senderId: memberId,
@@ -84,51 +143,17 @@ const Signal = ({ conferenceId = 1, memberId = 1 }: ChatMessageProps) => {
         }
     };
 
-    const sendSignal = () => {
-        if (stompClient) {
-            stompClient.current.send(
-                `/pub/signal/${conferenceId}`,
-                {},
-                JSON.stringify({
-                    senderId: memberId,
-                    signal,
-                }),
-            );
-            setSignal('');
-        }
-    };
-
-    const sendAudioFile = () => {
-        if (audioFile && stompClient) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64Audio = reader.result as string; // Base64 문자열로 변환
-                stompClient.current.send(
-                    `/pub/signal/${conferenceId}`,
-                    {},
-                    JSON.stringify({
-                        senderId: memberId,
-                        signal: 'audio',
-                        rawAudio: base64Audio, // Base64 인코딩된 오디오
-                    }),
-                );
-                setAudioFile(null); // 전송 후 파일 초기화
-            };
-            reader.readAsDataURL(audioFile); // Base64로 변환
-        }
-    };
-
     return (
         <div className="fixed top-0 right-0 flex flex-col h-[92%] bg-dr-gray-100">
             <div className="flex h-full w-full">
-                <div className="h-full w-full bg-dr-coral-50 h-full">
+                <div className="h-full w-full bg-dr-coral-50">
                     {messages.map((msg, index) => (
                         <div key={index}>
                             ({msg.senderId}) : {msg.message}
                         </div>
                     ))}
                 </div>
-                <div className="h-full w-full bg-dr-coral-300 h-full">
+                <div className="h-full w-full bg-dr-coral-300">
                     {signals.map((msg, index) => (
                         <div key={index}>
                             ({msg.senderId}) : {msg.signal}
@@ -162,9 +187,8 @@ const Signal = ({ conferenceId = 1, memberId = 1 }: ChatMessageProps) => {
                         onChange={(e) => setSignal(e.target.value)}
                         placeholder="Enter Signal"
                     />
-                    <button onClick={sendSignal}>Send</button>
                 </div>
-                <div className="p-4">
+                {/* <div className="p-4">
                     <input
                         type="file"
                         accept="audio/*"
@@ -175,7 +199,11 @@ const Signal = ({ conferenceId = 1, memberId = 1 }: ChatMessageProps) => {
                         }}
                     />
                     <button onClick={sendAudioFile}>Send Audio</button>
-                </div>
+                </div> */}
+            </div>
+
+            <div className="fixed left-32 bottom-32 bg-dr-gray-200">
+                <Recorder memberId={memberId} stompClient={stompClient} />
             </div>
         </div>
     );
