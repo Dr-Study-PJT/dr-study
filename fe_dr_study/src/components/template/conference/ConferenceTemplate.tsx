@@ -5,6 +5,7 @@ import ConferenceControlBar from '@/components/organisms/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress';
 import ModeratorAvatar from '@/components/organisms/ModeratorAvatar';
 import Room from '@/components/organisms/Room/Room';
+import Signal from '@/components/organisms/Signal/Signal';
 import axios from 'axios';
 import Peer from 'peerjs';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -261,6 +262,8 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     컨퍼런스 시작
                 </Button>
             </div>
+
+            <Signal />
         </div>
     );
 };
