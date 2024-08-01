@@ -74,10 +74,10 @@ public class StudyGroupController {
     @GetMapping("/{groupId}")
     @Operation(summary = "Study Group 조회", description = "Study Group 정보를 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conference 조회 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+            @ApiResponse(responseCode = "200", description = "Study Group 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "message": "Conference 조회에 실패했습니다.",
+                        "message": "Study Group 조회에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -98,6 +98,8 @@ public class StudyGroupController {
                 studyGroup.getCreatedAt(),
                 studyGroup.getIsDeleted(),
                 studyGroup.getDescription(),
+                studyGroup.getDueDate(),
+                studyGroup.getCaptain().getId(),
                 studyGroup.getMemberCount(),
                 studyGroup.getMemberCapacity(),
                 tags
@@ -268,8 +270,8 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@PathVariable Long studyGroupId) {
-        List<MemberStudyGroup> memberList = studyGroupService.getMemberListByStudyGroupId(studyGroupId);
+    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@RequestParam("groupId") Long groupId) {
+        List<MemberStudyGroup> memberList = studyGroupService.getMemberListByStudyGroupId(groupId);
         List<GetMemberListResponse> responseList = memberList.stream().map(GetMemberListResponse::of).toList();
 
         return ResponseEntity.ok(

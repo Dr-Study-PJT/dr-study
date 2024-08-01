@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 public class GetMemberListResponse {
 
+    @Schema(description = "스터디원 아이디", example = "1")
+    private final Long id;
+
     @Schema(description = "스터디원 닉네임", example = "박경모")
     private final String nickname;
 
@@ -25,6 +28,7 @@ public class GetMemberListResponse {
 
     public static GetMemberListResponse of(MemberStudyGroup memberStudyGroup){
         return builder()
+                .id(memberStudyGroup.getMember().getId())
                 .nickname(memberStudyGroup.getMember().getNickname())
                 .imageId(memberStudyGroup.getMember().getImageId())
                 .role(memberStudyGroup.getRole())

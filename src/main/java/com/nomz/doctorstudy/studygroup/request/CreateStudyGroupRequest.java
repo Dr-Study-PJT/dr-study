@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.studygroup.request;
 
-import com.nomz.doctorstudy.studygroup.entity.Tag;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -37,7 +36,7 @@ public class CreateStudyGroupRequest {
 //    private final String goal;
 
     @Schema(description = "스터디 종료 날짜", example = "2024-07-22")
-    private final LocalDateTime dueDate;
+    private final LocalDate dueDate;
 
     @NotNull(message = "스터디 인원은 반드시 포함되어야 합니다.")
     @Schema(description = "스터디 인원 수", example = "6")
