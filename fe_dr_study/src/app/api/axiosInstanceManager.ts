@@ -12,7 +12,7 @@ export const GenerateAPI = (url?: string) => {
         ? `${BACKEND_API_VERSION}/${url}`
         : BACKEND_API_VERSION;
     const API: AxiosInstance = axios.create({
-        baseURL: `${process.env.NEXT_PUBLIC_HOST}/${versionedUrl}/`,
+        baseURL: `${process.env.NEXT_PUBLIC_HOST}/${versionedUrl}`,
         withCredentials: true,
     });
 

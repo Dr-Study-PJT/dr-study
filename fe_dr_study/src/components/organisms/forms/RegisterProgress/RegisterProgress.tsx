@@ -14,7 +14,7 @@ import { IRegisterReq } from '@/interfaces/members';
 
 const RegisterProgress = ({ steps = 2 }: RegisterProgressProps) => {
     const [bodyData, setBodyData] = useState<IRegisterReq>({
-        file: null,
+        imageId: null,
         email: '',
         nickname: '',
         password: '',

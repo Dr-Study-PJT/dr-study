@@ -2,12 +2,19 @@ import React, { FormEvent } from 'react';
 import { Button, Label } from '@/components/atoms';
 import { StepProps } from './type';
 import { createModerator } from '../../_api';
+import { useRouter } from 'next/navigation';
 
 const Step4: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
+    const router = useRouter();
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        await createModerator(data);
+        try {
+            const response = await createModerator(data);
+            router.push('/group/1');
+        } catch {
+            console.error('실패 에반데;;');
+        }
     };
 
     return (

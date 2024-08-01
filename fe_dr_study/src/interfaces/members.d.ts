@@ -8,9 +8,13 @@ export interface IMember {
 export interface IMemberData
     extends Pick<IMember, 'id' | 'email' | 'nickname'> {}
 
+export interface IUploadImage {
+    File: file | null;
+}
 export interface IRegisterReq
     extends Pick<IMember, 'email' | 'password' | 'nickname'> {
-    file: File | null;
+    imageId: number | null;
+    rePassword?: string;
 }
 
 export interface ILogInReq extends Pick<IMember, 'email' | 'password'> {}

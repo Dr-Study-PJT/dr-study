@@ -15,9 +15,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     };
 
     useEffect(() => {
-        if (!data.type_model) handleChange('type_model', 'A');
-        if (!data.type_voice) handleChange('type_voice', 'A');
-        if (!data.type_tone) handleChange('type_tone', 'A');
+        if (!data.typeModel) handleChange('typeModel', 'A');
+        if (!data.typeVoice) handleChange('typeVoice', 'A');
+        if (!data.typeCharacter) handleChange('typeCharacter', 'A');
     }, []);
 
     return (
@@ -67,9 +67,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     value: 'C',
                                 },
                             ]}
-                            value={data.type_model}
+                            value={data.typeModel}
                             onChange={(value) =>
-                                handleChange('type_model', value)
+                                handleChange('typeModel', value)
                             }
                         />
                         <LabelCheckboxGroup
@@ -91,9 +91,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     value: 'C',
                                 },
                             ]}
-                            value={data.type_voice}
+                            value={data.typeVoice}
                             onChange={(value) =>
-                                handleChange('type_voice', value)
+                                handleChange('typeVoice', value)
                             }
                         />
                         <LabelCheckboxGroup
@@ -115,9 +115,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     value: 'C',
                                 },
                             ]}
-                            value={data.type_tone}
+                            value={data.typeCharacter}
                             onChange={(value) =>
-                                handleChange('type_tone', value)
+                                handleChange('typeCharacter', value)
                             }
                         />
                     </div>

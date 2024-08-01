@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
-import { StepProps } from './type';
+import { StepProps } from '../_types/type';
 import { LabelCheckboxGroup } from '@/components/organisms/LabelCheckboxGroup';
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
 
