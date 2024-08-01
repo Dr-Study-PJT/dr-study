@@ -1,9 +1,20 @@
+// fe_dr_study/src/app/api/jwt.ts
 import { POST } from '@/app/api/routeModule';
 import { IMemberData } from '@/interfaces/members';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
-
 import { authAPI as API } from './axiosInstanceManager';
 import { logout } from '@/app/auth/_api/login';
+
+// 로컬 스토리지에서 액세스 토큰을 저장하고 불러오는 유틸리티 함수 추가
+const ACCESS_TOKEN_KEY = 'access_token';
+
+export const saveAccessTokenToLocalStorage = (token: string) => {
+    localStorage.setItem(ACCESS_TOKEN_KEY, token);
+};
+
+export const getAccessTokenFromLocalStorage = (): string | null => {
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
+};
 
 export const fetchAccessToken = async (
     memberId: string | null,
@@ -33,13 +44,13 @@ export const fetchAccessToken = async (
     }
 };
 
-/*= ========================================================== */
-// 기존의 recoil상태 또는 훅 사용 대신, 모든 API 인스턴스 & GET(= using fetch())를 위한 함수의 공통스코프에서 관리되는 파일에서 accessToken을 변수로 공통적으로 사용 및 관리하도록 설계
-
 let currentAccessToken: string | null = null;
 export const getAccessToken = (): string | null => currentAccessToken;
 export const setAccessToken = (token: string | null) => {
     currentAccessToken = token;
+    if (token) {
+        saveAccessTokenToLocalStorage(token);
+    }
 };
 
 export async function handleAuthentication(isAuth: boolean): Promise<any> {
@@ -51,6 +62,10 @@ export async function handleAuthentication(isAuth: boolean): Promise<any> {
     if (!memberData) return headers;
 
     let token = getAccessToken();
+
+    if (!token) {
+        token = getAccessTokenFromLocalStorage();
+    }
 
     if (!token || !isTokenValid(token)) {
         try {
@@ -65,6 +80,7 @@ export async function handleAuthentication(isAuth: boolean): Promise<any> {
             throw error;
         }
     }
+
     headers['Authorization'] = `Bearer ${token}`;
     return headers;
 }
