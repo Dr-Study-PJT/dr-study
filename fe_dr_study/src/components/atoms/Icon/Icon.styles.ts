@@ -21,6 +21,7 @@ export const iconStyles = tv({
         },
         shape: {
             contained: 'rounded-[0.3125rem]',
+            rounded: 'rounded-full',
         },
         active: {
             true: '',
