@@ -8,6 +8,7 @@ import lombok.*;
 @Setter
 @Entity
 @Builder
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConferenceMember {

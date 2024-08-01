@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @SpringBootTest
@@ -109,18 +110,16 @@ class ConferenceServiceImplTest {
 
 
         // when
+        ConferenceMemberId conferenceMemberId = new ConferenceMemberId(conference.getId(), hostMember.getId());
         ConferenceMember conferenceMember = ConferenceMember.builder()
-                .id(new ConferenceMemberId(conference.getId(), hostMember.getId()))
+                .id(conferenceMemberId)
                 .conference(conference)
                 .member(hostMember)
                 .build();
         conferenceMemberRepository.save(conferenceMember);
 
-        System.out.println("conferenceMember = " + conferenceMember);
-
         // then
         List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByConferenceId(conference.getId());
-        System.out.println("conferenceMember1 = " + conferenceMembers.get(0));
-        Assertions.assertThat(conferenceMembers).contains(conferenceMember);
+        Assertions.assertThat(conferenceMembers).containsOnly(conferenceMember);
     }
 }
