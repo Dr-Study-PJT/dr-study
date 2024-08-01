@@ -165,7 +165,8 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
         try {
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/join`,
+                `${LOCAL_URL}`,
+                // `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/join`,
                 {
                     peerId,
                 },

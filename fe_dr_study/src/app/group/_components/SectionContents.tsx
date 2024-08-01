@@ -8,6 +8,9 @@ import { Button } from '@/components/atoms';
 import { useRouter } from 'next/navigation';
 import { trimString } from '@/utils/trimString';
 import { ReactNode, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
+import CreateConferenceForm from '@/components/organisms/CreateConferenceForm/CreateConferenceForm';
 
 interface SectionContentsProps {
     groupId: string;
@@ -19,6 +22,13 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     const [activeTab, setActiveTab] = useState<
         '게시판' | '채팅방' | '스터디 이력'
     >('게시판');
+
+    const dispatch = useDispatch();
+
+    const handleClickOpenConference = () => {
+        dispatch(setIsModalOpen());
+        dispatch(setModalContent('CreateConferenceForm'));
+    };
 
     const renderContent = (activeTab: string, groupId: string) => {
         const router = useRouter();
@@ -188,9 +198,9 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                 </div>
                 <div className="mt-6 text-center">
                     <Button
-                        onClick={(e: React.MouseEvent<HTMLElement>) => {
-                            alert('새 컨퍼런스 생성 모달 만들어서 띄워줘야함.');
-                        }}
+                        onClick={(e: React.MouseEvent<HTMLElement>) =>
+                            handleClickOpenConference()
+                        }
                         outlined
                         rounded
                         fullWidth

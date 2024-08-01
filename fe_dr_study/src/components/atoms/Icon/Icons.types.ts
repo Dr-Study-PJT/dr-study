@@ -14,7 +14,8 @@ export type IconKeyValue = {
     videoOff: ReactNode;
     micOn: ReactNode;
     micOff: ReactNode;
-    // 아이콘 이름 추가
+    xMark: ReactNode;
+    // 아이콘 이름 추가 해주셔야 오타 방지 할 수 있습니다.
 };
 
 export interface IconInterface {

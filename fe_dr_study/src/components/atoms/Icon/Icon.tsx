@@ -11,6 +11,7 @@ import {
     BsCameraVideoOff,
     BsFillMicFill,
     BsFillMicMuteFill,
+    BsXLg,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -28,6 +29,7 @@ const iconName: IconKeyValue = {
     videoOff: <BsCameraVideoOff />,
     micOn: <BsFillMicFill />,
     micOff: <BsFillMicMuteFill />,
+    xMark: <BsXLg />,
 };
 
 // Icon 컴포넌트
