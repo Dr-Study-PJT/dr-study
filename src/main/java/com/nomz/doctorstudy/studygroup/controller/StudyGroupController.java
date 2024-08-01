@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.studygroup.controller;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.*;
@@ -256,10 +257,102 @@ public class StudyGroupController {
                 )
         );
     }
+
+    @GetMapping("/{studyGroupId}/members")
+    @Operation(summary = "Study Group 가입자 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 가입자 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 가입자 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 가입자 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@PathVariable Long studyGroupId) {
+        List<MemberStudyGroup> memberList = studyGroupService.getMemberListByStudyGroupId(studyGroupId);
+        List<GetMemberListResponse> responseList = memberList.stream().map(GetMemberListResponse::of).toList();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        responseList
+                )
+        );
+    }
+
+    @GetMapping("/waiters")
+    @Operation(summary = "Study Group 장이 자신의 그룹에 승인 대기중인 멤버를 조회", description = "Study Group 승인 대기자를 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 승인 대기자 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 승인 대기자 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Study Group 승인 대기자 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getWaiterList(Authentication authentication) {
+        List<MemberStudyGroupApply> waiterList = studyGroupService.getWaiterList(authentication);
+        List<GetWaiterListResponse> responseList = waiterList.stream().map(GetWaiterListResponse::of).toList();
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        responseList
+                )
+        );
+    }
+    @PutMapping("/{groupId}")
+    @Operation(summary = "스터디 그룹 삭제(소프트 삭제)", description = "Study Group을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 삭제 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 삭제 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                        {
+                            "message": "Study Group 삭제에 실패했습니다.",
+                            "errors": {
+                            }
+                        }
+                        """)))
+    })
+    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(@PathVariable Long groupId) {
+        StudyGroup group = studyGroupService.deleteStudyGroup(groupId);
+        DeleteGroupResponse response = new DeleteGroupResponse( group.getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 삭제에 성공했습니다.",
+                        response
+                )
+        );
+    }
+    @PutMapping("/member/{groupId}")
+    @Operation(summary = "유저가 스터디 그룹을 탈퇴(소프트 탈퇴)", description = "유저가 스터디 그룹에서 탈퇴합니다.(소프트 탈퇴)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Study Group 탈퇴 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Study Group 탈퇴 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                        {
+                            "message": "Study Group 탈퇴에 실패했습니다.",
+                            "errors": {
+                            }
+                        }
+                        """)))
+    })
+    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable Long groupId, Authentication authentication) {
+        MemberStudyGroup memberStudyGroup = studyGroupService.leaveStudyGroup(groupId, authentication);
+        LeaveGroupResponse response = new LeaveGroupResponse(memberStudyGroup.getStudyGroup().getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "StudyGroup 탈퇴에 성공했습니다.",
+                        response
+                )
+        );
+    }
 }
 
 
-//
+
+
 ////    @Operation(summary = "Get all study groups")
 ////    @ApiResponse(responseCode = "200", description = "List of all study groups")
 //    @GetMapping
@@ -268,18 +361,6 @@ public class StudyGroupController {
 //        return ResponseEntity.ok(groups);
 //    }
 //
-////    @Operation(summary = "Delete a study group by ID")
-////    @ApiResponses(value = {
-////            @ApiResponse(responseCode = "200", description = "Study group deleted successfully"),
-////            @ApiResponse(responseCode = "404", description = "Study group not found")
-////    })
-//    @DeleteMapping("/{groupId}")
-//    public ResponseEntity<Void> deleteStudyGroup(@PathVariable Long groupId) {
-//        StudyGroup group = studyGroupRepository.findById(groupId)
-//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
-//        studyGroupRepository.delete(group);
-//        return ResponseEntity.noContent().build();
-//    }
 //
 //
 //

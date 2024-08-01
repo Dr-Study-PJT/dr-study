@@ -28,7 +28,7 @@ public class MemberStudyGroupApply {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status; // e.g., "PENDING", "APPROVED", "REJECTED"
+    private Status status; // e.g., "APPROVED", "DENIED", "WAITING"
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

@@ -73,6 +73,16 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
             studyGroupTagRepository.saveAll(studyGroupTags);
         }
+        MemberStudyGroupId memberStudyGroupIdObject  = new MemberStudyGroupId(member.getId(), studyGroup.getId());
+        MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
+                .memberStudyGroupId(memberStudyGroupIdObject)
+                .member(member)
+                .studyGroup(studyGroup)
+                .role("LEADER") // 기본 역할 설정
+                .joinDate(LocalDateTime.now())
+                .isLeaved(false)
+                .build();
+        memberStudyGroupRepository.save(memberStudyGroup);
         return studyGroup;
     }
 
@@ -142,11 +152,18 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         apply.setStatus(createReplyRequest.getStatus());
         memberStudyGroupApplyRepository.save(apply);
 
-        // 3. 사용자 - 스터디 그룹 테이블에 데이터 저장
-        if(createReplyRequest.getStatus() == Status.APPROVED){
+        // 3. StudyGroup의 memberCount 1 증가
+        if (createReplyRequest.getStatus() == Status.APPROVED) {
+            StudyGroup studyGroup = apply.getStudyGroup();
+            studyGroup.setMemberCount(studyGroup.getMemberCount() + 1);
+            studyGroupRepository.save(studyGroup);
+
+        // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
             MemberStudyGroupId memberStudyGroupIdObject  = new MemberStudyGroupId(apply.getMember().getId(), apply.getStudyGroup().getId());
             MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
                     .memberStudyGroupId(memberStudyGroupIdObject)
+                    .member(apply.getMember())
+                    .studyGroup(apply.getStudyGroup())
                     .role("MEMBER") // 기본 역할 설정
                     .joinDate(LocalDateTime.now())
                     .isLeaved(false)
@@ -176,6 +193,72 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         }
         // 기타 필드에 대해 동일하게 처리
         return studyGroupRepository.save(studyGroup);
+    }
+
+    @Override
+    public List<MemberStudyGroup> getMemberListByStudyGroupId(Long studyGroupId) {
+        return memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(studyGroupId);
+    }
+
+    @Override
+    public List<MemberStudyGroupApply> getWaiterList(Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+
+        // 1. 이 멤버가 그룹장인지 찾기
+        List<StudyGroup> GroupList = studyGroupRepository.findByCaptain(member);
+        if (GroupList.isEmpty()) {
+            throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
+        }
+        // 2. 그룹장이라면 그 그룹에 WAITING중인 멤버들을 리스트로 담기
+        List<Long> groupIds = GroupList.stream()
+                .map(StudyGroup::getId)
+                .toList();
+
+        return memberStudyGroupApplyRepository.findByStudyGroupIdInAndStatus(groupIds, Status.WAITING);
+    }
+
+    @Override
+    public StudyGroup deleteStudyGroup(Long groupId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
+                .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+        studyGroup.setIsDeleted(Boolean.TRUE);
+        return studyGroupRepository.save(studyGroup);
+    }
+
+    @Override
+    public MemberStudyGroup leaveStudyGroup(Long groupId, Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        MemberStudyGroupId memberStudyGroupId = new MemberStudyGroupId(member.getId(), groupId);
+
+        MemberStudyGroup memberStudyGroup = memberStudyGroupRepository.findById(memberStudyGroupId)
+                .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
+
+        memberStudyGroup.setIsLeaved(Boolean.TRUE);
+        memberStudyGroup.setLeavedDate(LocalDateTime.now());
+
+        StudyGroup studyGroup = studyGroupRepository.findById(memberStudyGroup.getStudyGroup().getId())
+                        .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
+        studyGroup.setMemberCount(studyGroup.getMemberCount() -1);
+
+        memberStudyGroupRepository.save(memberStudyGroup);
+        studyGroupRepository.save(studyGroup);
+        return memberStudyGroup;
     }
 
 //    @Override
