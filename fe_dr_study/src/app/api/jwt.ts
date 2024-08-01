@@ -68,7 +68,7 @@ export async function handleAuthentication(isAuth: boolean): Promise<any> {
             throw error;
         }
     }
-
+    headers['Authorization'] = `Bearer ${token}`;
     return headers;
 }
 
