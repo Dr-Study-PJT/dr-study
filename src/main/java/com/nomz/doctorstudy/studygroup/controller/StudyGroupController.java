@@ -270,7 +270,7 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@RequestParam("groupId") Long groupId) {
+    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@PathVariable Long groupId) {
         List<MemberStudyGroup> memberList = studyGroupService.getMemberListByStudyGroupId(groupId);
         List<GetMemberListResponse> responseList = memberList.stream().map(GetMemberListResponse::of).toList();
 
