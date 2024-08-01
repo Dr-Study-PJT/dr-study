@@ -16,7 +16,7 @@ public class ImageExceptionHandler {
     public ResponseEntity<?> ImageExceptionHandler(MemberException e){
         log.info("Image error");
         return new ResponseEntity<>(
-                new ErrorResponse<>(e.getErrorCode().getMessage(), Map.of()), e.getErrorCode().getHttpStatus()
+                new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
     }
 }

@@ -16,7 +16,7 @@ public class StydyGroupExceptionHandler {
     public ResponseEntity<?> StudyGroupExceptionHandler(StudyGroupException e){
         log.info("study group error");
         return new ResponseEntity<>(
-                new ErrorResponse<>(e.getErrorCode().getMessage(), Map.of()), e.getErrorCode().getHttpStatus()
+                new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
     }
 
