@@ -24,13 +24,4 @@ public class ConferenceMemberInvite {
     @MapsId("memberId")
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @Embeddable
-    @EqualsAndHashCode
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ConferenceMemberInviteId implements Serializable {
-        private Long conferenceId;
-        private Long memberId;
-    }
 }

@@ -7,6 +7,7 @@ import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
 import com.nomz.doctorstudy.conference.entity.ConferenceMember;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
+import com.nomz.doctorstudy.conference.entity.ConferenceMemberInviteId;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
@@ -15,7 +16,6 @@ import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
 import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
-import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
@@ -155,7 +155,7 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST));
 
         ConferenceMemberInvite conferenceMemberInvite = ConferenceMemberInvite.builder()
-                .id(new ConferenceMemberInvite.ConferenceMemberInviteId(conferenceId, inviteeId))
+                .id(new ConferenceMemberInviteId(conferenceId, inviteeId))
                 .conference(conference)
                 .member(member)
                 .build();

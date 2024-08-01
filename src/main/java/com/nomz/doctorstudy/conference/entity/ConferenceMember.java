@@ -4,8 +4,6 @@ import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
-
 @Getter
 @Entity
 @Builder
@@ -24,13 +22,4 @@ public class ConferenceMember {
     @MapsId("memberId")
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @Embeddable
-    @EqualsAndHashCode
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ConferenceMemberId implements Serializable {
-        private Long conferenceId;
-        private Long memberId;
-    }
 }
