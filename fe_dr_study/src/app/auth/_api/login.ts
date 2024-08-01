@@ -28,7 +28,7 @@ API.interceptors.response.use(
 
 export const login = async (memerData: ILogInReq) => {
     const response = await API.post(
-        'https://www.dr-study.kro.kr/v1/auth/login',
+        'https://api.dr-study.kro.kr/v1/auth/login',
         memerData,
     );
     setSessionStorageItem('memberData', {
