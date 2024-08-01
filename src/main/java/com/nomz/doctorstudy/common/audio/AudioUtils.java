@@ -14,6 +14,10 @@ public class AudioUtils {
     private static final String SRC_FILE_PATH = TEMP_FILE_NAME + SRC_EXT;
     private static final String DEST_FILE_PATH = TEMP_FILE_NAME + DEST_EXT;
 
+    public static void playAudioFromBinaryMessage(BinaryMessage message) {
+        playAudioFromByteArr(message.getPayload().array());
+    }
+
     public static void playAudioFromByteArr(byte[] message) {
         saveFileFromByteArr(message);
 

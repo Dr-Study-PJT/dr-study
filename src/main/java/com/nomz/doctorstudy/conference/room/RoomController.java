@@ -31,10 +31,9 @@ public class RoomController {
     public void message(@DestinationVariable("conferenceId") Long conferenceId, Signal signal) {
         log.debug("sender:{} sent signal message:{} from conference:{}", signal.getSenderId(), signal, conferenceId);
 
-        if (signal.getSignal().equals("audio")) {
-            String rawAudioStr = signal.getRawAudio();
-            log.debug("rawAudioStr={}", rawAudioStr.substring(0, rawAudioStr.indexOf("//")));
-            AudioUtils.playAudioFromByteArr(Base64.getDecoder().decode(rawAudioStr));
+        if (signal.getType().equals("audio")) {
+            String rawAudio = signal.getRawAudio();
+            AudioUtils.playAudioFromByteArr(Base64.getDecoder().decode(rawAudio));
         }
     }
 
