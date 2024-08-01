@@ -11,8 +11,13 @@ import org.springframework.stereotype.Component;
 public class SignalSender {
     private final SimpMessagingTemplate template;
 
-    public void sendSignal(Long conferenceId, Signal signal) {
-        log.debug("sent signal:{} from conference:{}", signal, conferenceId);
-        template.convertAndSend("/topic/signal/" + conferenceId, signal);
+    public void sendMuteSignal(Long conferenceId, MuteSignal signal) {
+        log.debug("sent mute signal:{} from conference:{}", signal, conferenceId);
+        template.convertAndSend("/topic/signal/" + conferenceId + "/mute", signal);
+    }
+
+    public void sendUnmuteSignal(Long conferenceId, UnmuteSignal signal) {
+        log.debug("sent unmute signal:{} from conference:{}", signal, conferenceId);
+        template.convertAndSend("/topic/signal/" + conferenceId + "/unmute", signal);
     }
 }
