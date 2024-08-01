@@ -8,6 +8,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ChatMessage {
-    private Long senderId;
+    private Long id;
     private String message;
 }

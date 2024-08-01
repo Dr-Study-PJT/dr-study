@@ -1,16 +1,16 @@
 package com.nomz.doctorstudy.conference.room;
 
 import com.nomz.doctorstudy.common.audio.AudioUtils;
+import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
+import com.nomz.doctorstudy.conference.room.signal.ParticipantAudioSignal;
+import com.nomz.doctorstudy.conference.room.signal.SignalSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
 
@@ -22,28 +22,27 @@ public class RoomController {
 
     @MessageMapping("/chat/{conferenceId}")
     @SendTo("/topic/chat/{conferenceId}")
-    public ChatMessage message(@DestinationVariable("conferenceId") Long conferenceId, ChatMessage chatMessage) {
-        log.debug("sender:{} sent chat message:{} from conference:{}", chatMessage.getSenderId(), chatMessage, conferenceId);
+    public ChatMessage handleChatMessage(@DestinationVariable("conferenceId") Long conferenceId, ChatMessage chatMessage) {
+        log.debug("sender:{} sent chat message:{} from conference:{}", chatMessage.getId(), chatMessage, conferenceId);
         return chatMessage;
     }
 
-    @MessageMapping("/signal/{conferenceId}")
-    public void message(@DestinationVariable("conferenceId") Long conferenceId, Signal signal) {
-        log.debug("sender:{} sent signal message:{} from conference:{}", signal.getSenderId(), signal, conferenceId);
+    @MessageMapping("/signal/{conferenceId}/participant-audio")
+    public void handleSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
+        log.debug("signal: {} from conference: {}", signal, conferenceId);
 
-        if (signal.getType().equals("audio")) {
-            String rawAudio = signal.getRawAudio();
-            AudioUtils.playAudioFromByteArr(Base64.getDecoder().decode(rawAudio));
-        }
+        String rawAudio = signal.getRawAudio();
+        AudioUtils.playAudioFromByteArr(Base64.getDecoder().decode(rawAudio));
     }
 
-    @PostMapping("/signal-send/{conferenceId}")
-    public ResponseEntity<?> sendSignalMessage(
+    @PostMapping("/send-mute-signal/{conferenceId}")
+    public ResponseEntity<?> sendMuteSignal(
             @PathVariable("conferenceId") Long conferenceId,
-            @RequestBody Signal signal)
-    {
-        log.debug("trying to send SignalMessage:{} to conference:{}", signal, conferenceId);
-        signalSender.sendSignal(conferenceId, signal);
-        return ResponseEntity.ok(signal);
+            @RequestParam Long memberId
+    ) {
+        MuteSignal muteSignal = new MuteSignal(memberId);
+        log.debug("trying to send SignalMessage:{} to conference:{}", muteSignal, conferenceId);
+        signalSender.sendSignal(conferenceId, muteSignal);
+        return ResponseEntity.ok(muteSignal);
     }
 }

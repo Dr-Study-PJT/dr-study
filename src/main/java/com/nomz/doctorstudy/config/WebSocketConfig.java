@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
 @Configuration
@@ -32,5 +33,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         container.setMaxTextMessageBufferSize(1024 * 1024 * 50); // 50MB
         container.setMaxBinaryMessageBufferSize(1024 * 1024 * 50); // 50MB
         return container;
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
+        registry.setMessageSizeLimit(10_000_000); // default : 64 * 1024
+        registry.setSendTimeLimit(10_000_000); // default : 10 * 10000
+        registry.setSendBufferSizeLimit(10_000_000); // default : 512 * 1024
     }
 }

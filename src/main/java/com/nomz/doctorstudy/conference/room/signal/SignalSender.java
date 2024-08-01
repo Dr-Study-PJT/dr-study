@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.conference.room;
+package com.nomz.doctorstudy.conference.room.signal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ public class SignalSender {
     private final SimpMessagingTemplate template;
 
     public void sendSignal(Long conferenceId, Signal signal) {
-        log.debug("sender:{} sent signal message:{} from conference:{}", signal.getSenderId(), signal, conferenceId);
+        log.debug("sent signal:{} from conference:{}", signal, conferenceId);
         template.convertAndSend("/topic/signal/" + conferenceId, signal);
     }
 }
