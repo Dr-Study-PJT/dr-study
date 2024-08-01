@@ -59,6 +59,6 @@ export interface ConferenceWithMembersData {
 }
 
 export interface IGroupAdmissionApplyReq {
-    groupId: string;
+    studyGroupId: string; // 나중에 groupId로 바꿉시다.
     message: string;
 }
