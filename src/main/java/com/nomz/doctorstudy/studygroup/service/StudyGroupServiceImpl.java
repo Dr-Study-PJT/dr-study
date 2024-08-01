@@ -2,6 +2,9 @@ package com.nomz.doctorstudy.studygroup.service;
 
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.image.entity.Image;
+import com.nomz.doctorstudy.image.exception.ImageErrorCode;
+import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
@@ -37,6 +40,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
     private final MemberStudyGroupRepository memberStudyGroupRepository;
     private final MemberService memberService;
+    private final ImageRepository imageRepository;
 
     @Override
     public StudyGroup createStudyGroup(CreateStudyGroupRequest request, Authentication authentication) {
@@ -49,9 +53,12 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         String email = memberDetails.getUsername();
         Member member = memberService.getUserByEmail(email);
         // --------------------------------------------------------------------------
+        Image image = imageRepository.findById(request.getImageId())
+                .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_EMPTY));
+
         StudyGroup studyGroup = StudyGroup.builder()
                 .name(request.getName())
-                .imageId(request.getImageId())
+                .image(image)
                 .captain(member)
                 .createdAt(LocalDateTime.now())
                 .isDeleted(false)
@@ -179,6 +186,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
         Member captain = memberRepository.findById(request.getCaptainId())
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+        Image image = imageRepository.findById(request.getImageId())
+                .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_EMPTY));
         if (request.getName() != null) {
             studyGroup.setName(request.getName());
         }
@@ -189,7 +198,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
             studyGroup.setCaptain(captain);
         }
         if (request.getImageId() != null) {
-            studyGroup.setImageId(request.getImageId());
+            studyGroup.setImage(image);
         }
         // 기타 필드에 대해 동일하게 처리
         return studyGroupRepository.save(studyGroup);

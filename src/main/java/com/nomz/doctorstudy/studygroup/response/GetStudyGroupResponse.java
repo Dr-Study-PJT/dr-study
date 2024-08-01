@@ -17,8 +17,8 @@ public class GetStudyGroupResponse {
     @Schema(description = "조회된 스터디그룹 이름", example = "정처기 스터디")
     private final String name;
 
-    @Schema(description = "조회된 스터디그룹 썸네일 이미지 아이디", example = "1")
-    private final Long imageId;
+    @Schema(description = "조회된 스터디그룹 썸네일 이미지 Url", example = "xxx.xxx.xxx")
+    private final String imageUrl;
 
     @Schema(description = "조회된 스터디그룹 생성 일시", example = "2024-07-22")
     private final LocalDateTime createdAt;

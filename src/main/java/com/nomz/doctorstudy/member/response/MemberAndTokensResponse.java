@@ -9,7 +9,6 @@ import java.util.Map;
 @Getter
 @Builder
 public class MemberAndTokensResponse {
-
     private Member member;
     private Map tokens;
 
