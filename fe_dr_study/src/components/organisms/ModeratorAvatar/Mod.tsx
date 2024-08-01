@@ -1,27 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-interface ModeratorAvatarProps {}
+interface ModeratorAvatarProps {
+    isAvatarSpeaking: boolean;
+    gptSummaryBySystem: string;
+}
 
-const ModeratorAvatar = ({}: ModeratorAvatarProps) => {
-    const [isModeratorSpeaking, setIsModeratorSpeaking] =
-        useState<boolean>(false);
+const ModeratorAvatar = ({
+    isAvatarSpeaking,
+    gptSummaryBySystem,
+}: ModeratorAvatarProps) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
-
-    // 사회자 말하도록 하기
-    const toggleSpeaking = () => {
-        setIsModeratorSpeaking((prev) => !prev);
-    };
 
     return (
         <div
+            className="relative"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{
                 transition: 'transform 0.3s ease-in-out',
                 transform:
-                    isModeratorSpeaking || isHovered
+                    isAvatarSpeaking || isHovered
                         ? 'translateX(-50%) scale(1.3)'
                         : 'translateX(-50%) scale(1)',
                 borderTopLeftRadius: '20%',
@@ -31,16 +31,19 @@ const ModeratorAvatar = ({}: ModeratorAvatarProps) => {
         >
             <img
                 src={
-                    isModeratorSpeaking
+                    isAvatarSpeaking
                         ? '/images/speaking.png'
                         : '/images/not-speaking.png'
                 }
                 alt={
-                    isModeratorSpeaking
+                    isAvatarSpeaking
                         ? 'Moderator Speaking'
                         : 'Moderator Not Speaking'
                 }
             />
+            <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
+                {gptSummaryBySystem}
+            </div>
         </div>
     );
 };

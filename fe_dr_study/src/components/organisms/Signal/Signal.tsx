@@ -4,7 +4,6 @@ import SockJS from 'sockjs-client';
 import { Frame } from 'stompjs';
 import Recorder from './Recorder';
 import { Button } from '@/components/atoms';
-import Icon from '@/components/atoms/Icon/Icon';
 
 interface Message {
     id: number;
@@ -21,27 +20,40 @@ interface SignalProps {
     conferenceId: number;
     memberId: number;
     setIsMutedBySystem: Dispatch<SetStateAction<boolean>>;
+    setFocusingMemberId: Dispatch<SetStateAction<number>>;
+    setIsAvatarSpeaking: Dispatch<SetStateAction<boolean>>;
+    setGPTSummaryBySystem: Dispatch<SetStateAction<string>>;
+    timeForAudioRecord: number;
+    setTimeForAudioRecord: Dispatch<SetStateAction<number>>;
+    isStartRecordingAudio: boolean;
+    setIsStartRecordingAudio: Dispatch<SetStateAction<boolean>>;
 }
 
-const openConsoleLogs = false;
+const openConsoleLogs = true;
 
 const Signal = ({
     conferenceId = 1,
     memberId = 1,
     setIsMutedBySystem,
+    setFocusingMemberId,
+    setIsAvatarSpeaking,
+    setGPTSummaryBySystem,
+    timeForAudioRecord,
+    setTimeForAudioRecord,
+    isStartRecordingAudio,
+    setIsStartRecordingAudio,
 }: SignalProps) => {
     const CHANNEL = 'topic'; // 채널 이름
 
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
-    const [sendingSignal, setSendingSignal] = useState<Signal>({}); // 송신할 신호를 저장하는 상태
     const [signals, setSignals] = useState<Signal[]>([]); // 수신된 신호 목록을 저장하는 상태
 
     const [stompClient, setStompClient] = useState<any>(null); // Stomp 클라이언트 상태
 
     // 소켓 생성 및 Stomp 클라이언트 생성
     useEffect(() => {
-        const socket = new SockJS('http://192.168.100.77:8080/room'); // SockJS 소켓 생성
+        const socket = new SockJS('http://192.168.163.126:8080/room'); // SockJS 소켓 생성
 
         const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
 
@@ -114,6 +126,10 @@ const Signal = ({
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 수신된 신호를 신호 목록에 추가
                     openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+
+                    setFocusingMemberId(newSignal.id as number); // 발화자 id로 포커싱
+                    setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 시작
+                    setIsStartRecordingAudio(true); // 오디오 녹음 시작
                 },
             );
             // avatar-speak 오디오 재생
@@ -128,6 +144,8 @@ const Signal = ({
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
                     openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+
+                    setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
                 },
             );
 
@@ -143,6 +161,8 @@ const Signal = ({
                     });
                     setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
                     openConsoleLogs && console.log(...messages, newSignal); // 현재 메시지 목록과 새 신호 로그
+
+                    setGPTSummaryBySystem(newSignal.content as string); // 요약 내용 설정
                 },
             );
 
@@ -180,6 +200,7 @@ const Signal = ({
 
     // 메시지 전송 함수
     const sendMessage = () => {
+        console.log('sendMessage: 클릭', memberId, message);
         if (stompClient) {
             // Stomp 클라이언트가 존재할 때
             stompClient?.send(
@@ -210,16 +231,16 @@ const Signal = ({
     };
 
     return (
-        <div className="flex flex-col h-[100%] bg-dr-gray-100">
-            <div className="flex h-full w-full">
-                <div className="h-full w-full bg-dr-gray-500">
+        <div className="flex flex-col h-full bg-dr-dark-300">
+            <div className="flex h-full w-full ">
+                <div className="h-full w-full  ">
                     {messages.map((msg, index) => (
                         <div key={index}>
                             ({msg.id}) : {msg.message}
                         </div>
                     ))}
                 </div>
-                <div className="h-full w-full bg-dr-gray-500">
+                <div className="h-full w-full ">
                     {signals.map((msg, index) => (
                         <div key={index}>
                             <div>Id : {msg.id || 'no id'}</div>
@@ -230,7 +251,7 @@ const Signal = ({
                 </div>
             </div>
 
-            <div className="flex h-[10%] p-2 bg-dr-dark-300 gap-dr-10">
+            <div className="flex h-[10%] p-2 gap-dr-10">
                 <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -242,11 +263,14 @@ const Signal = ({
                 </Button>
             </div>
 
-            <div className="fixed left-32 bottom-32 bg-dr-gray-200">
+            <div className="fixed left-8 bottom-8 p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40">
                 <Recorder
                     conferenceId={conferenceId}
                     memberId={memberId}
                     stompClient={stompClient}
+                    timeForAudioRecord={timeForAudioRecord}
+                    setTimeForAudioRecord={setTimeForAudioRecord}
+                    isStartRecordingAudio={isStartRecordingAudio}
                 />
             </div>
         </div>
