@@ -31,7 +31,8 @@ public class SecurityConfig  {
     private static final String[] AUTH_WHITELIST = {
 //            "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/api-docs/**", "/swagger-ui.html", "/v1/auth/login", "/v1/auth/email-code", "/v1/auth/find-password", "/v1/auth/reset-password",
-            "/v1/no-auth/**", "/v1/email/**", "/v1/members/**", "/v1/images", "/v1/images/**"
+            "/v1/no-auth/**", "/v1/email/**", "/v1/images/**", "/v1/images", "/v1/need-auth",
+            "/v1/members/**",
     };
 
     @Bean
@@ -57,13 +58,15 @@ public class SecurityConfig  {
                 .accessDeniedHandler(accessDeniedHandler)
         );
 
+
         // 권한 규칙 작성
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
-//                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()
 //                        .anyRequest().authenticated()
         );
+
 
         return http.build();
     }

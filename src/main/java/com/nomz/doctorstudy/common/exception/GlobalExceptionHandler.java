@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.security.sasl.AuthenticationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,4 +46,14 @@ public class GlobalExceptionHandler {
 //                        Map.of()
 //                ));
 //    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handleAuthenticationException(AuthenticationException e) {
+//        Map<String, Object> errors = new LinkedHashMap<>();
+//        for (FieldError fieldError : e.) {
+//            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+//        }
+
+        return ResponseEntity.status(401).body("로그인을 부탁합니다이");
+    }
 }
