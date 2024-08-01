@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
-import { StepProps } from './type';
+import { StepProps } from '../_types/type';
 import { LabelCheckboxGroup } from '@/components/organisms/LabelCheckboxGroup';
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
@@ -25,23 +25,23 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                 <section className="CONTENT w-full h-full flex flex-col gap-5">
                     <div className="flex flex-row justify-between gap-8">
                         <InputWithLabelAndError
-                            id="member_capacity"
+                            id="memberCapacity"
                             label="스터디 그룹 최대 인원수"
                             inputSize="md"
-                            name="member_capacity"
-                            value={data.member_capacity}
+                            name="memberCapacity"
+                            value={data.memberCapacity}
                             onChange={(e) =>
-                                handleChange('member_capacity', e.target.value)
+                                handleChange('memberCapacity', e.target.value)
                             }
                         />
                         <InputWithLabelAndError
-                            id="due_date"
+                            id="dueDate"
                             label="목표 종료 기간"
                             inputSize="md"
-                            name="due_date"
-                            value={data.due_date}
+                            name="dueDate"
+                            value={data.dueDate}
                             onChange={(e) =>
-                                handleChange('due_date', e.target.value)
+                                handleChange('dueDate', e.target.value)
                             }
                         />
                     </div>

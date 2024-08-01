@@ -1,20 +1,16 @@
-import { ICreateModeratorReq } from '../../_types';
+import { IRegisterReq } from '@/interfaces/members';
 
 export interface FormData {
     [x: string]: string | number | readonly string[] | undefined;
-    name: string;
-    description?: string;
-    typeVoice: string;
-    typeCharacter: string;
-    typeModel: string;
-    prePrompt: string;
+    email: string;
+    nickname: string;
 }
 
 export interface StepProps {
     onNext: () => void;
     onBack: () => void;
-    data: ICreateModeratorReq;
-    setData: (data: ICreateModeratorReq) => void;
+    data: IRegisterReq;
+    setData: (data: IRegisterReq) => void;
 }
 
 export interface CreateFormPageProps {

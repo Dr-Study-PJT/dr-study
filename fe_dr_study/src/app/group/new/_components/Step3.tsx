@@ -1,18 +1,25 @@
 import React, { FormEvent } from 'react';
 import { Button, Label } from '@/components/atoms';
-import { StepProps } from './type';
+import { StepProps } from '../_types/type';
 import { createGroup } from '../../_api';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
 import { LabelCheckboxGroup } from '@/components/organisms/LabelCheckboxGroup';
 import { Textarea } from '@/components/atoms/Textarea';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
+import { useRouter } from 'next/navigation';
 
 const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
+    const router = useRouter();
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        await createGroup(data);
+        try {
+            const response = await createGroup(data);
+            router.push('/group/1');
+        } catch (error) {
+            console.error('그룹생성 에러용;;; :' + error);
+        }
     };
 
     return (
@@ -50,11 +57,11 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                 <section className="RIGHT-CONTENT w-full h-auto">
                     <div className="w-full h-full flex flex-col justify-between gap-6 items-center">
                         <InputWithLabelAndError
-                            id="member_capacity"
+                            id="memberCapacity"
                             label="스터디 그룹 최대 인원수"
                             inputSize="md"
-                            name="member_capacity"
-                            value={data.member_capacity}
+                            name="memberCapacity"
+                            value={data.memberCapacity}
                             disabled
                         />
                         <TextareaWithLabel

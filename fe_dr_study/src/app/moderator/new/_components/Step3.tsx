@@ -413,7 +413,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
 
     useEffect(() => {
         console.log(fbScript);
-        setData({ ...data, fb_script: fbScript }); // Add this line to update formData with fb_script
+        setData({ ...data, script: fbScript }); // Add this line to update formData with fb_script
     }, [fbScript]);
 
     const hasPhaseBlock = droppedBlocks.some((block) =>

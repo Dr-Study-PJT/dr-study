@@ -69,11 +69,11 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             onChange={handleChange}
                         />
                         <TextareaWithLabel
-                            id="pre_prompt"
+                            id="prePrompt"
                             label="사전학습 프롬프트 입력"
                             textareaSize="lg"
-                            name="pre_prompt"
-                            value={data.pre_prompt}
+                            name="prePrompt"
+                            value={data.prePrompt}
                             onChange={handleChange}
                         />
                     </div>

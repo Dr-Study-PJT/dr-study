@@ -130,6 +130,8 @@ async function REQUEST({
         url = `${url}?${query}`;
     }
 
+    console.log('url' + url);
+
     // Axios 요청 설정
     const config: AxiosRequestConfig = {
         url,
@@ -140,6 +142,7 @@ async function REQUEST({
     };
 
     try {
+        console.log('config.url' + config.url);
         const response = await API.request(config);
 
         const acceptedStatus = [200, 201, 204];

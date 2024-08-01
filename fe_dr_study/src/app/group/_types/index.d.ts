@@ -4,13 +4,13 @@ export interface IGroup {
     description: string;
     goal: string;
     created_at: Date;
-    due_date: Date;
+    dueDate: Date;
     member_count: number;
-    member_capacity: number;
+    memberCapacity: number;
 }
 
 export interface ICreateGroupReq
     extends Pick<
         IGroup,
-        'name' | 'description' | 'goal' | 'due_date' | 'member_capacity'
+        'name' | 'description' | 'goal' | 'dueDate' | 'memberCapacity'
     > {}

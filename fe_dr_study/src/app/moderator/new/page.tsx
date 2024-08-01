@@ -29,12 +29,12 @@ const steps = [
 
 const initialFormData: ICreateModeratorReq = {
     name: '',
-    type_voice: '',
-    type_tone: '',
-    type_model: '',
-    pre_prompt: '',
+    typeVoice: '',
+    typeModel: '',
+    typeCharacter: '',
+    prePrompt: '',
     description: '',
-    fb_script: '',
+    script: '',
 };
 
 const CreateModeratorPage: React.FC<CreateFormPageProps> = () => {

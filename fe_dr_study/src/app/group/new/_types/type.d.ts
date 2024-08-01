@@ -3,11 +3,11 @@ import { ICreateModeratorReq } from '../../_types';
 export interface FormData {
     [x: string]: string | number | readonly string[] | undefined;
     name: string;
-    type_voice: string;
-    type_tone: string;
-    type_model: string;
+    voiceType: string;
+    characterType: string;
+    modelType: string;
     pre_prompt: string;
-    pre_promptDetails?: string;
+    description?: string;
 }
 
 export interface StepProps {

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Step1 from './_components/Step1';
 import Step2 from './_components/Step2';
 
-import { CreateFormPageProps, FormData } from './_components/type';
+import { CreateFormPageProps } from './_types/type';
 import Step3 from './_components/Step3';
 import { ICreateGroupReq } from '../_types';
 
@@ -26,11 +26,11 @@ const initialFormData: ICreateGroupReq = {
     name: '',
     description: '',
     goal: '',
-    due_date: new Date(),
-    member_capacity: 0,
+    dueDate: new Date(),
+    memberCapacity: 0,
 };
 
-const CreateModeratorPage: React.FC<CreateFormPageProps> = () => {
+const CreateGroupPage: React.FC<CreateFormPageProps> = () => {
     const title = '스터디 그룹 생성';
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<ICreateGroupReq>(initialFormData);
@@ -94,4 +94,4 @@ const CreateModeratorPage: React.FC<CreateFormPageProps> = () => {
     );
 };
 
-export default CreateModeratorPage;
+export default CreateGroupPage;
