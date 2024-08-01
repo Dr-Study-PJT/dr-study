@@ -197,6 +197,10 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Override
     public List<MemberStudyGroup> getMemberListByStudyGroupId(Long studyGroupId) {
+        List<MemberStudyGroup> memberStudyGroups = memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(studyGroupId);
+        if(memberStudyGroups == null){
+            throw new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR);
+        }
         return memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(studyGroupId);
     }
 
