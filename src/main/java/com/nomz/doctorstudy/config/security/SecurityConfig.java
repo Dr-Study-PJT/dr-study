@@ -31,7 +31,7 @@ public class SecurityConfig  {
     private static final String[] AUTH_WHITELIST = {
             "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/v1/auth/**",
-            "/v1/no-auth/**"
+            "/v1/no-auth/**", "/v1/**"
     };
 
     @Bean
@@ -61,7 +61,7 @@ public class SecurityConfig  {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
-                        .anyRequest().permitAll()
+//                        .anyRequest().permitAll()
 //                        .anyRequest().authenticated()
         );
 
