@@ -4,9 +4,9 @@ export interface IModerator {
     script: string;
     description: string;
     name: string;
-    typeModel: string;
-    typeVoice: string;
-    typeCharacter: string;
+    modelType: string;
+    voiceType: string;
+    characterType: string;
 }
 
 export interface ICreateModeratorReq
@@ -14,9 +14,9 @@ export interface ICreateModeratorReq
         IModerator,
         | 'name'
         | 'description'
-        | 'typeCharacter'
-        | 'typeModel'
-        | 'typeVoice'
+        | 'characterType'
+        | 'modelType'
+        | 'voiceType'
         | 'script'
         | 'prePrompt'
     > {}

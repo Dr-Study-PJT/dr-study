@@ -2,12 +2,10 @@
 import React, { useState } from 'react';
 import Step1 from './_components/Step1';
 import Step2 from './_components/Step2';
-
-import { CreateFormPageProps } from './_types/type';
 import Step3 from './_components/Step3';
-import { ICreateGroupReq } from '../_types';
+import { ICreateGroupReq } from './_types/type';
 
-const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center py-8 w-full min-h-full h-max bg-gray-800 fixed`;
+const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center py-8 w-full min-h-full h-max bg-gray-800`;
 const containerStyles = `CONTAINER-FORM min-w-[50%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
 
 const steps = [
@@ -25,12 +23,12 @@ const steps = [
 const initialFormData: ICreateGroupReq = {
     name: '',
     description: '',
-    goal: '',
+    tags: [],
     dueDate: new Date(),
     memberCapacity: 0,
 };
 
-const CreateGroupPage: React.FC<CreateFormPageProps> = () => {
+const CreateGroupPage: React.FC = () => {
     const title = '스터디 그룹 생성';
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<ICreateGroupReq>(initialFormData);

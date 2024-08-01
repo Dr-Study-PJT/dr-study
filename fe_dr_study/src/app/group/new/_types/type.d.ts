@@ -1,15 +1,5 @@
 import { ICreateModeratorReq } from '../../_types';
 
-export interface FormData {
-    [x: string]: string | number | readonly string[] | undefined;
-    name: string;
-    voiceType: string;
-    characterType: string;
-    modelType: string;
-    pre_prompt: string;
-    description?: string;
-}
-
 export interface StepProps {
     onNext: () => void;
     onBack: () => void;
@@ -17,7 +7,19 @@ export interface StepProps {
     setData: (data: ICreateModeratorReq) => void;
 }
 
-export interface CreateFormPageProps {
-    // title?: string;
-    // initialFormData?: ICreateModeratorReq;
+export interface IGroup {
+    id: number;
+    name: string;
+    description: string;
+    tags: string[];
+    created_at: Date;
+    dueDate: Date;
+    memberCount: number;
+    memberCapacity: number;
 }
+
+export interface ICreateGroupReq
+    extends Pick<
+        IGroup,
+        'name' | 'description' | 'tags' | 'dueDate' | 'memberCapacity'
+    > {}

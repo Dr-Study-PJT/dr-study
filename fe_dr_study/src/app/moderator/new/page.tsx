@@ -29,9 +29,9 @@ const steps = [
 
 const initialFormData: ICreateModeratorReq = {
     name: '',
-    typeVoice: '',
-    typeModel: '',
-    typeCharacter: '',
+    voiceType: '',
+    modelType: '',
+    characterType: '',
     prePrompt: '',
     description: '',
     script: '',

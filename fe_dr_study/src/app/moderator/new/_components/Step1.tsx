@@ -15,9 +15,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     };
 
     useEffect(() => {
-        if (!data.typeModel) handleChange('typeModel', 'A');
-        if (!data.typeVoice) handleChange('typeVoice', 'A');
-        if (!data.typeCharacter) handleChange('typeCharacter', 'A');
+        if (!data.modelType) handleChange('modelType', 'A');
+        if (!data.voiceType) handleChange('voiceType', 'A');
+        if (!data.characterType) handleChange('characterType', 'A');
     }, []);
 
     return (
@@ -67,9 +67,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     value: 'C',
                                 },
                             ]}
-                            value={data.typeModel}
+                            value={data.modelType}
                             onChange={(value) =>
-                                handleChange('typeModel', value)
+                                handleChange('modelType', value)
                             }
                         />
                         <LabelCheckboxGroup
@@ -91,9 +91,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     value: 'C',
                                 },
                             ]}
-                            value={data.typeVoice}
+                            value={data.voiceType}
                             onChange={(value) =>
-                                handleChange('typeVoice', value)
+                                handleChange('voiceType', value)
                             }
                         />
                         <LabelCheckboxGroup
@@ -115,9 +115,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     value: 'C',
                                 },
                             ]}
-                            value={data.typeCharacter}
+                            value={data.characterType}
                             onChange={(value) =>
-                                handleChange('typeCharacter', value)
+                                handleChange('characterType', value)
                             }
                         />
                     </div>

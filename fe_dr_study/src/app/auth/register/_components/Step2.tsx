@@ -38,7 +38,7 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             disabled
                         />
                         <InputWithLabelAndError
-                            id="goal"
+                            id="nickname"
                             label="닉네임 입력"
                             inputSize="md"
                             name="nickname"

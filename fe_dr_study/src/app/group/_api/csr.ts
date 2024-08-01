@@ -1,5 +1,5 @@
 import { groupAPI as API } from '@/app/api/axiosInstanceManager';
-import { ICreateGroupReq } from '../_types';
+import { ICreateGroupReq } from '../new/_types/type';
 import { POST } from '@/app/api/routeModule';
 
 export const createGroup = async (createGroupData: ICreateGroupReq) => {

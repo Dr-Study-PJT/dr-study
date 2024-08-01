@@ -94,7 +94,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     const router = useRouter();
     const conferencesWithMembers = dummyConferencesWithMembers;
     return (
-        <div className="SECTION-CONTENTS w-full h-max flex flex-row  px-6 mt-8">
+        <div className="SECTION-CONTENTS w-full h-max flex flex-row px-6 mt-8">
             <div className="LEFT-CONTENTS flex flex-col w-2/5 h-full  p-4">
                 <div className="SUBTITLE flex flex-row gap-4 items-end text-dr-white mb-4">
                     <div className="text-dr-header-2 font-medium text-dr-white pl-2">

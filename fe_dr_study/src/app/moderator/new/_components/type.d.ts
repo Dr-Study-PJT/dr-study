@@ -4,9 +4,9 @@ export interface FormData {
     [x: string]: string | number | readonly string[] | undefined;
     name: string;
     description?: string;
-    typeVoice: string;
-    typeCharacter: string;
-    typeModel: string;
+    voiceType: string;
+    characterType: string;
+    modelType: string;
     prePrompt: string;
 }
 
