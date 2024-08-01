@@ -5,6 +5,7 @@ import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class StudyGroup {
     @Column(length = 64)
     private String goal;
 
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
 
     @Column(nullable = false)
     private Integer memberCount;

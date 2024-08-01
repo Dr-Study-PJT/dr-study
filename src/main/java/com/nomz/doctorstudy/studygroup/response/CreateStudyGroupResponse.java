@@ -10,7 +10,6 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @ToString
 public class CreateStudyGroupResponse {
-
     @Schema(description = "생성된 스터디그룹 아이디", example = "1")
     private final Long groupId;
 }
