@@ -54,6 +54,14 @@ const Navigation = () => {
             <div className="w-full flex justify-center items-center">
                 <ul className="flex gap-8">
                     <li>
+                        <Link
+                            href="/conference/1"
+                            className={linkClasses('/home')}
+                        >
+                            컨퍼런스참여
+                        </Link>
+                    </li>
+                    <li>
                         <Link href="/home" className={linkClasses('/home')}>
                             홈
                         </Link>

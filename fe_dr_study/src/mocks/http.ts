@@ -8,11 +8,11 @@ const app = express();
 const port = 9090; // 서버 포트
 
 app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200,
-    credentials: true,
-  }),
+    cors({
+        origin: 'http://localhost:5080',
+        optionsSuccessStatus: 200,
+        credentials: true,
+    }),
 );
 app.use(express.json());
 

@@ -28,8 +28,10 @@ API.interceptors.response.use(
 );
 
 export const login = async (memerData: ILogInReq) => {
-    const response = await API.post('/login', memerData);
-    console.log('멤버데이터:' + Object.entries(response.data.data));
+    const response = await API.post(
+        'https://api.dr-study.kro.kr/v1/auth/login',
+        memerData,
+    );
     setSessionStorageItem('memberData', {
         id: response.data.data.id,
         email: response.data.data.email,
