@@ -42,55 +42,42 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
 
     @Override
-    public CreateConferenceResponse createConference(/*Member requester, */CreateConferenceRequest request) {
+    public Long createConference(Member requester, CreateConferenceRequest request) {
         Conference conference = Conference.builder()
                 .title(request.getTitle())
-                //.host(requester)
+                .host(requester)
                 .memberCapacity(request.getMemberCapacity())
                 .build();
         conferenceRepository.save(conference);
 
         log.info("[new conference] id={}, title={}", conference.getId(), conference.getTitle());
 
-        return CreateConferenceResponse.builder()
-                .conferenceId(conference.getId())
-                .build();
+        return conference.getId();
     }
 
     @Override
     @Transactional
-    public GetConferenceResponse getConference(Long conferenceId) {
-        Conference conference = conferenceRepository.findById(conferenceId)
+    public Conference getConference(Long conferenceId) {
+        return conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
-
-        return GetConferenceResponse.builder()
-                .id(conference.getId())
-                .title(conference.getTitle())
-                .memberCapacity(conference.getMemberCapacity())
-                .build();
     }
 
     @Override
-    public List<GetConferenceListResponse> getConferenceList(GetConferenceListRequest request) {
-        List<Conference> conferenceList = conferenceQueryRepository.getConferenceList(
+    public List<Conference> getConferenceList(GetConferenceListRequest request) {
+        return conferenceQueryRepository.getConferenceList(
                 ConferenceSearchFilter.builder()
                         .title(request.getTitle())
                         .memberCapacity(request.getMemberCapacity())
                         .build()
         );
-
-        return conferenceList.stream()
-                .map(GetConferenceListResponse::of)
-                .toList();
     }
 
     @Override
-    public List<GetConferenceParticipantListResponseItem> getConferenceParticipantList(Long conferenceId) {
+    public List<Member> getConferenceParticipantList(Long conferenceId) {
         List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByConferenceId(conferenceId);
 
         return conferenceMembers.stream()
                 .map(ConferenceMember::getMember)
-                .map(GetConferenceParticipantListResponseItem::of)
                 .toList();
     }
 
@@ -121,7 +108,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     @Transactional
-    public JoinConferenceResponse joinConference(/*Member requester, */Long conferenceId, JoinConferenceRequest request) {
+    public List<String> joinConference(/*Member requester, */Long conferenceId, JoinConferenceRequest request) {
         List<String> peerIds;
         ReentrantLock lock = joinLockMap.get(conferenceId);
         if (lock == null) {
@@ -148,14 +135,12 @@ public class ConferenceServiceImpl implements ConferenceService {
         conferenceMemberRepository.save(conferenceMember);
         */
 
-        return JoinConferenceResponse.builder()
-                .existingPeerIds(peerIds)
-                .build();
+        return peerIds;
     }
 
     @Override
     @Transactional
-    public InviteMemberConferenceResponse inviteMemberConference(Member requester, Long conferenceId, InviteMemberConferenceRequest request) {
+    public void inviteMemberConference(Member requester, Long conferenceId, InviteMemberConferenceRequest request) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
@@ -175,8 +160,5 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .member(member)
                 .build();
         conferenceMemberInviteRepository.save(conferenceMemberInvite);
-
-        return InviteMemberConferenceResponse.builder()
-                .build();
     }
 }

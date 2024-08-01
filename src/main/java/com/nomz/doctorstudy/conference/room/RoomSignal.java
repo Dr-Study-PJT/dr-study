@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class RoomSignal {
     private Long sender;
-    private String message;
+    private String signal;
 }

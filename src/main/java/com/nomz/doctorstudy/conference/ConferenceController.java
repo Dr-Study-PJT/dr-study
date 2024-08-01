@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.conference;
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
+import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
 import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
 import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
@@ -60,11 +61,14 @@ public class ConferenceController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateConferenceResponse>> createConference(
-            //Authentication authentication,
+            Authentication authentication,
             @Valid @RequestBody CreateConferenceRequest request
     ) {
-        //Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
-        CreateConferenceResponse response = conferenceService.createConference(/*member, */request);
+        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
+        Long conferenceId = conferenceService.createConference(member, request);
+        CreateConferenceResponse response = CreateConferenceResponse.builder()
+                .conferenceId(conferenceId)
+                .build();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -89,7 +93,13 @@ public class ConferenceController {
     })
     public ResponseEntity<SuccessResponse<GetConferenceResponse>> getConference(
             @PathVariable("conferenceId") Long conferenceId) {
-        GetConferenceResponse response = conferenceService.getConference(conferenceId);
+        Conference conference = conferenceService.getConference(conferenceId);
+
+        GetConferenceResponse response = GetConferenceResponse.builder()
+                .id(conference.getId())
+                .title(conference.getTitle())
+                .memberCapacity(conference.getMemberCapacity())
+                .build();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -112,10 +122,14 @@ public class ConferenceController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetConferenceListResponse>>> getConferenceList(
+    public ResponseEntity<SuccessResponse<List<GetConferenceListResponseItem>>> getConferenceList(
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
-        List<GetConferenceListResponse> responses = conferenceService.getConferenceList(request);
+        List<Conference> conferences = conferenceService.getConferenceList(request);
+
+        List<GetConferenceListResponseItem> responses = conferences.stream()
+                .map(GetConferenceListResponseItem::of)
+                .toList();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -223,19 +237,19 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<JoinConferenceResponse>> joinConference(
+    public ResponseEntity<SuccessResponse<List<String>>> joinConference(
             @PathVariable("conferenceId") Long conferenceId,
             Authentication authentication,
             @RequestBody JoinConferenceRequest request
             ) {
         //Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
 
-        JoinConferenceResponse response = conferenceService.joinConference(/*requester, */conferenceId, request);
+        List<String> existingParticipants = conferenceService.joinConference(/*requester, */conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 참여에 성공했습니다.",
-                        response
+                        existingParticipants
                 )
         );
     }
@@ -272,12 +286,12 @@ public class ConferenceController {
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         Member requester = memberDetails.getUser();
 
-        InviteMemberConferenceResponse response = conferenceService.inviteMemberConference(requester, conferenceId, request);
+        conferenceService.inviteMemberConference(requester, conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 멤버 초대에 성공했습니다.",
-                        response
+                        null
                 )
         );
     }
@@ -287,12 +301,16 @@ public class ConferenceController {
     public ResponseEntity<SuccessResponse<List<GetConferenceParticipantListResponseItem>>> getConferenceParticipantsList(
             @PathVariable Long conferenceId
     ) {
-        List<GetConferenceParticipantListResponseItem> response = conferenceService.getConferenceParticipantList(conferenceId);
+        List<Member> participants = conferenceService.getConferenceParticipantList(conferenceId);
+
+        List<GetConferenceParticipantListResponseItem> responses = participants.stream()
+                .map(GetConferenceParticipantListResponseItem::of)
+                .toList();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 참여자 조회에 성공했습니다.",
-                        response
+                        responses
                 )
         );
     }
