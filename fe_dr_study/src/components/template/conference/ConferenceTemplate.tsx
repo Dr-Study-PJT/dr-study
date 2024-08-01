@@ -234,9 +234,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 ))}
             </div>
 
-            <div className="fixed top-0 left-0 w-full h-[10%] bg-dr-gray-500">
+            {/* <div className="fixed top-0 left-0 w-full h-[10%] bg-dr-gray-500">
                 <ConferenceProgress />
-            </div>
+            </div> */}
 
             <div className="fixed bottom-0 left-0 right-0 bg-dr-white shadow-md z-50 ">
                 <ConferenceControlBar
