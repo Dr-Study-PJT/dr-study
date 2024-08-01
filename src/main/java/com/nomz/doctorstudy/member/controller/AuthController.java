@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -145,6 +146,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(0)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", null)
@@ -153,6 +155,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(0)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
@@ -177,10 +180,26 @@ public class AuthController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<?>> getAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<SuccessResponse<?>> getAccessToken(
+            @RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletRequest request, HttpServletResponse response){
+
+
 
         String email = refreshTokenRequest.getEmail();
-        String refreshToken = request.getHeader(jwtUtil.HEADER_STRING);
+//        String refreshToken = request.getHeader(jwtUtil.HEADER_STRING);
+
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = "";
+
+        for(Cookie cookie : cookies){
+            if("refresh_token".equals(cookie.getName())){
+                refreshToken = cookie.getValue();
+            }
+        }
+
+
+//        log.info("refreshToken = {}", refreshToken);
+        log.info("cookie refresh_token = {}", refreshToken);
 
         String accessToken = authService.getAccessToken(email, refreshToken);
 
