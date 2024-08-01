@@ -25,7 +25,7 @@ public class StudyGroup {
     @Column(nullable = false, length = 32)
     private String name;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "imageId", referencedColumnName = "id")
     private Image image;
 

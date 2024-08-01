@@ -19,7 +19,6 @@ public class CreateStudyGroupRequest {
     @Schema(description = "스터디 그룹 이름", example = "정보처리기사 스터디")
     private String name;
 
-    @NotNull(message = "스터디 그룹 썸네일 이미지는 반드시 포함되어야 합니다.")
     @Schema(description = "스터디 그룹 썸네일 이미지", example = "1")
     private Long imageId;
 

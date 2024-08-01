@@ -53,9 +53,15 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         String email = memberDetails.getUsername();
         Member member = memberService.getUserByEmail(email);
         // --------------------------------------------------------------------------
-        Image image = imageRepository.findById(request.getImageId())
-                .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_EMPTY));
-
+        Image image = null;
+        Long imageId = request.getImageId();
+        if (imageId != null) {
+            image = imageRepository.findById(imageId)
+                    .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_EMPTY));
+        }else{
+            image = imageRepository.findById(1L)
+                    .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_EMPTY));
+        }
         StudyGroup studyGroup = StudyGroup.builder()
                 .name(request.getName())
                 .image(image)
