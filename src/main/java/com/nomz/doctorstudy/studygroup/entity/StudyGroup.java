@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
 import com.nomz.doctorstudy.article.entity.Article;
+import com.nomz.doctorstudy.image.entity.Image;
 import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,8 +25,9 @@ public class StudyGroup {
     @Column(nullable = false, length = 32)
     private String name;
 
-    @Column(nullable = false)
-    private Long imageId;
+    @OneToOne
+    @JoinColumn(name = "imageId", referencedColumnName = "id")
+    private Image image;
 
     @ManyToOne
     @JoinColumn(name= "captain", nullable = false)

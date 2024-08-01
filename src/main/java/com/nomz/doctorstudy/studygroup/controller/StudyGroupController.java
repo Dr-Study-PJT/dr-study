@@ -94,7 +94,7 @@ public class StudyGroupController {
         GetStudyGroupResponse response = new GetStudyGroupResponse(
                 studyGroup.getId(),
                 studyGroup.getName(),
-                studyGroup.getImageId(),
+                studyGroup.getImage().getImageUrl(),
                 studyGroup.getCreatedAt(),
                 studyGroup.getIsDeleted(),
                 studyGroup.getDescription(),
@@ -270,7 +270,7 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@PathVariable Long groupId) {
+    public ResponseEntity<SuccessResponse<List<GetMemberListResponse>>> GetMemberListByStudyGroupId(@PathVariable (name = "groupId ") Long groupId) {
         List<MemberStudyGroup> memberList = studyGroupService.getMemberListByStudyGroupId(groupId);
         List<GetMemberListResponse> responseList = memberList.stream().map(GetMemberListResponse::of).toList();
 
