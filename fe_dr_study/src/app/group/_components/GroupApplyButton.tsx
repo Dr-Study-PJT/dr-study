@@ -9,7 +9,7 @@ interface GroupApplyButtonProps {
 const GroupApplyButton: React.FC<GroupApplyButtonProps> = ({ groupId }) => {
     const onClickApplyHandler = async (e: React.MouseEvent<HTMLElement>) => {
         await postGroupAdmissionApply({
-            groupId,
+            studyGroupId: groupId,
             message: '스터디 그룹 가입 신청합니다!',
         });
     };
