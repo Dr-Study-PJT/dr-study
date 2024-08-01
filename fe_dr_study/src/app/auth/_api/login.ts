@@ -6,18 +6,21 @@ import {
     setSessionStorageItem,
 } from '@/utils/sessionStorage';
 
-import { authAPI as API } from '@/utils/axios/axiosInstanceManager';
-import { GET } from '@/utils/axios/routeModule';
+import { authAPI as API } from '@/app/api/axiosInstanceManager';
+import { GET } from '@/app/api/routeModule';
 
 API.interceptors.response.use(
     (response) => {
         if (
             response.config.url === '/login' ||
-            response.config.url === '/refresh'
+            response.config.url === '/access-token'
         ) {
-            const { accessToken } = response.data;
+            const { accessToken, refreshToken } = response.data;
             if (accessToken) {
                 Cookies.set('access_token', accessToken);
+            }
+            if (refreshToken) {
+                Cookies.set('refresh_token', refreshToken);
             }
         }
         return response;
@@ -58,6 +61,6 @@ export const logout = async (memberId: string) => {
 };
 
 export const refreshAccessToken = async () => {
-    const response = await API.post('/refresh');
+    const response = await API.post('/access-token');
     return response.data.accessToken;
 };

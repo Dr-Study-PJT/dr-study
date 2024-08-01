@@ -1,5 +1,5 @@
-import { memberAPI } from '@/utils/axios/axiosInstanceManager';
-import { POST } from '@/utils/axios/routeModule';
+import { memberAPI } from '@/app/api/axiosInstanceManager';
+import { POST } from '@/app/api/routeModule';
 import { IRegisterReq } from '@/interfaces/members';
 
 export const register = async (memberData: IRegisterReq) => {

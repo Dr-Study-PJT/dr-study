@@ -1,25 +1,31 @@
-import { POST } from '@/utils/axios/routeModule';
+import { POST } from '@/app/api/routeModule';
 import { IMemberData } from '@/interfaces/members';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 
-import { authAPI as API } from '../../utils/axios/axiosInstanceManager';
+import { authAPI as API } from './axiosInstanceManager';
 import { logout } from '@/app/auth/_api/login';
 
 export const fetchAccessToken = async (
     memberId: string | null,
 ): Promise<string> => {
+    const member = getSessionStorageItem('memberData');
     try {
         const response = await POST({
             API,
-            endPoint: 'refresh',
+            endPoint: 'access-token',
             isAuth: false,
+            body: {
+                email: member.email,
+            },
+            options: {
+                credentials: 'include', // 쿠키 포함
+            },
         });
         const newAccessToken: string = response.data;
         return newAccessToken;
     } catch (error: any) {
         if (error.response && error.response.data === 'Expired token') {
             // Refresh 토큰이 만료된 경우
-            // 사용자 데이터를 가져와서 로그아웃 함수를 호출합니다.
             if (memberId) {
                 await logout(memberId);
                 return '토큰 만료로 로그아웃됩니다.';
@@ -63,7 +69,6 @@ export async function handleAuthentication(isAuth: boolean): Promise<any> {
         }
     }
 
-    headers.Authorization = `Bearer ${token}`;
     return headers;
 }
 
