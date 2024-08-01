@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.common.jwt.JwtUtil;
 import com.nomz.doctorstudy.common.redis.RedisUtil;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.request.*;
+import com.nomz.doctorstudy.member.response.MemberAndTokensResponse;
 import com.nomz.doctorstudy.member.response.MemberLoginPostRes;
 import com.nomz.doctorstudy.member.response.PasswordResetUrlResponse;
 import com.nomz.doctorstudy.member.service.AuthService;
@@ -88,6 +89,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", tokens.get("refreshToken"))
@@ -96,6 +98,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 7 * 24 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
@@ -104,8 +107,14 @@ public class AuthController {
 
         Member loginMember = memberService.getUserByEmail(loginInfo.getEmail());
 
+        MemberAndTokensResponse memberAndTokensResponse = MemberAndTokensResponse
+                .builder()
+                .member(loginMember)
+                .tokens(tokens)
+                .build();
+
         return ResponseEntity.ok(
-                new SuccessResponse<>("로그인 되었습니다.", loginMember)
+                new SuccessResponse<>("로그인 되었습니다.", memberAndTokensResponse)
         );
     }
 
