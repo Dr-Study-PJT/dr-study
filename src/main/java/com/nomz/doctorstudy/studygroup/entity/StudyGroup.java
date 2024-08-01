@@ -1,9 +1,14 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
+import com.nomz.doctorstudy.article.entity.Article;
+import com.nomz.doctorstudy.image.entity.Image;
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -20,11 +25,13 @@ public class StudyGroup {
     @Column(nullable = false, length = 32)
     private String name;
 
-    @Column(nullable = false)
-    private Long imageId;
+    @ManyToOne
+    @JoinColumn(name = "imageId", referencedColumnName = "id")
+    private Image image;
 
-    //@Column(nullable = false)
-    //private Member captainId;
+    @ManyToOne
+    @JoinColumn(name= "captain", nullable = false)
+    private Member captain;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -38,15 +45,17 @@ public class StudyGroup {
     @Column(length = 64)
     private String goal;
 
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
 
     @Column(nullable = false)
-    private int memberCount;
+    private Integer memberCount;
 
-    private int memberCapacity;
+    private Integer memberCapacity;
 
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<StudyGroupTag> studyGroupTags;
 
+    @OneToMany(mappedBy = "studyGroup")
+    private List<Article> articles;
 }
 

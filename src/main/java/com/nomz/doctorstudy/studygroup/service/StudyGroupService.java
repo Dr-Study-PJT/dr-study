@@ -1,17 +1,15 @@
 package com.nomz.doctorstudy.studygroup.service;
-
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
-import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateReplyRequest;
-import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
-import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;
+import com.nomz.doctorstudy.studygroup.request.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
 public interface StudyGroupService {
     // 스터디 그룹 생성
-    StudyGroup createStudyGroup(CreateStudyGroupRequest request);
+    StudyGroup createStudyGroup(CreateStudyGroupRequest request, Authentication authentication);
 
     // 스터디 그룹 ID로 조회
     StudyGroup getStudyGroup(Long groupId);
@@ -20,7 +18,7 @@ public interface StudyGroupService {
     List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command);
 
     // 스터디 그룹 지원 요청 생성
-    MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest);
+    MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest, Authentication authentication);
 
     // 스터디 그룹 지원 요청 조회
     MemberStudyGroupApply getApply(Long userId, Long groupId);
@@ -28,14 +26,20 @@ public interface StudyGroupService {
     // 스터디 그룹 지원 응답 처리 + 멤버-스터디그룹 테이블 저장
     MemberStudyGroupApply processReply(CreateReplyRequest createReplyRequest);
 
-    // Update an existing study group
-    // StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails);
+    // 스터디 그룹 업데이트
+    StudyGroup updateStudyGroup(Long groupId, UpdateStudyGroupRequest request);
 
+    //스터디 그룹 아이디로 속한 멤버 리스트 찾기
+    List<MemberStudyGroup> getMemberListByStudyGroupId(Long studyGroupId);
 
-    // Delete a study group by its ID
-    // void deleteStudyGroup(Long groupId);
+    //스터디 그룹장이 속한 스터디 그룹의 대기자 리스트 찾기
+    List<MemberStudyGroupApply> getWaiterList(Authentication authentication);
 
+    // ID로 Study group 삭제 (소프트 삭제)
+    StudyGroup deleteStudyGroup(Long groupId);
 
+    // 유저가 그룹 ID로 Study group 탈퇴 (소프트 탈퇴)
+    MemberStudyGroup leaveStudyGroup(Long groupId, Authentication authentication);
     // Respond to a study group application
     // void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest);
 

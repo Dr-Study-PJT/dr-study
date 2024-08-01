@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.common.jwt.JwtUtil;
 import com.nomz.doctorstudy.common.redis.RedisUtil;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.request.*;
+import com.nomz.doctorstudy.member.response.MemberAndTokensResponse;
 import com.nomz.doctorstudy.member.response.MemberLoginPostRes;
 import com.nomz.doctorstudy.member.response.PasswordResetUrlResponse;
 import com.nomz.doctorstudy.member.service.AuthService;
@@ -77,7 +78,7 @@ public class AuthController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<Map<String,String>>> login(@RequestBody MemberLoginPostReq loginInfo, HttpServletResponse response) {
+    public ResponseEntity<SuccessResponse<?>> login(@RequestBody MemberLoginPostReq loginInfo, HttpServletResponse response) {
 
         // 유효한 패스워드가 맞는 경우, 로그인 성공으로 응답.(액세스 토큰을 포함하여 응답값 전달)
         Map<String, String> tokens = authService.login(loginInfo);
@@ -88,6 +89,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", tokens.get("refreshToken"))
@@ -96,14 +98,23 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 7 * 24 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
 
+        Member loginMember = memberService.getUserByEmail(loginInfo.getEmail());
+
+        MemberAndTokensResponse memberAndTokensResponse = MemberAndTokensResponse
+                .builder()
+                .member(loginMember)
+                .tokens(tokens)
+                .build();
+
         return ResponseEntity.ok(
-                new SuccessResponse<>("로그인 되었습니다.", tokens)
+                new SuccessResponse<>("로그인 되었습니다.", memberAndTokensResponse)
         );
     }
 
@@ -154,7 +165,7 @@ public class AuthController {
 
 
 
-    @GetMapping("/access-token")
+    @PostMapping("/access-token")
     @Operation(summary = "AccessToken 재발급 ", description = "RefreshToken을 통해서 AccessToken을 재발급 받습니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "AccessToken 재발급 성공", useReturnTypeSchema = true),
@@ -166,7 +177,7 @@ public class AuthController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<String>> getAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<SuccessResponse<?>> getAccessToken(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletRequest request, HttpServletResponse response){
 
         String email = refreshTokenRequest.getEmail();
         String refreshToken = request.getHeader(jwtUtil.HEADER_STRING);
@@ -179,6 +190,7 @@ public class AuthController {
                 .path("/")
                 .maxAge(2 * 60 * 60)
                 .sameSite("Strict")
+                .domain(".dr-study.kro.kr")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
