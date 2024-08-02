@@ -39,7 +39,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                     key={index}
                     onClick={() => handleConferenceClick(conference.id)}
                     className={`CONFERENCE-CARD h-max min-h-32 p-6 rounded-lg shadow-md cursor-pointer transition-colors duration-200 ${
-                        true
+                        conference.finishTime
                             ? 'bg-[#212534] hover:bg-[#2125347c]'
                             : 'bg-blue-500 hover:bg-blue-600'
                     }`}
@@ -100,17 +100,6 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                     </div>
                 </div>
             ))}
-            <div className="mt-6 text-center">
-                <Button
-                    onClick={handleCreateConferenceClick}
-                    outlined
-                    rounded
-                    fullWidth
-                    classNameStyles="text-dr-white"
-                >
-                    새 컨퍼런스 개설
-                </Button>
-            </div>
         </div>
     );
 };
