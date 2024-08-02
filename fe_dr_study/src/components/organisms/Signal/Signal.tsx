@@ -153,9 +153,18 @@ const Signal = ({
     // 아바타 발화 신호 처리
     const handleAvatarSpeakSignal = (newSignal: Signal) => {
         console.log('before setIsAvatarSpeaking', newSignal.time);
+        console.log('setTimeOut 시작 전');
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
         setTimeForAvatarSpeaking(newSignal.time as number);
         // 아바타 발화는 해당 시간 동안만 수행
+        setTimeout(
+            () => {
+                console.log('setTimeOut 시작 됨');
+                setIsAvatarSpeaking(false);
+                setTimeForAvatarSpeaking(0);
+            },
+            (newSignal.time as number) * 1000,
+        );
         console.log(
             `handleAvatarSpeakSignal: 사회자 아바타 => 발화 상태로 ${newSignal.time}초 동안 전환 + Audio 실행 (S3 기능 구현 대기중)`,
         );
