@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation'; // usePathname 훅 사용
 import { Logo } from '@/components/atoms/Logo/Logo';
@@ -11,6 +12,7 @@ import {
     getSessionStorageItem,
     removeMemberData,
 } from '@/utils/sessionStorage';
+import { GET } from '@/app/api/routeModule';
 
 const Navigation = () => {
     const pathname = usePathname(); // usePathname 훅 사용
@@ -18,6 +20,20 @@ const Navigation = () => {
     const isSigned = useSelector((state: RootState) => state.auth.isSigned);
     const member = useSelector((state: RootState) => state.member);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const onClickGetLoginMemberInfo = async (e: React.MouseEvent) => {
+        await getLoginedMemberInfo();
+    };
+    const getLoginedMemberInfo = async () => {
+        try {
+            const response = await GET('v1/members', {
+                isAuth: true,
+            });
+            return response.data;
+        } catch {
+            console.log('로그인사용자 정보 가져오기 실패');
+        }
+    };
 
     useEffect(() => {
         const memberData = getSessionStorageItem('memberData');
@@ -95,6 +111,9 @@ const Navigation = () => {
                         />
                         {dropdownOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-20">
+                                <Button onClick={onClickGetLoginMemberInfo}>
+                                    내정보갱신
+                                </Button>
                                 <Link
                                     href="/mypage"
                                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"

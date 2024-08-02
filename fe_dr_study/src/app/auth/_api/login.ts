@@ -8,6 +8,7 @@ import {
 
 import { authAPI as API } from '@/app/api/axiosInstanceManager';
 import { GET } from '@/app/api/routeModule';
+import { setAccessToken } from '@/app/api/jwt';
 
 API.interceptors.response.use(
     (response) => {
@@ -35,10 +36,12 @@ export const login = async (memerData: ILogInReq) => {
         'https://api.dr-study.kro.kr/v1/auth/login',
         memerData,
     );
+    console.log(response.data.data);
+    setAccessToken(response.data.data.tokens.accessToken);
     setSessionStorageItem('memberData', {
-        id: response.data.data.id,
-        email: response.data.data.email,
-        nickname: response.data.data.nickname,
+        id: response.data.data.member.id,
+        email: response.data.data.member.email,
+        nickname: response.data.data.member.nickname,
     });
 
     return response.data;
