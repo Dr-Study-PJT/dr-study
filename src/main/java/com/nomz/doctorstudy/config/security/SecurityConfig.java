@@ -31,7 +31,9 @@ public class SecurityConfig  {
     private static final String[] AUTH_WHITELIST = {
             "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html", "/api/v1/auth/**",
-            "/v1/no-auth/**", "/v1/**", "/room/**", "/**"
+            "/v1/no-auth/**", "/v1/**", "/room/**", "/**", "/swagger-ui.html", "/v1/auth/login", "/v1/auth/email-code", "/v1/auth/find-password", "/v1/auth/reset-password",
+            "/v1/no-auth/**", "/v1/email/**", "/v1/images/**", "/v1/images", "/v1/need-auth",
+            "/v1/members/**"
     };
 
     @Bean
@@ -63,6 +65,7 @@ public class SecurityConfig  {
         // 권한 규칙 작성
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .anyRequest().authenticated()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
 //                        .anyRequest().permitAll()
 //                        .anyRequest().authenticated()
