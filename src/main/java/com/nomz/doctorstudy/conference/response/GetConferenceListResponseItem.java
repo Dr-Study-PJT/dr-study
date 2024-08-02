@@ -28,7 +28,6 @@ public class GetConferenceListResponseItem {
     @Schema(description = "컨퍼런스 최대 인원수", example = "10")
     private final Integer memberCapacity;
 
-
     @Schema(description = "컨퍼런스 시작 시간", example = "2024-08-01T22:20:42.483173")
     private final LocalDateTime startTime;
 
