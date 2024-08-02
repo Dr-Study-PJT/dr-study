@@ -18,7 +18,7 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     return (
         <section className="w-2/3 self-center mt-6">
             <div className="w-max h-max flex flex-row justify-around gap-6 items-center">
-                <section className="CONTENT w-full h-full flex flex-col gap-4 w-64">
+                <section className="CONTENT h-full flex flex-col gap-4 w-64">
                     <TextareaWithLabel
                         id="description"
                         label="스터디 그룹 설명"

@@ -11,6 +11,7 @@ import { ReactNode, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
 import CreateConferenceForm from '@/components/organisms/CreateConferenceForm/CreateConferenceForm';
+import ListConferenceToday from './ConferenceWithMembers';
 
 interface SectionContentsProps {
     groupId: string;
@@ -114,88 +115,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                         오늘의 스터디 일정을 확인하세요.
                     </div>
                 </div>
-                <div className="LIST-CONFERENCE-TODAY space-y-4">
-                    {conferencesWithMembers.map((conference, index) => (
-                        <div
-                            key={index}
-                            onClick={(e: React.MouseEvent<HTMLElement>) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                alert(
-                                    `컨퍼런스ID : ${conference.id} \n컨퍼런스 PDP 정보 모달로 띄워주는 창 구현해야함`,
-                                );
-                            }}
-                            className={`CONFERENCE-CARD h-max min-h-32 p-6 rounded-lg shadow-md cursor-pointer transition-colors duration-200 ${
-                                // conference.isEnd
-                                true
-                                    ? 'bg-[#212534] hover:bg-[#2125347c]'
-                                    : 'bg-blue-500 hover:bg-blue-600'
-                            }`}
-                        >
-                            <div className="flex flex-col justify-between mb-2">
-                                <div className="text-white font-bold text-lg">
-                                    {conference.title}
-                                </div>
-                                {
-                                    // conference.isEnd
-                                    true ? (
-                                        <div className="text-dr-gray-100 text-dr-body-4">
-                                            {/* {conference.startTime} ~{' '}
-                                        {conference.targetEndTime} | */}
-                                            {'10:30'} ~ {'11:30'} | 3시간 전
-                                            종료
-                                        </div>
-                                    ) : (
-                                        <div className="text-dr-gray-100 text-dr-body-4">
-                                            {/* {conference.startTime} | 진행 */}
-                                            {'10:30 ~ '} | 진행 대기 중
-                                        </div>
-                                    )
-                                }
-                            </div>
-                            <div className="mt-4 w-full flex flex-row justify-between items-end">
-                                <div className="BL-INFO-MEMBER-LIST flex flex-col gap-1">
-                                    <div className="text-dr-body-4 text-dr-gray-100">
-                                        6 / 8
-                                    </div>
-                                    <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
-                                        {conference.participants
-                                            .slice(0, 3)
-                                            .map((participant, i) => (
-                                                <li key={i}>
-                                                    <div className="relative overflow-hidden w-10 h-10 rounded-xl">
-                                                        <Image
-                                                            alt="avatar"
-                                                            src={`/images/member_thumbnail_${participant.id}.png`}
-                                                            // src={`https://example-s3-url.com/avatars/${participant.id}`}
-                                                            layout="fill"
-                                                        />
-                                                    </div>
-                                                </li>
-                                            ))}
-                                    </ul>
-                                </div>
-                                {
-                                    // !conference.isEnd
-                                    true && (
-                                        <Button
-                                            classNameStyles="!h-8 bg-dr-coral-100"
-                                            onClick={(
-                                                e: React.MouseEvent<HTMLElement>,
-                                            ) => {
-                                                router.push(
-                                                    `/conference/${conference.id}`,
-                                                );
-                                            }}
-                                        >
-                                            스터디 참여
-                                        </Button>
-                                    )
-                                }
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <ListConferenceToday conferences={conferencesWithMembers} />
                 <div className="mt-6 text-center">
                     <Button
                         onClick={(e: React.MouseEvent<HTMLElement>) =>

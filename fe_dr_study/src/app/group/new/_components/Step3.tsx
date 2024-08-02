@@ -15,7 +15,8 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data }) => {
 
         try {
             const response = await createGroup(data);
-            router.push('/group/1');
+            console.log(response.data);
+            router.push(`/group/${response.data.data.groupId}`);
         } catch (error) {
             console.error('그룹생성 에러용;;; :' + error);
         }

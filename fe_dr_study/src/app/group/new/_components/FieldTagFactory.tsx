@@ -87,7 +87,7 @@ const FieldTagFactory: React.FC<FieldTagFactoryProps> = ({
                     ))}
                 </div>
                 <input
-                    className={`h-full w-full min-w-[40%] border-2px border-white rounded-md bg-dr-indigo-100 font-normal outline-none text-left text-xs ${disabled ? 'bg-gray-200' : ''}`}
+                    className={`h-full w-full min-w-[40%] border-2px border-white rounded-md bg-dr-indigo-100 font-normal outline-none text-left text-xs ${disabled ? 'bg-dr-indigo-300' : ''}`}
                     onChange={onChange}
                     onKeyDown={onKeyDownTagRegisterDelete}
                     value={inputValue}

@@ -1,13 +1,28 @@
 import { GroupData, ArticleData, ConferenceData, Member } from '../_types';
 
-export const dummyConferencesWithMembers: ConferenceData[] = [
+export interface Participant {
+    id: number;
+    email: string;
+    nickname: string;
+    imageUrl: string;
+}
+
+export interface Conference {
+    id: number;
+    title: string;
+    startTime: string;
+    finishTime: string | null;
+    imageUrl: string | null;
+    participants: Participant[];
+}
+
+export const dummyConferencesWithMembers: Conference[] = [
     {
         id: 1,
         title: '일일 정기 면접 스터디',
-        // isEnd: true,
-        // startTime: '10:00',
-        // targetEndTime: '11:30',
-        MemberCapacity: 6,
+        startTime: '10:00',
+        finishTime: '11:30',
+        imageUrl: null,
         participants: [
             {
                 id: 1,
@@ -16,32 +31,31 @@ export const dummyConferencesWithMembers: ConferenceData[] = [
                 imageUrl: '/images/member_1.png',
             },
             {
-                id: 1,
-                email: '',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
+                id: 2,
+                email: 'lee5678@ajou.ac.kr',
+                nickname: '이영호',
+                imageUrl: '/images/member_2.png',
             },
             {
-                id: 1,
-                email: '',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
+                id: 3,
+                email: 'kim9012@ajou.ac.kr',
+                nickname: '김철수',
+                imageUrl: '/images/member_3.png',
             },
             {
-                id: 1,
-                email: '',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
+                id: 4,
+                email: 'park3456@ajou.ac.kr',
+                nickname: '박민수',
+                imageUrl: '/images/member_4.png',
             },
         ],
     },
     {
-        id: 1,
+        id: 2,
         title: '주간 토론면접 대비 스터디',
-        // isEnd: false,
-        // startTime: '14:30',
-        // targetEndTime: '16:30',
-        MemberCapacity: 6,
+        startTime: '14:30',
+        finishTime: null,
+        imageUrl: null,
         participants: [
             {
                 id: 1,
@@ -50,22 +64,22 @@ export const dummyConferencesWithMembers: ConferenceData[] = [
                 imageUrl: '/images/member_1.png',
             },
             {
-                id: 1,
-                email: 'he1236@ajou.ac.kr',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
+                id: 2,
+                email: 'lee5678@ajou.ac.kr',
+                nickname: '이영호',
+                imageUrl: '/images/member_2.png',
             },
             {
-                id: 1,
-                email: 'he1236@ajou.ac.kr',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
+                id: 3,
+                email: 'kim9012@ajou.ac.kr',
+                nickname: '김철수',
+                imageUrl: '/images/member_3.png',
             },
             {
-                id: 1,
-                email: 'he1236@ajou.ac.kr',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
+                id: 4,
+                email: 'park3456@ajou.ac.kr',
+                nickname: '박민수',
+                imageUrl: '/images/member_4.png',
             },
         ],
     },
