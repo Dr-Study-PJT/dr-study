@@ -230,11 +230,24 @@ const Signal = ({
         }
     };
 
+    const tempMessages = [
+        { id: 1, message: 'Hello' },
+        { id: 2, message: 'Hi' },
+        { id: 3, message: 'Good morning' },
+        { id: 4, message: 'Good afternoon' },
+        { id: 5, message: 'Good evening' },
+        { id: 6, message: 'Good night' },
+        { id: 7, message: 'Goodbye' },
+        { id: 8, message: 'Bye' },
+        { id: 9, message: 'See you later' },
+        { id: 10, message: 'See you soon' },
+    ];
+
     return (
         <div className="flex flex-col h-full bg-dr-dark-300">
             <div className="flex h-full w-full overflow-y-scroll">
                 <div className="px-[10px] flex gap-dr-10 flex-col  h-full w-full ">
-                    {messages.map((msg, index) => (
+                    {tempMessages.map((msg, index) => (
                         <div
                             key={index}
                             className="flex items-start p-2 bg-gray-800 rounded-lg"
