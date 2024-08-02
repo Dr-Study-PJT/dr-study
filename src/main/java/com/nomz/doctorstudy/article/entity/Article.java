@@ -49,5 +49,4 @@ public class Article {
     @OneToMany(mappedBy = "studyGroupArticle")
     private List<Comment> comments;
 
-
 }
