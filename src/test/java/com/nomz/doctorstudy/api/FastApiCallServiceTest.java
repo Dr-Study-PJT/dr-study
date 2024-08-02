@@ -22,9 +22,7 @@ public class FastApiCallServiceTest {
 
     @Test
     public void testGpt() {
-        String inputText = "안녕하세요. 오늘 저는 데이터 베이스. 그래서 드디어 대해 갖다니뚜게 드리겠습니다. " +
-                "하이서베이크와 웨이터를 체계적으로 소장하고 분명한 시스템을 의미합니다. " +
-                "데이터 베이스는 대량의 데이터를 효율적으로 소장 전세X정 숙제할 수 있도록 구워줍니다.";
+        String inputText = "인공지능이 뭐야?";
         String actualResponse = fastApiCallService.gpt(inputText);
         System.out.println("Actual Response: " + actualResponse);
     }
@@ -41,9 +39,9 @@ public class FastApiCallServiceTest {
 
     @Test
     public void testStt() {
-        String inputText = "안녕하세요. 오늘 저는 데이터베이스에 대해 이야기할 것입니다. " +
-                "데이터베이스는 다양한 정보를 체계적으로 저장하고 효율적으로 관리할 수 있는 시스템을 말합니다. " +
-                "대량의 데이터를 정확하게 저장하고 분석할 수 있도록 도와줍니다.";
+        String inputText = "안녕하세요. 오늘 저는 데이터 베이스. 그래서 드디어 대해 갖다니뚜게 드리겠습니다. " +
+                "하이서베이크와 웨이터를 체계적으로 소장하고 분명한 시스템을 의미합니다. " +
+                "데이터 베이스는 대량의 데이터를 효율적으로 소장 전세X정 숙제할 수 있도록 구워줍니다.";
 
         // 텍스트를 음성 파일로 변환
         byte[] audioData = fastApiCallService.tts(inputText);
