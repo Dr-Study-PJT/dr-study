@@ -280,4 +280,19 @@ class BlockInterpreterTest {
         blockInterpreter.init(id, preprocessedScript1, Map.of());
         blockInterpreter.interpret(id);
     }
+
+
+    @Test
+    @DisplayName("사회자 생성 페이지 결과 스크립트 테스트")
+    public void moderatorCreateScriptTest() {
+        String script1 =
+                """
+phase(1) {  let_avatar_speak( gpt_query( string_concat( '입력
+' ) ) );}
+                """;
+        long id = getProcessContextIdSequence();
+        String preprocessedScript1 = scriptPreprocessor.preprocessScript(script1);
+        blockInterpreter.init(id, preprocessedScript1, Map.of());
+        blockInterpreter.interpret(id);
+    }
 }

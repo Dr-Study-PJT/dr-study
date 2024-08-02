@@ -8,4 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 public class MuteSignal implements Signal {
     private Long id;
+
+    @Override
+    public SignalType getSignalType() {
+        return SignalType.MUTE;
+    }
 }

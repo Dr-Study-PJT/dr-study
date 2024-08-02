@@ -8,12 +8,12 @@ import lombok.RequiredArgsConstructor;
 public enum SignalType {
     MUTE("mute"),
     UNMUTE("unmute"),
-    PARTICIPANT_SPEAK_ORDER("participant-speak-order"),
-    AVATAR_SPEAK_ORDER("avatar-speak-order"),
+    PARTICIPANT_SPEAK("participant-speak"),
+    AVATAR_SPEAK("avatar-speak"),
     GPT_SUMMARY("gpt-summary"),
 
-    PARTICIPANT_SPEAK_ANSWER("participant-speak-answer")
-
+    PARTICIPANT_AUDIO("participant-audio"),
+    HEARTBEAT("heartbeat")
     ;
 
     private final String token;

@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
+import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -8,6 +10,8 @@ import java.util.*;
 @Slf4j
 @Component
 public class ScriptPreprocessor {
+    private static final int INFINITE_LOOP_COUNT = 1_000_000_000;
+
     public String preprocessScript(String script) {
         log.debug("before preprocess:\n{}", script);
 
@@ -41,8 +45,9 @@ public class ScriptPreprocessor {
                     sb.append(ch);
                     break;
 
-                case ' ':
                 case '\n':
+                case '\r':
+                case ' ':
                 case '\t':
                     if (single_quotation_mark) {
                         sb.append(ch);
@@ -60,11 +65,17 @@ public class ScriptPreprocessor {
     }
 
     private String preprocessPhase(String script) {
+
         Map<Integer, String> phaseMap = new HashMap<>();
         int cursor = 0;
         boolean startFlag = true;
 
+        int count = 0;
         while (true) {
+            if (count++ > INFINITE_LOOP_COUNT) {
+                throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "알 수 없는 이유로 무한루프가 발생했습니다.");
+            }
+
             cursor = script.indexOf("phase", cursor);
             if (cursor == -1) break;
             if (cursor == 0 && !startFlag) break;
@@ -113,7 +124,12 @@ public class ScriptPreprocessor {
                     label('loop_end_%d');
                 """);
 
+        int count = 0;
         while (true) {
+            if (count++ > INFINITE_LOOP_COUNT) {
+                throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "알 수 없는 이유로 무한루프가 발생했습니다.");
+            }
+
             int loopIdx = script.indexOf("loop(");
             if (loopIdx == -1) break;
 

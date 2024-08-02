@@ -2,9 +2,9 @@ package com.nomz.doctorstudy.blockinterpreter.blockexecutors.command;
 
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
+import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
-import com.nomz.doctorstudy.conference.room.signal.SignalSender;
-import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
+import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -14,19 +14,19 @@ import java.util.List;
 @Component
 public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
     private final ThreadProcessContext threadProcessContext;
-    private final SignalSender signalSender;
+    private final SignalTransmitter signalTransMitter;
 
-    public LetAvatarSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalSender signalSender) {
+    public LetAvatarSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransMitter) {
         super(void.class, List.of(String.class));
         this.threadProcessContext = threadProcessContext;
-        this.signalSender = signalSender;
+        this.signalTransMitter = signalTransMitter;
     }
 
     @Override
     protected Object executeAction(List<Object> args) {
-        log.info("let ai speak!");
+        log.info("let avatar speak!");
 
-        signalSender.sendMuteSignal(1L, new MuteSignal(1L));
+        signalTransMitter.transmitSignal(1L, new AvatarSpeakSignal(2));
 
         return null;
     }

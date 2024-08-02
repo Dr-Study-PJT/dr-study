@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,6 +15,12 @@ import java.util.List;
 public class GetConferenceListResponseItem {
     @Schema(description = "컨퍼런스 아이디", example = "1")
     private final Long id;
+
+    @Schema(description = "호스트 아이디", example = "1")
+    private final Long hostId;
+
+    @Schema(description = "스터디 그룹 아이디", example = "1")
+    private final Long studyGroupId;
 
     @Schema(description = "컨퍼런스 제목", example = "컨퍼런스 제목")
     private final String title;
@@ -65,6 +70,8 @@ public class GetConferenceListResponseItem {
     public static GetConferenceListResponseItem of(Conference conference, List<MemberInfo> memberInfoList) {
         return builder()
                 .id(conference.getId())
+                //TODO: .hostId(conference.getHost().getId())
+                //TODO: .studyGroupId(conference.getStudyGroup().getId())
                 .title(conference.getTitle())
                 .memberCapacity(conference.getMemberCapacity())
                 .startTime(conference.getStartTime())

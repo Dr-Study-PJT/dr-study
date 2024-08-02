@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.conference.service;
 
+import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
+import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -18,14 +20,17 @@ import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
-import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
+import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
+import com.nomz.doctorstudy.moderator.entity.Moderator;
+import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -41,14 +46,20 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final MemberRepository memberRepository;
 
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
+    private final BlockInterpreter blockInterpreter;
+    private final ScriptPreprocessor scriptPreprocessor;
+    private final ModeratorRepository moderatorRepository;
 
     @Override
-    public Long createConference(Member requester, CreateConferenceRequest request) {
+    public Long createConference(/*Member requester, */CreateConferenceRequest request) {
+        Moderator moderator = moderatorRepository.findById(request.getModeratorId())
+                .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
+
         Conference conference = Conference.builder()
                 .title(request.getTitle())
-                .host(requester)
+                .moderator(moderator)
+                .host(null)//.host(requester)
                 .memberCapacity(request.getMemberCapacity())
-                .isFinished(false)
                 .build();
         conferenceRepository.save(conference);
 
@@ -93,6 +104,10 @@ public class ConferenceServiceImpl implements ConferenceService {
         }
         joinLockMap.put(conferenceId, new ReentrantLock());
         roomService.createRoom(conferenceId);
+
+        String script = conference.getModerator().getProcessor().getScript();
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
+        blockInterpreter.init(conferenceId, preprocessedScript, Map.of());
     }
 
     @Override
@@ -100,7 +115,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
-
+        blockInterpreter.interpret(conferenceId);
     }
 
     @Override

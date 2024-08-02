@@ -22,7 +22,7 @@ public class BlockFactory {
         log.debug("parsed: method={}, args={}", method, argsStr);
 
         List<Block> argBlocks = new ArrayList<>();
-        List<String> args = argsTokenizer(argsStr);
+        List<String> args = tokenizeArgs(argsStr);
         for (String arg : args) {
             argBlocks.add(parseStatement(arg));
         }
@@ -30,7 +30,7 @@ public class BlockFactory {
         return new Block(method, argBlocks);
     }
 
-    private List<String> argsTokenizer(String argsStr) {
+    private List<String> tokenizeArgs(String argsStr) {
         List<String> args = new ArrayList<>();
 
         int bracket_count = 0;

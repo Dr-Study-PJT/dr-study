@@ -34,18 +34,17 @@ public class BlockInterpreter {
 
     @Async
     public void interpret(Long processContextId, ProcessMode processMode) {
-        log.debug("processContextId={} started to run", processContextId);
+        log.info("processContextId={} started to run", processContextId);
 
         ProcessContext processContext = processContextManager.getProcessContext(processContextId);
         threadProcessContext.init(processContext);
 
-        int debugCursor = 0;
         while (!threadProcessContext.isEndOfBlock()) {
             Block commandBlock = threadProcessContext.currentBlock();
             Stack<BlockInterpretContext> stack = new Stack<>();
             stack.push(new BlockInterpretContext(commandBlock, new ArrayList<>(), 0));
-            String m = commandBlock.getMethod();
-            log.debug("cursor={}, block={}", debugCursor++, commandBlock.getMethod());
+            String methodForDebug = commandBlock.getMethod();
+            log.debug("cursor={}, block={}", processContext.cursor, commandBlock.getMethod());
 
             while (!stack.empty()) {
                 BlockExecutor blockExecutor = blockExecutorMapper.getBlockExecutor(stack.peek().block.getMethod());
@@ -87,17 +86,10 @@ public class BlockInterpreter {
 
                 if (result == null || stack.size() == 1) {
                     if (result != null) {
-                        throw new BusinessException(
-                                CommonErrorCode.BAD_REQUEST,
-                                "Line " + threadProcessContext.getCursor() + ": 값 블록은 인수로만 사용되어야 합니다."
-                        );
+                        throw new BlockException(BlockErrorCode.COMMAND_BLOCK_NOT_FOUND, processContext.cursor);
                     }
                     if (stack.size() > 1) {
-                        throw new BusinessException(CommonErrorCode.BAD_REQUEST, "명령블록은 인수로 사용될 수 없습니다.");
-                    }
-                    if (!(result == null && stack.size() == 1)) {
-                        // TODO: 비지니스 예외코드로 변경
-                        throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "명령블록은 인수로 포함되어 있거나");
+                        throw new BlockException(BlockErrorCode.VALUE_BLOCK_NOT_FOUND, processContext.cursor);
                     }
                     break;
                 }
@@ -115,7 +107,7 @@ public class BlockInterpreter {
 
         threadProcessContext.close();
 
-        log.debug("processContextId={} ended to run", processContextId);
+        log.info("processContextId={} ended to run", processContextId);
     }
 
     public void close(Long processContextId) {

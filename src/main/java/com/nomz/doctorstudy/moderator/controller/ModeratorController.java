@@ -56,7 +56,7 @@ public class ModeratorController {
         Moderator moderator = moderatorService.getModerator(moderatorId);
 
         GetModeratorResponse response = GetModeratorResponse.builder()
-                .creatorId(moderator.getCreator().getId())
+                //.creatorId(moderator.getCreator().getId())
                 .processorId(moderator.getProcessor().getId())
                 .avatarId(moderator.getAvatar().getId())
                 .createdAt(moderator.getCreatedAt())
