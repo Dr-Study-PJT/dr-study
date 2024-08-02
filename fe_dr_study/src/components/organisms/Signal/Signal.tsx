@@ -31,8 +31,8 @@ interface SignalProps {
 }
 
 const Signal = ({
-    conferenceId = 1,
-    memberId = 1,
+    conferenceId,
+    memberId,
     setIsMutedBySystem,
     setFocusingMemberId,
     setIsAvatarSpeaking,
@@ -67,6 +67,14 @@ const Signal = ({
             // 메시지를 수신하기 위한 구독 설정
             subscribeToMessages();
             subscribeToSignals();
+
+            // 10초마다 생존 신고 전송
+            const heartbeatInterval = setInterval(() => {
+                sendHeartbeat(memberId); // memberId는 현재 멤버의 ID로 설정해야 합니다.
+            }, 10000); // 10초
+
+            // 컴포넌트 언마운트 시 interval 클리어
+            return () => clearInterval(heartbeatInterval);
         });
     }, [stompClient]);
 
