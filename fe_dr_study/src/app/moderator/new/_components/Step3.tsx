@@ -210,7 +210,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                     const loopCount =
                         block.loopCount === '현재 총 참여인원 수'
                             ? `get_int_variable( 'num_of_participant' )`
-                            : `int_input(${block.loopCount})`;
+                            : `${block.loopCount}`;
                     script += `${indent}loop( ${loopCount} ) {`;
                     break;
                 case 'block_command_letParticipant_speak':
@@ -225,7 +225,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                     script += `${indent}let_participant_speak( ${participant} , ${duration} );`;
                     break;
                 case 'block_command_queryToGPT':
-                    script += `${indent}let_ai_speak( get_answer_from_gpt_query( concat_string( `;
+                    script += `${indent}let_avatar_speak( gpt_query( concat_string( `;
                     if (block.children && block.children.length > 0) {
                         script += block.children
                             .map((child) => generateBlockScript(child, 0))
@@ -234,10 +234,10 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                     script += ` ) ) );`;
                     break;
                 case 'block_string_input':
-                    script += `string_input('${block.content}')`;
+                    script += `'${block.content}'`;
                     break;
                 case 'block_getParticipantRecord_recent':
-                    script += `get_recent_record(1)`;
+                    script += `get_recent_participant_speak(1)`;
                     break;
                 case 'block_int_variable_num_of_participants':
                     script += `get_int_variable( 'num_of_participant' )`;
@@ -348,7 +348,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             duration,
                         };
                         break;
-                    case 'let_ai_speak':
+                    case 'let_avatar_speak':
                         block = {
                             id: uuidv4(),
                             type: 'block_command_queryToGPT',
@@ -362,7 +362,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             content: rest.join(' '),
                         };
                         break;
-                    case 'get_recent_record':
+                    case 'get_recent_participant_speak':
                         block = {
                             id: uuidv4(),
                             type: 'block_getParticipantRecord_recent',
