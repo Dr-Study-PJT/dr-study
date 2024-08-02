@@ -3,6 +3,8 @@
 import { Button } from '@/components/atoms';
 import axios from 'axios';
 import React from 'react';
+import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
+import { GET, POST } from '@/app/api/routeModule';
 
 const CreateConferenceTemplate = () => {
     const handleCreateConference = async () => {
@@ -15,10 +17,13 @@ const CreateConferenceTemplate = () => {
         };
 
         try {
-            const response = await axios.post(
-                'https://api.dr-study.kro.kr/v1/conferences',
-                conferenceData,
-            );
+            const response = await POST({
+                API: API, // as API 로 작성,
+                endPoint: '',
+                body: conferenceData, // body는 body
+                isAuth: true, // 항상 true로
+            });
+
             console.log('컨퍼런스 생성 성공:', response.data);
         } catch (error) {
             console.error('컨퍼런스 생성 실패:', error);
@@ -27,10 +32,12 @@ const CreateConferenceTemplate = () => {
 
     const handleGetConferenceList = async () => {
         try {
-            const response = await axios.get(
-                'https://api.dr-study.kro.kr/v1/conferences',
-            );
-            console.log('컨퍼런스 조회 성공:', response.data);
+            const response = await GET('v1/conferences', {
+                params: '',
+                isAuth: true,
+                revalidateTime: 10,
+            });
+            console.log(response.data);
         } catch (error) {
             console.error('컨퍼런스 조회 실패:', error);
         }

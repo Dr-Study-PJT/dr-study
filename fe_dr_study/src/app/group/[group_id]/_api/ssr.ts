@@ -34,10 +34,12 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
         });
 
         // 그룹 멤버 정보 요청
-        const response_groupMembers = await fetch(
-            `https://api.dr-study.kro.kr/v1/groups/${groupId}/members`,
+        const response_groupMembers = await GET(
+            `v1/groups/${groupId}/members`,
             {
-                method: 'GET',
+                params: '',
+                isAuth: true,
+                revalidateTime: 30,
             },
         );
         const groupData = response_group.data;

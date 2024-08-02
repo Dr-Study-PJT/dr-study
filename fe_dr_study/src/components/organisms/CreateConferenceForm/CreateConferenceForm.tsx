@@ -1,9 +1,10 @@
 'use client';
 
+import { POST } from '@/app/api/routeModule';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
-
+import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 const loginFormContainerStyles = 'p-8 my-auto';
 const loginImageContainerStyles = 'w-1/2 relative';
 
@@ -39,19 +40,18 @@ const CreateConferenceForm = () => {
         setErrors({ ...errors, [e.target.id]: '' }); // Clear error on input change
     };
 
-    const onClickLoginSubmit = async (e: FormEvent) => {
+    const onSubmitCreateConference = async (e: FormEvent) => {
         e.preventDefault();
         console.log(HOST_URL);
         try {
-            const request = await fetch(`${HOST_URL}/v1/conferences`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+            const response = await POST({
+                API: API,
+                endPoint: '',
+                body: formData,
+                isAuth: true,
             });
-            const response = await request.json();
             console.log(response);
+            return response.data;
         } catch (error) {
             setErrors({
                 studyGroupId: '스터디 그룹이 없습니다.',
@@ -70,7 +70,7 @@ const CreateConferenceForm = () => {
                     컨퍼런스 생성
                 </h2>
                 <form
-                    onSubmit={onClickLoginSubmit}
+                    onSubmit={onSubmitCreateConference}
                     className="SECTION-INPUT-LIST flex flex-col gap-4"
                 >
                     <InputWithLabelAndError

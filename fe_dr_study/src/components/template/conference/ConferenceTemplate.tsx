@@ -1,5 +1,6 @@
 'use client';
 
+import { DELETE, GET, POST } from '@/app/api/routeModule';
 import { Button, Paragraph, Span } from '@/components/atoms';
 import ConferenceControlBar from '@/components/organisms/ConferenceControlBar/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress/ConferenceProgress';
@@ -10,6 +11,7 @@ import { getSessionStorageItem } from '@/utils/sessionStorage';
 import axios from 'axios';
 import Peer from 'peerjs';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 
 interface ConferenceTemplateProps {
     conferenceId: number;
@@ -27,9 +29,6 @@ interface clientInterface {
 }
 
 const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
-    const DEPLOY_URL = 'https://www.dr-study.kro.kr/v1';
-    const LOCAL_URL = 'http://192.168.100.77:8080/v1';
-
     // 방 정보 상태
     const [roomInfo, setRoomInfo] = useState<RoomInfoInterface>({
         title: '', // 방 제목
@@ -169,13 +168,22 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         };
 
         try {
-            const response = await axios.post(
-                `${LOCAL_URL}`,
-                // `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/join`,
-                {
-                    peerId,
-                },
-            ); // API 요청
+            // const response = await GET(
+            //     'v1/conferences',
+            //     {
+            //         params: '',
+            //         isAuth: true,
+            //         revalidateTime: 10
+            //     }
+            // )
+
+            const response = await POST({
+                API: API, // as API 로 작성
+                endPoint: `${conferenceId}/join`, //  v1/conferences 뒤에 있으면 '/' 붙고 아니면 안 붙음
+                body: { peerId }, // body는 body
+                isAuth: true, // 항상 true로
+            });
+
             console.log(response, '조인 결과');
             const { data } = response.data;
             console.log(data, '조인 결과 data');
