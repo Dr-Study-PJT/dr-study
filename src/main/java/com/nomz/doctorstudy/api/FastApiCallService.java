@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -11,7 +12,7 @@ public class FastApiCallService implements ExternalApiCallService{
     @Autowired
     private RestTemplate restTemplate;
     // FastAPI 서버 주소
-    private final String BASE_URL = "http://localhost:6090";
+    private final String BASE_URL = "http://192.168.100.149:8000";
 
     public FastApiCallService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -27,8 +28,14 @@ public class FastApiCallService implements ExternalApiCallService{
         String requestJson =  "{\"text\":\"" + s + "\"}";
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-        return response.getBody();
+        try{
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+            return response.getBody();
+        } catch (ResourceAccessException e){
+            System.err.println("ResourceAccessException: " + e.getMessage());
+            return null;
+        }
+
 
     }
 
@@ -42,9 +49,17 @@ public class FastApiCallService implements ExternalApiCallService{
         String requestJson = "{\"text\":\"" + s + "\"}";
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 
-        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.POST, entity, byte[].class);
+        try{
+            ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.POST, entity, byte[].class);
+            return response.getBody();
+        }catch (ResourceAccessException e) {
+            System.err.println("ResourceAccessException: " + e.getMessage());
+            return null;
+        }
 
-        return response.getBody();
+
+
+
     }
 
     @Override
@@ -56,8 +71,13 @@ public class FastApiCallService implements ExternalApiCallService{
 
         HttpEntity<byte[]> entity = new HttpEntity<>(audio, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        try{
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 
-        return response.getBody();
+            return response.getBody();
+        }catch(ResourceAccessException e) {
+            System.err.println("ResourceAccessException: " + e.getMessage());
+            return null;
+        }
     }
 }
