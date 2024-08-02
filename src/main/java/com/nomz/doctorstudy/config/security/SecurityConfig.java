@@ -32,7 +32,7 @@ public class SecurityConfig  {
             "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/api-docs/**", "/swagger-ui.html", "/v1/auth/login", "/v1/auth/email-code", "/v1/auth/find-password", "/v1/auth/reset-password",
             "/v1/no-auth/**", "/v1/email/**", "/v1/images/**", "/v1/images", "/v1/need-auth",
-            "/v1/members/**", "/error",
+            "/v1/members/**", "/error", "/v1/conferences/**", "/room/**", "/v1/moderators/**"
     };
 
     @Bean

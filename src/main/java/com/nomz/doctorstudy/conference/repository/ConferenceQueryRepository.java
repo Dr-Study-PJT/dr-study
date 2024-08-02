@@ -30,8 +30,7 @@ public class ConferenceQueryRepository {
                 .from(conference)
                 .where(
                         likeTitle(filter.getTitle()),
-                        equalMemberCapacity(filter.getMemberCapacity()),
-                        equalIsFinished(filter.getIsFinished())
+                        equalMemberCapacity(filter.getMemberCapacity())
                 )
                 .fetch();
     }
@@ -48,15 +47,6 @@ public class ConferenceQueryRepository {
     private BooleanExpression equalMemberCapacity(Integer memberCapacity) {
         if (memberCapacity != null) {
             return conference.memberCapacity.eq(memberCapacity);
-        }
-        else {
-            return null;
-        }
-    }
-
-    private BooleanExpression equalIsFinished(Boolean isFinished) {
-        if (isFinished != null) {
-            return conference.isFinished.eq(isFinished);
         }
         else {
             return null;

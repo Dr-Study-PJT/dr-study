@@ -41,6 +41,8 @@ out/
 
 ### Media File ###
 *.mp3
+*.webm
+*.wav
 
 ### QueryDSL ###
 src/main/generated/

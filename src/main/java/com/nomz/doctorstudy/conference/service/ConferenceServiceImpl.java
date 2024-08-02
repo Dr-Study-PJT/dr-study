@@ -60,7 +60,6 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .moderator(moderator)
                 .host(null)//.host(requester)
                 .memberCapacity(request.getMemberCapacity())
-                .isFinished(false)
                 .build();
         conferenceRepository.save(conference);
 
