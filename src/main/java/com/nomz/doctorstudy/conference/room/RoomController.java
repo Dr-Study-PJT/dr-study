@@ -43,7 +43,7 @@ public class RoomController {
 
     //
 
-    @PostMapping("/send-mute-signal/{conferenceId}")
+    @PostMapping("/v1/conferences/{conferenceId}/send-mute-signal")
     public ResponseEntity<?> sendMuteSignal(
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody MuteSignal muteSignal
@@ -53,7 +53,7 @@ public class RoomController {
         return ResponseEntity.ok(muteSignal);
     }
 
-    @PostMapping("/send-unmute-signal/{conferenceId}")
+    @PostMapping("/v1/conferences/{conferenceId}/send-unmute-signal")
     public ResponseEntity<?> sendUnmuteSignal(
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody UnmuteSignal unmuteSignal
@@ -63,7 +63,7 @@ public class RoomController {
         return ResponseEntity.ok(unmuteSignal);
     }
 
-    @PostMapping("/send-avatar-speak-signal/{conferenceId}")
+    @PostMapping("/v1/conferences/{conferenceId}/send-avatar-speak-signal")
     public ResponseEntity<?> sendAvatarSpeakSignal(
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody AvatarSpeakSignal avatarSpeakSignal
@@ -73,23 +73,15 @@ public class RoomController {
         return ResponseEntity.ok(avatarSpeakSignal);
     }
 
-    @PostMapping("/run-block-script")
-    public ResponseEntity<?> blockMuteUnmute() {
-        String script1 =
-                """
-                phase(1) {
-                    loop(5) {
-                        let_avatar_speak('hi');
-                        wait(1);
-                        let_participant_speak(1, 1);
-                        wait(1);
-                    }
-                }
-                """;
-        Long id = 1L;
-        String preprocessedScript1 = scriptPreprocessor.preprocessScript(script1);
-        blockInterpreter.init(id, preprocessedScript1, Map.of());
-        blockInterpreter.interpret(id);
-        return ResponseEntity.ok("OK");
+    @PostMapping("/v1/conferences/{conferenceId}/run-block-script")
+    public ResponseEntity<?> blockMuteUnmute(
+            @PathVariable("conferenceId") Long conferenceId,
+            @RequestBody String script
+    ) {
+        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
+        blockInterpreter.init(conferenceId, preprocessedScript, Map.of());
+        blockInterpreter.interpret(conferenceId);
+
+        return ResponseEntity.ok("OK\n" + script);
     }
 }
