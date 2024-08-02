@@ -38,6 +38,7 @@ public class Member {
 //    @Column(updatable = false, nullable = false)
     private LocalDateTime regDate;
 
+    @Column(name = "image_id", nullable = true)
     private Long imageId;
 
     @ColumnDefault("0")

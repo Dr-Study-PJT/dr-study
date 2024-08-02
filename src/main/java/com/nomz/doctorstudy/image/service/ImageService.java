@@ -91,6 +91,7 @@ public class ImageService{
         List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
 
         if (!allowedExtentionList.contains(extention)) {
+            log.info("지원하지 않는 확장자입니다.");
             throw new ImageException(ImageErrorCode.NO_ACCESS_FILE_EXTENTION);
         }
 
