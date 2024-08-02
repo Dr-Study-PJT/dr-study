@@ -35,10 +35,6 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
-
-        if(authorizationHeader == null){
-            log.info("asdjfsfnsalfeststes");
-        }
         //JWT가 헤더에 있는 경우
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
@@ -59,6 +55,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
             } else{
                 log.info("----------------- jwt error -------------------");
                 jwtExceptionHandler(response, AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+                return;
             }
         }
 
@@ -72,8 +69,12 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
         response.setCharacterEncoding("UTF-8");
 
         try {
-            String json = new ObjectMapper().writeValueAsString("다시 로그인해주세요~!");
-            response.getWriter().write(json);
+            ErrorResponse<?> errorResponse = new ErrorResponse<>("다시 로그인해주세요", null);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            String jsonErrorResponse = objectMapper.writeValueAsString(errorResponse);
+            response.getWriter().write(jsonErrorResponse);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

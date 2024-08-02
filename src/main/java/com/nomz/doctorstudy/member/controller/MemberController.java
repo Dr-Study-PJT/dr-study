@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.member.controller;
 
-
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
@@ -25,9 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 유저 관련 API 요청 처리를 위한 컨트롤러 정의.
- */
 @RestController
 @RequestMapping("/v1/members")
 @Slf4j
@@ -55,7 +51,6 @@ public class MemberController {
             @RequestBody @Valid MemberRegisterPostReq registerInfo) {
         log.info("registerInfo = {}", registerInfo.getNickname());
 
-        //임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
         Member member = memberService.createUser(registerInfo);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -83,10 +78,7 @@ public class MemberController {
                     """))),
     })
     public ResponseEntity<?> getLoginMemberInfo(Authentication authentication) {
-        /**
-         * 요청 헤더 액세스 토큰이 포함된 경우에만 실행되는 인증 처리이후, 리턴되는 인증 정보 객체(authentication) 통해서 요청한 유저 식별.
-         * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
-         */
+
         if(authentication == null){
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
         }
@@ -120,14 +112,10 @@ public class MemberController {
                     }
                     """))),
     })
-    public ResponseEntity<?> getMemberInfo(@PathVariable(name = "memberEmail") @Valid EmailSendRequest emailSendRequest) {
-        /**
-         * 요청 헤더 액세스 토큰이 포함된 경우에만 실행되는 인증 처리이후, 리턴되는 인증 정보 객체(authentication) 통해서 요청한 유저 식별.
-         * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
-         */
+    public ResponseEntity<?> getMemberInfo(@PathVariable(name = "memberEmail") @Valid String email) {
 
-//        log.info("memberEMAIL = {}", emailSendRequest.getEmail());
-        Member member = memberService.getUserByEmail(emailSendRequest.getEmail());
+        log.info("memberEMAIL = {}", email);
+        Member member = memberService.getUserByEmail(email);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>("조회되었습니다.", member)
