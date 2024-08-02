@@ -280,6 +280,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     <div className="fixed bottom-[10%] left-[50%] w-[10%]">
                         <ModeratorAvatar
                             isAvatarSpeaking={isAvatarSpeaking}
+                            timeForAvatarSpeaking={timeForAvatarSpeaking}
                             gptSummaryBySystem={gptSummaryBySystem}
                         />
                     </div>
