@@ -217,15 +217,13 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                     const participant = block.participant
                         ? block.participant === '반복회차 i'
                             ? `get_num_of_iteration()`
-                            : `int_input(${block.participant})`
+                            : `${block.participant}`
                         : '';
-                    const duration = block.duration
-                        ? `int_input(${block.duration})`
-                        : '';
+                    const duration = block.duration ? `${block.duration}` : '';
                     script += `${indent}let_participant_speak( ${participant} , ${duration} );`;
                     break;
                 case 'block_command_queryToGPT':
-                    script += `${indent}let_avatar_speak( gpt_query( concat_string( `;
+                    script += `${indent}let_avatar_speak( gpt_query( string_concat( `;
                     if (block.children && block.children.length > 0) {
                         script += block.children
                             .map((child) => generateBlockScript(child, 0))
