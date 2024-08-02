@@ -7,10 +7,9 @@ interface VideoProps {
 }
 
 const Video = ({ existingPeers, peerId, focusing }: VideoProps) => {
-    // const [peerCount, setPeerCount] = useState<number>(
-    //     Object.keys(existingPeers).length,
-    // );
-    const [peerCount, setPeerCount] = useState<number>(10);
+    const [peerCount, setPeerCount] = useState<number>(
+        Object.keys(existingPeers).length,
+    );
 
     const videoDimensions = () => {
         switch (peerCount) {

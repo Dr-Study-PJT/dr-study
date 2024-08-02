@@ -27,6 +27,7 @@ function Recorder({
         if (timeForAudioRecord) {
             startAudioStream();
 
+            // 설정한 시간 후에 오디오 녹음 중지
             const timeout = setTimeout(() => {
                 stopAudioStream();
             }, timeForAudioRecord * 1000);

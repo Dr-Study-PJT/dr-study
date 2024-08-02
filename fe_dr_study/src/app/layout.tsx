@@ -13,6 +13,8 @@ import SideBar from '@/components/organisms/SideBar';
 import worker from '@/mocks/browser';
 import { useRouter } from 'next/router';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import ModalBox from '@/components/molecules/ModalBox/ModalBox';
 
 const pretendard = localFont({
     src: [
@@ -92,6 +94,7 @@ export default function RootLayout({
                                         {children}
                                     </div>
                                 </div>
+                                <ModalBox />
                             </>
                         )}
                     </RQProvider>

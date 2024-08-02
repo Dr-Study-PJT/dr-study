@@ -50,13 +50,18 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
     // 시스템에 의한 상태
     const [isMutedBySystem, setIsMutedBySystem] = useState<boolean>(false); // 시스템에 의해 음소거되었는지 여부
-    const [focusingMemberId, setFocusingMemberId] = useState<number>(0); // 현재 화면에 표시되는 멤버의 ID
-    const [isAvatarSpeaking, setIsAvatarSpeaking] = useState<boolean>(false); // 현재 화면에 표시되는 멤버의 ID
+    const [focusingMemberId, setFocusingMemberId] = useState<number>(0); // 현재 강조할 멤버의 ID
+    const [isAvatarSpeaking, setIsAvatarSpeaking] = useState<boolean>(false); // 아바타 발화 여부
+    const [timeForAvatarSpeaking, setTimeForAvatarSpeaking] =
+        useState<number>(0); // 아바타 발화 시간
     const [gptSummaryBySystem, setGPTSummaryBySystem] =
         useState<string>('서마리'); // 현재 화면에 표시되는 멤버의 ID
     const [isStartRecordingAudio, setIsStartRecordingAudio] =
         useState<boolean>(false); // 오디오 스트림 시작 신호
     const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
+
+    // 세션 스토리지에서 멤버 ID 가져오기
+    const memberId = getSessionStorageItem('memberData');
 
     // 피어와 로컬 스트림 참조
     const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
@@ -143,7 +148,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             });
         }
     };
-    const memberId = getSessionStorageItem('memberData');
+
     const joinConference = async (peerId: string) => {
         if (!isFlag) return;
 
@@ -165,7 +170,8 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
         try {
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/join`,
+                `${LOCAL_URL}`,
+                // `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/join`,
                 {
                     peerId,
                 },
@@ -295,6 +301,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     setIsMutedBySystem={setIsMutedBySystem}
                     setFocusingMemberId={setFocusingMemberId}
                     setIsAvatarSpeaking={setIsAvatarSpeaking}
+                    setTimeForAvatarSpeaking={setTimeForAvatarSpeaking}
                     setGPTSummaryBySystem={setGPTSummaryBySystem}
                     timeForAudioRecord={timeForAudioRecord}
                     setTimeForAudioRecord={setTimeForAudioRecord}
