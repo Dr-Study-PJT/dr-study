@@ -4,3 +4,4 @@ export { Paragraph } from './Paragraph/Paragraph';
 export { Span } from './Span/Span';
 export { Label } from './Label/Label';
 export { Input } from './Input/Input';
+export { Box } from './Box/Box';

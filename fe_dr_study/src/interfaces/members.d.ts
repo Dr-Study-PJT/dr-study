@@ -18,3 +18,6 @@ export interface IRegisterReq
 }
 
 export interface ILogInReq extends Pick<IMember, 'email' | 'password'> {}
+
+
+export interface ArticleData
