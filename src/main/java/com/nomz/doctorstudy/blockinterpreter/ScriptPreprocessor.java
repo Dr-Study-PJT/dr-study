@@ -45,6 +45,11 @@ public class ScriptPreprocessor {
                 case '\n':
                 case '\t':
                     if (single_quotation_mark) {
+                        if (ch == '\n') {
+                            sb.append("\\\\");
+                            sb.append("n");
+                            break;
+                        }
                         sb.append(ch);
                     }
                     break;

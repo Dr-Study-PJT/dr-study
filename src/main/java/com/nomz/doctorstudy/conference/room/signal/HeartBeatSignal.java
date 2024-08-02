@@ -9,11 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UnmuteSignal implements Signal {
+public class HeartBeatSignal implements Signal {
     private Long id;
 
     @Override
     public SignalType getSignalType() {
-        return SignalType.UNMUTE;
+        return SignalType.HEARTBEAT;
     }
 }

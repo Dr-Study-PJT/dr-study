@@ -3,9 +3,9 @@ package com.nomz.doctorstudy.conference.room;
 import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
 import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.audio.AudioUtils;
+import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
 import com.nomz.doctorstudy.conference.room.signal.ParticipantAudioSignal;
-import com.nomz.doctorstudy.conference.room.signal.SignalSender;
 import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class RoomController {
-    private final SignalSender signalSender;
+    private final SignalTransmitter signalTransMitter;
     private final ScriptPreprocessor scriptPreprocessor;
     private final BlockInterpreter blockInterpreter;
 
@@ -41,13 +41,15 @@ public class RoomController {
         AudioUtils.playAudioFromByteArr(Base64.getDecoder().decode(rawAudio));
     }
 
+    //
+
     @PostMapping("/send-mute-signal/{conferenceId}")
     public ResponseEntity<?> sendMuteSignal(
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody MuteSignal muteSignal
     ) {
         log.debug("trying to send SignalMessage:{} to conference:{}", muteSignal, conferenceId);
-        signalSender.sendMuteSignal(conferenceId, muteSignal);
+        signalTransMitter.transmitSignal(conferenceId, muteSignal);
         return ResponseEntity.ok(muteSignal);
     }
 
@@ -57,8 +59,18 @@ public class RoomController {
             @RequestBody UnmuteSignal unmuteSignal
     ) {
         log.debug("trying to send Unmute to conference:{}", conferenceId);
-        signalSender.sendUnmuteSignal(conferenceId, unmuteSignal);
+        signalTransMitter.transmitSignal(conferenceId, unmuteSignal);
         return ResponseEntity.ok(unmuteSignal);
+    }
+
+    @PostMapping("/send-avatar-speak-signal/{conferenceId}")
+    public ResponseEntity<?> sendAvatarSpeakSignal(
+            @PathVariable("conferenceId") Long conferenceId,
+            @RequestBody AvatarSpeakSignal avatarSpeakSignal
+            ) {
+        log.debug("trying to send Avatar Speak to conference:{}", conferenceId);
+        signalTransMitter.transmitSignal(conferenceId, avatarSpeakSignal);
+        return ResponseEntity.ok(avatarSpeakSignal);
     }
 
     @PostMapping("/run-block-script")

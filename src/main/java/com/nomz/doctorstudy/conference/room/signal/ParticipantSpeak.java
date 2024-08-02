@@ -9,11 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UnmuteSignal implements Signal {
+public class ParticipantSpeak implements Signal {
     private Long id;
+    private Integer time;
 
     @Override
     public SignalType getSignalType() {
-        return SignalType.UNMUTE;
+        return SignalType.MUTE;
     }
 }

@@ -64,11 +64,11 @@ public class ConferenceController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateConferenceResponse>> createConference(
-            Authentication authentication,
+            /*Authentication authentication,*/
             @Valid @RequestBody CreateConferenceRequest request
     ) {
-        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
-        Long conferenceId = conferenceService.createConference(member, request);
+        /*Member member = ((MemberDetails) authentication.getPrincipal()).getUser();*/
+        Long conferenceId = conferenceService.createConference(/*member, */request);
         CreateConferenceResponse response = CreateConferenceResponse.builder()
                 .conferenceId(conferenceId)
                 .build();
