@@ -30,8 +30,9 @@ import java.util.List;
 public class ModeratorController {
     private final ModeratorService moderatorService;
 
+
     @PostMapping
-    private ResponseEntity<SuccessResponse<CreateModeratorResponse>> createModerator(@RequestBody CreateModeratorRequest request) {
+    public ResponseEntity<SuccessResponse<CreateModeratorResponse>> createModerator(@RequestBody CreateModeratorRequest request) {
         //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         //MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         //Member requester = memberDetails.getUser();

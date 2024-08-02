@@ -26,7 +26,7 @@ public class ModeratorServiceImpl implements ModeratorService {
     private final AvatarRepository avatarRepository;
     private final ProcessorRepository processorRepository;
 
-    @Transactional
+//    @Transactional
     @Override
     public Long createModerator(/*Member requester, */CreateModeratorRequest request) {
         Avatar avatar = createAvatar(/*requester, */request);
