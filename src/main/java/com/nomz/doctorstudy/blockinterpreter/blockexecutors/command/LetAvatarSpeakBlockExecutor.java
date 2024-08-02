@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
 import com.nomz.doctorstudy.conference.room.signal.SignalSender;
+import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,9 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
     @Override
     protected Object executeAction(List<Object> args) {
-        log.debug("let ai speak!");
+        log.info("let ai speak!");
+
+        signalSender.sendMuteSignal(1L, new MuteSignal(1L));
 
         return null;
     }

@@ -28,15 +28,15 @@ public class ModeratorServiceImpl implements ModeratorService {
 
     @Transactional
     @Override
-    public Long createModerator(Member requester, CreateModeratorRequest request) {
-        Avatar avatar = createAvatar(requester, request);
-        Processor processor = createProcessor(requester, request);
+    public Long createModerator(/*Member requester, */CreateModeratorRequest request) {
+        Avatar avatar = createAvatar(/*requester, */request);
+        Processor processor = createProcessor(/*requester, */request);
 
         Moderator moderator = Moderator.builder()
                 .avatar(avatar)
                 .processor(processor)
                 .name(request.getName())
-                .creator(requester)
+                //.creator(requester)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -56,9 +56,9 @@ public class ModeratorServiceImpl implements ModeratorService {
         return moderatorRepository.findAll();
     }
 
-    private Avatar createAvatar(Member requester, CreateModeratorRequest request) {
+    private Avatar createAvatar(/*Member requester, */CreateModeratorRequest request) {
         Avatar avatar = Avatar.builder()
-                .creator(requester)
+                //.creator(requester)
                 .createdAt(LocalDateTime.now())
                 .voiceType(request.getVoiceType())
                 .characterType(request.getCharacterType())
@@ -70,9 +70,9 @@ public class ModeratorServiceImpl implements ModeratorService {
         return avatar;
     }
 
-    private Processor createProcessor(Member requester, CreateModeratorRequest request) {
+    private Processor createProcessor(/*Member requester, */CreateModeratorRequest request) {
         Processor processor = Processor.builder()
-                .creator(requester)
+                //.creator(requester)
                 .createdAt(LocalDateTime.now())
                 .prePrompt(request.getPrePrompt())
                 .script(request.getScript())

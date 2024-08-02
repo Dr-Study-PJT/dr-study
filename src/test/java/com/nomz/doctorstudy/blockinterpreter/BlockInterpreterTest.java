@@ -260,4 +260,24 @@ class BlockInterpreterTest {
         blockInterpreter.init(id, preprocessedScript1, Map.of());
         blockInterpreter.interpret(id, ProcessMode.PROGRAMME);
     }
+    
+    @Test
+    @DisplayName("뮤트 제어신호 테스트")
+    public void muteSignalTest() {
+        String script1 =
+                """
+                phase(1) {
+                    loop(5) {
+                        let_avatar_speak('hi');
+                        wait(1);
+                        let_participant_speak(1, 1);
+                        wait(3);
+                    }
+                }
+                """;
+        long id = getProcessContextIdSequence();
+        String preprocessedScript1 = scriptPreprocessor.preprocessScript(script1);
+        blockInterpreter.init(id, preprocessedScript1, Map.of());
+        blockInterpreter.interpret(id);
+    }
 }
