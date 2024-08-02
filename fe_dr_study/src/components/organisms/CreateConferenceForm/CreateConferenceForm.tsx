@@ -41,6 +41,7 @@ const CreateConferenceForm = () => {
 
     const onClickLoginSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        console.log(HOST_URL);
         try {
             const request = await fetch(`${HOST_URL}/v1/conferences`, {
                 method: 'POST',

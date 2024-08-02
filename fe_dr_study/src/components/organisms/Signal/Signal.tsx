@@ -54,7 +54,7 @@ const Signal = ({
 
     // 소켓 생성 및 Stomp 클라이언트 생성
     useEffect(() => {
-        const socket = new SockJS('http://192.168.163.126:8080/room'); // SockJS 소켓 생성
+        const socket = new SockJS('http://192.168.100.77:8080/room'); // SockJS 소켓 생성
         // const socket = new SockJS(`${TARGET_HOST}/${endpoint}`); // SockJS 소켓 생성
         const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
 
@@ -121,6 +121,7 @@ const Signal = ({
 
     // Mute 신호 처리
     const handleMuteSignal = (newSignal: Signal) => {
+        console.log('before handleMuteSignal', newSignal);
         if (newSignal.id === memberId) {
             setIsMutedBySystem(true); // mute 상태로 변경
             console.log(
@@ -151,6 +152,7 @@ const Signal = ({
 
     // 아바타 발화 신호 처리
     const handleAvatarSpeakSignal = (newSignal: Signal) => {
+        console.log('before setIsAvatarSpeaking', newSignal.time);
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
         setTimeForAvatarSpeaking(newSignal.time as number);
         // 아바타 발화는 해당 시간 동안만 수행
@@ -226,7 +228,7 @@ const Signal = ({
         <div className="flex flex-col h-full bg-dr-dark-300">
             <div className="flex h-full w-full overflow-y-scroll">
                 <div className="px-[10px] flex gap-dr-10 flex-col  h-full w-full ">
-                    {tempMessages.map((msg, index) => (
+                    {messages.map((msg, index) => (
                         <div
                             key={index}
                             className="flex items-start p-2 bg-gray-800 rounded-lg"
