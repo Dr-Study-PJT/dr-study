@@ -1,11 +1,11 @@
 package com.nomz.doctorstudy.conference.room.signal;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MuteSignal implements Signal {
     private Long id;
 }

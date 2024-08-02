@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.conference.room;
 
+import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
+import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.audio.AudioUtils;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
 import com.nomz.doctorstudy.conference.room.signal.ParticipantAudioSignal;
@@ -14,12 +16,15 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class RoomController {
     private final SignalSender signalSender;
+    private final ScriptPreprocessor scriptPreprocessor;
+    private final BlockInterpreter blockInterpreter;
 
     @MessageMapping("/chat/{conferenceId}")
     @SendTo("/topic/chat/{conferenceId}")
@@ -54,5 +59,25 @@ public class RoomController {
         log.debug("trying to send Unmute to conference:{}", conferenceId);
         signalSender.sendUnmuteSignal(conferenceId, unmuteSignal);
         return ResponseEntity.ok(unmuteSignal);
+    }
+
+    @PostMapping("/run-block-script")
+    public ResponseEntity<?> blockMuteUnmute() {
+        String script1 =
+                """
+                phase(1) {
+                    loop(5) {
+                        let_avatar_speak('hi');
+                        wait(1);
+                        let_participant_speak(1, 1);
+                        wait(1);
+                    }
+                }
+                """;
+        Long id = 1L;
+        String preprocessedScript1 = scriptPreprocessor.preprocessScript(script1);
+        blockInterpreter.init(id, preprocessedScript1, Map.of());
+        blockInterpreter.interpret(id);
+        return ResponseEntity.ok("OK");
     }
 }

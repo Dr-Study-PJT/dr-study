@@ -32,11 +32,11 @@ public class ModeratorController {
 
     @PostMapping
     private ResponseEntity<SuccessResponse<CreateModeratorResponse>> createModerator(@RequestBody CreateModeratorRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        Member requester = memberDetails.getUser();
+        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        //Member requester = memberDetails.getUser();
 
-        Long moderatorId = moderatorService.createModerator(requester, request);
+        Long moderatorId = moderatorService.createModerator(/*requester, */request);
 
         CreateModeratorResponse response = CreateModeratorResponse.builder()
                 .id(moderatorId)
