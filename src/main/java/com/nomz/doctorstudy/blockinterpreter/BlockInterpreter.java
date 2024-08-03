@@ -2,7 +2,6 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.*;
 import com.nomz.doctorstudy.common.exception.BusinessException;
-import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class BlockInterpreter {
-    private final ProcessContextManager processContextManager;
+    private final ProcessManager processManager;
     private final ThreadProcessContext threadProcessContext;
     private final BlockFactory blockFactory;
     private final BlockExecutorMapper blockExecutorMapper;
@@ -24,7 +23,7 @@ public class BlockInterpreter {
     public void init(Long processContextId, String preprocessedScript, Map<String, Object> varMap) {
         Map<String, Integer> labelMap = new HashMap<>();
         List<Block> blocks = tokenizeScript(preprocessedScript, labelMap);
-        processContextManager.add(processContextId, blocks, varMap, labelMap);
+        processManager.initProcess(processContextId, blocks, varMap, labelMap);
     }
 
     @Async
@@ -36,7 +35,7 @@ public class BlockInterpreter {
     public void interpret(Long processContextId, ProcessMode processMode) {
         log.info("processContextId={} started to run", processContextId);
 
-        ProcessContext processContext = processContextManager.getProcessContext(processContextId);
+        ProcessContext processContext = processManager.getProcessContext(processContextId);
         threadProcessContext.init(processContext);
 
         while (!threadProcessContext.isEndOfBlock()) {
@@ -44,7 +43,7 @@ public class BlockInterpreter {
             Stack<BlockInterpretContext> stack = new Stack<>();
             stack.push(new BlockInterpretContext(commandBlock, new ArrayList<>(), 0));
             String methodForDebug = commandBlock.getMethod();
-            log.debug("cursor={}, block={}", processContext.cursor, commandBlock.getMethod());
+            log.debug("cursor={}, block={}", processContext.getCursor(), commandBlock.getMethod());
 
             while (!stack.empty()) {
                 BlockExecutor blockExecutor = blockExecutorMapper.getBlockExecutor(stack.peek().block.getMethod());
@@ -86,10 +85,10 @@ public class BlockInterpreter {
 
                 if (result == null || stack.size() == 1) {
                     if (result != null) {
-                        throw new BlockException(BlockErrorCode.COMMAND_BLOCK_NOT_FOUND, processContext.cursor);
+                        throw new BlockException(BlockErrorCode.COMMAND_BLOCK_NOT_FOUND, processContext.getCursor());
                     }
                     if (stack.size() > 1) {
-                        throw new BlockException(BlockErrorCode.VALUE_BLOCK_NOT_FOUND, processContext.cursor);
+                        throw new BlockException(BlockErrorCode.VALUE_BLOCK_NOT_FOUND, processContext.getCursor());
                     }
                     break;
                 }
@@ -111,7 +110,7 @@ public class BlockInterpreter {
     }
 
     public void close(Long processContextId) {
-        processContextManager.remove(processContextId);
+        processManager.removeProcess(processContextId);
     }
 
     @AllArgsConstructor
