@@ -86,7 +86,7 @@ export default function RootLayout({
                                 </div>
                                 <SideBar />
                                 <div className="pl-[3rem] flex h-[calc(100vh-3rem)]">
-                                    <div className="flex-1 overflow-auto">
+                                    <div className="flex-1 overflow-auto bg-dr-dark-300">
                                         {children}
                                     </div>
                                 </div>
