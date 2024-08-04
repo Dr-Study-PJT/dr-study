@@ -17,25 +17,25 @@ import java.util.*;
 public class BlockInterpreter {
     private final ProcessManager processManager;
     private final ThreadProcessContext threadProcessContext;
-    private final BlockFactory blockFactory;
     private final BlockExecutorMapper blockExecutorMapper;
+    private final ScriptPreprocessor scriptPreprocessor;
 
-    public void init(Long processContextId, String preprocessedScript, Map<String, Object> varMap) {
-        Map<String, Integer> labelMap = new HashMap<>();
-        List<Block> blocks = tokenizeScript(preprocessedScript, labelMap);
-        processManager.initProcess(processContextId, blocks, varMap, labelMap);
+    public void init(Long processId, String script, Map<String, Object> varMap) {
+        List<Block> blocks = scriptPreprocessor.preprocessScript(script);
+        Map<String, Integer> labelMap = parseLabels(blocks);
+        processManager.register(processId, blocks, varMap, labelMap);
     }
 
-    @Async
-    public void interpret(Long processContextId) {
-        interpret(processContextId, ProcessMode.RUN);
+    //@Async
+    public void interpret(Long processId) {
+        interpret(processId, ProcessMode.RUN);
     }
 
-    @Async
-    public void interpret(Long processContextId, ProcessMode processMode) {
-        log.info("processContextId={} started to run", processContextId);
+    //@Async
+    public void interpret(Long processId, ProcessMode processMode) {
+        log.info("processId={} started to run", processId);
 
-        ProcessContext processContext = processManager.getProcessContext(processContextId);
+        ProcessContext processContext = processManager.getProcessContext(processId);
         threadProcessContext.init(processContext);
 
         while (!threadProcessContext.isEndOfBlock()) {
@@ -54,7 +54,7 @@ public class BlockInterpreter {
                     Object result = null;
 
                     if (value.startsWith("'") && value.endsWith("'")) {
-                        result = value.substring(1, value.length() - 1);
+                        result = processEscape(value);
                     }
                     if (StringUtils.isNumeric(value)) {
                         result = Integer.parseInt(value);
@@ -106,11 +106,60 @@ public class BlockInterpreter {
 
         threadProcessContext.close();
 
-        log.info("processContextId={} ended to run", processContextId);
+        log.info("processId={} ended to run", processId);
+
+        close(processId);
     }
 
-    public void close(Long processContextId) {
-        processManager.removeProcess(processContextId);
+    private String processEscape(String value) {
+        StringBuilder sb = new StringBuilder();
+        String strVal = value.substring(1, value.length() - 1);
+        boolean escapeFlag = false;
+
+        for (char ch : strVal.toCharArray()) {
+            if (escapeFlag) {
+                escapeFlag = false;
+                if (ch == 'n') {
+                    sb.append('\n');
+                    continue;
+                }
+                if (ch == 't') {
+                    sb.append('\t');
+                    continue;
+                }
+                sb.append(ch);
+                continue;
+            }
+            if (ch == '\\') {
+                escapeFlag = true;
+                continue;
+            }
+            sb.append(ch);
+        }
+
+        return sb.toString();
+    }
+
+    private Map<String, Integer> parseLabels(List<Block> blocks) {
+        Map<String, Integer> labelMap = new HashMap<>();
+
+        for (int i=0; i<blocks.size(); i++) {
+            Block block = blocks.get(i);
+            if (block.getMethod().equals(BlockType.LABEL.getToken())) {
+                String labelNameArg = block.getArgBlocks().get(0).getMethod();
+                String labelName = labelNameArg.substring(1, labelNameArg.length() - 1);
+
+                labelMap.put(labelName, i);
+
+                log.debug("added label[name={}, index={}]", labelName, i);
+            }
+        }
+
+        return labelMap;
+    }
+
+    public void close(Long processId) {
+        processManager.removeProcess(processId);
     }
 
     @AllArgsConstructor
@@ -118,26 +167,5 @@ public class BlockInterpreter {
         private final Block block;
         private final List<Object> args;
         public int argCursor;
-    }
-
-    private List<Block> tokenizeScript(String script, Map<String, Integer> labelMap) {
-        List<Block> blocks = new ArrayList<>();
-        StringTokenizer st = new StringTokenizer(script, ";");
-        while (st.hasMoreTokens()) {
-            String stmt = st.nextToken();
-            Block parsedBlock = blockFactory.parseStatement(stmt);
-            if (parsedBlock.getArgBlocks().size() == 1 && parsedBlock.getArgBlocks().get(0).getMethod().isEmpty()) {
-                parsedBlock.getArgBlocks().clear();
-            }
-            blocks.add(parsedBlock);
-            if (parsedBlock.getMethod().equals(BlockType.LABEL.getToken())) {
-                String labelName = parsedBlock.getArgBlocks().get(0).getMethod();
-                labelName = labelName.substring(1, labelName.length() - 1);
-                int labelIndex = blocks.size() - 1;
-                labelMap.put(labelName, labelIndex);
-                log.debug("added label[name={}, index={}]", labelName, labelIndex);
-            }
-        }
-        return blocks;
     }
 }
