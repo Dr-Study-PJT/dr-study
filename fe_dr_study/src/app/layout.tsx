@@ -13,8 +13,9 @@ import SideBar from '@/components/organisms/SideBar';
 import worker from '@/mocks/browser';
 import { useRouter } from 'next/router';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ModalBox from '@/components/molecules/ModalBox/ModalBox';
+import { fetchNotifications } from '@/hooks/common/fetchNotifications';
 
 const pretendard = localFont({
     src: [
