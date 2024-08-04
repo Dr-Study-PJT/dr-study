@@ -1,6 +1,7 @@
 'use client';
 
 import Icon from '@/components/atoms/Icon/Icon';
+import ToolTip from '@/components/atoms/Tooltip/ToolTip';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 interface ConferenceControlBarProps {
@@ -88,11 +89,15 @@ const ConferenceControlBar = ({
             <button onClick={toggleAudio} className="relative group">
                 {audioEnabled ? (
                     <>
-                        {isMutedBySystem && (
+                        <ToolTip
+                            isVisible={isMutedBySystem}
+                            content="시스템에 의해 제어할 수 없는 상태입니다."
+                        />
+                        {/* {isMutedBySystem && (
                             <span className="tooltip-text absolute hidden group-hover:block bg-black text-white text-xs rounded py-1 px-3 -mt-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
                                 시스템에 의해 제어할 수 없는 상태입니다.
                             </span>
-                        )}
+                        )} */}
                         <Icon
                             cursor="pointer"
                             disabled={isMutedBySystem}

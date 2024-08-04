@@ -5,7 +5,8 @@ export const pageContainerStyles = tv({
     variants: {
         variant: {},
         bg: {
-            gray: 'b-[#36393E]',
+            dark: 'bg-dr-dark-300',
+            gray: 'bg-dr-gray-500',
         },
     },
     compoundVariants: [],
