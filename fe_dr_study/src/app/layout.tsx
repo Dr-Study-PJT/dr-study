@@ -2,19 +2,16 @@
 
 import './globals.css';
 import localFont from 'next/font/local';
+import { Provider } from 'react-redux';
+import { store } from '@/store';
+import 'react-toastify/dist/ReactToastify.css';
 
 import RQProvider from './_components/RQProvider';
 import { MSWComponent } from './_components/MSWComponent';
-import { Provider } from 'react-redux';
-import { store } from '@/store';
-
 import Navigation from '@/components/organisms/Navigation';
 import SideBar from '@/components/organisms/SideBar';
-import worker from '@/mocks/browser';
-import { useRouter } from 'next/router';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 import ModalBox from '@/components/molecules/ModalBox/ModalBox';
+import { usePathname } from 'next/navigation';
 
 const pretendard = localFont({
     src: [
@@ -71,7 +68,6 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    // 'conference/숫자' 로 시작인 경우에는
     const pathname = usePathname();
     const isConference = /^\/conference\/\d+$/.test(pathname);
 

@@ -6,15 +6,16 @@ import Image from 'next/image';
 import { StepProps } from '../_types';
 import { register } from '../_api/register';
 import { useRouter } from 'next/navigation';
+import { IRegisterReq } from '@/interfaces/members';
 
-const Step2: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
+const Step2: React.FC<StepProps> = ({
+    onNext,
+    onBack,
+    onSubmit,
+    data,
+    setData,
+}) => {
     const router = useRouter();
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-
-        await register(data);
-        router.push('/group/new');
-    };
 
     return (
         <section className="w-2/3 self-center">
@@ -52,7 +53,12 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                 <Button size="md" onClick={onBack} color="dark">
                     이전으로
                 </Button>
-                <Button size="md" onClick={handleSubmit}>
+                <Button
+                    size="md"
+                    onClick={(e) => {
+                        onSubmit(e, data);
+                    }}
+                >
                     가입하기
                 </Button>
             </div>

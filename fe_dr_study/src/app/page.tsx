@@ -5,11 +5,7 @@ import CreateStudyGroupProgress from '@/components/organisms/forms/CreateStudyGr
 import React from 'react';
 
 const MyPage: React.FC = () => {
-    return (
-        <PageContainer className="bg-[#36393E]">
-            <CreateStudyGroupProgress />
-        </PageContainer>
-    );
+    return <>홈</>;
 };
 
 export default MyPage;
