@@ -21,10 +21,6 @@ public class JumpBlockExecutor extends BlockExecutor {
         boolean condition = (boolean) args.get(0);
         String labelName = (String) args.get(1);
 
-        if (labelName.equals("loop_end_2")) {
-            int asdf=1;
-        }
-
         if (!condition) {
             log.debug("jump condition is 0");
             return null;

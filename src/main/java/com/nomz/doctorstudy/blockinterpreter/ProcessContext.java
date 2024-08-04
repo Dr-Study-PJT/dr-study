@@ -1,28 +1,35 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.*;
 
 public class ProcessContext {
+    @Getter
+    private final long id;
+    @Getter @Setter
+    private int cursor;
+    @Getter @Setter
+    private int phase;
     private final List<Block> commandBlocks;
-    public int cursor;
     private int scopeDepth;
     private final List<Map<String, Object>> variableMapStack;
     private final Map<String, Integer> labelMap;
-    private final Map<String, String> transcriptionMap;
-
+    private final List<Transcript> transcripts;
     @Getter
     private final List<String> programme;
 
-    public ProcessContext(List<Block> commandBlocks, Map<String, Object> varMap, Map<String, Integer> labelMap) {
+    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> varMap, Map<String, Integer> labelMap) {
+        this.id = id;
         this.commandBlocks = commandBlocks;
         this.cursor = 0;
         this.scopeDepth = 0;
         this.variableMapStack = new ArrayList<>();
         this.variableMapStack.add(new HashMap<>(varMap)); // TODO: deepCopy 필요 여부 확인하기
         this.labelMap = new HashMap<>(labelMap);
-        this.transcriptionMap = new LinkedHashMap<>();
+        this.transcripts = new ArrayList<>();
         this.programme = new ArrayList<>();
     }
 
@@ -62,6 +69,24 @@ public class ProcessContext {
         variableMapStack.get(scopeDepth).put(key, val);
     }
 
+    public void addTranscript(String content) {
+        transcripts.add(new Transcript(phase, content));
+    }
+
+    public String getRecentTranscript(int n) {
+        if (n < 1 || n > transcripts.size()) {
+            throw new BlockException(BlockErrorCode.TRANSCRIPT_INDEX_OUT_OF_BOUND);
+        }
+        return transcripts.get(transcripts.size() - n).content;
+    }
+
+    public List<String> getPhaseTranscript(int phase) {
+        return transcripts.stream()
+                .filter(transcript -> transcript.getPhase() == phase)
+                .map(Transcript::getContent)
+                .toList();
+    }
+
     public int getLabelIndex(String name) {
         return labelMap.get(name);
     }
@@ -80,5 +105,13 @@ public class ProcessContext {
 
     public void addProgrammeInfo(String info) {
         programme.add(info);
+    }
+
+
+    @Getter
+    @RequiredArgsConstructor
+    private static class Transcript {
+        private final int phase;
+        private final String content;
     }
 }

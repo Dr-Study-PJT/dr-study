@@ -37,8 +37,7 @@ class ScriptPreprocessorTest {
                 }
                 """;
 
-        ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
+
     }
 
     @Test
@@ -52,9 +51,6 @@ class ScriptPreprocessorTest {
                     print(get_int_variable(get_string_variable('var1')));
                 }
                 """;
-
-        ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
 
@@ -73,9 +69,6 @@ class ScriptPreprocessorTest {
                     print(hi);
                 }
                 """;
-
-        ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
     @Test
@@ -112,9 +105,6 @@ class ScriptPreprocessorTest {
             }
         }
         """;
-
-        ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
 
@@ -185,9 +175,6 @@ phase( 4 ) {
     );
 }
 """;
-
-        ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 
     @Test
@@ -203,8 +190,5 @@ phase( 4 ) {
                     get_int_variable('current_phase');
                 }
                 """;
-
-        ScriptPreprocessor scriptPreprocessor = new ScriptPreprocessor();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
     }
 }

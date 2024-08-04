@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.conference.room;
 
-import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
-import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
+import com.nomz.doctorstudy.api.ExternalApiCallService;
+import com.nomz.doctorstudy.blockinterpreter.*;
 import com.nomz.doctorstudy.common.audio.AudioUtils;
 import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
@@ -25,6 +25,8 @@ public class RoomController {
     private final SignalTransmitter signalTransMitter;
     private final ScriptPreprocessor scriptPreprocessor;
     private final BlockInterpreter blockInterpreter;
+    private final ExternalApiCallService externalApiCallService;
+    private final ProcessManager processManager;
 
     @MessageMapping("/chat/{conferenceId}")
     @SendTo("/topic/chat/{conferenceId}")
@@ -37,8 +39,20 @@ public class RoomController {
     public void handleSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
         log.debug("signal: {} from conference: {}", signal, conferenceId);
 
-        String rawAudio = signal.getRawAudio();
-        AudioUtils.playAudioFromByteArr(Base64.getDecoder().decode(rawAudio));
+        byte[] rawAudioData = Base64.getDecoder().decode(signal.getRawAudio());
+        String transcript = externalApiCallService.stt(rawAudioData);
+
+        ProcessContext processContext = processManager.getProcessContext(conferenceId);
+        processContext.addTranscript(transcript);
+
+        //
+        String testSrcAudio = "audio/participant_audio";
+        AudioUtils.saveFile(rawAudioData, testSrcAudio);
+        AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");
+        AudioUtils.playAudio(testSrcAudio + ".wav");
+        //
+
+        ProcessLockManager.awaken(conferenceId);
     }
 
     //
@@ -78,8 +92,7 @@ public class RoomController {
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody String script
     ) {
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
-        blockInterpreter.init(conferenceId, preprocessedScript, Map.of());
+        blockInterpreter.init(conferenceId, script, Map.of());
         blockInterpreter.interpret(conferenceId);
 
         return ResponseEntity.ok("OK\n" + script);

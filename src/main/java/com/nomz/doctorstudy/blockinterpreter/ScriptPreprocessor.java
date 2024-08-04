@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -9,10 +10,12 @@ import java.util.*;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ScriptPreprocessor {
-    private static final int INFINITE_LOOP_COUNT = 1_000_000_000;
+    private final BlockFactory blockFactory;
+    private static final int LOOP_LIMIT = 1_000_000_000;
 
-    public String preprocessScript(String script) {
+    public List<Block> preprocessScript(String script) {
         log.debug("before preprocess:\n{}", script);
 
         script = removeWhiteCharacters(script);
@@ -21,58 +24,47 @@ public class ScriptPreprocessor {
 
         log.debug("after preprocess:\n{}", formatScript(script));
 
-        return script;
+        List<String> stmts = extractStatementsFromScript(script);
+        List<Block> blocks = extractBlocksFromStatements(stmts);
+
+        return blocks;
     }
 
     private String removeWhiteCharacters(String script) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder scriptBuffer = new StringBuilder();
 
-        boolean single_quotation_mark = false;
-        boolean escape_flag = false;
-        for (char ch : script.toCharArray()) {
-            if (escape_flag) {
-                sb.append(ch);
-                escape_flag = false;
-                continue;
-            }
+        ScriptReader.readScript(script, (buf, ch) -> {
             switch (ch) {
-                case '\\':
-                    escape_flag = true;
-                    break;
-
-                case '\'':
-                    single_quotation_mark ^= true;
-                    sb.append(ch);
-                    break;
-
                 case '\n':
                 case '\r':
                 case ' ':
                 case '\t':
-                    if (single_quotation_mark) {
-                        sb.append(ch);
-                    }
+                    scriptBuffer.append(buf);
+                    buf.setLength(0);
                     break;
 
                 default:
-                    sb.append(ch);
+                    buf.append(ch);
+                    scriptBuffer.append(buf);
+                    buf.setLength(0);
             }
-        }
+        });
 
-        log.debug("after remove white characters:\n{}", formatScript(sb.toString()));
 
-        return sb.toString();
+        String preprocessedScript = scriptBuffer.toString();
+        log.debug("after remove white characters:\n{}", formatScript(preprocessedScript));
+
+        return preprocessedScript;
     }
 
     private String preprocessPhase(String script) {
-
         Map<Integer, String> phaseMap = new HashMap<>();
         int cursor = 0;
         boolean startFlag = true;
 
         int count = 0;
         while (true) {
-            if (count++ > INFINITE_LOOP_COUNT) {
+            if (count++ > LOOP_LIMIT) {
                 throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "알 수 없는 이유로 무한루프가 발생했습니다.");
             }
 
@@ -126,7 +118,7 @@ public class ScriptPreprocessor {
 
         int count = 0;
         while (true) {
-            if (count++ > INFINITE_LOOP_COUNT) {
+            if (count++ > LOOP_LIMIT) {
                 throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "알 수 없는 이유로 무한루프가 발생했습니다.");
             }
 
@@ -167,6 +159,39 @@ public class ScriptPreprocessor {
         return script;
     }
 
+    private List<String> extractStatementsFromScript(String preprocessedScript) {
+        List<String> stmts = new ArrayList<>();
+
+        ScriptReader.readScript(preprocessedScript, (buf, ch) -> {
+            buf.append(ch);
+            if (ch == ';') {
+                String stmt = buf.toString();
+                log.debug("tokenized Statement => {}", stmt);
+                stmts.add(stmt);
+                buf.setLength(0);
+            }
+        });
+
+        return stmts;
+    }
+
+    private List<Block> extractBlocksFromStatements(List<String> stmts) {
+        List<Block> blocks = new ArrayList<>();
+
+        for (String stmt : stmts) {
+            Block parsedBlock = blockFactory.parseStatement(stmt);
+
+            // 인수블록이 하나인데 Method가 빈 문자열이라면 인수가 없다는 뜻이므로 제거
+            if (parsedBlock.getArgBlocks().size() == 1 && parsedBlock.getArgBlocks().get(0).getMethod().isEmpty()) {
+                parsedBlock.getArgBlocks().clear();
+            }
+
+            blocks.add(parsedBlock);
+        }
+
+        return blocks;
+    }
+
     private int findBracketPairIndex(String script, List<Character> bracket, int bracketStartIdx) {
         int bracketEndIdx = -1;
         int bracketCount = 0;
@@ -188,9 +213,11 @@ public class ScriptPreprocessor {
     }
 
     private String formatScript(String script) {
+        int scopeDepth; // TODO: char 하나씩 읽어서 스코프 깊이에 따라 indent까지 삽입된 결과
         script = script.replace(";", ";\n");
         script = script.replace("{", "{\n");
         script = script.replace("}", "}\n");
+
         return script;
     }
 }

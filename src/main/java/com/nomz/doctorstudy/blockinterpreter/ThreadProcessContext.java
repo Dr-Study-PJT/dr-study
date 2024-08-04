@@ -6,69 +6,75 @@ import java.util.List;
 
 @Component
 public class ThreadProcessContext {
-    private final ThreadLocal<ProcessContext> processContext = new ThreadLocal<>();
+    private final ThreadLocal<ProcessContext> threadProcessContext = new ThreadLocal<>();
+
 
     public void init(ProcessContext processContext) {
-        this.processContext.set(processContext);
+        this.threadProcessContext.set(processContext);
     }
 
     public void close() {
-        processContext.remove();
+        threadProcessContext.remove();
+    }
+
+    public long getProcessId() {
+        return threadProcessContext.get().getId();
     }
 
     public int getLabelIndex(String name) {
-        return processContext.get().getLabelIndex(name);
+        return threadProcessContext.get().getLabelIndex(name);
     }
 
     public void setLabelIndex(String name, int index) {
-        processContext.get().setLabelIndex(name, index);
+        threadProcessContext.get().setLabelIndex(name, index);
     }
 
     public int getCursor() {
-        return processContext.get().cursor;
+        return threadProcessContext.get().getCursor();
     }
 
     public void setCursor(int cursor) {
-        processContext.get().cursor = cursor;
+        threadProcessContext.get().setCursor(cursor);
     }
 
     public void increaseCursor() {
-        processContext.get().cursor++;
+        ProcessContext processContext = threadProcessContext.get();
+        processContext.setCursor(processContext.getCursor() + 1);
     }
 
     public void increaseScopeDepth() {
-        processContext.get().increaseScopeDepth();
+        threadProcessContext.get().increaseScopeDepth();
     }
 
     public void decreaseScopeDepth() {
-        processContext.get().decreaseScopeDepth();
+        threadProcessContext.get().decreaseScopeDepth();
     }
 
     public void declareVariable(String key) {
-        processContext.get().declareVariable(key);
+        threadProcessContext.get().declareVariable(key);
     }
 
     public Object getVariable(String key) {
-        return processContext.get().getVariable(key);
+        return threadProcessContext.get().getVariable(key);
     }
 
     public void setVariable(String key, Object val) {
-        processContext.get().setVariable(key, val);
+        threadProcessContext.get().setVariable(key, val);
     }
 
     public boolean isEndOfBlock() {
-        return processContext.get().isEndOfBlock();
+        return threadProcessContext.get().isEndOfBlock();
     }
 
     public Block currentBlock() {
-        return processContext.get().currentBlock();
+        return threadProcessContext.get().currentBlock();
     }
 
     public void addProgrammeInfo(String info) {
-        processContext.get().addProgrammeInfo(info);
+        threadProcessContext.get().addProgrammeInfo(info);
     }
 
     public List<String> getProgramme() {
-        return processContext.get().getProgramme();
+        return threadProcessContext.get().getProgramme();
     }
 }

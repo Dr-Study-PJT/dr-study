@@ -1,47 +1,57 @@
 package com.nomz.doctorstudy.common.audio;
 
-import org.springframework.web.socket.BinaryMessage;
+import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.common.exception.CommonErrorCode;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
+@Slf4j
 public class AudioUtils {
-    private static final String TEMP_FILE_NAME = "audio_from_react";
-    private static final String SRC_EXT = ".webm";
-    private static final String DEST_EXT = ".wav";
-    private static final String SRC_FILE_PATH = TEMP_FILE_NAME + SRC_EXT;
-    private static final String DEST_FILE_PATH = TEMP_FILE_NAME + DEST_EXT;
 
-    public static void playAudioFromBinaryMessage(BinaryMessage message) {
-        playAudioFromByteArr(message.getPayload().array());
-    }
+    /**
+     * 전달받은 절대경로에 있는 오디오 파일의 재생시간을 반환한다.
+     * @param absolutePath 오디오 파일의 절대 경로
+     * @return 오디오 파일의 재생시간 (밀리초 단위)
+     */
+    public static int getAudioLength(String absolutePath) {
+        // FFmpeg 명령어 실행
+        ProcessBuilder pb = new ProcessBuilder(
+                "ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", absolutePath
+        );
 
-    public static void playAudioFromByteArr(byte[] message) {
-        saveFileFromByteArr(message);
-
-        File srcFile = new File(SRC_FILE_PATH);
-        File destFile = new File(DEST_FILE_PATH);
-
-        AudioUtils.convert(srcFile, destFile);
-        AudioUtils.playAudio(destFile);
-    }
-
-    private static void saveFileFromByteArr(byte[] payload) {
-        try (FileOutputStream fos = new FileOutputStream(SRC_FILE_PATH)) {
-            fos.write(payload);
-            System.out.println("File saved at " + DEST_FILE_PATH);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        try {
+            Process process = pb.start();
+            InputStream is = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String durationStr = reader.readLine();
+            process.waitFor();
+            double duration = Double.parseDouble(durationStr);
+            return (int) Math.floor(duration * 1000);
+        } catch (InterruptedException | IOException e) {
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "failed to get audio length", e);
         }
     }
 
-    private static void convert(File srcFile, File destFile) {
+    public static void saveFile(byte[] data, String path) {
+        try (FileOutputStream fos = new FileOutputStream(path)) {
+            fos.write(data);
+            log.debug("saved file at {}", path);
+        } catch (IOException e) {
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "failed to get audio length", e);
+
+        }
+    }
+
+    public static void convertAudio(String path, String newExt) {
+        File file = new File(path);
+        String srcAbsolutePath = file.getAbsolutePath();
+        String destAbsolutePath = srcAbsolutePath.substring(srcAbsolutePath.lastIndexOf('.')) + newExt;
+
         // FFmpeg 명령어 실행
         ProcessBuilder pb = new ProcessBuilder(
-                "ffmpeg", "-i", srcFile.getAbsolutePath(), "-y", destFile.getAbsolutePath());
+                "ffmpeg", "-i", srcAbsolutePath, "-y", destAbsolutePath);
         pb.inheritIO();
         try {
             Process process = pb.start();
@@ -52,11 +62,14 @@ public class AudioUtils {
     }
 
     /**
-     *
-     * @param file 가능 확장자 : .wav 불가능 확장자 : .webm, .mp3
+     * 경로에 있는 오디오 파일을 재생한다.
+     * 가능 확장자: .wav
+     * 불가능 확장자: .webm, .mp3
+     * @param path 재생할 오디오 파일의 경로
      */
-    private static void playAudio(File file) {
+    public static void playAudio(String path) {
         try {
+            File file = new File(path);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
             AudioFormat format = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);

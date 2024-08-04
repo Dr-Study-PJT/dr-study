@@ -33,36 +33,37 @@ public class BlockFactory {
     private List<String> tokenizeArgs(String argsStr) {
         List<String> args = new ArrayList<>();
 
-        int bracket_count = 0;
-        StringBuilder buffer = new StringBuilder();
-        for (char ch : argsStr.toCharArray()) {
+        class BracketCounter { int count = 0; }
+        BracketCounter bracketCounter = new BracketCounter();
+
+        String lastBufStr = ScriptReader.readScript(argsStr, ((buf, ch) -> {
             switch (ch) {
                 case '(':
-                    buffer.append(ch);
-                    bracket_count++;
+                    buf.append(ch);
+                    bracketCounter.count++;
                     break;
 
                 case ')':
-                    buffer.append(ch);
-                    bracket_count--;
+                    buf.append(ch);
+                    bracketCounter.count--;
                     break;
 
                 case ',':
-                    if (bracket_count > 0) {
-                        buffer.append(ch);
+                    if (bracketCounter.count == 0) {
+                        args.add(buf.toString());
+                        buf.setLength(0);
                     }
                     else {
-                        args.add(buffer.toString());
-                        buffer.setLength(0);
+                        buf.append(ch);
                     }
                     break;
 
                 default:
-                    buffer.append(ch);
-                    break;
+                    buf.append(ch);
             }
-        }
-        args.add(buffer.toString());
+        }));
+
+        args.add(lastBufStr);
 
         return args;
     }

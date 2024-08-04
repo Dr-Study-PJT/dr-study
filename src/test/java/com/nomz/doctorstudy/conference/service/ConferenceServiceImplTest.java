@@ -47,7 +47,6 @@ class ConferenceServiceImplTest {
                                 .title("conference1")
                                 .host(null)
                                 .memberCapacity(10)
-                                .isFinished(false)
                                 .startTime(LocalDateTime.now())
                                 .finishTime(LocalDateTime.now().plusDays(2).plusHours(3).plusMinutes(30).plusSeconds(50))
                                 .build()

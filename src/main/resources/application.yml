@@ -6,7 +6,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: false
@@ -26,6 +26,9 @@ springdoc:
     path: /api-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+audio-utils:
+  upper-path: "audio/"
 
 ---
 ## local

@@ -18,6 +18,13 @@ public class BlockException extends RuntimeException {
         this.lineNumber = null;
     }
 
+    public BlockException(ErrorCode errorCode, Throwable cause) {
+        super(cause);
+        this.errorCode = errorCode;
+        this.message = errorCode.getDefaultMessage();
+        this.lineNumber = null;
+    }
+
     public BlockException(ErrorCode errorCode, String message) {
         this.errorCode = errorCode;
         this.message = message;
