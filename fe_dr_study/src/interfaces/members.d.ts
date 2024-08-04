@@ -3,6 +3,7 @@ export interface IMember {
     email: string;
     nickname: string;
     password: string;
+    imageUrl: string;
 }
 
 export interface IMemberData
@@ -13,7 +14,7 @@ export interface IUploadImage {
 }
 export interface IRegisterReq
     extends Pick<IMember, 'email' | 'password' | 'nickname'> {
-    imageId: number | null;
+    imageId?: number | null;
     rePassword?: string;
 }
 

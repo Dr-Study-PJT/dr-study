@@ -1,39 +1,59 @@
 'use client';
 import { IRegisterReq } from '@/interfaces/members';
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import Step1 from './_components/Step1';
 import Step2 from './_components/Step2';
+import { StepProps } from './_types';
+import TitleSection from './_components/TitleSection';
+import ResultStep from './_components/Result';
+import { register } from './_api/register';
+import { useRouter } from 'next/navigation';
 
 const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center py-6 w-full min-h-full h-max bg-gray-800`;
 const containerStyles = `CONTAINER-FORM min-w-[50%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
 
 const initialFormData: IRegisterReq = {
-    imageId: 0,
     email: '',
     nickname: '',
     password: '',
     rePassword: '',
 };
 
-const steps = [
+interface IStep {
+    guide: string;
+    component: React.FC<StepProps | any>;
+}
+
+const steps: IStep[] = [
     {
-        title: '회원 정보를 입력하고 닥터스터디의 가족이 되세요.',
+        guide: '회원 정보를 입력하고 닥터스터디의 가족이 되세요.',
         component: Step1,
     },
     {
-        title: '회원 정보가 맞는지 확인하고 제출해주세요.',
+        guide: '회원 정보가 맞는지 확인하고 제출해주세요.',
         component: Step2,
     },
 ];
 
+steps.push({
+    guide: 'RESULT',
+    component: ResultStep,
+});
+
 const RegisterPage = () => {
-    // return <RegisterProgress />;
     const title = 'Dr. Study에 가입하기';
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState<IRegisterReq>(initialFormData);
+    const [isResultPage, setIsResultPage] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [result, setResult] = useState<{
+        success: boolean | null;
+        description: string;
+    }>({ success: null, description: '' });
+
+    const router = useRouter();
 
     const handleNext = () => {
-        console.log(formData);
         if (currentStep < steps.length - 1) {
             setCurrentStep(currentStep + 1);
         }
@@ -42,8 +62,42 @@ const RegisterPage = () => {
     const handleBack = () => {
         if (currentStep > 0) {
             setCurrentStep(currentStep - 1);
-            console.log(formData);
         }
+    };
+
+    const handleSubmit = async (e: FormEvent, data: IRegisterReq) => {
+        e.preventDefault();
+        setIsResultPage(true);
+        setLoading(true);
+        try {
+            const response = await register(data);
+            setTimeout(() => {
+                setLoading(false);
+                setResult({
+                    success: true,
+                    description: response.data.message,
+                });
+            }, 2000);
+        } catch (error: any) {
+            const errorMessage =
+                error.response?.data?.message ||
+                '회원 가입 중 오류가 발생했습니다. 다시 시도해주세요.';
+            setTimeout(() => {
+                setLoading(false);
+                setResult({
+                    success: false,
+                    description: errorMessage,
+                });
+            }, 2000);
+        }
+        handleNext();
+    };
+
+    const handleRetry = () => {
+        setCurrentStep(0);
+        setIsResultPage(false);
+        setLoading(false);
+        setResult({ success: null, description: '' });
     };
 
     const StepComponent = steps[currentStep].component;
@@ -51,39 +105,36 @@ const RegisterPage = () => {
         <div className={pageStyles}>
             <div className={containerStyles}>
                 <div className="h-max min-h-[60vh] w-full flex flex-col justify-start items-center gap-4 ">
-                    <section className="TITLE-SECTION w-1/2 h-1/4 flex flex-col justify-center">
-                        <div className="TITLE-AND-PAHSE items-center flex flex-col justify-center w-full h-max">
-                            <div className="TITLE-TEXT text-dr-header-2 font-bold w-full text-center">
-                                {title}
-                            </div>
-                            <div className="SUBTITLE-TEXT text-dr-body-4 font-semibold text-dr-coral-100 w-full text-center">
-                                {steps[currentStep].title}
-                            </div>
-                            <div className="BAR-PHASE mt-8 w-4/6 h-max pb-6">
-                                <div className="relative w-full h-max">
-                                    <div className="absolute top-[0.375rem] left-0 w-full border-[1px] border-dr-indigo-100 z-0"></div>
-                                    <div className="absolute top-0 left-0 w-full flex flex-row justify-around z-10">
-                                        {steps.map((_, i) => {
-                                            return (
-                                                <div
-                                                    key={i}
-                                                    className={`w-3 h-3 bg-dr-coral-300 rounded-full shadow-md border-[1px] transition-colors duration-300 ${i === currentStep ? 'border-dr-white' : 'border-dr-coral-300'}`}
-                                                ></div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    {!isResultPage && (
+                        <TitleSection
+                            title={title}
+                            guide={steps[currentStep].guide}
+                            totalStep={steps.length}
+                            currentStep={currentStep}
+                        />
+                    )}
                     <section className="CONTENTS-SECTION-STEP1 animate-fadeIn w-max min-w-[75%] h-max min-h-[50%] flex flex-col gap-2 transition-all duration-200">
                         <StepComponent
                             onNext={handleNext}
                             onBack={handleBack}
+                            onSubmit={handleSubmit}
                             data={formData}
                             setData={setFormData}
                         />
                     </section>
+                    {isResultPage && (
+                        <ResultStep
+                            loading={loading}
+                            result={result}
+                            successMessage="회원 가입이 완료되었습니다!"
+                            failMessage="회원 가입에 실패했습니다."
+                            onHomeClick={() => router.push('/')}
+                            onSuccessConfirmClick={() =>
+                                router.push('/auth/login')
+                            }
+                            onFailureEditClick={handleRetry}
+                        />
+                    )}
                 </div>
             </div>
         </div>
