@@ -34,6 +34,9 @@ public enum BlockType {
     CALCULATE("calculate"),
     COMPARE_INT("compare_int"),
 
+    GET_PARTICIPANT_NAME("get_participant_name"),
+    GET_NUM_OF_PARTICIPANT("get_num_of_participant"),
+
     GPT_QUERY("gpt_query")
     ;
     

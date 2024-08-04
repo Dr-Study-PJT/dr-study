@@ -1,6 +1,8 @@
 package com.nomz.doctorstudy.conference.service;
 
 import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
+import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
+import com.nomz.doctorstudy.blockinterpreter.ProcessManager;
 import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
@@ -40,15 +42,17 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceRepository conferenceRepository;
     private final ConferenceQueryRepository conferenceQueryRepository;
-    private final RoomService roomService;
     private final ConferenceMemberRepository conferenceMemberRepository;
     private final ConferenceMemberInviteRepository conferenceMemberInviteRepository;
     private final MemberRepository memberRepository;
 
-    private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
+    private final RoomService roomService;
     private final BlockInterpreter blockInterpreter;
     private final ScriptPreprocessor scriptPreprocessor;
+    private final ProcessManager processManager;
+
     private final ModeratorRepository moderatorRepository;
+    private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
 
     @Override
     public Long createConference(/*Member requester, */CreateConferenceRequest request) {
@@ -105,9 +109,11 @@ public class ConferenceServiceImpl implements ConferenceService {
         joinLockMap.put(conferenceId, new ReentrantLock());
         roomService.createRoom(conferenceId);
 
+        ProcessContext processContext = processManager.getProcessContext(conferenceId);
+        processContext.setVariable("num_of_participant", 0);
+
         String script = conference.getModerator().getProcessor().getScript();
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
-        blockInterpreter.init(conferenceId, preprocessedScript, Map.of());
+        blockInterpreter.init(conferenceId, script, Map.of());
     }
 
     @Override
@@ -147,6 +153,12 @@ public class ConferenceServiceImpl implements ConferenceService {
         } finally {
             lock.unlock();
         }
+
+        long tmpMemberId = 1L;
+        String tmpMemberName = "test member";
+        ProcessContext processContext = processManager.getProcessContext(conferenceId);
+        processContext.setVariable("participant_name_" + tmpMemberId, tmpMemberName);
+        processContext.setVariable("num_of_participant", (int) processContext.getVariable("num_of_participant") + 1);
 
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));

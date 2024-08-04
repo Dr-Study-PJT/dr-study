@@ -15,7 +15,7 @@ public class ProcessManager {
         return findProcessContext(processId).orElseThrow(() -> new BlockException(BlockErrorCode.PROCESS_NOT_FOUND));
     }
 
-    public void initProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
+    public void register(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
         if (processContextMap.containsKey(processId)) {
             throw new BlockException(BlockErrorCode.PROCESS_ALREADY_EXISTS);
         }

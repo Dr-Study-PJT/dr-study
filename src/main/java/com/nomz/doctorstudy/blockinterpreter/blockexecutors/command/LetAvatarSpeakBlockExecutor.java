@@ -8,6 +8,8 @@ import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import com.nomz.doctorstudy.common.audio.AudioUtils;
 import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
+import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
+import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -51,12 +53,22 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         //
 
         long processId = threadProcessContext.getProcessId();
+
+        int numOfParticipant = (int) threadProcessContext.getVariable("num_of_participant");
+        for (int i=1; i<=numOfParticipant; i++) {
+            signalTransMitter.transmitSignal(processId, new MuteSignal((long) i));
+        }
+
         signalTransMitter.transmitSignal(processId, new AvatarSpeakSignal(audioDurationMills));
 
         try {
             Thread.sleep(audioDurationMills);
         } catch (InterruptedException e) {
             throw new BlockException(BlockErrorCode.PROCESS_INTERRUPTED, e);
+        }
+
+        for (int i=1; i<=numOfParticipant; i++) {
+            signalTransMitter.transmitSignal(processId, new UnmuteSignal((long) i));
         }
 
         return null;

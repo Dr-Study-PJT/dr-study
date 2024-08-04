@@ -35,6 +35,8 @@ public class BlockExecutorMapper {
     private final CompareIntBlockExecutor compareIntBlockExecutor;
     private final BooleanToStringBlockExecutor booleanToStringBlockExecutor;
     private final GPTQueryBlockExecutor gptQueryBlockExecutor;
+    private final GetParticipantNameBlockExecutor getParticipantNameBlockExecutor;
+    private final GetNumOfParticipantBlockExecutor getNumOfParticipantBlockExecutor;
 
     private final Map<String, BlockExecutor> map = new ConcurrentHashMap<>();
 
@@ -62,6 +64,8 @@ public class BlockExecutorMapper {
         map.put(BlockType.COMPARE_INT.getToken(), compareIntBlockExecutor);
         map.put(BlockType.BOOLEAN_TO_STRING.getToken(), booleanToStringBlockExecutor);
         map.put(BlockType.GPT_QUERY.getToken(), gptQueryBlockExecutor);
+        map.put(BlockType.GET_PARTICIPANT_NAME.getToken(), getParticipantNameBlockExecutor);
+        map.put(BlockType.GET_NUM_OF_PARTICIPANT.getToken(), getNumOfParticipantBlockExecutor);
     }
 
     public BlockExecutor getBlockExecutor(String method) {
