@@ -18,7 +18,8 @@ public class AudioUtils {
     public static int getAudioLength(String absolutePath) {
         // FFmpeg 명령어 실행
         ProcessBuilder pb = new ProcessBuilder(
-                "ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", absolutePath);
+                "ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", absolutePath
+        );
 
         try {
             Process process = pb.start();

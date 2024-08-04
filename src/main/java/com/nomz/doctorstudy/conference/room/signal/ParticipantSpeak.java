@@ -1,17 +1,12 @@
 package com.nomz.doctorstudy.conference.room.signal;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ParticipantSpeak implements Signal {
-    private Long id;
-    private Integer time;
+    private final Long id;
+    private final Integer time;
 
     @Override
     public SignalType getSignalType() {

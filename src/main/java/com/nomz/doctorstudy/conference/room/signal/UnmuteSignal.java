@@ -1,16 +1,11 @@
 package com.nomz.doctorstudy.conference.room.signal;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UnmuteSignal implements Signal {
-    private Long id;
+    private final Long id;
 
     @Override
     public SignalType getSignalType() {

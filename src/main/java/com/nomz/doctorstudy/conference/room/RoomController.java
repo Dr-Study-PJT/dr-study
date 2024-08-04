@@ -92,8 +92,7 @@ public class RoomController {
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody String script
     ) {
-        String preprocessedScript = scriptPreprocessor.preprocessScript(script);
-        blockInterpreter.init(conferenceId, preprocessedScript, Map.of());
+        blockInterpreter.init(conferenceId, script, Map.of());
         blockInterpreter.interpret(conferenceId);
 
         return ResponseEntity.ok("OK\n" + script);
