@@ -47,25 +47,27 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         String audioPath = audioUpperPath + AUDIO_FILE_NAME + AUDIO_EXT;
         AudioUtils.saveFile(speechAudio, audioPath);
         File file = new File(audioPath);
+
         int audioDurationMills = AudioUtils.getAudioLength(file.getAbsolutePath());
-        // play for test
-        AudioUtils.playAudio(audioPath);
-        //
+        log.debug("tts audio duration={}", audioDurationMills);
 
         long processId = threadProcessContext.getProcessId();
-
-        int numOfParticipant = (int) threadProcessContext.getVariable("num_of_participant");
-        for (int i=1; i<=numOfParticipant; i++) {
-            signalTransMitter.transmitSignal(processId, new MuteSignal((long) i));
-        }
-
-        signalTransMitter.transmitSignal(processId, new AvatarSpeakSignal(audioDurationMills));
 
         try {
             Thread.sleep(audioDurationMills);
         } catch (InterruptedException e) {
             throw new BlockException(BlockErrorCode.PROCESS_INTERRUPTED, e);
         }
+
+        Object numOfParticipantObj = threadProcessContext.getVariable("num_of_participant");
+        if (numOfParticipantObj == null) return null;
+
+        int numOfParticipant = (int) numOfParticipantObj;
+        for (int i=1; i<=numOfParticipant; i++) {
+            signalTransMitter.transmitSignal(processId, new MuteSignal((long) i));
+        }
+
+        signalTransMitter.transmitSignal(processId, new AvatarSpeakSignal(audioDurationMills));
 
         for (int i=1; i<=numOfParticipant; i++) {
             signalTransMitter.transmitSignal(processId, new UnmuteSignal((long) i));

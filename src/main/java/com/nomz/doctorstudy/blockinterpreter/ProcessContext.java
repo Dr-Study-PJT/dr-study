@@ -20,6 +20,7 @@ public class ProcessContext {
     private final List<Transcript> transcripts;
     @Getter
     private final List<String> programme;
+    private final List<Long> participantMemberIdList;
 
     public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> varMap, Map<String, Integer> labelMap) {
         this.id = id;
@@ -31,6 +32,17 @@ public class ProcessContext {
         this.labelMap = new HashMap<>(labelMap);
         this.transcripts = new ArrayList<>();
         this.programme = new ArrayList<>();
+        this.participantMemberIdList = new ArrayList<>();
+        participantMemberIdList.add(0L);
+    }
+
+    public int addParticipantMemberId(Long memberId) {
+        participantMemberIdList.add(memberId);
+        return participantMemberIdList.size() - 1;
+    }
+
+    public Long getParticipantMemberId(int participant_id) {
+        return participantMemberIdList.get(participant_id);
     }
 
     public void increaseScopeDepth() {
