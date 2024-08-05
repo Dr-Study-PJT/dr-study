@@ -26,6 +26,11 @@ public class CreateConferenceRequest {
     @Schema(description = "컨퍼런스 제목", example = "정보처리기사 컨퍼런스")
     private String title;
 
+    @NotBlank(message = "컨퍼런스 주제는 반드시 포함되어야 합니다.")
+    @Size(min = 1, max = 64, message = "컨퍼런스 주제는 1자이상 64자 이하여야 합니다.")
+    @Schema(description = "컨퍼런스 주제", example = "정보처리기사")
+    private String subject;
+
     @NotNull(message = "최대 인원수는 반드시 포함되어야 합니다.")
     @Min(value = 1, message = "최대 인원수의 최솟값은 1입니다.")
     @Max(value = 256, message = "최대 인원수의 최댓값은 256입니다.")

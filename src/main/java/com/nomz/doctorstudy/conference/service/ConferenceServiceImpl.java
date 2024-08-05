@@ -60,9 +60,11 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
         Conference conference = Conference.builder()
-                .title(request.getTitle())
                 .moderator(moderator)
                 .host(null)//.host(requester)
+                .studyGroup(null) //.studyGroup(studyGroup)
+                .title(request.getTitle())
+                .subject(request.getSubject())
                 .memberCapacity(request.getMemberCapacity())
                 .build();
         conferenceRepository.save(conference);
