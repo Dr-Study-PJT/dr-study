@@ -1,6 +1,8 @@
 spring:
   application:
     name: doctor-study
+  profiles:
+    include: secret
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # url: ENC(vRvWrSNak8qL4hz99F9Rdpinr2Ge9/yAWeOBKJF0T+3ubtJn82NHt0IqVWBuFic7RVlZM8IN7dnzFEn0ZpHuv/rbhvhqCuCD)
