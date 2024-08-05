@@ -36,7 +36,7 @@ services:
     depends_on:
       - database
     container_name: spring_container
-    environment:
+    # environment:
       # SPRING_DATASOURCE_URL: '${SPRING_DATASOURCE_URL}'
       # SPRING_DATASOURCE_USERNAME: '${SPRING_DATASOURCE_USERNAME}'
       # SPRING_DATASOURCE_PASSWORD: '${SPRING_DATASOURCE_PASSWORD}'
