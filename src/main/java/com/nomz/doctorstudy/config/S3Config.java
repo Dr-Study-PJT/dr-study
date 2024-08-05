@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-@Slf4j
 public class S3Config {
 
     // @Value("${cloud.accesskey1}")
@@ -31,7 +30,7 @@ public class S3Config {
         @Value("${cloud.accesskey1}") String accessKey,
         @Value("${cloud.secretkey1}") String secretKey
     ){
-        // log.info("cloud.accessKey1 = {}", accessKey);
+        log.info("cloud.accessKey1 = {}", accessKey);
         this.accessKey = accessKey;
         this.secretKey = secretKey;
     }
