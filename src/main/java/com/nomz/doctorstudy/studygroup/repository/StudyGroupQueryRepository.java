@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.nomz.doctorstudy.studygroup.entity.QStudyGroup.studyGroup;
 import static com.nomz.doctorstudy.studygroup.entity.QStudyGroupTag.studyGroupTag;
-import static com.nomz.doctorstudy.studygroup.entity.QTag.tag;
+import static com.nomz.doctorstudy.tag.QTag.tag;
 
 @Repository
 public class StudyGroupQueryRepository {
