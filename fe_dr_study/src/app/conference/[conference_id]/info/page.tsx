@@ -21,7 +21,7 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
         const handleGetConferenceInfo = async () => {
             try {
                 const response = await GET(`v1/conferences`, {
-                    params: '',
+                    params: `${conferenceId}`,
                     isAuth: true,
                     revalidateTime: 10,
                 });
@@ -35,26 +35,8 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
             }
         };
 
-        // handleGetConferenceInfo();
+        handleGetConferenceInfo();
     }, [conferenceId]);
-    // mock conference data
-    useEffect(() => {
-        setConferenceData({
-            id: 1,
-            hostId: 1,
-            studyGroupId: 1,
-            title: '정보처리기사 시험 대비 컨퍼런스',
-            subject: '한 주 회고',
-            memberCapacity: 10,
-            startTime: '2024-08-04T09:02:19.887Z',
-            finishTime: '2024-08-04T09:02:19.887Z',
-            imageUrl: '/images/group_thumbnail_1.png',
-        });
-    }, []);
-
-    if (!conferenceData) {
-        return <div>Loading...</div>; // 데이터 로딩 중 표시
-    }
 
     return (
         <ConferenceInfoTemplate

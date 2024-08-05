@@ -1,6 +1,6 @@
 'use client';
 
-import { DELETE, GET, POST } from '@/app/api/routeModule';
+import { POST } from '@/app/api/routeModule';
 import { Button, Paragraph, Span } from '@/components/atoms';
 import ConferenceControlBar from '@/components/organisms/ConferenceControlBar/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress/ConferenceProgress';
@@ -10,7 +10,7 @@ import Video from '@/components/organisms/Video/Video';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import axios from 'axios';
 import Peer from 'peerjs';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 
 interface ConferenceTemplateProps {
@@ -60,7 +60,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
 
     // 세션 스토리지에서 멤버 ID 가져오기
-    const memberId = getSessionStorageItem('memberData');
+    const memberData = getSessionStorageItem('memberData');
 
     // 피어와 로컬 스트림 참조
     const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
@@ -74,7 +74,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     });
 
     // 1. new Peer 내 피어 생성
-    const onClickStart = (e: React.MouseEvent<HTMLElement>) => {
+    const onClickJoin = (e: React.MouseEvent<HTMLElement>) => {
         setIsFlag(1);
 
         myPeer.current = new Peer();
@@ -152,7 +152,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         if (!isFlag) return;
 
         // 참여할때 peerId 넘기기 함수
-        console.log('멤버 아이디(memberId) =>', memberId);
+        console.log('멤버 아이디(memberId) =>', memberData.id);
         console.log('피어 아이디(peerId) =>', peerId);
         console.log(
             '로컬 스트림 아이디(localStream.current.id) =>',
@@ -162,7 +162,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         console.log(localStream.current, '로컬 스트림');
 
         client.current = {
-            memberId,
+            memberId: memberData.id,
             peerId,
             streamId: localStream.current?.id as string,
         };
@@ -258,7 +258,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                                 key={peerId}
                                 existingPeers={existingPeers}
                                 peerId={peerId}
-                                focusing={memberId === focusingMemberId}
+                                focusing={memberData.id === focusingMemberId}
                             />
                         </>
                     ))}
@@ -298,8 +298,11 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             <div className="fixed top-8 left-8 p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
                 <Paragraph>컨퍼런스 페이지 제목 : {roomInfo.title}</Paragraph>
                 <Span color="white">최대 인원 : {roomInfo.memberCapacity}</Span>
-                <Button fullWidth onClick={onClickStart}>
-                    컨퍼런스 시작
+                <Button fullWidth onClick={onClickJoin}>
+                    컨퍼런스 참여
+                </Button>
+                <Button fullWidth onClick={onClickJoin}>
+                    컨퍼런스 시작 (방장만)
                 </Button>
             </div>
 

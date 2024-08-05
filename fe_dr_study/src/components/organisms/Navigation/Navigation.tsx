@@ -103,7 +103,7 @@ const Navigation = () => {
     };
 
     useEffect(() => {
-        console.log('알림 목록:', notifications);
+        // console.log('알림 목록:', notifications);
     }, []); // 로그인 된 멤버를 의존성에 추가 !필요!
 
     // 컨퍼런스 입장 data api 회의
