@@ -7,8 +7,8 @@ import ButtonWithRouter from './group/_components/ButtonWithRouter';
 const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black`;
 
 export default async function HomePage({}: {}) {
-    const groupList = await getGroupListBy({ page: 1, size: 5 });
-
+    const response_groupList = await getGroupListBy({ page: 1, size: 5 });
+    const groupList_content = response_groupList.content;
     return (
         <div className={pageStyles}>
             <section className="SECTION1-THUMBNAIL relative w-full h-max flex justify-center items-center">
@@ -77,7 +77,7 @@ export default async function HomePage({}: {}) {
                     </div>
                     <div className="CONETENTS w-full h-max">
                         <div className="bg-dr-gray-800 rounded-lg">
-                            {groupList.map((group, index) => (
+                            {groupList_content.map((group, index) => (
                                 <div
                                     key={index}
                                     className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -143,7 +143,7 @@ export default async function HomePage({}: {}) {
                         </div>
                         <div className="CONETENTS w-full h-max">
                             <div className="bg-dr-gray-800 rounded-lg">
-                                {groupList.map((group, index) => (
+                                {groupList_content.map((group, index) => (
                                     <div
                                         key={index}
                                         className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -153,7 +153,7 @@ export default async function HomePage({}: {}) {
                                                 <Image
                                                     className="pl-[3rem]"
                                                     alt={group.name}
-                                                    src="/images/thumbnail.png"
+                                                    src={group.imageUrl}
                                                     layout="fill"
                                                     objectFit="cover"
                                                 />
@@ -210,7 +210,7 @@ export default async function HomePage({}: {}) {
                         </div>
                         <div className="CONETENTS w-full h-max">
                             <div className="bg-dr-gray-800 rounded-lg">
-                                {groupList.map((group, index) => (
+                                {groupList_content.map((group, index) => (
                                     <div
                                         key={index}
                                         className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -220,7 +220,7 @@ export default async function HomePage({}: {}) {
                                                 <Image
                                                     className="pl-[3rem]"
                                                     alt={group.name}
-                                                    src="/images/thumbnail.png"
+                                                    src={group.imageUrl}
                                                     layout="fill"
                                                     objectFit="cover"
                                                 />

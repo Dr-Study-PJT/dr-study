@@ -1,7 +1,7 @@
 import React, { FormEvent } from 'react';
 import { Button, Label } from '@/components/atoms';
 import { StepProps } from './type';
-import { createModerator } from '../../_api';
+import { createModerator } from '../../_api/csr';
 import { useRouter } from 'next/navigation';
 
 const Step4: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {

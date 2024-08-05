@@ -1,7 +1,9 @@
 import Image from 'next/image';
 import { FaUsers } from 'react-icons/fa';
 import { Pagination } from './Pagenation';
-import { getGroupListBy, SearchParams } from './_api/ssr';
+import { getGroupListBy, SearchParams, IGroupListResponse } from './_api/ssr';
+import Lottie from 'lottie-react';
+import { ErrorLottie } from '../_components/Lottie/Error/ErrorLottie';
 
 const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black`;
 
@@ -35,11 +37,14 @@ export default async function GroupListPage({
         propsGetAllChatPostCategory.name = name;
     }
 
-    const groupList = await getGroupListBy(propsGetAllChatPostCategory);
+    const groupListResponse: IGroupListResponse = await getGroupListBy(
+        propsGetAllChatPostCategory,
+    );
+    const groupList_content = groupListResponse?.content;
 
-    // ! 페이징용 게시물수
-    const totalCount = groupList.length;
-    const totalPage = Math.ceil(totalCount / pageSize);
+    // 페이징용 게시물 수와 페이지 수
+    const totalCount = groupListResponse?.totalElements;
+    const totalPage = groupListResponse?.totalPages;
 
     return (
         <div className={pageStyles}>
@@ -53,9 +58,19 @@ export default async function GroupListPage({
                             Dr. Study의 다양한 스터디를 만나보세요
                         </p>
                     </div>
-                    <div className="CONETENTS w-full h-max">
+                    <div className="CONETENTS w-full h-max flex flex-col items-center">
+                        {groupList_content.length === 0 && (
+                            <div className="w-full flex flex-col items-center mb-12">
+                                <div className="w-full flex flex-col items-center">
+                                    <ErrorLottie />
+                                </div>
+                                <p className="text-dr-white font-bold text-dr-header-3">
+                                    아무것도 없네요!
+                                </p>
+                            </div>
+                        )}
                         <div className="bg-dr-gray-800 rounded-lg">
-                            {groupList.map((group, index) => (
+                            {groupList_content?.map((group, index) => (
                                 <div
                                     key={index}
                                     className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
