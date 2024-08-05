@@ -1,4 +1,3 @@
-import React from 'react';
 import Image from 'next/image';
 import { FaUsers } from 'react-icons/fa';
 import { Pagination } from './Pagenation';

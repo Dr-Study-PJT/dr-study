@@ -1,39 +1,13 @@
-'use client';
-
-import { Button } from '@/components/atoms';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import React from 'react';
 import { FaUsers } from 'react-icons/fa';
+import { getGroupListBy } from './group/_api/ssr';
+import ButtonWithRouter from './group/_components/ButtonWithRouter';
 
 const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black`;
 
-export const groupsDummy = [
-    {
-        name: '삼성전자 면접 스터디',
-        description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
-        tags: ['면접 스터디', '조직 학습'],
-        members: 4,
-        maxMembers: 8,
-    },
-    {
-        name: '씨피 학습교류 스터디',
-        description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
-        tags: ['학습 교류', '공부 스터디'],
-        members: 5,
-        maxMembers: 10,
-    },
-    {
-        name: '클린코드 독서 공유',
-        description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
-        tags: ['클린코드 책', '독서 공유'],
-        members: 3,
-        maxMembers: 6,
-    },
-];
-
-const MyPage: React.FC = () => {
-    const router = useRouter();
+export default async function HomePage({}: {}) {
+    const groupList = await getGroupListBy({ page: 1, size: 5 });
 
     return (
         <div className={pageStyles}>
@@ -85,14 +59,7 @@ const MyPage: React.FC = () => {
                                 </p>
                             </div>
                             <div className="w-full flex flex-col items-center">
-                                <Button
-                                    classNameStyles="px-8 font-semibold"
-                                    onClick={(e) => {
-                                        router.push('/auth/login');
-                                    }}
-                                >
-                                    로그인하고 나에게 꼭 맞는 스터디 찾기
-                                </Button>
+                                <ButtonWithRouter></ButtonWithRouter>
                             </div>
                         </div>
                     </div>
@@ -110,7 +77,7 @@ const MyPage: React.FC = () => {
                     </div>
                     <div className="CONETENTS w-full h-max">
                         <div className="bg-dr-gray-800 rounded-lg">
-                            {groupsDummy.map((group, index) => (
+                            {groupList.map((group, index) => (
                                 <div
                                     key={index}
                                     className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -153,7 +120,8 @@ const MyPage: React.FC = () => {
                                     <div className="flex items-center space-x-2 text-dr-gray-200 mt-3 mr-5 text-dr-body-4 min-w-12">
                                         <FaUsers />
                                         <span>
-                                            {group.members} / {group.maxMembers}
+                                            {group.memberCount} /{' '}
+                                            {group.memberCapacity}
                                         </span>
                                     </div>
                                 </div>
@@ -175,7 +143,7 @@ const MyPage: React.FC = () => {
                         </div>
                         <div className="CONETENTS w-full h-max">
                             <div className="bg-dr-gray-800 rounded-lg">
-                                {groupsDummy.map((group, index) => (
+                                {groupList.map((group, index) => (
                                     <div
                                         key={index}
                                         className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -220,8 +188,8 @@ const MyPage: React.FC = () => {
                                         <div className="flex items-center space-x-2 text-dr-gray-200 mt-3 mr-5 text-dr-body-4 min-w-12">
                                             <FaUsers />
                                             <span>
-                                                {group.members} /{' '}
-                                                {group.maxMembers}
+                                                {group.memberCount} /{' '}
+                                                {group.memberCapacity}
                                             </span>
                                         </div>
                                     </div>
@@ -242,7 +210,7 @@ const MyPage: React.FC = () => {
                         </div>
                         <div className="CONETENTS w-full h-max">
                             <div className="bg-dr-gray-800 rounded-lg">
-                                {groupsDummy.map((group, index) => (
+                                {groupList.map((group, index) => (
                                     <div
                                         key={index}
                                         className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -287,8 +255,8 @@ const MyPage: React.FC = () => {
                                         <div className="flex items-center space-x-2 text-dr-gray-200 mt-3 mr-5 text-dr-body-4 min-w-12">
                                             <FaUsers />
                                             <span>
-                                                {group.members} /{' '}
-                                                {group.maxMembers}
+                                                {group.memberCount} /{' '}
+                                                {group.memberCapacity}
                                             </span>
                                         </div>
                                     </div>
@@ -300,6 +268,4 @@ const MyPage: React.FC = () => {
             </section>
         </div>
     );
-};
-
-export default MyPage;
+}
