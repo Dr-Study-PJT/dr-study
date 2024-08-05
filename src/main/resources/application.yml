@@ -50,18 +50,18 @@ audio-utils:
   upper-path: "audio/"
 
 
-cloud:
-  aws:
-    s3:
-      # bucket: ENC(vWy85kbDoTrKZ4d+sJcKeQ==)
-    credentials:
-      # accessKey1: ENC(RccwEmE0OBKReyZZgYuaUhwP9WthHzH6ymUcAL3CL3I=)
-      # secretKey1: ENC(/fyQt2sh7eLtVkXe63A7N/FtRIYu8FdeMbGoygQ+DaeGpxIRhR1kU3c6aeVnaBh4KgM5+IWTRzg=)
-    region:
-      # static: ENC(AtRBVGQdxXx9+67aQZ9Wthkvos0j+Lar)
-      auto: false
-    stack:
-      auto: false
+# cloud:
+#   aws:
+#     s3:
+#       bucket: ENC(vWy85kbDoTrKZ4d+sJcKeQ==)
+#     credentials:
+#       accessKey1: ENC(RccwEmE0OBKReyZZgYuaUhwP9WthHzH6ymUcAL3CL3I=)
+#       secretKey1: ENC(/fyQt2sh7eLtVkXe63A7N/FtRIYu8FdeMbGoygQ+DaeGpxIRhR1kU3c6aeVnaBh4KgM5+IWTRzg=)
+#     region:
+#       static: ENC(AtRBVGQdxXx9+67aQZ9Wthkvos0j+Lar)
+#       auto: false
+#     stack:
+#       auto: false
 ---
 ## local
 spring:
