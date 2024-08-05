@@ -1,4 +1,4 @@
-import { IGroup } from '../../_api/ssr';
+import { IGroup, IGroupListResponse } from '../../_api/ssr';
 import { GroupData, ArticleData, ConferenceData, Member } from '../_types';
 
 export interface Participant {
@@ -100,47 +100,42 @@ export const dummyGroupData: IGroup = {
     tags: ['정보처리기사', '교류'],
 };
 
-export const dummyGroupListData: IGroup[] = [
-    {
-        id: 1,
-        name: '삼성전자 면접 스터디',
-        imageUrl: '',
-        createdAt: '2024-08-05T01:12:54.082Z',
-        dueDate: '2024-08-07T01:12:54.082Z',
-        isDeleted: false,
-        description:
-            '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
-        memberCount: 3,
-        memberCapacity: 4,
-        tags: ['정보처리기사', '교류'],
+export const dummyGroupListData: IGroupListResponse = {
+    totalElements: 1,
+    totalPages: 1,
+    pageable: {
+        paged: true,
+        pageNumber: 0,
+        pageSize: 10,
+        sort: [
+            {
+                direction: 'ASC',
+                nullHandling: 'NATIVE',
+                ascending: true,
+                property: 'name',
+                ignoreCase: false,
+            },
+        ],
+        unpaged: false,
+        offset: 0,
     },
-    {
-        id: 2,
-        name: '삼성전자 면접 스터디',
-        imageUrl: '',
-        createdAt: '2024-08-05T01:12:54.082Z',
-        dueDate: '2024-08-07T01:12:54.082Z',
-        isDeleted: false,
-        description:
-            '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
-        memberCount: 3,
-        memberCapacity: 4,
-        tags: ['정보처리기사', '교류'],
-    },
-    {
-        id: 3,
-        name: '삼성전자 면접 스터디',
-        imageUrl: '',
-        createdAt: '2024-08-05T01:12:54.082Z',
-        dueDate: '2024-08-07T01:12:54.082Z',
-        isDeleted: false,
-        description:
-            '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
-        memberCount: 3,
-        memberCapacity: 4,
-        tags: ['정보처리기사', '교류'],
-    },
-];
+    sort: [
+        {
+            direction: 'ASC',
+            nullHandling: 'NATIVE',
+            ascending: true,
+            property: 'name',
+            ignoreCase: false,
+        },
+    ],
+    first: true,
+    last: true,
+    number: 0,
+    numberOfElements: 1,
+    size: 10,
+    content: [dummyGroupData],
+    empty: false,
+};
 
 export const dummyMembersData: Member[] = [
     {
