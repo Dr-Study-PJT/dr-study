@@ -103,6 +103,7 @@ const ResultStep = ({
                 </div>
                 <div className="w-1/2 mt-5">
                     <TextareaWithLabel
+                        className=""
                         label="처리 결과"
                         value={result.description}
                         disabled

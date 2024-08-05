@@ -1,6 +1,7 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation'; // usePathname 훅 사용
+import { usePathname, useRouter } from 'next/navigation';
 import { Logo } from '@/components/atoms/Logo/Logo';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
@@ -13,9 +14,11 @@ import {
     removeMemberData,
 } from '@/utils/sessionStorage';
 import { GET } from '@/app/api/routeModule';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 const Navigation = () => {
-    const pathname = usePathname(); // usePathname 훅 사용
+    const pathname = usePathname();
+    const router = useRouter(); // useRouter 훅 사용
     const dispatch = useDispatch();
     const isSigned = useSelector((state: RootState) => state.auth.isSigned);
     const member = useSelector((state: RootState) => state.member);
@@ -60,23 +63,31 @@ const Navigation = () => {
         return pathname === path ? `${activeClasses}` : baseClasses;
     };
 
+    const arrowButtonStyles =
+        'rounded-full p-1 bg-dr-gray-500 text-white flex items-center justify-center hover:bg-dr-gray-400 transition-colors duration-200';
     return (
         <div className="NAVIGATION-BOX w-full fixed flex flex-row justify-between bg-[#262627] top-0 h-[3rem] items-center px-4">
-            <div>
+            <div onClick={(e) => router.push('/')}>
                 <Logo />
+            </div>
+            <div className="flex gap-2 ml-6">
+                <button
+                    className={arrowButtonStyles}
+                    onClick={() => router.back()}
+                >
+                    <FaArrowLeft size={16} className="" />
+                </button>
+                <button
+                    className={arrowButtonStyles}
+                    onClick={() => router.forward()}
+                >
+                    <FaArrowRight size={16} />
+                </button>
             </div>
             <div className="w-full flex justify-center items-center">
                 <ul className="flex gap-8">
                     <li>
-                        <Link
-                            href="/conference/1"
-                            className={linkClasses('/home')}
-                        >
-                            컨퍼런스참여
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/home" className={linkClasses('/home')}>
+                        <Link href="/" className={linkClasses('/')}>
                             홈
                         </Link>
                     </li>
@@ -91,11 +102,6 @@ const Navigation = () => {
                             className={linkClasses('/moderator')}
                         >
                             AI 사회자
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/board" className={linkClasses('/board')}>
-                            게시판
                         </Link>
                     </li>
                 </ul>
