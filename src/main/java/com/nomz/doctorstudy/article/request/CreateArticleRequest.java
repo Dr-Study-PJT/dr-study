@@ -1,9 +1,10 @@
 package com.nomz.doctorstudy.article.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,4 +22,7 @@ public class CreateArticleRequest {
 
     @Schema(description = "스터디 그룹 아이디", example = "1")
     private Long studyGroupId;
+
+    @Schema(description = "태그", example = "[\"#공지사항\", \"#필독\"]")
+    private List<String> tags;
 }

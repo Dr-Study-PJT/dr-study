@@ -29,4 +29,7 @@ public class GetArticleResponse {
 
     @Schema(description = "조회된 게시글 댓글 리스트", example = "[]")
     private List<Comment> comments;
+
+    @Schema(description = "태그 리스트", example = "[\"#공지사항\", \"#필독\"]")
+    private List<String> tags;
 }

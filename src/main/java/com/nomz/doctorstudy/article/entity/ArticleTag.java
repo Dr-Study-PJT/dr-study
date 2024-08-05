@@ -1,14 +1,14 @@
-package com.nomz.doctorstudy.studygroup.entity;
+package com.nomz.doctorstudy.article.entity;
 
+import com.nomz.doctorstudy.tag.Tag;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import com.nomz.doctorstudy.tag.Tag;
 
 @Getter
 @Entity
 @RequiredArgsConstructor
-public class StudyGroupTag {
+public class ArticleTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,11 +18,12 @@ public class StudyGroupTag {
     private Tag tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="study_group_id")
-    private StudyGroup studyGroup;
+    @JoinColumn(name="article_id")
+    private Article article;
 
-    public StudyGroupTag(Tag tag, StudyGroup studyGroup) {
+    public ArticleTag(Tag tag, Article article){
         this.tag = tag;
-        this.studyGroup = studyGroup;
+        this.article = article;
     }
+
 }
