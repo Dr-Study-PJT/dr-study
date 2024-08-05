@@ -26,11 +26,11 @@ public class StudyGroup {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "imageId", referencedColumnName = "id")
+    @JoinColumn(name = "image_id")
     private Image image;
 
     @ManyToOne
-    @JoinColumn(name= "captain", nullable = false)
+    @JoinColumn(name= "captain_id", nullable = false)
     private Member captain;
 
     @Column(nullable = false)
