@@ -34,6 +34,12 @@ springdoc:
 audio-utils:
   upper-path: "audio/"
 
+
+cloud:
+  aws:
+    credentials:
+      accessKey1: ${cloud-accesskey1}
+      secretKey1: ${cloud-secretkey1}
 ---
 ## local
 spring:
