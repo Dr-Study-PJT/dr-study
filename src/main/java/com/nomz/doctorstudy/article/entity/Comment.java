@@ -1,8 +1,17 @@
 package com.nomz.doctorstudy.article.entity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,8 +24,8 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
-    private Article studyGroupArticle;
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
 
     @Column(name="is_deleted", nullable = false)
     private Boolean isDeleted;

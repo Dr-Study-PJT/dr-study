@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.studygroup.entity;
+package com.nomz.doctorstudy.tag;
 
 import jakarta.persistence.*;
 import lombok.*;

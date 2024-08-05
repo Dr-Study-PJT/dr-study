@@ -20,8 +20,13 @@ import com.nomz.doctorstudy.studygroup.request.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Pageable;
+import com.nomz.doctorstudy.tag.Tag;
+import com.nomz.doctorstudy.tag.TagRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -106,14 +111,13 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command) {
-        return studyGroupQueryRepository.getStudyGroupList(
-                StudyGroupSearchFilter.builder()
-                        .name(command.getName())
-                        .memberCapacity(command.getMemberCapacity())
-                        .tagName(command.getTagName())
-                        .build()
-        );
+    public Page<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable) {
+        StudyGroupSearchFilter filter = StudyGroupSearchFilter.builder()
+                .name(command.getName())
+                .memberCapacity(command.getMemberCapacity())
+                .tagName(command.getTagName())
+                .build();
+        return studyGroupQueryRepository.getStudyGroupList(filter, pageable);
     }
 
     @Override
@@ -278,6 +282,20 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         memberStudyGroupRepository.save(memberStudyGroup);
         studyGroupRepository.save(studyGroup);
         return memberStudyGroup;
+    }
+
+    @Override
+    public List<MemberStudyGroup> getStudyGroupListByMemberId(Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        return memberStudyGroupRepository.findByMemberId(member.getId());
     }
 
 //    @Override

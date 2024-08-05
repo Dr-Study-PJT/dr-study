@@ -7,6 +7,7 @@ import com.nomz.doctorstudy.common.jwt.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +33,8 @@ public class SecurityConfig  {
             "/api/v1/member/**", "/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
             "/api-docs/**", "/swagger-ui.html", "/v1/auth/login", "/v1/auth/email-code", "/v1/auth/find-password", "/v1/auth/reset-password",
             "/v1/no-auth/**", "/v1/email/**", "/v1/images/**", "/v1/images", "/v1/need-auth",
-            "/v1/members/**", "/error", "/v1/conferences/**", "/room/**", "/v1/moderators/**"
+            "/v1/members/**", "/error", "/v1/conferences/**", "/room/**", "/v1/moderators/**",
+            "/v1/groups",
     };
 
     @Bean
@@ -65,6 +67,7 @@ public class SecurityConfig  {
         // 권한 규칙 작성
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v1/groups/**").permitAll()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
                         .anyRequest().authenticated()
 //                        .anyRequest().authenticated()

@@ -1,8 +1,13 @@
 spring:
   application:
     name: doctor-study
+  profiles:
+    include: secret
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # url: ENC(vRvWrSNak8qL4hz99F9Rdpinr2Ge9/yAWeOBKJF0T+3ubtJn82NHt0IqVWBuFic7RVlZM8IN7dnzFEn0ZpHuv/rbhvhqCuCD)
+    # username: ENC(6J5KDQ0bQcrkcQi8mDQmfQ==)
+    # password: ENC(jREwrJfAT6XiqxBSlHD8AQ==)
   jpa:
     database: mysql
     hibernate:
@@ -13,6 +18,12 @@ spring:
         format_sql: true
         use_sql_comments: true
     defer-datasource-initialization: true
+  mail:
+    host: smtp.naver.com
+    port: 465
+    # username: ENC(Ie15jnhRnq/z2N/EJokdXoM++8/9lwRplpSZ7088HE8=)
+    # password: ENC(ylXxe1vHQHzl7Ngc2HDt1xVxShphiJ3P)
+    protocol: smtps
 
   data:
     redis:
@@ -21,6 +32,10 @@ spring:
   sql:
     init:
       mode: always
+
+# jwt:
+#   secret: ENC(6Vd+EXILVTQ5Vf2KNjK8DFf9xMn8jYriq0WgklK++xV7EETrbeQculP5bryRYXUyTd5sCOjhcvzmF/l1bGvoQK8Zck5O6jZwjCl7RrtG/9MKmVjWqjKb4GftItjW6g/u6l/PqwSf7YA=)
+
 
 springdoc:
   swagger-ui:
@@ -34,6 +49,19 @@ springdoc:
 audio-utils:
   upper-path: "audio/"
 
+
+# cloud:
+#   aws:
+#     s3:
+#       bucket: ENC(vWy85kbDoTrKZ4d+sJcKeQ==)
+#     credentials:
+#       accessKey1: ENC(RccwEmE0OBKReyZZgYuaUhwP9WthHzH6ymUcAL3CL3I=)
+#       secretKey1: ENC(/fyQt2sh7eLtVkXe63A7N/FtRIYu8FdeMbGoygQ+DaeGpxIRhR1kU3c6aeVnaBh4KgM5+IWTRzg=)
+#     region:
+#       static: ENC(AtRBVGQdxXx9+67aQZ9Wthkvos0j+Lar)
+#       auto: false
+#     stack:
+#       auto: false
 ---
 ## local
 spring:
@@ -49,3 +77,4 @@ spring:
 
 fast-api:
   url: http://192.168.100.149:8000
+

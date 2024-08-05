@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface MemberStudyGroupRepository extends JpaRepository<MemberStudyGroup, MemberStudyGroupId> {
     List<MemberStudyGroup> findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(Long studyGroupId);
+    List<MemberStudyGroup> findByMemberId(Long memberId);
+    boolean existsByMemberStudyGroupIdMemberIdAndMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(Long memberId, Long studyGroupId);
 }

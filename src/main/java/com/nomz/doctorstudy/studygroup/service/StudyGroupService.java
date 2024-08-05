@@ -3,6 +3,8 @@ import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public interface StudyGroupService {
     StudyGroup getStudyGroup(Long groupId);
 
     // 스터디 그룹 조건 검색
-    List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command);
+    Page<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable);
 
     // 스터디 그룹 지원 요청 생성
     MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest, Authentication authentication);
@@ -40,6 +42,9 @@ public interface StudyGroupService {
 
     // 유저가 그룹 ID로 Study group 탈퇴 (소프트 탈퇴)
     MemberStudyGroup leaveStudyGroup(Long groupId, Authentication authentication);
+
+    // 멤버 ID로 스터디 그룹 리스트 찾기
+    List<MemberStudyGroup> getStudyGroupListByMemberId(Authentication authentication);
     // Respond to a study group application
     // void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest);
 

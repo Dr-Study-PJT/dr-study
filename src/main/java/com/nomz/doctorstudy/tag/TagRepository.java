@@ -1,6 +1,5 @@
-package com.nomz.doctorstudy.studygroup.repository;
+package com.nomz.doctorstudy.tag;
 
-import com.nomz.doctorstudy.studygroup.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
