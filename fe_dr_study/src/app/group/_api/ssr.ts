@@ -1,4 +1,3 @@
-// fe_dr_study/src/app/group/_api/ssr.ts
 import { GET } from '@/app/api/routeModule';
 import { dummyGroupData, dummyGroupListData } from '../[group_id]/dummy';
 
