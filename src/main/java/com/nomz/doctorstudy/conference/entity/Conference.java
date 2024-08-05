@@ -25,7 +25,7 @@ public class Conference {
     private Moderator moderator;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = true)
+    @JoinColumn(name = "host_id", nullable = true)
     private Member host;
 
     @ManyToOne

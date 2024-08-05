@@ -38,8 +38,10 @@ public class JwtUtil {
 	public JwtUtil(
             @Value("${jwt.secret}") String secretKey,
             RedisTemplate<String, String> redisTemplate
-            )
+    )
     {
+        log.info("----------JWT SECRET KEY LOG----------\n${jwt.secret}={}", secretKey);
+
 		this.secretKey = secretKey;
         this.redisTemplate = redisTemplate;
 

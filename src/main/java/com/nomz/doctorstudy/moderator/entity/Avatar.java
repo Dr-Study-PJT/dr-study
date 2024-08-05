@@ -20,7 +20,7 @@ public class Avatar {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = true)
+    @JoinColumn(name = "creator_id", nullable = true)
     private Member creator;
 
     @Column(nullable = false)

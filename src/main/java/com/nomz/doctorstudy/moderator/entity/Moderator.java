@@ -28,7 +28,7 @@ public class Moderator {
     private Avatar avatar;
 
     @ManyToOne
-    @JoinColumn(nullable = true)
+    @JoinColumn(name = "creator_id", nullable = true)
     private Member creator;
 
     @Column
