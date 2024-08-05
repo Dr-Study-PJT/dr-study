@@ -70,7 +70,7 @@ public class ArticleServiceImpl implements ArticleService{
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         String email = memberDetails.getUsername();
         // --------------------------------------------------------------------------
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
         if(!article.getWriter().getEmail().equals(email)){
@@ -94,7 +94,7 @@ public class ArticleServiceImpl implements ArticleService{
         String email = memberDetails.getUsername();
         Member member = memberService.getUserByEmail(email);
         // --------------------------------------------------------------------------
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
         boolean isMemberInStudyGroup = memberStudyGroupRepository.existsByMemberStudyGroupIdMemberIdAndMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(
@@ -119,7 +119,7 @@ public class ArticleServiceImpl implements ArticleService{
         String email = memberDetails.getUsername();
         Member member = memberService.getUserByEmail(email);
         // --------------------------------------------------------------------------
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
         if(!Objects.equals(article.getWriter().getId(), member.getId())){
             throw new BusinessException(ArticleErrorCode.ARTICLE_NOT_AUTHORIZED);

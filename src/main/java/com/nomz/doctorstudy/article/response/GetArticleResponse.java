@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
 @Builder
 public class GetArticleResponse {
     @Schema(description = "조회된 게시글 제목", example = "가입 인사글")

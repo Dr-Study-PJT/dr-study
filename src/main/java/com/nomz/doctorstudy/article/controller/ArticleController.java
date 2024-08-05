@@ -85,7 +85,7 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<ArticleResponse>> updateArticle(@PathVariable Long articleId, @RequestBody UpdateArticleRequest request, Authentication authentication){
+    public ResponseEntity<SuccessResponse<ArticleResponse>> updateArticle(@PathVariable("articleId") Long articleId, @RequestBody UpdateArticleRequest request, Authentication authentication){
         Article updatedArticle = articleService.updateArticle(articleId, request, authentication);
         ArticleResponse response = new ArticleResponse(updatedArticle.getId());
         return ResponseEntity.ok(
@@ -117,7 +117,7 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticle(@PathVariable Long articleId, Authentication authentication){
+    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticle(@PathVariable("articleId") Long articleId, Authentication authentication){
         Article article = articleService.getArticle(articleId, authentication);
         GetArticleResponse response = GetArticleResponse.builder()
                 .title(article.getTitle())
@@ -130,7 +130,7 @@ public class ArticleController {
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Article 수정에 성공했습니다.",
+                        "Article 조회에 성공했습니다.",
                         response
                 )
         );
@@ -157,12 +157,12 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<ArticleResponse>> deleteArticle(@PathVariable Long articleId, Authentication authentication){
+    public ResponseEntity<SuccessResponse<ArticleResponse>> deleteArticle(@PathVariable("articleId") Long articleId, Authentication authentication){
         Article article = articleService.deleteArticle(articleId, authentication);
         ArticleResponse response = new ArticleResponse(article.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Article 수정에 성공했습니다.",
+                        "Article 삭제에 성공했습니다.",
                         response
                 )
         );
