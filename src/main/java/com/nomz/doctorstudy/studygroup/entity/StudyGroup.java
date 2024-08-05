@@ -47,9 +47,6 @@ public class StudyGroup {
 
     private LocalDate dueDate;
 
-    @Column(nullable = false)
-    private Integer memberCount;
-
     private Integer memberCapacity;
 
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

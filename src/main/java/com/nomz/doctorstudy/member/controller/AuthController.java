@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.member.controller;
 
-import com.nomz.doctorstudy.common.auth.MemberDetailService;
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
@@ -9,8 +8,7 @@ import com.nomz.doctorstudy.common.redis.RedisUtil;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.request.*;
 import com.nomz.doctorstudy.member.response.MemberAndTokensResponse;
-import com.nomz.doctorstudy.member.response.MemberLoginPostRes;
-import com.nomz.doctorstudy.member.response.PasswordResetUrlResponse;
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import com.nomz.doctorstudy.member.service.AuthService;
 import com.nomz.doctorstudy.member.service.EmailService;
 import com.nomz.doctorstudy.member.service.MemberService;
@@ -26,19 +24,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,7 +41,7 @@ import java.util.Map;
 @RequestMapping("/v1/auth")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Auth API", description = "Auth API")
+@Tag(name = "Auth API", description = "Auth API 입니다.")
 public class AuthController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
@@ -110,7 +103,7 @@ public class AuthController {
 
         MemberAndTokensResponse memberAndTokensResponse = MemberAndTokensResponse
                 .builder()
-                .member(loginMember)
+                .memberInfo(MemberInfo.of(loginMember))
                 .tokens(tokens)
                 .build();
 

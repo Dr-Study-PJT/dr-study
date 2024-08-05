@@ -3,7 +3,6 @@ package com.nomz.doctorstudy.conference.service;
 import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
 import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.ProcessManager;
-import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -26,6 +25,10 @@ import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
+import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
+import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
+import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,21 +51,24 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     private final RoomService roomService;
     private final BlockInterpreter blockInterpreter;
-    private final ScriptPreprocessor scriptPreprocessor;
     private final ProcessManager processManager;
 
     private final ModeratorRepository moderatorRepository;
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
+    private final StudyGroupRepository studyGroupRepository;
 
     @Override
-    public Long createConference(/*Member requester, */CreateConferenceRequest request) {
+    public Long createConference(Member requester, CreateConferenceRequest request) {
         Moderator moderator = moderatorRepository.findById(request.getModeratorId())
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
+        StudyGroup studyGroup = studyGroupRepository.findById(request.getStudyGroupId())
+                .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+
         Conference conference = Conference.builder()
                 .moderator(moderator)
-                .host(null)//.host(requester)
-                .studyGroup(null) //.studyGroup(studyGroup)
+                .host(requester)
+                .studyGroup(studyGroup)
                 .title(request.getTitle())
                 .subject(request.getSubject())
                 .memberCapacity(request.getMemberCapacity())
@@ -85,8 +91,10 @@ public class ConferenceServiceImpl implements ConferenceService {
     public List<Conference> getConferenceList(GetConferenceListRequest request) {
         return conferenceQueryRepository.getConferenceList(
                 ConferenceSearchFilter.builder()
-                        .title(request.getTitle())
-                        .isFinished(request.getIsFinished())
+                        .memberId(request.getMemberId())
+                        .studyGroupId(request.getStudyGroupId())
+                        .lowerBoundDate(request.getLowerBoundDate())
+                        .upperBoundDate(request.getUpperBoundDate())
                         .build()
         );
     }
@@ -106,16 +114,16 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
         if (joinLockMap.containsKey(conferenceId)) {
-            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_OPENED);
         }
         joinLockMap.put(conferenceId, new ReentrantLock());
         roomService.createRoom(conferenceId);
 
-        ProcessContext processContext = processManager.getProcessContext(conferenceId);
-        processContext.setVariable("num_of_participant", 0);
-
         String script = conference.getModerator().getProcessor().getScript();
         blockInterpreter.init(conferenceId, script, Map.of());
+
+        ProcessContext processContext = processManager.getProcessContext(conferenceId);
+        processContext.setVariable("num_of_participant", 0);
     }
 
     @Override
@@ -141,7 +149,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     @Transactional
-    public List<String> joinConference(/*Member requester, */Long conferenceId, JoinConferenceRequest request) {
+    public List<String> joinConference(Member requester, Long conferenceId, JoinConferenceRequest request) {
         List<String> peerIds;
         ReentrantLock lock = joinLockMap.get(conferenceId);
         if (lock == null) {
@@ -156,25 +164,21 @@ public class ConferenceServiceImpl implements ConferenceService {
             lock.unlock();
         }
 
-        long tmpMemberId = 1L;
-        String tmpMemberName = "test member";
-        ProcessContext processContext = processManager.getProcessContext(conferenceId);
-        processContext.setVariable("participant_name_" + tmpMemberId, tmpMemberName);
-        processContext.setVariable("num_of_participant", (int) processContext.getVariable("num_of_participant") + 1);
+        addParticipantIdVariable(conferenceId, requester);
 
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
-        /*
-        ConferenceMember conferenceMember = ConferenceMember.builder()
-                .id(new ConferenceMember.ConferenceMemberId(conferenceId, requester.getId()))
-                .conference(conference)
-                //.member(requester)
-                .build();
-        conferenceMemberRepository.save(conferenceMember);
-        */
+        conferenceMemberRepository.save(ConferenceMember.of(conference, requester));
 
         return peerIds;
+    }
+
+    private void addParticipantIdVariable(Long conferenceId, Member member) {
+        ProcessContext processContext = processManager.getProcessContext(conferenceId);
+        int participantId = processContext.addParticipantMemberId(member.getId());
+        processContext.setVariable("participant_name_" + participantId, member.getNickname());
+        processContext.setVariable("num_of_participant", participantId);
     }
 
     @Override
@@ -184,11 +188,9 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
         if (requester.getId() != conference.getHost().getId()) {
-            // TODO: MemberErrorCode로 변경
             throw new BusinessException(CommonErrorCode.FORBIDDEN, "호스트 유저만이 초대할 수 있습니다.");
         }
 
-        // TODO: Member 에러코드 변경
         Long inviteeId = request.getInviteeId();
         Member member = memberRepository.findById(inviteeId)
                 .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "초대할 멤버의 아이디를 찾을 수 없습니다."));

@@ -35,11 +35,16 @@ public class AudioUtils {
     }
 
     public static void saveFile(byte[] data, String path) {
-        try (FileOutputStream fos = new FileOutputStream(path)) {
+        File file = new File(path);
+        if (file.getParentFile() != null) {
+            file.getParentFile().mkdirs();
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(data);
             log.debug("saved file at {}", path);
         } catch (IOException e) {
-            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "failed to get audio length", e);
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "failed to save audio file", e);
 
         }
     }
@@ -47,7 +52,7 @@ public class AudioUtils {
     public static void convertAudio(String path, String newExt) {
         File file = new File(path);
         String srcAbsolutePath = file.getAbsolutePath();
-        String destAbsolutePath = srcAbsolutePath.substring(srcAbsolutePath.lastIndexOf('.')) + newExt;
+        String destAbsolutePath = srcAbsolutePath.substring(0, srcAbsolutePath.lastIndexOf('.')) + "." + newExt;
 
         // FFmpeg 명령어 실행
         ProcessBuilder pb = new ProcessBuilder(

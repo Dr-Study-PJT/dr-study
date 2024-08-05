@@ -3,14 +3,14 @@ package com.nomz.doctorstudy.blockinterpreter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+    import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Slf4j
 @SpringBootTest
 class BlockInterpreterTest {
@@ -251,24 +251,32 @@ class BlockInterpreterTest {
     }
     
     @Test
-    @DisplayName("뮤트 제어신호 테스트")
-    public void muteSignalTest() {
+    @DisplayName("아바타 말하기 테스트")
+    public void letAvatarSpeakTest() {
         String script =
                 """
                 phase(1) {
-                    loop(5) {
-                        let_avatar_speak('hi');
-                        wait(1);
-                        let_participant_speak(1, 1);
-                        wait(3);
-                    }
+                    let_avatar_speak('안녕하세요. 이 음성은 STT 기술을 이용해 만들어졌습니다.');
                 }
                 """;
         long id = getProcessContextIdSequence();
-        blockInterpreter.init(id, String.valueOf(""), Map.of());
+        blockInterpreter.init(id, script, Map.of());
         blockInterpreter.interpret(id);
     }
 
+    @Test
+    @DisplayName("GPT 테스트")
+    public void gptTest() {
+        String script =
+                """
+                phase(1) {
+                    log(gpt_query('반갑다. 너는 얼마나 반갑니'));
+                }
+                """;
+        long id = getProcessContextIdSequence();
+        blockInterpreter.init(id, script, Map.of());
+        blockInterpreter.interpret(id);
+    }
 
     @Test
     @DisplayName("사회자 생성 페이지 결과 스크립트 테스트")

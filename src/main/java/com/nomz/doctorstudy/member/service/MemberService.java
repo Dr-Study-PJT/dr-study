@@ -2,6 +2,10 @@ package com.nomz.doctorstudy.member.service;
 
 
 import com.nomz.doctorstudy.common.auth.MemberDetails;
+import com.nomz.doctorstudy.image.entity.Image;
+import com.nomz.doctorstudy.image.exception.ImageErrorCode;
+import com.nomz.doctorstudy.image.exception.ImageException;
+import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
@@ -15,6 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  *	유저 관련 비즈니스 로직 처리를 위한 서비스 구현 정의.
  */
@@ -23,6 +29,7 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ImageRepository imageRepository;
 
 	@Transactional
 	public Member createUser(MemberRegisterPostReq userRegisterInfo) {
@@ -37,13 +44,14 @@ public class MemberService {
 			throw new MemberException(MemberErrorCode.MEMBER_EMAIL_EXIST_ERROR);
 		}
 
-
+		Image image = imageRepository.findById(userRegisterInfo.getImage_id())
+				.orElseThrow(() -> new ImageException(ImageErrorCode.IMAGE_NOT_FOUND));
 
 		Member member = Member.builder()
 				.email(userRegisterInfo.getEmail())
 				.password(passwordEncoder.encode(userRegisterInfo.getPassword()))
 				.nickname(userRegisterInfo.getNickname())
-				.imageId(userRegisterInfo.getImage_id())
+				.image(image)
 				.build();
 
 		return memberRepository.save(member);

@@ -103,7 +103,6 @@ public class StudyGroupController {
                 studyGroup.getDescription(),
                 studyGroup.getDueDate(),
                 studyGroup.getCaptain().getId(),
-                studyGroup.getMemberCount(),
                 studyGroup.getMemberCapacity(),
                 tags
         );
@@ -158,7 +157,7 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse> updateStudyGroup(
+    public ResponseEntity<SuccessResponse<?>> updateStudyGroup(
             @PathVariable Long groupId,
             @RequestBody UpdateStudyGroupRequest request) {
         log.info("UpdateStudyGroupRequest = {}", request);
@@ -170,7 +169,7 @@ public class StudyGroupController {
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Apply 생성에 성공했습니다.",
-                        ""
+                        null
                 )
         );
     }
@@ -297,7 +296,11 @@ public class StudyGroupController {
     })
     public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getWaiterList(Authentication authentication) {
         List<MemberStudyGroupApply> waiterList = studyGroupService.getWaiterList(authentication);
-        List<GetWaiterListResponse> responseList = waiterList.stream().map(GetWaiterListResponse::of).toList();
+
+        List<GetWaiterListResponse> responseList = waiterList.stream()
+                .map(GetWaiterListResponse::of)
+                .toList();
+
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "StudyGroup 리스트 조회에 성공했습니다.",

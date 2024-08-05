@@ -6,7 +6,7 @@ import lombok.*;
 
 @Getter
 @Entity
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +23,12 @@ public class ConferenceMember {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public static ConferenceMember of(Conference conference, Member member) {
+        return ConferenceMember.builder()
+                .id(new ConferenceMemberId(conference.getId(), member.getId()))
+                .conference(conference)
+                .member(member)
+                .build();
+    }
 }

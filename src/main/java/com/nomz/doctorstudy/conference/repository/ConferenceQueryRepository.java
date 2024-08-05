@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import static com.nomz.doctorstudy.conference.entity.QConference.conference;
+import static com.nomz.doctorstudy.studygroup.entity.QMemberStudyGroup.memberStudyGroup;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -29,10 +31,38 @@ public class ConferenceQueryRepository {
         return query.select(conference)
                 .from(conference)
                 .where(
-                        likeTitle(filter.getTitle()),
-                        equalMemberCapacity(filter.getMemberCapacity())
+                        eqStudyGroupMember(filter.getMemberId()),
+                        eqStudyGroup(filter.getStudyGroupId()),
+                        dateInBound(filter.getLowerBoundDate(), filter.getUpperBoundDate())
                 )
                 .fetch();
+    }
+
+    private BooleanExpression eqStudyGroupMember(Long memberId) {
+        if (memberId != null) {
+            List<Long> studyGroupIds = query
+                    .select(memberStudyGroup.studyGroup.id)
+                    .from(memberStudyGroup)
+                    .where(memberStudyGroup.member.id.eq(memberId))
+                    .fetch();
+
+            return conference.studyGroup.id.in(studyGroupIds);
+        }
+        return null;
+    }
+
+    private BooleanExpression eqStudyGroup(Long studyGroupId) {
+        if (studyGroupId != null) {
+            return conference.studyGroup.id.eq(studyGroupId);
+        }
+        return null;
+    }
+
+    private BooleanExpression dateInBound(LocalDateTime lowerBoundDate, LocalDateTime upperBoundDate) {
+        if (lowerBoundDate != null) {
+            return conference.finishTime.before(lowerBoundDate).or(conference.startTime.after(upperBoundDate)).not();
+        }
+        return null;
     }
 
     private BooleanExpression likeTitle(String title) {
