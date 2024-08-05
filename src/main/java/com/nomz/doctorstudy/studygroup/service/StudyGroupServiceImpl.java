@@ -25,6 +25,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
+import com.nomz.doctorstudy.tag.Tag;
+import com.nomz.doctorstudy.tag.TagRepository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -115,13 +118,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .tagName(command.getTagName())
                 .build();
         return studyGroupQueryRepository.getStudyGroupList(filter, pageable);
-//        return studyGroupQueryRepository.getStudyGroupList(
-//                StudyGroupSearchFilter.builder()
-//                        .name(command.getName())
-//                        .memberCapacity(command.getMemberCapacity())
-//                        .tagName(command.getTagName())
-//                        .build()
-//        );
     }
 
     @Override

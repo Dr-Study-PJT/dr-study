@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="study_group_article")
@@ -46,6 +47,9 @@ public class Article {
     @JoinColumn(name = "study_group_id", nullable = false)
     private StudyGroup studyGroup;
 
-    @OneToMany(mappedBy = "studyGroupArticle")
+    @OneToMany(mappedBy = "article")
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ArticleTag> articleTags;
 }

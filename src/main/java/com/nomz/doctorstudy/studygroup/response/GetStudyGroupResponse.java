@@ -41,6 +41,6 @@ public class GetStudyGroupResponse {
     @Schema(description = "조회된 스터디그룹 최대 인원", example = "6")
     private final Integer memberCapacity;
 
-    @Schema(description = "태그 리스트", example = "[#정처기, #토익]")
+    @Schema(description = "태그 리스트", example = "[\"#정처리\", \"#토익\"]")
     private final List<String> tags;
 }

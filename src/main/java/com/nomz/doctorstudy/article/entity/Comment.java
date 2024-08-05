@@ -24,8 +24,8 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
-    private Article studyGroupArticle;
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
 
     @Column(name="is_deleted", nullable = false)
     private Boolean isDeleted;

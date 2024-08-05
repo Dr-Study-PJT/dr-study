@@ -8,7 +8,7 @@
 //import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 //import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 //import com.nomz.doctorstudy.studygroup.entity.StudyGroupTag;
-//import com.nomz.doctorstudy.studygroup.entity.Tag;
+//import tag.Tag;
 //import com.nomz.doctorstudy.studygroup.request.CreateApplyRequest;
 //import com.nomz.doctorstudy.studygroup.request.CreateStudyGroupRequest;
 //import com.nomz.doctorstudy.studygroup.request.GetStudyGroupListRequest;

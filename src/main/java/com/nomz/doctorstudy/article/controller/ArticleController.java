@@ -22,6 +22,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Validated
 @RestController
@@ -119,6 +122,12 @@ public class ArticleController {
     })
     public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticle(@PathVariable("articleId") Long articleId, Authentication authentication){
         Article article = articleService.getArticle(articleId, authentication);
+
+        List<String> tags = article.getArticleTags().stream()
+                .map(articleTag -> articleTag.getTag().getName())
+                .collect(Collectors.toList());
+
+
         GetArticleResponse response = GetArticleResponse.builder()
                 .title(article.getTitle())
                 .content(article.getContent())
@@ -126,8 +135,8 @@ public class ArticleController {
                 .viewCount(article.getViewCount())
                 .writerNickname(article.getWriter().getNickname())
                 .comments(article.getComments())
+                .tags(tags)
                 .build();
-
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Article 조회에 성공했습니다.",
