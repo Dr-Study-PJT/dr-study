@@ -2,18 +2,16 @@
 
 import './globals.css';
 import localFont from 'next/font/local';
+import { Provider } from 'react-redux';
+import { store } from '@/store';
+import 'react-toastify/dist/ReactToastify.css';
 
 import RQProvider from './_components/RQProvider';
 import { MSWComponent } from './_components/MSWComponent';
-import { Provider } from 'react-redux';
-import { store } from '@/store';
-
 import Navigation from '@/components/organisms/Navigation';
 import SideBar from '@/components/organisms/SideBar';
-import worker from '@/mocks/browser';
 import { usePathname } from 'next/navigation';
 import ModalBox from '@/components/molecules/ModalBox/ModalBox';
-import { useEffect } from 'react';
 
 const pretendard = localFont({
     src: [
@@ -70,7 +68,6 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    // 'conference/숫자' 로 시작인 경우에는
     const pathname = usePathname();
     const isConference = /^\/conference\/\d+$/.test(pathname);
 
@@ -89,7 +86,7 @@ export default function RootLayout({
                                 </div>
                                 <SideBar />
                                 <div className="pl-[3rem] flex h-[calc(100vh-3rem)]">
-                                    <div className="flex-1 overflow-auto">
+                                    <div className="flex-1 overflow-auto bg-dr-dark-300">
                                         {children}
                                     </div>
                                 </div>

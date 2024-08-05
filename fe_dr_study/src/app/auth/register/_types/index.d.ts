@@ -9,6 +9,7 @@ export interface FormData {
 export interface StepProps {
     onNext: () => void;
     onBack: () => void;
+    onSubmit: (e: FormEvent, data: any) => void;
     data: IRegisterReq;
     setData: (data: IRegisterReq) => void;
 }

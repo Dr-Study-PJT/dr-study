@@ -1,30 +1,80 @@
-// src/app/moderator/new/_components/Step1.tsx
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { StepProps } from '../_types';
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
+import {
+    validateEmail,
+    validateNickname,
+    validatePassword,
+    validateRePassword,
+    ValidationErrors,
+    validateForm,
+} from '../_validation';
+import { IRegisterReq } from '@/interfaces/members';
 
 const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
+    const [errors, setErrors] = useState<ValidationErrors>({});
+    const [touched, setTouched] = useState<
+        Partial<Record<keyof IRegisterReq, boolean>>
+    >({});
+
     const handleChange = (name: string, value: string) => {
         setData({
             ...data,
             [name]: value,
         });
+
+        // 필드가 터치되었음을 표시합니다잉
+        setTouched((prevTouched) => ({
+            ...prevTouched,
+            [name]: true,
+        }));
+
+        // 실시간 유효성 검사 수행함니다잉
+        let error: string | undefined;
+        switch (name) {
+            case 'email':
+                error = validateEmail(value);
+                break;
+            case 'nickname':
+                error = validateNickname(value);
+                break;
+            case 'password':
+                error = validatePassword(value);
+                break;
+            case 'rePassword':
+                error = validateRePassword(data.password, value);
+                break;
+        }
+
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: error,
+        }));
     };
 
-    useEffect(() => {}, []);
+    const handleNext = () => {
+        const newErrors = validateForm(data);
+        setErrors(newErrors);
+        setTouched({
+            email: true,
+            nickname: true,
+            password: true,
+            rePassword: true,
+        });
+
+        if (Object.values(newErrors).every((error) => !error)) {
+            onNext();
+        }
+    };
 
     return (
         <section className="w-2/3 self-center">
             <div className="w-full min-h-48 h-max flex flex-row justify-around gap-6 items-center">
                 <section className="CONTENT w-full h-full flex flex-col gap-5">
                     <div className="w-full h-full flex flex-col justify-between gap-3 items-center">
-                        <ImageUpload
-                        // bodyData={bodyData}
-                        // setBodyData={setBodyData}
-                        // setImageDisplay={setImageDisplay}
-                        />
+                        <ImageUpload />
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -38,9 +88,10 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             onChange={(e) =>
                                 handleChange('email', e.target.value)
                             }
+                            error={touched.email ? errors.email : undefined}
                         />
                         <InputWithLabelAndError
-                            id="goal"
+                            id="nickname"
                             label="닉네임 입력"
                             inputSize="md"
                             name="nickname"
@@ -49,10 +100,13 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             onChange={(e) =>
                                 handleChange('nickname', e.target.value)
                             }
+                            error={
+                                touched.nickname ? errors.nickname : undefined
+                            }
                         />
                         <InputWithLabelAndError
                             id="password"
-                            label="password"
+                            label="비밀번호 입력"
                             inputSize="md"
                             type="password"
                             name="password"
@@ -60,6 +114,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             value={data.password}
                             onChange={(e) =>
                                 handleChange('password', e.target.value)
+                            }
+                            error={
+                                touched.password ? errors.password : undefined
                             }
                         />
                         <InputWithLabelAndError
@@ -73,12 +130,17 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             onChange={(e) =>
                                 handleChange('rePassword', e.target.value)
                             }
+                            error={
+                                touched.rePassword
+                                    ? errors.rePassword
+                                    : undefined
+                            }
                         />
                     </div>
                 </section>
             </div>
             <div className="w-full h-max flex flex-row justify-end gap-2 my-4">
-                <Button size="md" onClick={onNext}>
+                <Button size="md" onClick={handleNext}>
                     다음으로
                 </Button>
             </div>
