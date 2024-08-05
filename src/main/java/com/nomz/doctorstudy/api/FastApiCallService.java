@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
@@ -8,11 +9,11 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class FastApiCallService implements ExternalApiCallService{
+    @Value("${fast-api.url}")
+    private String baseUrl;
 
     @Autowired
     private RestTemplate restTemplate;
-    // FastAPI 서버 주소
-    private final String BASE_URL = "http://192.168.100.149:8000";
 
     public FastApiCallService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -20,7 +21,7 @@ public class FastApiCallService implements ExternalApiCallService{
 
     @Override
     public String gpt(String s) {
-        String url = BASE_URL + "/gpt/";
+        String url = baseUrl + "/gpt/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -35,13 +36,11 @@ public class FastApiCallService implements ExternalApiCallService{
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;
         }
-
-
     }
 
     @Override
     public byte[] tts(String s) {
-        String url = BASE_URL + "/tts/";
+        String url = baseUrl + "/tts/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -56,15 +55,11 @@ public class FastApiCallService implements ExternalApiCallService{
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;
         }
-
-
-
-
     }
 
     @Override
     public String stt(byte[] audio) {
-        String url = BASE_URL + "/stt/";
+        String url = baseUrl + "/stt/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

@@ -46,3 +46,6 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+fast-api:
+  url: http://192.168.100.149:8000

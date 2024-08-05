@@ -37,3 +37,6 @@ spring:
     activate:
       on-profile: local
     import: application-secret.yml
+
+fast-api:
+  url: http://192.168.100.149:8000
