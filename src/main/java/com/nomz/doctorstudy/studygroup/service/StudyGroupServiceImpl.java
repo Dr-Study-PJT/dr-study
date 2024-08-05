@@ -20,9 +20,11 @@ import com.nomz.doctorstudy.studygroup.request.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -106,14 +108,20 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public List<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command) {
-        return studyGroupQueryRepository.getStudyGroupList(
-                StudyGroupSearchFilter.builder()
-                        .name(command.getName())
-                        .memberCapacity(command.getMemberCapacity())
-                        .tagName(command.getTagName())
-                        .build()
-        );
+    public Page<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable) {
+        StudyGroupSearchFilter filter = StudyGroupSearchFilter.builder()
+                .name(command.getName())
+                .memberCapacity(command.getMemberCapacity())
+                .tagName(command.getTagName())
+                .build();
+        return studyGroupQueryRepository.getStudyGroupList(filter, pageable);
+//        return studyGroupQueryRepository.getStudyGroupList(
+//                StudyGroupSearchFilter.builder()
+//                        .name(command.getName())
+//                        .memberCapacity(command.getMemberCapacity())
+//                        .tagName(command.getTagName())
+//                        .build()
+//        );
     }
 
     @Override
