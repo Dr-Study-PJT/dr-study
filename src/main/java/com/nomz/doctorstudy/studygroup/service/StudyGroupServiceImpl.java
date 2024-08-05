@@ -284,6 +284,20 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         return memberStudyGroup;
     }
 
+    @Override
+    public List<MemberStudyGroup> getStudyGroupListByMemberId(Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        return memberStudyGroupRepository.findByMemberId(member.getId());
+    }
+
 //    @Override
 //    public StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails) {
 //        StudyGroup existingStudyGroup = studyGroupRepository.findById(groupId)
