@@ -17,16 +17,15 @@ import { GET } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
-const Navigation = () => {
+const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const pathname = usePathname();
-    const router = useRouter(); // useRouter 훅 사용
+    const router = useRouter();
     const dispatch = useDispatch();
 
     const isSigned = useSelector((state: RootState) => state.auth.isSigned);
     const member = useSelector((state: RootState) => state.member);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
-
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [notifications, setNotifications] = useState([
         {
@@ -39,10 +38,7 @@ const Navigation = () => {
         },
     ]);
 
-    const onClickGetLoginMemberInfo = async (e: React.MouseEvent) => {
-        await getLoginedMemberInfo();
-    };
-    const getLoginedMemberInfo = async () => {
+    const onClickGetLoginMemberInfo = async () => {
         try {
             const response = await GET('v1/members', {
                 isAuth: true,
@@ -84,43 +80,28 @@ const Navigation = () => {
         return pathname === path ? `${activeClasses}` : baseClasses;
     };
 
-    // 알림 목록을 가져오는 함수
-    // useEffect(() => {
-    //     const loadNotifications = async () => {
-    //         await dispatch(fetchNotifications()); // API 요청
-    //     };
-    //     const newNotifications = loadNotifications();
-
-    //     if (newNotifications) {
-    //         console.log('알림 목록 (fetchNotifications) => ', newNotifications);
-    //         setNotifications(newNotifications);
-    //     }
-    // }, [dispatch]);
-
-    // 알람 요소에 초대 이벤트 추가 필요
-    const handleClickNotification = (id: number) => {
-        console.log('알림 클릭:', id);
-    };
-
-    useEffect(() => {
-        console.log('알림 목록:', notifications);
-    }, []); // 로그인 된 멤버를 의존성에 추가 !필요!
-
-    // 컨퍼런스 입장 data api 회의
-
     const arrowButtonStyles =
         'rounded-full p-1 bg-dr-gray-500 text-white flex items-center justify-center hover:bg-dr-gray-400 transition-colors duration-200';
+
+    const navBoxStyles = {
+        backdropFilter:
+            scrollPosition === 'top' ? 'none' : 'blur(6px) saturate(180%)',
+        backgroundColor:
+            scrollPosition === 'top' ? '#262627' : 'rgba(38, 38, 39, 0.5)',
+        transition: 'background-color 0.3s, backdrop-filter 0.3s',
+    };
+
     return (
-        <div className="NAVIGATION-BOX w-full fixed flex flex-row justify-between bg-[#262627] top-0 h-[3rem] items-center px-4">
-            <div onClick={(e) => router.push('/')}>
-                <Logo />
-            </div>
-            <div className="flex gap-2 ml-6">
+        <div
+            className={`NAVIGATION-BOX w-full fixed flex flex-row justify-between top-0 h-[3rem] items-center px-3`}
+            style={navBoxStyles}
+        >
+            <div className="flex gap-2 ml-1">
                 <button
                     className={arrowButtonStyles}
                     onClick={() => router.back()}
                 >
-                    <FaArrowLeft size={16} className="" />
+                    <FaArrowLeft size={16} />
                 </button>
                 <button
                     className={arrowButtonStyles}
@@ -216,7 +197,9 @@ const Navigation = () => {
                     </div>
                 ) : (
                     <Link href="/auth/login" className="">
-                        <Button color="gray">로그인</Button>
+                        <Button color="gray" classNameStyles="!py-1.5">
+                            로그인
+                        </Button>
                     </Link>
                 )}
             </div>

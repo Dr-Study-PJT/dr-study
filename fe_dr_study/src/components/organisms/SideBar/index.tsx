@@ -4,7 +4,7 @@ import React from 'react';
 
 const SideBar = () => {
     return (
-        <div className="fixed left-0 px-[10px] py-4 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-3rem)] bg-[#282B30]">
+        <div className="SIDEBAR-BOX fixed z-10 left-0 px-[10px] pt-20 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-[#282B30]">
             <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-3">
                     <SideBarButton src="/samsung.png" live />

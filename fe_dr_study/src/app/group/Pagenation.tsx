@@ -1,4 +1,3 @@
-// fe_dr_study/src/app/group/Pagenation.tsx
 'use client';
 
 import Link from 'next/link';
