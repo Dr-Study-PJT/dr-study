@@ -1,4 +1,4 @@
-package com.nomz.doctorstudy.conference;
+package com.nomz.doctorstudy.conference.controller;
 
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
@@ -11,7 +11,7 @@ import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
 import com.nomz.doctorstudy.member.entity.Member;
-import com.nomz.doctorstudy.member.response.MemberResponse;
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -95,11 +95,7 @@ public class ConferenceController {
             @PathVariable("conferenceId") Long conferenceId) {
         Conference conference = conferenceService.getConference(conferenceId);
 
-        GetConferenceResponse response = GetConferenceResponse.builder()
-                .id(conference.getId())
-                .title(conference.getTitle())
-                .memberCapacity(conference.getMemberCapacity())
-                .build();
+        GetConferenceResponse response = GetConferenceResponse.of(conference);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -122,12 +118,12 @@ public class ConferenceController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetConferenceListResponseItem>>> getConferenceList(
+    public ResponseEntity<SuccessResponse<List<GetConferenceResponse>>> getConferenceList(
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
         // TODO: 조인으로 성능 최적화 필요
-        List<GetConferenceListResponseItem> responses = conferenceService.getConferenceList(request).stream()
-                .map(GetConferenceListResponseItem::of)
+        List<GetConferenceResponse> responses = conferenceService.getConferenceList(request).stream()
+                .map(GetConferenceResponse::of)
                 .toList();
 
         return ResponseEntity.ok(
@@ -251,7 +247,7 @@ public class ConferenceController {
 
 
     @PostMapping("/{conferenceId}/join")
-    @Operation(summary = "Conference 참여", description = "Conference에 참여합니다.")
+    @Operation(summary = "Conference 참여", description = "Conference에 참여합니다. 요청바디: 새 참여자의 peerId, 응답바디: 기존 참여자들의 peerId 리스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conference 참여 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
@@ -334,11 +330,11 @@ public class ConferenceController {
 
 
     @GetMapping("/{conferenceId}/participants")
-    public ResponseEntity<SuccessResponse<List<MemberResponse>>> getConferenceParticipantsList(
+    public ResponseEntity<SuccessResponse<List<MemberInfo>>> getConferenceParticipantsList(
             @PathVariable("conferenceId") Long conferenceId
     ) {
-        List<MemberResponse> responses = conferenceService.getConferenceParticipantList(conferenceId).stream()
-                .map(MemberResponse::of)
+        List<MemberInfo> responses = conferenceService.getConferenceParticipantList(conferenceId).stream()
+                .map(MemberInfo::of)
                 .toList();
 
         return ResponseEntity.ok(

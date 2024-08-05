@@ -35,9 +35,6 @@ public class GetStudyGroupResponse {
     @Schema(description = "조회된 스터디그룹 그룹장 아이디", example = "1")
     private final Long captainId;
 
-    @Schema(description = "조회된 스터디그룹 현재 인원 수", example = "1")
-    private final Integer memberCount;
-
     @Schema(description = "조회된 스터디그룹 최대 인원", example = "6")
     private final Integer memberCapacity;
 

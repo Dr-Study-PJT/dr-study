@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import static com.nomz.doctorstudy.conference.entity.QConference.conference;
+import static com.nomz.doctorstudy.studygroup.entity.QMemberStudyGroup.memberStudyGroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,27 +31,37 @@ public class ConferenceQueryRepository {
         return query.select(conference)
                 .from(conference)
                 .where(
-                        member(filter.getMemberId()),
-                        studyGroup(filter.getStudyGroupId()),
-                        lowerBound(filter.getLowerBoundDate()),
-                        upperBound(filter.getUpperBoundDate())
+                        eqStudyGroupMember(filter.getMemberId()),
+                        eqStudyGroup(filter.getStudyGroupId()),
+                        dateInBound(filter.getLowerBoundDate(), filter.getUpperBoundDate())
                 )
                 .fetch();
     }
 
-    private BooleanExpression member(Long memberId) {
+    private BooleanExpression eqStudyGroupMember(Long memberId) {
+        if (memberId != null) {
+            List<Long> studyGroupIds = query
+                    .select(memberStudyGroup.studyGroup.id)
+                    .from(memberStudyGroup)
+                    .where(memberStudyGroup.member.id.eq(memberId))
+                    .fetch();
+
+            return conference.studyGroup.id.in(studyGroupIds);
+        }
         return null;
     }
 
-    private BooleanExpression studyGroup(Long studyGroupId) {
+    private BooleanExpression eqStudyGroup(Long studyGroupId) {
+        if (studyGroupId != null) {
+            return conference.studyGroup.id.eq(studyGroupId);
+        }
         return null;
     }
 
-    private BooleanExpression lowerBound(LocalDateTime lowerBoundDate) {
-        return null;
-    }
-
-    private BooleanExpression upperBound(LocalDateTime upperBoundDate) {
+    private BooleanExpression dateInBound(LocalDateTime lowerBoundDate, LocalDateTime upperBoundDate) {
+        if (lowerBoundDate != null) {
+            return conference.finishTime.before(lowerBoundDate).or(conference.startTime.after(upperBoundDate)).not();
+        }
         return null;
     }
 

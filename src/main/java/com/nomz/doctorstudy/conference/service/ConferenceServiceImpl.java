@@ -164,10 +164,7 @@ public class ConferenceServiceImpl implements ConferenceService {
             lock.unlock();
         }
 
-        Member testMember = memberRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "테스트 멤버가 존재하지 않습니다."));
-
-        addParticipantIdVariable(conferenceId, testMember);
+        addParticipantIdVariable(conferenceId, requester);
 
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));

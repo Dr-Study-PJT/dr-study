@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class MemberResponse {
+public class MemberInfo {
     @Schema(description = "아이디", example = "1")
     private final long id;
 
@@ -31,7 +31,7 @@ public class MemberResponse {
     @Schema(description = "탈퇴 여부", example = "false")
     private final boolean isLeaved;
 
-    public static MemberResponse of(Member member) {
+    public static MemberInfo of(Member member) {
         return builder()
                 .id(member.getId())
                 .email(member.getEmail())

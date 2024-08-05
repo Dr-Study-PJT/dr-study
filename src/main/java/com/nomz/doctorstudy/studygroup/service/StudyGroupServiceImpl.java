@@ -75,7 +75,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .isDeleted(false)
                 .description(request.getDescription())
                 .dueDate(request.getDueDate())
-                .memberCount(1)
                 .memberCapacity(request.getMemberCapacity())
                 .build();
         studyGroupRepository.save(studyGroup);
@@ -167,14 +166,9 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
         // 2. status 변경
         apply.setStatus(createReplyRequest.getStatus());
-        memberStudyGroupApplyRepository.save(apply);
 
         // 3. StudyGroup의 memberCount 1 증가
         if (createReplyRequest.getStatus() == Status.APPROVED) {
-            StudyGroup studyGroup = apply.getStudyGroup();
-            studyGroup.setMemberCount(studyGroup.getMemberCount() + 1);
-            studyGroupRepository.save(studyGroup);
-
         // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
             MemberStudyGroupId memberStudyGroupIdObject  = new MemberStudyGroupId(apply.getMember().getId(), apply.getStudyGroup().getId());
             MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
@@ -277,10 +271,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
         StudyGroup studyGroup = studyGroupRepository.findById(memberStudyGroup.getStudyGroup().getId())
                         .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
-        studyGroup.setMemberCount(studyGroup.getMemberCount() -1);
 
-        memberStudyGroupRepository.save(memberStudyGroup);
-        studyGroupRepository.save(studyGroup);
         return memberStudyGroup;
     }
 

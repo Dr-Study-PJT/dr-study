@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.studygroup.response;
 
-import com.nomz.doctorstudy.member.response.MemberResponse;
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class GetWaiterListResponse {
     @Schema(description = "신청 대기자")
-    private final MemberResponse memberResponse;
+    private final MemberInfo applicant;
 
     @Schema(description = "그룹 아이디", example = "1")
     private final Long groupId;
@@ -28,7 +28,7 @@ public class GetWaiterListResponse {
 
     public static GetWaiterListResponse of(MemberStudyGroupApply memberStudyGroupApply) {
         return builder()
-                .memberResponse(MemberResponse.of(memberStudyGroupApply.getMember()))
+                .applicant(MemberInfo.of(memberStudyGroupApply.getMember()))
                 .groupId(memberStudyGroupApply.getStudyGroup().getId())
                 .groupName(memberStudyGroupApply.getStudyGroup().getName())
                 .createdAt(memberStudyGroupApply.getCreatedAt())

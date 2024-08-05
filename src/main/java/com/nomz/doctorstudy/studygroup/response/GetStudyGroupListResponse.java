@@ -61,7 +61,6 @@ public class GetStudyGroupListResponse {
                 .tags(tagNames)
                 .dueDate(studyGroup.getDueDate())
                 .captainId(studyGroup.getCaptain().getId())
-                .memberCount(studyGroup.getMemberCount())
                 .memberCapacity(studyGroup.getMemberCapacity())
                 .build();
     }
