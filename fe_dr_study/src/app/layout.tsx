@@ -11,11 +11,9 @@ import { store } from '@/store';
 import Navigation from '@/components/organisms/Navigation';
 import SideBar from '@/components/organisms/SideBar';
 import worker from '@/mocks/browser';
-import { useRouter } from 'next/router';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import ModalBox from '@/components/molecules/ModalBox/ModalBox';
-import { fetchNotifications } from '@/hooks/common/fetchNotifications';
+import { useEffect } from 'react';
 
 const pretendard = localFont({
     src: [

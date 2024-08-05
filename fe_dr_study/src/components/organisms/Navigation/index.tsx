@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { usePathname } from 'next/navigation'; // usePathname 훅 사용
 import { Logo } from '@/components/atoms/Logo/Logo';
 import Link from 'next/link';
@@ -95,6 +95,18 @@ const Navigation = () => {
     //         setNotifications(newNotifications);
     //     }
     // }, [dispatch]);
+
+    // 알람 요소에 초대 이벤트 추가
+
+    const handleClickNotification = (id: number) => {
+        console.log('알림 클릭:', id);
+    };
+
+    useEffect(() => {
+        console.log('알림 목록:', notifications);
+    }, []); // 로그인 된 멤버를 의존성에 추가 !필요!
+
+    // 컨퍼런스 입장 data api 회의
 
     return (
         <div className="NAVIGATION-BOX w-full fixed flex flex-row justify-between bg-[#262627] top-0 h-[3rem] items-center px-4">

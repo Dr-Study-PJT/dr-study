@@ -2,18 +2,21 @@ import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { POST } from '@/app/api/routeModule';
 import { Button } from '@/components/atoms';
 import { ConferenceMember } from '@/interfaces/conference';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 interface InviteMembersBoxProps {
     members: ConferenceMember[]; // 초대할 멤버 목록
     conferenceId?: number; // 회의 ID (선택적)
     setIsMemberInvited: (isMemberInvited: boolean) => void; // 초대 상태를 설정하는 함수
+    capacity?: number; // 컨퍼런스 최대 인원 수 (선택적)
 }
 
 const InviteMembersBox = ({
     members,
     conferenceId,
     setIsMemberInvited,
+    capacity = 16,
 }: InviteMembersBoxProps) => {
     const [selectedMembers, setSelectedMembers] = useState<ConferenceMember[]>(
         [],
@@ -84,53 +87,92 @@ const InviteMembersBox = ({
         }
     }, [selectedMembers]);
 
+    const maxInviteMemberCount =
+        capacity < members.length ? capacity : members.length; // 초대할 수 있는 최대 멤버 수
+
     return (
-        <div>
+        <div className="rounded-md">
+            <p className="text-dr-header-2">컨퍼런스 멤버 초대하기</p>
             <div>
-                멤버 초대하기:
+                <p className="py-[0.5rem] text-dr-body-3 text-dr-gray-100">
+                    스터디 그룹 멤버 목록
+                </p>
                 <div className="flex flex-wrap gap-2">
                     {members.map((member) => (
-                        <Button
-                            key={member.id}
-                            rounded={true}
-                            onClick={() => handleInviteMember(member)} // 멤버 클릭 시 초대 핸들러 호출
-                            color={
+                        <div
+                            className={`bg-dr-indigo-100 p-[1rem] w-[7rem] h-[7rem] duration-200 hover:bg-dr-gray-500 cursor-pointer flex flex-col items-center gap-1 rounded-md ${
                                 selectedMembers.some((m) => m.id === member.id)
-                                    ? 'coral'
-                                    : 'dark'
-                            }
+                                    ? 'border border-blue-500'
+                                    : ''
+                            }`}
+                            key={member.id}
+                            onClick={() => handleInviteMember(member)} // 멤버 클릭 시 초대 핸들러 호출
                         >
-                            {member.nickname}
-                        </Button>
+                            <div className="relative w-[4rem] h-[4rem]">
+                                <Image
+                                    src={member.imageId.toString()}
+                                    alt="profile-image"
+                                    fill
+                                    className="rounded-md"
+                                />
+                            </div>
+                            <p className="w-full text-center text-dr-body-4 overflow-hidden text-ellipsis whitespace-nowrap">
+                                {member.nickname}
+                            </p>
+                        </div>
                     ))}
                 </div>
             </div>
+
             <div>
-                초대할 멤버:
-                <div className="flex gap-dr-5">
+                <p className="py-[0.5rem] text-dr-body-3 text-dr-gray-100">
+                    컨퍼런스에 초대할 멤버 ( {selectedMembers.length} /{' '}
+                    {maxInviteMemberCount} )
+                </p>
+                <div className="flex flex-wrap gap-2">
                     {selectedMembers.length > 0 &&
                         selectedMembers.map((member) => (
-                            <Button
+                            <div
+                                className={`bg-dr-indigo-100 p-[1rem] w-[7rem] h-[7rem] duration-200 hover:bg-dr-gray-500 cursor-pointer flex flex-col items-center gap-1 rounded-md ${
+                                    selectedMembers.some(
+                                        (m) => m.id === member.id,
+                                    )
+                                        ? 'border border-blue-500'
+                                        : ''
+                                }`}
                                 key={member.id}
-                                rounded={true}
-                                color="gray"
-                                onClick={() => handleRemoveMember(member)} // 클릭 시 멤버 제거 핸들러 호출
+                                onClick={() => handleRemoveMember(member)} // 멤버 클릭 시 초대 핸들러 호출
                             >
-                                {member.nickname}
-                                <span className="text-dr-gray">[X]</span>
-                            </Button>
+                                <div className="relative w-[4rem] h-[4rem]">
+                                    <Image
+                                        src={member.imageId}
+                                        alt="profile-image"
+                                        fill
+                                        className="rounded-md"
+                                    />
+                                </div>
+                                <p className="w-full text-center text-dr-body-4 overflow-hidden text-ellipsis whitespace-nowrap">
+                                    {member.nickname}
+                                </p>
+                            </div>
                         ))}
                 </div>
             </div>
             <div>
                 {isMemberSelected && (
-                    <span className="text-dr-gray-300">
+                    <p className="text-dr-body-1 text-dr-coral-500">
                         * 초대할 멤버를 선택해주세요. *
-                    </span>
+                    </p>
                 )}
-                <Button onClick={handleInviteConferenceMember} color="coral">
-                    선택한 멤버 초대하기
-                </Button>
+                <div className="py-3">
+                    <Button
+                        onClick={handleInviteConferenceMember}
+                        color="coral"
+                        size="lg"
+                    >
+                        선택된 멤버 초대하기
+                    </Button>
+                </div>
             </div>
         </div>
     );

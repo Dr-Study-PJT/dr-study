@@ -13,7 +13,7 @@ export interface ConferenceData {
 export interface ConferenceMember {
     id: number;
     nickname: string;
-    imageId: number;
+    imageId: string;
     role: string;
     joinDate: string;
 }

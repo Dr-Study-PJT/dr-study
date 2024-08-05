@@ -4,22 +4,31 @@ import Icon from '@/components/atoms/Icon/Icon';
 import CreateConferenceForm from '@/components/organisms/CreateConferenceForm/CreateConferenceForm';
 import { RootState } from '@/store';
 import { setIsModalOpen } from '@/store/slices/modalSlice';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 interface ModalBoxProps {}
 
 const ModalBox = ({}: ModalBoxProps) => {
+    const pathname = usePathname();
+
     const dispatch = useDispatch();
     const isModalOpen = useSelector((state: RootState) => state.modal.isOpen);
     const modalContent = useSelector((state: RootState) => state.modal.content);
 
-    if (!isModalOpen) {
-        return null;
-    }
-
     const closeModal = () => {
         dispatch(setIsModalOpen());
     };
+
+    useEffect(() => {
+        dispatch(setIsModalOpen());
+        console.log(pathname, 'ModalBox rendered');
+    }, [pathname]);
+
+    if (!isModalOpen) {
+        return null;
+    }
 
     // 렌더링 할 컴포넌트를 결정하는 함수
     const renderModalContent = () => {

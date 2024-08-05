@@ -6,6 +6,7 @@ import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAnd
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { groupAPI as API, conferenceAPI } from '@/app/api/axiosInstanceManager';
 import { useRouter } from 'next/navigation';
+
 const loginFormContainerStyles = 'p-8 my-auto';
 const loginImageContainerStyles = 'w-1/2 relative';
 
@@ -14,6 +15,7 @@ interface CreateConferenceFormReq {
     moderatorId: string;
     imageId: string;
     title: string;
+    subject: string;
     memberCapacity: string;
 }
 
@@ -27,6 +29,7 @@ const CreateConferenceForm = () => {
         moderatorId: '',
         imageId: '',
         title: '',
+        subject: '',
         memberCapacity: '',
     });
 
@@ -35,6 +38,7 @@ const CreateConferenceForm = () => {
         moderatorId: '',
         imageId: '',
         title: '',
+        subject: '',
         memberCapacity: '',
     });
 
@@ -53,7 +57,7 @@ const CreateConferenceForm = () => {
                 body: formData,
                 isAuth: true,
             });
-            const { conferenceId } = response.data;
+            const { conferenceId } = response.data.data;
             console.log('컨퍼런스 생성 성공:', conferenceId);
             router.push(`/conference/${conferenceId}/info`);
         } catch (error) {
@@ -62,6 +66,7 @@ const CreateConferenceForm = () => {
                 moderatorId: 'AI 사회자를 선택해주세요.',
                 imageId: '스터디 이미지를 선택해주세요.',
                 title: '컨퍼런스 제목을 입력해주세요.',
+                subject: '컨퍼런스 제목을 입력해주세요.',
                 memberCapacity: '최대 참가 인원은 16명입니다.',
             });
         }
@@ -112,6 +117,15 @@ const CreateConferenceForm = () => {
                         value={formData.title}
                         onChange={handleChange}
                         error={errors.title}
+                    />
+                    <InputWithLabelAndError
+                        label="컨퍼런스 주제 입력"
+                        type="text"
+                        id="subject"
+                        placeholder="컨퍼런스 주제를 입력해주세요."
+                        value={formData.subject}
+                        onChange={handleChange}
+                        error={errors.subject}
                     />
                     <InputWithLabelAndError
                         label="최대 참가 인원 입력"
