@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,11 +31,14 @@ public class GetStudyGroupListResponse {
     @Schema(description = "조회된 스터디그룹 설명란", example = "정처기 합격을 위한 스터디입니다.")
     private final String description;
 
-    @Schema(description = "조회된 스터디그룹 태그", example = "#정처기")
+    @Schema(description = "조회된 스터디그룹 태그", example = "[\"#정처기\", \"#스터디\"]")
     private final List<String> tags;
 
-    //@Schema(description = "조회된 스터디그룹 아이디", example = "1")
-    //private final Long captainId;
+    @Schema(description = "조회된 스터디그룹 종료일자", example = "2024-08-16")
+    private final LocalDate dueDate;
+
+    @Schema(description = "조회된 스터디그룹 그룹장 아이디", example = "1")
+    private final Long captainId;
 
     @Schema(description = "조회된 스터디그룹 현재 인원 수", example = "1")
     private final Integer memberCount;
@@ -55,6 +59,8 @@ public class GetStudyGroupListResponse {
                 .isDeleted(studyGroup.getIsDeleted())
                 .description(studyGroup.getDescription())
                 .tags(tagNames)
+                .dueDate(studyGroup.getDueDate())
+                .captainId(studyGroup.getCaptain().getId())
                 .memberCount(studyGroup.getMemberCount())
                 .memberCapacity(studyGroup.getMemberCapacity())
                 .build();
