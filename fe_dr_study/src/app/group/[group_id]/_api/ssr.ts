@@ -21,6 +21,9 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
         id: number;
         email: string;
         nickname: string;
+        regDate: string;
+        isLeaved: boolean;
+        LeavedDate: string;
         imageUrl: string;
     }
     console.log('페칭시도');

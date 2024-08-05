@@ -8,32 +8,32 @@ import { FaUsers } from 'react-icons/fa';
 
 const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black`;
 
+export const groupsDummy = [
+    {
+        name: '삼성전자 면접 스터디',
+        description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
+        tags: ['면접 스터디', '조직 학습'],
+        members: 4,
+        maxMembers: 8,
+    },
+    {
+        name: '씨피 학습교류 스터디',
+        description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
+        tags: ['학습 교류', '공부 스터디'],
+        members: 5,
+        maxMembers: 10,
+    },
+    {
+        name: '클린코드 독서 공유',
+        description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
+        tags: ['클린코드 책', '독서 공유'],
+        members: 3,
+        maxMembers: 6,
+    },
+];
+
 const MyPage: React.FC = () => {
     const router = useRouter();
-
-    const groups = [
-        {
-            name: '삼성전자 면접 스터디',
-            description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
-            tags: ['면접 스터디', '조직 학습'],
-            members: 4,
-            maxMembers: 8,
-        },
-        {
-            name: '씨피 학습교류 스터디',
-            description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
-            tags: ['학습 교류', '공부 스터디'],
-            members: 5,
-            maxMembers: 10,
-        },
-        {
-            name: '클린코드 독서 공유',
-            description: '이 스터디에 대한 간단한 설명을 여기에 작성합니다.',
-            tags: ['클린코드 책', '독서 공유'],
-            members: 3,
-            maxMembers: 6,
-        },
-    ];
 
     return (
         <div className={pageStyles}>
@@ -110,7 +110,7 @@ const MyPage: React.FC = () => {
                     </div>
                     <div className="CONETENTS w-full h-max">
                         <div className="bg-dr-gray-800 rounded-lg">
-                            {groups.map((group, index) => (
+                            {groupsDummy.map((group, index) => (
                                 <div
                                     key={index}
                                     className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -175,7 +175,7 @@ const MyPage: React.FC = () => {
                         </div>
                         <div className="CONETENTS w-full h-max">
                             <div className="bg-dr-gray-800 rounded-lg">
-                                {groups.map((group, index) => (
+                                {groupsDummy.map((group, index) => (
                                     <div
                                         key={index}
                                         className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
@@ -242,7 +242,7 @@ const MyPage: React.FC = () => {
                         </div>
                         <div className="CONETENTS w-full h-max">
                             <div className="bg-dr-gray-800 rounded-lg">
-                                {groups.map((group, index) => (
+                                {groupsDummy.map((group, index) => (
                                     <div
                                         key={index}
                                         className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"

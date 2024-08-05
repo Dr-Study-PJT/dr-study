@@ -64,7 +64,7 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                     </div>
                 </section>
             </div>
-            <div className="w-full h-max flex flex-row justify-end gap-2 my-4">
+            <div className="w-auto h-max flex flex-row justify-end gap-2 my-4">
                 <Button size="md" onClick={onNext}>
                     다음으로
                 </Button>
