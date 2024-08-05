@@ -10,7 +10,6 @@ import { trimString } from '@/utils/trimString';
 import { ReactNode, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
-import CreateConferenceForm from '@/components/organisms/CreateConferenceForm/CreateConferenceForm';
 import ListConferenceToday from './ConferenceWithMembers';
 
 interface SectionContentsProps {

@@ -28,10 +28,6 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
         router.push(`/conference/${conferenceId}`);
     };
 
-    const handleCreateConferenceClick = () => {
-        alert('새 컨퍼런스 생성 모달 만들어서 띄워줘야함.');
-    };
-
     return (
         <div className="LIST-CONFERENCE-TODAY space-y-4">
             {conferences.map((conference, index) => (

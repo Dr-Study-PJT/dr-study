@@ -4,34 +4,41 @@ import { POST } from '@/app/api/routeModule';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
-import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
+import { groupAPI as API, conferenceAPI } from '@/app/api/axiosInstanceManager';
+import { useRouter } from 'next/navigation';
+
 const loginFormContainerStyles = 'p-8 my-auto';
 const loginImageContainerStyles = 'w-1/2 relative';
 
 interface CreateConferenceFormReq {
-    studyGroupId: number;
-    aiModeratorId: number;
-    imageId: number;
+    studyGroupId: string;
+    moderatorId: string;
+    imageId: string;
     title: string;
-    memberCapacity: number;
+    subject: string;
+    memberCapacity: string;
 }
 
 const CreateConferenceForm = () => {
+    const router = useRouter();
+
     const HOST_URL = process.env.NEXT_PUBLIC_HOST;
 
     const [formData, setFormData] = useState<CreateConferenceFormReq>({
-        studyGroupId: 1,
-        aiModeratorId: 1,
-        imageId: 1,
-        title: '정보처리기사 컨퍼런스',
-        memberCapacity: 10,
+        studyGroupId: '',
+        moderatorId: '',
+        imageId: '',
+        title: '',
+        subject: '',
+        memberCapacity: '',
     });
 
     const [errors, setErrors] = useState({
         studyGroupId: '',
-        aiModeratorId: '',
+        moderatorId: '',
         imageId: '',
         title: '',
+        subject: '',
         memberCapacity: '',
     });
 
@@ -42,23 +49,25 @@ const CreateConferenceForm = () => {
 
     const onSubmitCreateConference = async (e: FormEvent) => {
         e.preventDefault();
-        console.log(HOST_URL);
         try {
+            console.log('formData:', formData);
             const response = await POST({
-                API: API,
+                API: conferenceAPI,
                 endPoint: '',
                 body: formData,
                 isAuth: true,
             });
-            console.log(response);
-            return response.data;
+            const { conferenceId } = response.data.data;
+            console.log('컨퍼런스 생성 성공:', conferenceId);
+            router.push(`/conference/${conferenceId}/info`);
         } catch (error) {
             setErrors({
                 studyGroupId: '스터디 그룹이 없습니다.',
-                aiModeratorId: 'AI 사회자를 선택해주세요.',
+                moderatorId: 'AI 사회자를 선택해주세요.',
                 imageId: '스터디 이미지를 선택해주세요.',
                 title: '컨퍼런스 제목을 입력해주세요.',
-                memberCapacity: '컨퍼런스에 참가할 최대 인원을 설정해주세요.',
+                subject: '컨퍼런스 제목을 입력해주세요.',
+                memberCapacity: '최대 참가 인원은 16명입니다.',
             });
         }
     };
@@ -85,11 +94,11 @@ const CreateConferenceForm = () => {
                     <InputWithLabelAndError
                         label="AI 사회자 아이디 입력"
                         type="text"
-                        id="aiModeratorId"
+                        id="moderatorId"
                         placeholder="AI 사회자 아이디를 입력해주세요."
-                        value={formData.aiModeratorId}
+                        value={formData.moderatorId}
                         onChange={handleChange}
-                        error={errors.aiModeratorId}
+                        error={errors.moderatorId}
                     />
                     <InputWithLabelAndError
                         label="이미지 아이디 입력"
@@ -108,6 +117,15 @@ const CreateConferenceForm = () => {
                         value={formData.title}
                         onChange={handleChange}
                         error={errors.title}
+                    />
+                    <InputWithLabelAndError
+                        label="컨퍼런스 주제 입력"
+                        type="text"
+                        id="subject"
+                        placeholder="컨퍼런스 주제를 입력해주세요."
+                        value={formData.subject}
+                        onChange={handleChange}
+                        error={errors.subject}
                     />
                     <InputWithLabelAndError
                         label="최대 참가 인원 입력"

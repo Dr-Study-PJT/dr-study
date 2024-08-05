@@ -24,4 +24,5 @@ export const memberAPI = GenerateAPI('members');
 export const moderatorAPI = GenerateAPI('moderators');
 export const groupAPI = GenerateAPI('groups');
 export const conferenceAPI = GenerateAPI('conferences');
+export const notificationAPI = GenerateAPI('notifications');
 export const imageAPI = GenerateAPI('images');
