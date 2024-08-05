@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nomz.doctorstudy.image.entity.Image;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,19 +39,21 @@ public class Member {
 //    @Column(updatable = false, nullable = false)
     private LocalDateTime regDate;
 
-    @Column(name = "image_id", nullable = true)
-    private Long imageId;
+    @ManyToOne
+    @JoinColumn(name = "image_id", nullable = false)
+    private Image image;
 
     @ColumnDefault("0")
     private boolean isLeaved;
+
     private LocalDateTime leavedDate;
 
     @Builder
-    public Member(String email, String password, String nickname, Long imageId, LocalDateTime regDate, LocalDateTime leavedDate, boolean isLeaved){
+    public Member(String email, String password, String nickname, Image image, LocalDateTime regDate, LocalDateTime leavedDate, boolean isLeaved){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.imageId = imageId;
+        this.image = image;
         this.regDate = regDate;
         this.leavedDate = leavedDate;
         this.isLeaved = isLeaved;

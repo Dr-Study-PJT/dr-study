@@ -1,7 +1,9 @@
 package com.nomz.doctorstudy.conference.response;
 
 import com.nomz.doctorstudy.conference.entity.Conference;
+import com.nomz.doctorstudy.conference.entity.ConferenceMember;
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.response.MemberResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,7 +40,7 @@ public class GetConferenceListResponseItem {
     private final String imageUrl;
 
     @Schema(description = "참여자 목록", example = "")
-    private final List<MemberInfo> participants;
+    private final List<MemberResponse> participants;
 
 
     @Getter
@@ -55,28 +57,20 @@ public class GetConferenceListResponseItem {
         
         @Schema(description = "참여자 이미지 URL", example = "[image URL]")
         private final String imageUrl;
-
-        public static MemberInfo of(Member member, String imageUrl) {
-            return builder()
-                    .id(member.getId())
-                    .email(member.getEmail())
-                    .nickname(member.getEmail())
-                    .imageUrl(imageUrl)
-                    .build();
-
-        }
     }
 
-    public static GetConferenceListResponseItem of(Conference conference, List<MemberInfo> memberInfoList) {
+    public static GetConferenceListResponseItem of(Conference conference) {
         return builder()
                 .id(conference.getId())
-                //TODO: .hostId(conference.getHost().getId())
-                //TODO: .studyGroupId(conference.getStudyGroup().getId())
+                .hostId(conference.getHost(     ).getId())
+                .studyGroupId(conference.getStudyGroup().getId())
                 .title(conference.getTitle())
                 .memberCapacity(conference.getMemberCapacity())
                 .startTime(conference.getStartTime())
                 .finishTime(conference.getFinishTime())
-                .participants(memberInfoList)
+                .participants(conference.getParticipants().stream().
+                        map(ConferenceMember::getMember).
+                        map(MemberResponse::of).toList())
                 .build();
     }
 }

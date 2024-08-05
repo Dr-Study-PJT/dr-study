@@ -10,6 +10,7 @@ import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.request.*;
 import com.nomz.doctorstudy.member.response.MemberAndTokensResponse;
 import com.nomz.doctorstudy.member.response.MemberLoginPostRes;
+import com.nomz.doctorstudy.member.response.MemberResponse;
 import com.nomz.doctorstudy.member.response.PasswordResetUrlResponse;
 import com.nomz.doctorstudy.member.service.AuthService;
 import com.nomz.doctorstudy.member.service.EmailService;
@@ -48,7 +49,7 @@ import java.util.Map;
 @RequestMapping("/v1/auth")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Auth API", description = "Auth API")
+@Tag(name = "Auth API", description = "Auth API 입니다.")
 public class AuthController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
@@ -110,7 +111,7 @@ public class AuthController {
 
         MemberAndTokensResponse memberAndTokensResponse = MemberAndTokensResponse
                 .builder()
-                .member(loginMember)
+                .memberResponse(MemberResponse.of(loginMember))
                 .tokens(tokens)
                 .build();
 

@@ -2,8 +2,6 @@ package com.nomz.doctorstudy.image.controller;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
-import com.nomz.doctorstudy.image.repository.ImageRepository;
-import com.nomz.doctorstudy.image.request.GetS3ImageRequest;
 import com.nomz.doctorstudy.image.request.ImageUploadRequest;
 import com.nomz.doctorstudy.image.response.GetS3ImageResponse;
 import com.nomz.doctorstudy.image.response.UploadS3Response;
@@ -14,18 +12,18 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.mail.Multipart;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/v1/images")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "Image API", description = "Image API 입니다.")
 public class ImageController {
     private final ImageService imageService;
 
@@ -49,7 +47,6 @@ public class ImageController {
 
         return ResponseEntity.ok(
                 new SuccessResponse<>("이미지 업로드에 성공했습니다.", uploadS3Response)
-//                new SuccessResponse<>("이미지 업로드에 성공했습니다.", "123")
         );
     }
 

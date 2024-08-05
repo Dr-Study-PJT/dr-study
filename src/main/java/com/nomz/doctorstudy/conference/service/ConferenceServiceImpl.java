@@ -3,7 +3,6 @@ package com.nomz.doctorstudy.conference.service;
 import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
 import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.ProcessManager;
-import com.nomz.doctorstudy.blockinterpreter.ScriptPreprocessor;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -26,6 +25,10 @@ import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
+import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
+import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
+import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,21 +51,24 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     private final RoomService roomService;
     private final BlockInterpreter blockInterpreter;
-    private final ScriptPreprocessor scriptPreprocessor;
     private final ProcessManager processManager;
 
     private final ModeratorRepository moderatorRepository;
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
+    private final StudyGroupRepository studyGroupRepository;
 
     @Override
-    public Long createConference(/*Member requester, */CreateConferenceRequest request) {
+    public Long createConference(Member requester, CreateConferenceRequest request) {
         Moderator moderator = moderatorRepository.findById(request.getModeratorId())
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
+        StudyGroup studyGroup = studyGroupRepository.findById(request.getStudyGroupId())
+                .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+
         Conference conference = Conference.builder()
                 .moderator(moderator)
-                .host(null)//.host(requester)
-                .studyGroup(null) //.studyGroup(studyGroup)
+                .host(requester)
+                .studyGroup(studyGroup)
                 .title(request.getTitle())
                 .subject(request.getSubject())
                 .memberCapacity(request.getMemberCapacity())
@@ -85,8 +91,10 @@ public class ConferenceServiceImpl implements ConferenceService {
     public List<Conference> getConferenceList(GetConferenceListRequest request) {
         return conferenceQueryRepository.getConferenceList(
                 ConferenceSearchFilter.builder()
-                        .title(request.getTitle())
-                        .isFinished(request.getIsFinished())
+                        .memberId(request.getMemberId())
+                        .studyGroupId(request.getStudyGroupId())
+                        .lowerBoundDate(request.getLowerBoundDate())
+                        .upperBoundDate(request.getUpperBoundDate())
                         .build()
         );
     }

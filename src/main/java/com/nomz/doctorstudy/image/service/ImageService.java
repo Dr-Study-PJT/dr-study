@@ -1,15 +1,12 @@
 package com.nomz.doctorstudy.image.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.IOUtils;
 import com.nomz.doctorstudy.image.entity.Image;
 import com.nomz.doctorstudy.image.exception.ImageErrorCode;
 import com.nomz.doctorstudy.image.exception.ImageException;
 import com.nomz.doctorstudy.image.repository.ImageRepository;
-import com.nomz.doctorstudy.image.request.GetS3ImageRequest;
 import com.nomz.doctorstudy.image.request.ImageUploadRequest;
 import com.nomz.doctorstudy.image.response.UploadS3Response;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -74,7 +70,7 @@ public class ImageService{
 
     private void validateImageFile(MultipartFile image){
         if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())){
-            throw new ImageException(ImageErrorCode.IMAGE_EMPTY);
+            throw new ImageException(ImageErrorCode.IMAGE_NOT_FOUND);
         }
 
         validateImageFileExtention(image.getOriginalFilename());
@@ -84,7 +80,7 @@ public class ImageService{
         int lastDotIndex = filename.lastIndexOf(".");
 
         if(lastDotIndex == -1){
-            throw new ImageException(ImageErrorCode.NO_ACCESS_FILE_EXTENTION);
+            throw new ImageException(ImageErrorCode.NO_ACCESS_FILE_EXTENSION);
         }
 
         String extention = filename.substring(lastDotIndex + 1).toLowerCase();
@@ -92,7 +88,7 @@ public class ImageService{
 
         if (!allowedExtentionList.contains(extention)) {
             log.info("지원하지 않는 확장자입니다.");
-            throw new ImageException(ImageErrorCode.NO_ACCESS_FILE_EXTENTION);
+            throw new ImageException(ImageErrorCode.NO_ACCESS_FILE_EXTENSION);
         }
 
     }

@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import static com.nomz.doctorstudy.conference.entity.QConference.conference;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -29,10 +30,28 @@ public class ConferenceQueryRepository {
         return query.select(conference)
                 .from(conference)
                 .where(
-                        likeTitle(filter.getTitle()),
-                        equalMemberCapacity(filter.getMemberCapacity())
+                        member(filter.getMemberId()),
+                        studyGroup(filter.getStudyGroupId()),
+                        lowerBound(filter.getLowerBoundDate()),
+                        upperBound(filter.getUpperBoundDate())
                 )
                 .fetch();
+    }
+
+    private BooleanExpression member(Long memberId) {
+        return null;
+    }
+
+    private BooleanExpression studyGroup(Long studyGroupId) {
+        return null;
+    }
+
+    private BooleanExpression lowerBound(LocalDateTime lowerBoundDate) {
+        return null;
+    }
+
+    private BooleanExpression upperBound(LocalDateTime upperBoundDate) {
+        return null;
     }
 
     private BooleanExpression likeTitle(String title) {

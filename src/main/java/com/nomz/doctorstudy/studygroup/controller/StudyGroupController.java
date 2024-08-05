@@ -296,7 +296,11 @@ public class StudyGroupController {
     })
     public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getWaiterList(Authentication authentication) {
         List<MemberStudyGroupApply> waiterList = studyGroupService.getWaiterList(authentication);
-        List<GetWaiterListResponse> responseList = waiterList.stream().map(GetWaiterListResponse::of).toList();
+
+        List<GetWaiterListResponse> responseList = waiterList.stream()
+                .map(GetWaiterListResponse::of)
+                .toList();
+
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "StudyGroup 리스트 조회에 성공했습니다.",

@@ -6,12 +6,12 @@ VALUES ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg", false, NOW())
 
 --MEMBER--
 INSERT INTO member (email, password, nickname, image_id, reg_date, leaved_date, is_leaved)
-VALUES ('test1@example.com', 'test', '유영한이다', 1, NOW(), null, false),
-       ('test2@example.com', 'test', '난 조성우', 1, NOW(), null, false),
-       ('test2@example.com', 'test', 'Im 철현', 1, NOW(), null, false),
-       ('test2@example.com', 'test', '김주현인데요', 1, NOW(), null, false),
-       ('test2@example.com', 'test', '갱모', 1, NOW(), null, false),
-       ('test2@example.com', 'test', '신재민이에요', 1, NOW(), null, false)
+VALUES ('test1@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '유영한이다', 1, NOW(), null, false),
+       ('test2@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '난 조성우', 1, NOW(), null, false),
+       ('test3@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'Im 철현', 1, NOW(), null, false),
+       ('test4@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '김주현인데요', 1, NOW(), null, false),
+       ('test5@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '갱모', 1, NOW(), null, false),
+       ('test6@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '신재민이에요', 1, NOW(), null, false)
 ;
 
 --STUDY_GROUP--
@@ -35,9 +35,9 @@ INSERT INTO processor (creator_id, description, pre_prompt, script, created_at)
 VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트",
         "
                 phase(1) {
-                    log(string_concat(''hello '', ''world! '', ''반갑습니다 '', ''여러분들!''));
-                    log(''hi'');
-                    log(int_to_string(get_int_variable(''current_phase'')));
+                    log(string_concat('hello ', 'world! ', '반갑습니다 ', '여러분들!'));
+                    log('hi');
+                    log(int_to_string(get_int_variable('current_phase')));
                 }
 ",
         NOW()),
@@ -45,11 +45,20 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
         "
                 phase(1) {
                     loop(3) {
-                        log(string_concat(''outer_iter='', int_to_string(get_int_variable(get_string_variable(''current_iterator'')))));
+                        log(string_concat('outer_iter=', int_to_string(get_int_variable(get_string_variable('current_iterator')))));
                         loop(3) {
-                            log(string_concat(''inner_iter='', int_to_string(get_int_variable(get_string_variable(''current_iterator'')))));
+                            log(string_concat('inner_iter=', int_to_string(get_int_variable(get_string_variable('current_iterator')))));
                         }
-                        log(''--------------------'');
+                        log('--------------------');
+                    }
+                }
+",
+        NOW()),
+       (3, "아바타 말하기 스크립트", "3번 사전 프롬프트",
+        "
+                phase(1) {
+                    loop(3) {
+                        let_avatar_speak('안녕하세요, 3번 프로세서 스크립트 실행 중입니다. 이 음성은 STT 기술을 이용해 만들어졌습니다. 안녕히계세요.');
                     }
                 }
 ",

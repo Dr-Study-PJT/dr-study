@@ -41,8 +41,8 @@ public class GetConferenceResponse {
     public static GetConferenceResponse of(Conference conference) {
         return builder()
                 .id(conference.getId())
-                //TODO: .hostId(conference.getHost().getId())
-                //TODO: .studyGroupId(conference.getStudyGroup().getId())
+                .hostId(conference.getHost().getId())
+                .studyGroupId(conference.getStudyGroup().getId())
                 .title(conference.getTitle())
                 .memberCapacity(conference.getMemberCapacity())
                 .startTime(conference.getStartTime())

@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.request.EmailSendRequest;
 import com.nomz.doctorstudy.member.request.MemberRegisterPostReq;
+import com.nomz.doctorstudy.member.response.MemberResponse;
 import com.nomz.doctorstudy.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/members")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Member API", description = "Member API")
+@Tag(name = "Member API", description = "Member API 입니다.")
 public class MemberController {
     private final MemberService memberService;
 
@@ -88,8 +89,10 @@ public class MemberController {
 
         Member member = memberService.getUserByEmail(email);
 
+        MemberResponse response = MemberResponse.of(member);
+
         return ResponseEntity.ok(
-                new SuccessResponse<>("조회되었습니다.", member)
+                new SuccessResponse<>("조회되었습니다.", response)
         );
     }
 

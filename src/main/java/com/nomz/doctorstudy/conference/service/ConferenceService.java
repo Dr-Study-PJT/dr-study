@@ -10,7 +10,7 @@ import com.nomz.doctorstudy.member.entity.Member;
 import java.util.List;
 
 public interface ConferenceService {
-    Long createConference(/*Member requester, */CreateConferenceRequest request);
+    Long createConference(Member requester, CreateConferenceRequest request);
 
     Conference getConference(Long conferenceId);
 
@@ -24,7 +24,7 @@ public interface ConferenceService {
 
     void finishConference(Long conferenceId);
 
-    List<String> joinConference(/*Member requester, */Long conferenceId, JoinConferenceRequest request);
+    List<String> joinConference(Member requester, Long conferenceId, JoinConferenceRequest request);
 
     void inviteMemberConference(Member requester, Long conferenceId, InviteMemberConferenceRequest request);
 }

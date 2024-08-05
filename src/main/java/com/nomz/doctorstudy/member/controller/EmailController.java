@@ -7,6 +7,7 @@ import com.nomz.doctorstudy.member.request.EmailSendRequest;
 import com.nomz.doctorstudy.member.request.ResetPasswordRequest;
 import com.nomz.doctorstudy.member.request.VerifyEmailNumberRequest;
 import com.nomz.doctorstudy.member.service.EmailService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +21,7 @@ import java.time.Duration;
 @RequestMapping("/v1/email")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "Email API", description = "Email API 입니다.")
 public class EmailController {
     private final EmailService emailService;
 

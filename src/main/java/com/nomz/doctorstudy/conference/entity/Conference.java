@@ -7,10 +7,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -53,4 +53,6 @@ public class Conference {
     @Column
     private LocalDateTime finishTime;
 
+    @OneToMany(mappedBy = "conference")
+    private List<ConferenceMember> participants;
 }

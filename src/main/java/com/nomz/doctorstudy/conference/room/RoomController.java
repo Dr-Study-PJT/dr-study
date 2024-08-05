@@ -7,6 +7,7 @@ import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
 import com.nomz.doctorstudy.conference.room.signal.ParticipantAudioSignal;
 import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Room API", description = "Room 제어 API 입니다.")
 public class RoomController {
     private final SignalTransmitter signalTransMitter;
     private final ScriptPreprocessor scriptPreprocessor;

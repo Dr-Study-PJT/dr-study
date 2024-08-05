@@ -20,13 +20,12 @@ public class GetConferenceParticipantListResponseItem {
     @Schema(description = "참여자 이미지 URL", example = "[imageURL]")
     private final String imageUrl;
 
-    public static GetConferenceParticipantListResponseItem of(Member member, String imageUrl) {
+    public static GetConferenceParticipantListResponseItem of(Member member) {
         return  GetConferenceParticipantListResponseItem.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
-                // TODO: imageUrl 넣기
-                .imageUrl(null)
+                .imageUrl(member.getImage().getImageUrl())
                 .build();
     }
 }

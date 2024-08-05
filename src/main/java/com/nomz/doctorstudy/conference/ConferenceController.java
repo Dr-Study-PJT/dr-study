@@ -10,8 +10,8 @@ import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
 import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
-import com.nomz.doctorstudy.image.service.ImageService;
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.response.MemberResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -29,7 +29,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -40,8 +39,6 @@ import java.util.List;
 @Tag(name = "Conference API", description = "Conference API 입니다.")
 public class ConferenceController {
     private final ConferenceService conferenceService;
-    private final ImageService imageService;
-
 
     @PostMapping
     @Operation(summary = "Conference 생성", description = "Conference를 생성합니다.")
@@ -64,11 +61,11 @@ public class ConferenceController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateConferenceResponse>> createConference(
-            /*Authentication authentication,*/
+            Authentication authentication,
             @Valid @RequestBody CreateConferenceRequest request
     ) {
-        /*Member member = ((MemberDetails) authentication.getPrincipal()).getUser();*/
-        Long conferenceId = conferenceService.createConference(/*member, */request);
+        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
+        Long conferenceId = conferenceService.createConference(member, request);
         CreateConferenceResponse response = CreateConferenceResponse.builder()
                 .conferenceId(conferenceId)
                 .build();
@@ -129,15 +126,9 @@ public class ConferenceController {
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
         // TODO: 조인으로 성능 최적화 필요
-        List<GetConferenceListResponseItem> responses = new ArrayList<>();
-        for (Conference conference : conferenceService.getConferenceList(request)) {
-            List<GetConferenceListResponseItem.MemberInfo> participants = new ArrayList<>();
-            for (Member member : conferenceService.getConferenceParticipantList(conference.getId())) {
-                String imageUrl = imageService.get(member.getImageId());
-                participants.add(GetConferenceListResponseItem.MemberInfo.of(member, imageUrl));
-            }
-            responses.add(GetConferenceListResponseItem.of(conference, participants));
-        }
+        List<GetConferenceListResponseItem> responses = conferenceService.getConferenceList(request).stream()
+                .map(GetConferenceListResponseItem::of)
+                .toList();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -287,9 +278,9 @@ public class ConferenceController {
             Authentication authentication,
             @RequestBody JoinConferenceRequest request
             ) {
-        //Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
+        Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
 
-        List<String> existingParticipants = conferenceService.joinConference(/*requester, */conferenceId, request);
+        List<String> existingParticipants = conferenceService.joinConference(requester, conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -343,16 +334,12 @@ public class ConferenceController {
 
 
     @GetMapping("/{conferenceId}/participants")
-    public ResponseEntity<SuccessResponse<List<GetConferenceParticipantListResponseItem>>> getConferenceParticipantsList(
-            @PathVariable Long conferenceId
+    public ResponseEntity<SuccessResponse<List<MemberResponse>>> getConferenceParticipantsList(
+            @PathVariable("conferenceId") Long conferenceId
     ) {
-        List<Member> participants = conferenceService.getConferenceParticipantList(conferenceId);
-
-        List<GetConferenceParticipantListResponseItem> responses = new ArrayList<>();
-        for (Member member : participants) {
-            String imageUrl = imageService.get(member.getImageId());
-            responses.add(GetConferenceParticipantListResponseItem.of(member, imageUrl));
-        }
+        List<MemberResponse> responses = conferenceService.getConferenceParticipantList(conferenceId).stream()
+                .map(MemberResponse::of)
+                .toList();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
