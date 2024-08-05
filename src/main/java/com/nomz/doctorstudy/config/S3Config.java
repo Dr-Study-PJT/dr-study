@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Lazy;
 
 @Slf4j
 @Configuration
-@Lazy
 public class S3Config {
 
     // @Value("${cloud.accesskey1}")
@@ -28,8 +27,8 @@ public class S3Config {
     private String region = Regions.AP_NORTHEAST_2.getName();
 
     public S3Config(
-        @Value("${cloud.accesskey1}") String accessKey,
-        @Value("${cloud.secretkey1}") String secretKey
+        @Value("${cloud.aws.credentials.accessKey1}") String accessKey,
+        @Value("${cloud.aws.credentials.secretKey1}") String secretKey
     ){
         log.info("cloud.accessKey1 = {}", accessKey);
         this.accessKey = accessKey;
@@ -52,3 +51,5 @@ public class S3Config {
         log.info("----------POST CONSTRUCT S3\"----------\naccessKey={}\nsecretKey={}", accessKey, secretKey);
     }
 }
+
+
