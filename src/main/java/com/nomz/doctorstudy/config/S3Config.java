@@ -15,16 +15,25 @@ import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
+
 public class S3Config {
 
-    @Value("${cloud.accesskey1}")
+    // @Value("${cloud.accesskey1}")
     private String accessKey;
 
-    @Value("${cloud.secretkey1}")
+    // @Value("${cloud.secretkey1}")
     private String secretKey;
 
     //@Value("${cloud.aws.region.static}")
     private String region = Regions.AP_NORTHEAST_2.getName();
+
+    public S3Config(
+        @Value("${cloud.accesskey1}") String accessKey,
+        @Value("${cloud.secretkey1}") String secretKey
+    ){
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+    }
 
     @Bean
     public AmazonS3 amazonS3() {
