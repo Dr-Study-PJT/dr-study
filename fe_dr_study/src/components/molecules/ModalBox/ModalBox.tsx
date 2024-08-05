@@ -3,7 +3,7 @@
 import Icon from '@/components/atoms/Icon/Icon';
 import CreateConferenceForm from '@/components/organisms/CreateConferenceForm/CreateConferenceForm';
 import { RootState } from '@/store';
-import { setIsModalOpen } from '@/store/slices/modalSlice';
+import { setCloseModal, setIsModalOpen } from '@/store/slices/modalSlice';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,11 +18,11 @@ const ModalBox = ({}: ModalBoxProps) => {
     const modalContent = useSelector((state: RootState) => state.modal.content);
 
     const closeModal = () => {
-        dispatch(setIsModalOpen());
+        dispatch(setCloseModal());
     };
 
     useEffect(() => {
-        dispatch(setIsModalOpen());
+        dispatch(setCloseModal());
         console.log(pathname, 'ModalBox rendered');
     }, [pathname]);
 
