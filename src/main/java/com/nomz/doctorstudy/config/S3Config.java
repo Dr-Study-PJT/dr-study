@@ -27,8 +27,8 @@ public class S3Config {
     private String region = Regions.AP_NORTHEAST_2.getName();
 
     public S3Config(
-        @Value("${cloud.aws.credentials.accessKey1}") String accessKey,
-        @Value("${cloud.aws.credentials.secretKey1}") String secretKey
+        @Value("${cloud.accessKey1}") String accessKey,
+        @Value("${cloud.secretKey1}") String secretKey
     ){
         log.info("cloud.accessKey1 = {}", accessKey);
         this.accessKey = accessKey;
