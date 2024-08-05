@@ -1,3 +1,4 @@
+import { IGroup } from '../../_api/ssr';
 import { GroupData, ArticleData, ConferenceData, Member } from '../_types';
 
 export interface Participant {
@@ -13,7 +14,7 @@ export interface Conference {
     startTime: string;
     finishTime: string | null;
     imageUrl: string | null;
-    participants: Participant[];
+    participants: Member[];
 }
 
 export const dummyConferencesWithMembers: Conference[] = [
@@ -85,12 +86,12 @@ export const dummyConferencesWithMembers: Conference[] = [
     },
 ];
 
-export const dummyGroupData: GroupData = {
-    id: '1',
+export const dummyGroupData: IGroup = {
+    id: 1,
     name: '삼성전자 면접 스터디',
     imageUrl: '',
-    createdAt: '2024.07.22',
-    dueDate: '2024.08.16',
+    createdAt: '2024-08-05T01:12:54.082Z',
+    dueDate: '2024-08-07T01:12:54.082Z',
     isDeleted: false,
     description:
         '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
@@ -98,6 +99,48 @@ export const dummyGroupData: GroupData = {
     memberCapacity: 4,
     tags: ['정보처리기사', '교류'],
 };
+
+export const dummyGroupListData: IGroup[] = [
+    {
+        id: 1,
+        name: '삼성전자 면접 스터디',
+        imageUrl: '',
+        createdAt: '2024-08-05T01:12:54.082Z',
+        dueDate: '2024-08-07T01:12:54.082Z',
+        isDeleted: false,
+        description:
+            '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
+        memberCount: 3,
+        memberCapacity: 4,
+        tags: ['정보처리기사', '교류'],
+    },
+    {
+        id: 2,
+        name: '삼성전자 면접 스터디',
+        imageUrl: '',
+        createdAt: '2024-08-05T01:12:54.082Z',
+        dueDate: '2024-08-07T01:12:54.082Z',
+        isDeleted: false,
+        description:
+            '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
+        memberCount: 3,
+        memberCapacity: 4,
+        tags: ['정보처리기사', '교류'],
+    },
+    {
+        id: 3,
+        name: '삼성전자 면접 스터디',
+        imageUrl: '',
+        createdAt: '2024-08-05T01:12:54.082Z',
+        dueDate: '2024-08-07T01:12:54.082Z',
+        isDeleted: false,
+        description:
+            '삼성전자 면접에 대비하는 스터디 그룹입니다. 주 2회정도 운영하며, 면접 스터디에 특화된 AI 사회자를 주로 사용합니다.',
+        memberCount: 3,
+        memberCapacity: 4,
+        tags: ['정보처리기사', '교류'],
+    },
+];
 
 export const dummyMembersData: Member[] = [
     {
