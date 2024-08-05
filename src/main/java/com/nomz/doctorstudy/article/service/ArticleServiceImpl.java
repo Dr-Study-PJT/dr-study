@@ -117,13 +117,6 @@ public class ArticleServiceImpl implements ArticleService{
         Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
-        boolean isMemberInStudyGroup = memberStudyGroupRepository.existsByMemberStudyGroupIdMemberIdAndMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(
-                member.getId(), article.getStudyGroup().getId());
-
-        if (!isMemberInStudyGroup) {
-            throw new BusinessException(StudyGroupErrorCode.MEMBER_NOT_IN_GROUP_ERROR);
-        }
-
         return article;
 
     }
