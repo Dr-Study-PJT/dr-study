@@ -130,10 +130,10 @@ public class StudyGroupController {
     })
     public ResponseEntity<SuccessResponse<Page<GetStudyGroupListResponse>>> getStudyGroupList(
             @ParameterObject @ModelAttribute GetStudyGroupListRequest request,
-            @RequestParam(name= "page", defaultValue = "0") int page,
+            @RequestParam(name= "page", defaultValue = "1") int page,
             @RequestParam(name= "size", defaultValue = "10") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page -1, size);
         Page<StudyGroup> studyGroupPage = studyGroupService.getStudyGroupList(request, pageable);
 
         Page<GetStudyGroupListResponse> responsePage = studyGroupPage.map(GetStudyGroupListResponse::of);
