@@ -7,7 +7,7 @@ import { logoStyles } from './Logo.styles';
 
 export const Logo = ({}: LogoProps) => {
     return (
-        <Link href="/home" className={logoStyles({})}>
+        <Link href="" className={logoStyles({})}>
             <Image
                 width={40}
                 height={40}
