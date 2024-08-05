@@ -19,6 +19,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -125,23 +128,21 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetStudyGroupListResponse>>> getStudyGroupList(
-            @ParameterObject @ModelAttribute GetStudyGroupListRequest request
+    public ResponseEntity<SuccessResponse<Page<GetStudyGroupListResponse>>> getStudyGroupList(
+            @ParameterObject @ModelAttribute GetStudyGroupListRequest request,
+            @RequestParam(name= "page", defaultValue = "0") int page,
+            @RequestParam(name= "size", defaultValue = "10") int size
     ) {
-        GetStudyGroupListRequest command = GetStudyGroupListRequest.builder()
-                .name(request.getName())
-                .memberCapacity(request.getMemberCapacity())
-                .tagName(request.getTagName())
-                .build();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<StudyGroup> studyGroupPage = studyGroupService.getStudyGroupList(request, pageable);
 
-        List<StudyGroup> studyGroupList = studyGroupService.getStudyGroupList(command);
+        Page<GetStudyGroupListResponse> responsePage = studyGroupPage.map(GetStudyGroupListResponse::of);
 
-        List<GetStudyGroupListResponse> responseList = studyGroupList.stream().map(GetStudyGroupListResponse::of).toList();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "StudyGroup 리스트 조회에 성공했습니다.",
-                        responseList
+                        responsePage
                 )
         );
     }

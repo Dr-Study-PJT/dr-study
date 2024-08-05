@@ -7,6 +7,9 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +33,7 @@ public class StudyGroupQueryRepository {
      * @return 조건에 맞는 StudyGroup 리스트를 반환합니다.
      */
 
-    public List<StudyGroup> getStudyGroupList(StudyGroupSearchFilter filter){
+    public Page<StudyGroup> getStudyGroupList(StudyGroupSearchFilter filter, Pageable pageable){
         JPAQuery<StudyGroup> queryBuilder = query.select(studyGroup).from(studyGroup);
 
         if(StringUtils.hasText(filter.getTagName())){
@@ -38,13 +41,26 @@ public class StudyGroupQueryRepository {
                     .leftJoin(studyGroupTag.tag, tag);
         }
 
-        return queryBuilder.where(
-                likeName(filter.getName()),
-                equalMemberCapacity(filter.getMemberCapacity()),
-                likeTagName(filter.getTagName()),
-                isNotDeleted()  // isDeleted 필터 추가
-        )
-                .fetch();
+        JPAQuery<StudyGroup> pagedQuery = queryBuilder.where(
+                        likeName(filter.getName()),
+                        equalMemberCapacity(filter.getMemberCapacity()),
+                        likeTagName(filter.getTagName()),
+                        isNotDeleted()
+                ).offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        long total = queryBuilder.fetchCount(); // 전체 데이터 수 조회
+        List<StudyGroup> results = pagedQuery.fetch(); // 페이징된 데이터 조회
+
+        return new PageImpl<>(results, pageable, total);
+
+//        return queryBuilder.where(
+//                likeName(filter.getName()),
+//                equalMemberCapacity(filter.getMemberCapacity()),
+//                likeTagName(filter.getTagName()),
+//                isNotDeleted()  // isDeleted 필터 추가
+//        )
+//                .fetch();
 
     }
 
