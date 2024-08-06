@@ -33,7 +33,6 @@ public class ImageService{
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
     @Transactional
     public UploadS3Response save(ImageUploadRequest imageUploadRequest) {
         MultipartFile image = imageUploadRequest.getFile();
@@ -145,5 +144,8 @@ public class ImageService{
         return Arrays.asList(typeList).contains(type);
     }
 
-
+    public Image getDefaultImage() {
+        return imageRepository.findById(1L)
+                .orElseThrow(() -> new ImageException(ImageErrorCode.IMAGE_NOT_FOUND));
+    }
 }
