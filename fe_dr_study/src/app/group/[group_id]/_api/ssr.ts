@@ -26,6 +26,7 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
         LeavedDate: string;
         imageUrl: string;
     }
+    
     console.log('페칭시도');
 
     try {

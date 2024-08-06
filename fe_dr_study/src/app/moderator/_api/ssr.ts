@@ -1,5 +1,5 @@
 import { GET } from '@/app/api/routeModule';
-import { dummyGroupData, dummyGroupListData } from '../[group_id]/dummy';
+import { dummyGroupListData } from '@/app/group/[group_id]/dummy';
 
 export interface SearchParams {
     page?: number;
@@ -35,7 +35,7 @@ export interface IGroupListResponse {
     empty: boolean;
 }
 
-export const getGroupListBy = async ({
+export const getModeratorListBy = async ({
     page,
     size,
     tagName,

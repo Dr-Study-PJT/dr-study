@@ -7,11 +7,12 @@ import Live from '@/components/atoms/Live/Live';
 export const SideBarButton = ({
     src = '/samsung.png',
     live,
+    classNameStyles,
 }: SideBarButtonProps) => {
     return (
-        <div className={`${sideBarButtonStyles({})} `}>
+        <div className={`${sideBarButtonStyles({})} ${classNameStyles}`}>
             <Image
-                className="rounded-[17px]"
+                className="rounded-full"
                 src={src}
                 alt="Side Bar Button"
                 width={92}
