@@ -8,10 +8,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import RQProvider from './_components/RQProvider';
 import { MSWComponent } from './_components/MSWComponent';
-import Navigation from '@/components/organisms/Navigation';
 import SideBar from '@/components/organisms/SideBar';
 import { usePathname } from 'next/navigation';
 import ModalBox from '@/components/molecules/ModalBox/ModalBox';
+import Navigation from '@/components/organisms/Navigation/Navigation';
 import { useEffect, useState } from 'react';
 
 import { IoClose, IoRemove, IoSquareOutline } from 'react-icons/io5';

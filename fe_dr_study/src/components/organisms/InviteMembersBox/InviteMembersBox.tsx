@@ -88,7 +88,7 @@ const InviteMembersBox = ({
     }, [selectedMembers]);
 
     const maxInviteMemberCount =
-        capacity < members.length ? capacity : members.length; // 초대할 수 있는 최대 멤버 수
+        capacity < members?.length ? capacity : members?.length; // 초대할 수 있는 최대 멤버 수
 
     return (
         <div className="rounded-md">
@@ -98,7 +98,7 @@ const InviteMembersBox = ({
                     스터디 그룹 멤버 목록
                 </p>
                 <div className="flex flex-wrap gap-2">
-                    {members.map((member) => (
+                    {members?.map((member) => (
                         <div
                             className={`bg-dr-indigo-100 p-[1rem] w-[7rem] h-[7rem] duration-200 hover:bg-dr-gray-500 cursor-pointer flex flex-col items-center gap-1 rounded-md ${
                                 selectedMembers.some((m) => m.id === member.id)
@@ -110,7 +110,7 @@ const InviteMembersBox = ({
                         >
                             <div className="relative w-[4rem] h-[4rem]">
                                 <Image
-                                    src={member.imageId.toString()}
+                                    src={member?.imageUrl?.toString()}
                                     alt="profile-image"
                                     fill
                                     className="rounded-md"

@@ -23,7 +23,6 @@ const ModalBox = ({}: ModalBoxProps) => {
 
     useEffect(() => {
         dispatch(setCloseModal());
-        console.log(pathname, 'ModalBox rendered');
     }, [pathname]);
 
     if (!isModalOpen) {

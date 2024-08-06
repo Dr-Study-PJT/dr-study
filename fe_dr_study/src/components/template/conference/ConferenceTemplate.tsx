@@ -1,6 +1,6 @@
 'use client';
 
-import { DELETE, GET, POST } from '@/app/api/routeModule';
+import { POST } from '@/app/api/routeModule';
 import { Button, Paragraph, Span } from '@/components/atoms';
 import ConferenceControlBar from '@/components/organisms/ConferenceControlBar/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress/ConferenceProgress';
@@ -10,7 +10,7 @@ import Video from '@/components/organisms/Video/Video';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import axios from 'axios';
 import Peer from 'peerjs';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 
 interface ConferenceTemplateProps {
@@ -60,7 +60,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
 
     // 세션 스토리지에서 멤버 ID 가져오기
-    const memberId = getSessionStorageItem('memberData');
+    const memberData = getSessionStorageItem('memberData');
 
     // 피어와 로컬 스트림 참조
     const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
@@ -74,7 +74,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     });
 
     // 1. new Peer 내 피어 생성
-    const onClickStart = (e: React.MouseEvent<HTMLElement>) => {
+    const onClickJoin = (e: React.MouseEvent<HTMLElement>) => {
         setIsFlag(1);
 
         myPeer.current = new Peer();
@@ -122,79 +122,6 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             );
     }, [isPeerCreated]);
 
-    // 3. 서버에 다른 이용자의 peerID 요청
-    const makeCall = async (remotePeerId?: string) => {
-        if (!isFlag) return;
-
-        // 기존에 방에 있는 멤버들에게 전화 연결하기
-        console.log(remotePeerId, 'remotePeerId');
-        if (remotePeerId) {
-            // remotePeerId에 전화 걸기
-            console.log(myPeer.current, 'myPeer.current');
-            console.log(localStream.current, 'localStream.current');
-            const myCall = myPeer.current?.call(
-                remotePeerId, // 호출할 Peer ID에
-                localStream.current as MediaStream, // 로컬 스트림 전달
-            );
-            console.log(myCall);
-            // 스트림 수신 이벤트 처리
-            myCall?.on('stream', (stream) => {
-                console.log(`on stream ${existingPeers}`);
-                setExistingPeers((prevPeers) => ({
-                    ...prevPeers,
-                    [remotePeerId]: stream, // 수신된 스트림을 기존 Peers에 추가
-                }));
-            });
-        }
-    };
-
-    const joinConference = async (peerId: string) => {
-        if (!isFlag) return;
-
-        // 참여할때 peerId 넘기기 함수
-        console.log('멤버 아이디(memberId) =>', memberId);
-        console.log('피어 아이디(peerId) =>', peerId);
-        console.log(
-            '로컬 스트림 아이디(localStream.current.id) =>',
-            localStream.current?.id,
-        );
-        console.log(myPeer, '마이피어');
-        console.log(localStream.current, '로컬 스트림');
-
-        client.current = {
-            memberId,
-            peerId,
-            streamId: localStream.current?.id as string,
-        };
-
-        try {
-            // const response = await GET(
-            //     'v1/conferences',
-            //     {
-            //         params: '',
-            //         isAuth: true,
-            //         revalidateTime: 10
-            //     }
-            // )
-
-            const response = await POST({
-                API: API, // as API 로 작성
-                endPoint: `${conferenceId}/join`, //  v1/conferences 뒤에 있으면 '/' 붙고 아니면 안 붙음
-                body: { peerId }, // body는 body
-                isAuth: true, // 항상 true로
-            });
-
-            console.log(response, '조인 결과');
-            const { data } = response.data;
-            console.log(data, '조인 결과 data');
-            data.forEach((remotePeerId: string) => makeCall(remotePeerId));
-            // letPeers.push(...existingPeerIds, ...data.existingPeerIds);
-            setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
-        } catch (error) {
-            console.error('Error fetching room list:', error);
-        }
-    };
-
     // 4. 방에 참가할 때 서버에 알리고, 방에 존재하는 모든 peer에 연결
     useEffect(() => {
         if (!isFlag) return;
@@ -214,33 +141,74 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         };
     }, [isMadeLocalStream]);
 
-    // 컨퍼런스 룸 시작 함수 (방장만 가능, id가 방장과 일치할 때 조건)
-    // 참여할때 peerId 넘기기 함수
-    const openConference = async () => {
+    // 기존에 방에 있는 멤버들에게 전화 연결하기
+    const makeCall = async (remotePeerId?: string) => {
+        if (!isFlag) return;
+
+        console.log(
+            'remotePeer에 전화 연결하기, remotePeerId => ',
+            remotePeerId,
+        );
+        if (remotePeerId) {
+            const myCall = myPeer.current?.call(
+                remotePeerId, // 호출할 Peer ID에
+                localStream.current as MediaStream, // 로컬 스트림 전달
+            );
+            // 스트림 수신 이벤트 처리
+            myCall?.on('stream', (stream) => {
+                setExistingPeers((prevPeers) => ({
+                    ...prevPeers,
+                    [remotePeerId]: stream, // 수신된 스트림을 기존 Peers에 추가
+                }));
+            });
+        }
+    };
+
+    // 회의에 참여하기 위해 모든 피어에 전화 연결
+    const joinConference = async (peerId: string) => {
+        if (!isFlag) return;
+
+        console.log('회의에 Join 하려는 클라이언트 데이터 => ', {
+            memberId: memberData.id,
+            peerId: peerId,
+            streamId: localStream.current?.id,
+        });
+        client.current = {
+            memberId: memberData.id,
+            peerId,
+            streamId: localStream.current?.id as string,
+        };
+
         try {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/open`,
-            ); // API 요청
-            console.log('컨퍼런스 시작 성공:', response);
+            const response = await POST({
+                API: API,
+                endPoint: `${conferenceId}/join`,
+                body: { peerId },
+                isAuth: true,
+            });
+
+            console.log('조인 결과 => ', response);
+            const { data } = response.data;
+            data.forEach((remotePeerId: string) => makeCall(remotePeerId));
+            console.log('모든 피어에 전화 연결 성공 => ', data);
+            setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
         } catch (error) {
             console.error('Error fetching room list:', error);
         }
     };
 
-    // 컨퍼런스 룸 데이터 조회 함수
-    const viewConference = async () => {
+    // 컨퍼런스 룸 시작 함수
+    const startConference = async () => {
         try {
-            const response = await axios.get(
-                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}`,
-            );
-            console.log('컨퍼런스 조회 성공:', response);
-            const { data } = response.data; // 응답 데이터에서 data를 추출
-            setRoomInfo({
-                title: data.title,
-                memberCapacity: data.memberCapacity,
+            const response = await POST({
+                API: API, // as API 로 작성
+                endPoint: `${conferenceId}/start`, //  v1/conferences 뒤에 있으면 '/' 붙고 아니면 안 붙음
+                body: '', // body는 body
+                isAuth: true, // 항상 true로
             });
+            console.log('컨퍼런스 시작 성공 => ', response);
         } catch (error) {
-            console.error('컨퍼런스 조회 실패:', error);
+            console.error('Error fetching room list:', error);
         }
     };
 
@@ -258,24 +226,10 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                                 key={peerId}
                                 existingPeers={existingPeers}
                                 peerId={peerId}
-                                focusing={memberId === focusingMemberId}
+                                focusing={memberData.id === focusingMemberId}
                             />
                         </>
                     ))}
-                    {/* <div
-                        key={peerId}
-                        className="w-full h-full rounded-xl overflow-hidden"
-                    >
-                        <video
-                            ref={(el) => {
-                                if (el) {
-                                    el.srcObject = existingPeers[peerId];
-                                    el.play();
-                                }
-                            }}
-                            autoPlay
-                        ></video>
-                    </div> */}
                 </div>
 
                 <div className="fixed left-0 bottom-0 w-full h-[10%] ">
@@ -298,8 +252,11 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             <div className="fixed top-8 left-8 p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
                 <Paragraph>컨퍼런스 페이지 제목 : {roomInfo.title}</Paragraph>
                 <Span color="white">최대 인원 : {roomInfo.memberCapacity}</Span>
-                <Button fullWidth onClick={onClickStart}>
-                    컨퍼런스 시작
+                <Button fullWidth onClick={onClickJoin}>
+                    컨퍼런스 참여
+                </Button>
+                <Button fullWidth onClick={startConference}>
+                    컨퍼런스 시작 (방장만)
                 </Button>
             </div>
 

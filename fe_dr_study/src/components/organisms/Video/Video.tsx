@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface VideoProps {
     existingPeers: Record<string, MediaStream>;
@@ -7,12 +7,16 @@ interface VideoProps {
 }
 
 const Video = ({ existingPeers, peerId, focusing }: VideoProps) => {
-    const [peerCount, setPeerCount] = useState<number>(
+    useEffect(() => {
+        setDisplayCount(Object.keys(existingPeers).length);
+    }, [existingPeers]);
+
+    const [displayCount, setDisplayCount] = useState<number>(
         Object.keys(existingPeers).length,
     );
 
     const videoDimensions = () => {
-        switch (peerCount) {
+        switch (displayCount) {
             case 1:
                 return 'h-full w-full'; // 1명일 때 전체 크기
             case 2:
