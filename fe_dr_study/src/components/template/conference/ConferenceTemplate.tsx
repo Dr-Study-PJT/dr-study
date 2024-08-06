@@ -184,11 +184,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 isAuth: true, // 항상 true로
             });
 
-            console.log(response, '조인 결과');
+            console.log('조인 결과 => ', response);
             const { data } = response.data;
-            console.log(data, '조인 결과 data');
             data.forEach((remotePeerId: string) => makeCall(remotePeerId));
-            // letPeers.push(...existingPeerIds, ...data.existingPeerIds);
             setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
         } catch (error) {
             console.error('Error fetching room list:', error);
@@ -214,14 +212,16 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         };
     }, [isMadeLocalStream]);
 
-    // 컨퍼런스 룸 시작 함수 (방장만 가능, id가 방장과 일치할 때 조건)
-    // 참여할때 peerId 넘기기 함수
-    const openConference = async () => {
+    // 컨퍼런스 룸 시작 함수
+    const startConference = async () => {
         try {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_HOST}/v1/conferences/${conferenceId}/open`,
-            ); // API 요청
-            console.log('컨퍼런스 시작 성공:', response);
+            const response = await POST({
+                API: API, // as API 로 작성
+                endPoint: `${conferenceId}/start`, //  v1/conferences 뒤에 있으면 '/' 붙고 아니면 안 붙음
+                body: '', // body는 body
+                isAuth: true, // 항상 true로
+            });
+            console.log('컨퍼런스 시작 성공 => ', response);
         } catch (error) {
             console.error('Error fetching room list:', error);
         }
@@ -262,20 +262,6 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                             />
                         </>
                     ))}
-                    {/* <div
-                        key={peerId}
-                        className="w-full h-full rounded-xl overflow-hidden"
-                    >
-                        <video
-                            ref={(el) => {
-                                if (el) {
-                                    el.srcObject = existingPeers[peerId];
-                                    el.play();
-                                }
-                            }}
-                            autoPlay
-                        ></video>
-                    </div> */}
                 </div>
 
                 <div className="fixed left-0 bottom-0 w-full h-[10%] ">
@@ -301,7 +287,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 <Button fullWidth onClick={onClickJoin}>
                     컨퍼런스 참여
                 </Button>
-                <Button fullWidth onClick={onClickJoin}>
+                <Button fullWidth onClick={startConference}>
                     컨퍼런스 시작 (방장만)
                 </Button>
             </div>

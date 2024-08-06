@@ -1,4 +1,5 @@
 import { http, HttpResponse, StrictResponse } from 'msw';
+import { title } from 'process';
 // import {faker} from "@faker-js/faker";
 
 // function generateDate() {
@@ -29,13 +30,13 @@ export const mypageMockHandler = [
         });
     }),
 
-    // 추가된 핸들러
     http.post('/v1/conferences', (req) => {
         return HttpResponse.json({
             success: true,
             message: 'Request intercepted successfully!',
             data: {
                 id: '1',
+                title: 'Mock Conference',
             },
         });
     }),
