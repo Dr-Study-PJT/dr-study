@@ -2,8 +2,8 @@
 import Link from 'next/link';
 import { BiSearch } from 'react-icons/bi';
 import { FaUsers } from 'react-icons/fa';
-import LottieCommunity from './_components/Lotties/Lottie_Community';
-import LottieTrending from './_components/Lotties/Lottie_Trending';
+import LottieCommunity from '../_components/Lotties/Lottie_Community';
+import LottieTrending from '../_components/Lotties/Lottie_Trending';
 
 export const styleTransitionColor = `transition duration-300 ease-in-out`;
 
