@@ -50,6 +50,7 @@ public class GetConferenceResponse {
                 .memberCapacity(conference.getMemberCapacity())
                 .startTime(conference.getStartTime())
                 .finishTime(conference.getFinishTime())
+                .imageUrl(conference.getImage().getImageUrl())
                 .participants(conference.getParticipants().stream().
                         map(ConferenceMember::getMember).
                         map(com.nomz.doctorstudy.member.response.MemberInfo::of).toList())

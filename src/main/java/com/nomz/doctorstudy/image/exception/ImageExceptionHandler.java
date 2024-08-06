@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.member.exception.member.MemberException;
 import jakarta.validation.constraints.Max;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
+@Order(1)
 public class ImageExceptionHandler {
     @ExceptionHandler(ImageException.class)
     public ResponseEntity<?> imageException1(ImageException e){
