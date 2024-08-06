@@ -9,10 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ImageUploadRequest {
+public class MediaUploadRequest {
     private MultipartFile file;
 
-    @NotBlank(message = "이미지 타입을 선택해주세요")
-    private String type;
+    @NotBlank(message = "도메인을 선택해주세요")
+    private String domain;
 
 }

@@ -1,25 +1,19 @@
 package com.nomz.doctorstudy.member.service;
 
 
-import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.image.entity.Image;
-import com.nomz.doctorstudy.image.exception.ImageErrorCode;
-import com.nomz.doctorstudy.image.exception.ImageException;
+import com.nomz.doctorstudy.image.exception.FileErrorCode;
+import com.nomz.doctorstudy.image.exception.FileException;
 import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.member.entity.Member;
-import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
-import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.exception.member.MemberException;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.member.request.MemberRegisterPostReq;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  *	유저 관련 비즈니스 로직 처리를 위한 서비스 구현 정의.
@@ -45,7 +39,7 @@ public class MemberService {
 		}
 
 		Image image = imageRepository.findById(userRegisterInfo.getImage_id())
-				.orElseThrow(() -> new ImageException(ImageErrorCode.IMAGE_NOT_FOUND));
+				.orElseThrow(() -> new FileException(FileErrorCode.IMAGE_NOT_FOUND));
 
 		Member member = Member.builder()
 				.email(userRegisterInfo.getEmail())
