@@ -1,7 +1,10 @@
 'use client';
 
+import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
+import { POST } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
 import ToolTip from '@/components/atoms/Tooltip/ToolTip';
+import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 interface ConferenceControlBarProps {
@@ -9,6 +12,7 @@ interface ConferenceControlBarProps {
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
     isMutedBySystem: boolean;
+    conferenceId: number;
 }
 
 const ConferenceControlBar = ({
@@ -16,7 +20,10 @@ const ConferenceControlBar = ({
     existingPeers,
     setExistingPeers,
     isMutedBySystem,
+    conferenceId,
 }: ConferenceControlBarProps) => {
+    const router = useRouter();
+
     const [videoEnabled, setVideoEnabled] = useState(true); // 비디오 상태
     const [audioEnabled, setAudioEnabled] = useState(true); // 오디오 상태
 
@@ -57,10 +64,22 @@ const ConferenceControlBar = ({
         }
     };
 
-    const handleDisconnectAll = () => {
+    const handleDisconnectAll = async () => {
         // 모든 연결된 사용자와의 통화 종료
         Object.keys(existingPeers).forEach((peerId) => disconnectCall(peerId));
         // (home 같은 경로로 주소 이동)
+        try {
+            const response = await POST({
+                API: API,
+                endPoint: `${conferenceId}/finish`,
+                body: '',
+                isAuth: true,
+            });
+            console.log('컨퍼런스 종료 성공:', response);
+            router.push(`/conference/${conferenceId}/info`);
+        } catch (error) {
+            console.error('컨퍼런스 종료 실패:', error);
+        }
     };
 
     return (
