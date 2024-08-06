@@ -15,11 +15,13 @@ public class ProcessManager {
         return findProcessContext(processId).orElseThrow(() -> new BlockException(BlockErrorCode.PROCESS_NOT_FOUND));
     }
 
-    public void register(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
+    public void createProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
         if (processContextMap.containsKey(processId)) {
             throw new BlockException(BlockErrorCode.PROCESS_ALREADY_EXISTS);
         }
-        processContextMap.put(processId, new ProcessContext(processId, blockList, varMap, labelMap));
+        ProcessContext processContext = new ProcessContext(processId, blockList, varMap, labelMap);
+        processContext.initialize();
+        processContextMap.put(processId, processContext);
     }
 
     public void removeProcess(Long processId) {

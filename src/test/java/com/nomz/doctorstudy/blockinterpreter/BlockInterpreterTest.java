@@ -31,7 +31,6 @@ class BlockInterpreterTest {
         varMap = new HashMap<>();
         varMap.put("var1", "var2");
         varMap.put("var2", 1);
-        varMap.put("num_of_participant", "15");
 
         String script =
                 """

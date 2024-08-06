@@ -8,6 +8,8 @@ import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
+import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
+import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +36,8 @@ class ConferenceServiceImplTest {
     private ConferenceMemberInviteRepository conferenceMemberInviteRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private StudyGroupRepository studyGroupRepository;
 
 
     @Test
@@ -60,16 +64,12 @@ class ConferenceServiceImplTest {
                     .email(String.format("member%d%d%d@gmail.com", i, i, i))
                     .password("password")
                     .nickname("nick" + i + i + i)
-                    .imageId(null)
+                    .image(null)
                     .build();
 
             memberRepository.save(member);
 
-            ConferenceMember conferenceMember = ConferenceMember.builder()
-                    .id(new ConferenceMemberId(conference.getId(), member.getId()))
-                    .conference(conference)
-                    .member(member)
-                    .build();
+            ConferenceMember conferenceMember = ConferenceMember.of(conference, member);
             conferenceMemberRepository.save(conferenceMember);
         }
 
@@ -94,27 +94,33 @@ class ConferenceServiceImplTest {
                 .password("password")
                 .nickname("hamsteak")
                 .regDate(LocalDateTime.now())
-                .imageId(0L)
                 .isLeaved(false)
                 .build();
         memberRepository.save(hostMember);
 
+        StudyGroup studyGroup = StudyGroup.builder()
+                .captain(hostMember)
+                .memberCapacity(10)
+                .name("asdf")
+                .goal("asdf")
+                .description("asdf")
+                .createdAt(LocalDateTime.now())
+                .isDeleted(false)
+                .build();
+        studyGroupRepository.save(studyGroup);
+
         Conference conference = Conference.builder()
-                .id(null)
                 .host(hostMember)
+                .studyGroup(studyGroup)
                 .memberCapacity(10)
                 .title("컨퍼런스1")
+                .subject("주제1")
                 .build();
         conferenceRepository.save(conference);
 
 
         // when
-        ConferenceMemberId conferenceMemberId = new ConferenceMemberId(conference.getId(), hostMember.getId());
-        ConferenceMember conferenceMember = ConferenceMember.builder()
-                .id(conferenceMemberId)
-                .conference(conference)
-                .member(hostMember)
-                .build();
+        ConferenceMember conferenceMember = ConferenceMember.of(conference, hostMember);
         conferenceMemberRepository.save(conferenceMember);
 
         // then

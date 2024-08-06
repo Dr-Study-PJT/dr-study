@@ -29,6 +29,7 @@ public class RoomService {
 
     public void openRoom(Long roomId, String script) {
         conferencePeerMap.put(roomId, new HashSet<>());
+
         if (joinLockMap.containsKey(roomId)) {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_OPENED);
         }
@@ -38,9 +39,6 @@ public class RoomService {
     }
 
     public void startRoom(Long roomId) {
-        ProcessContext processContext = processManager.getProcessContext(roomId);
-        processContext.initialize();
-
         blockInterpreter.interpret(roomId);
     }
 
