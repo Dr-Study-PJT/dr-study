@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MediaUploadRequest {
     private MultipartFile file;
 
-    @NotBlank(message = "도메인을 선택해주세요")
+//    @NotBlank(message = "도메인을 선택해주세요")
     private String domain;
 
 }

@@ -18,15 +18,16 @@ import java.util.Map;
 @Order(1)
 public class FileExceptionHandler {
     @ExceptionHandler(FileException.class)
-    public ResponseEntity<?> imageException1(FileException e){
-        log.info("Image error");
+    public ResponseEntity<?> fileException1(FileException e){
+        log.info("File error");
+        log.info("fileException = {}", e);
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<?> imageException2(MaxUploadSizeExceededException e){
+    public ResponseEntity<?> fileException2(MaxUploadSizeExceededException e){
         log.info("파일크기가 너무 커요");
 
         Map<String, String> map = new HashMap<>();

@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.image.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.nomz.doctorstudy.image.ImageType;
 import com.nomz.doctorstudy.image.MediaType;
 import com.nomz.doctorstudy.image.entity.Image;
 import com.nomz.doctorstudy.image.exception.FileErrorCode;
@@ -84,6 +85,15 @@ public class MediaService {
     }
 
     private FileResponse saveImage(MediaUploadRequest mediaUploadRequest){
+
+        if(mediaUploadRequest.getDomain() == null){
+            throw new FileException(FileErrorCode.DOMAIN_NOT_EXIST);
+        }
+
+        if(!ImageType.contains(mediaUploadRequest.getDomain())){
+            throw new FileException(FileErrorCode.NO_VALID_DOMAIN);
+        }
+
         try{
             String filePath = filePath("images", mediaUploadRequest.getDomain());
             String saveS3Url = s3Service.save(mediaUploadRequest.getFile(), filePath);
@@ -107,6 +117,12 @@ public class MediaService {
     }
 
     private FileResponse saveMedia(MediaUploadRequest mediaUploadRequest, String type){
+        log.info("mediaUploadRequest = {}", mediaUploadRequest.getDomain());
+
+        if(mediaUploadRequest.getDomain() != null){
+            throw new FileException(FileErrorCode.DOMAIN_EXIST);
+        }
+
         try{
             String filePath = filePath(type, mediaUploadRequest.getDomain());
 
@@ -121,9 +137,8 @@ public class MediaService {
             throw new FileException(FileErrorCode.MEDIA_UPLOAD_FAIL);
         }
 
-
-
     }
+
 
 
 
