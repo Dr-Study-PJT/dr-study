@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.article.dto;
 
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,6 +11,6 @@ import java.time.LocalDateTime;
 public class CommentSummary {
     private Long id;
     private String content;
-    private String authorNickname;
     private LocalDateTime createdAt;
+    private MemberInfo memberInfo;
 }
