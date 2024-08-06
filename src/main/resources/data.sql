@@ -54,12 +54,13 @@ VALUES (1, 1),
 
 --MEMBER STUDY GROUP APPLY--
 INSERT INTO member_study_group_apply (member_id, study_group_id, status, created_at, message)
-VALUES (1, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 1'),
+VALUES (1, 3, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 1'),
        (1, 2, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 2'),
-       (1, 3, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 3'),
-       (2, 3, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 4'),
-       (3, 3, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 5'),
-       (4, 3, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 6')
+       (2, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 3'),
+       (3, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 4'),
+       (4, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 5'),
+       (5, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 6'),
+       (6, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 6')
 ;
 
 --AVATAR--
