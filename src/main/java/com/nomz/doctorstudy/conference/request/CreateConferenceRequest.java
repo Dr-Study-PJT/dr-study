@@ -13,7 +13,6 @@ public class CreateConferenceRequest {
     @Schema(description = "스터디 그룹 아이디", example = "1")
     private Long studyGroupId;
 
-    @NotNull(message = "이미지 아이디는 반드시 포함되어야 합니다.")
     @Schema(description = "이미지 아이디", example = "1")
     private Long imageId;
 

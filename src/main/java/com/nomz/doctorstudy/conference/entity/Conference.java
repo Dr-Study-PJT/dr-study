@@ -72,4 +72,16 @@ public class Conference {
     public void updateModerator(Moderator moderator) {
         this.moderator = moderator;
     }
+
+    public Image getImage() {
+        if (image == null) {
+            return Image.builder()
+                    .imageUrl("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg")
+                    .isDeleted(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+        }
+
+        return image;
+    }
 }
