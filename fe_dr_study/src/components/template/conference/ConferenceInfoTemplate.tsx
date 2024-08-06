@@ -1,7 +1,5 @@
 'use client';
 
-import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
-import { GET, POST } from '@/app/api/routeModule';
 import { Button } from '@/components/atoms';
 import ToolTip from '@/components/atoms/Tooltip/ToolTip';
 import InviteMembersBox from '@/components/organisms/InviteMembersBox/InviteMembersBox';
@@ -9,117 +7,124 @@ import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/Select
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
 import { Moderator } from '@/interfaces/moderator';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface ConferenceInfoProps {
     conferenceId: number; // 회의 ID
     conferenceData: ConferenceData; // 회의 데이터
+    moderators: Moderator[]; // 사회자 리스트
+    studyMembers: ConferenceMember[]; // 스터디 멤버 리스트
+    handleOpenConference: () => void; // 컨퍼런스 개최 함수
 }
 
 const ConferenceInfoTemplate = ({
     conferenceId,
     conferenceData,
+    moderators,
+    studyMembers,
+    handleOpenConference,
 }: ConferenceInfoProps) => {
-    const router = useRouter();
-
-    const [studyMembers, setStudyMembers] = useState<ConferenceMember[]>([]); // 스터디 멤버 상태
     const [isMemberInvited, setIsMemberInvited] = useState<boolean>(true); // 멤버 초대 여부
 
-    const [moderators, setModerators] = useState<Moderator[]>([]); // 사회자 여부
-    const [isModeratorInvited, setIsModeratorInvited] =
-        useState<boolean>(false); // 사회자 선택 여부
+    // const router = useRouter();
 
-    // 스터디 멤버를 가져오는 함수
-    useEffect(() => {
-        const handleGetStudyMembers = async () => {
-            try {
-                const response = await GET(`v1/groups`, {
-                    params: `${1}/members`,
-                    isAuth: true,
-                    revalidateTime: 10,
-                });
+    // const [studyMembers, setStudyMembers] = useState<ConferenceMember[]>([]); // 스터디 멤버 상태
+    // const [isMemberInvited, setIsMemberInvited] = useState<boolean>(true); // 멤버 초대 여부
 
-                console.log('스터디 멤버 리스트 조회 성공:', response.data);
+    // const [moderators, setModerators] = useState<Moderator[]>([]); // 사회자 여부
+    // const [isModeratorInvited, setIsModeratorInvited] =
+    //     useState<boolean>(false); // 사회자 선택 여부
 
-                setStudyMembers(response.data.content);
-            } catch (error) {
-                console.error('스터디 멤버 리스트 조회 실패:', error);
-            }
-        };
+    // // 스터디 멤버를 가져오는 함수
+    // useEffect(() => {
+    //     const handleGetStudyMembers = async () => {
+    //         try {
+    //             const response = await GET(`v1/groups`, {
+    //                 params: `${1}/members`,
+    //                 isAuth: true,
+    //                 revalidateTime: 10,
+    //             });
 
-        handleGetStudyMembers();
-    }, [conferenceData]);
+    //             console.log('스터디 멤버 리스트 조회 성공:', response.data);
+
+    //             setStudyMembers(response.data.content);
+    //         } catch (error) {
+    //             console.error('스터디 멤버 리스트 조회 실패:', error);
+    //         }
+    //     };
+
+    //     handleGetStudyMembers();
+    // }, [conferenceData]);
 
     // 사회자 리스트를 가져오는 함수
-    useEffect(() => {
-        const handleGetModerators = async () => {
-            try {
-                const response = await GET(`v1/moderators`, {
-                    params: '',
-                    isAuth: true,
-                    revalidateTime: 10,
-                });
+    // useEffect(() => {
+    //     const handleGetModerators = async () => {
+    //         try {
+    //             const response = await GET(`v1/moderators`, {
+    //                 params: '',
+    //                 isAuth: true,
+    //                 revalidateTime: 10,
+    //             });
 
-                console.log('사회자 리스트 조회 성공:', response.data);
-                const { data } = response.data;
+    //             console.log('사회자 리스트 조회 성공:', response.data);
+    //             const { data } = response.data;
 
-                setModerators(data);
-            } catch (error) {
-                console.error('사회자 리스트 조회 실패:', error);
-            }
-        };
+    //             setModerators(data);
+    //         } catch (error) {
+    //             console.error('사회자 리스트 조회 실패:', error);
+    //         }
+    //     };
 
-        handleGetModerators();
-    }, []);
+    //     handleGetModerators();
+    // }, []);
 
     // 모의 스터디 멤버 데이터 설정
-    useEffect(() => {
-        setStudyMembers([
-            {
-                id: 1,
-                nickname: '박경모',
-                imageId: '/images/group_thumbnail_1.png',
-                role: '팀원',
-                joinDate: '2024-08-04T09:38:48.270Z', // 가입 날짜
-            },
-            {
-                id: 2,
-                nickname: '장철현',
-                imageId: '/images/group_thumbnail_1.png',
-                role: '팀원',
-                joinDate: '2024-08-04T09:38:48.270Z', // 가입 날짜
-            },
-            {
-                id: 3,
-                nickname: '조성우',
-                imageId: '/images/group_thumbnail_1.png',
-                role: '팀원',
-                joinDate: '2024-08-04T09:38:48.270Z', // 가입 날짜
-            },
-        ]);
-    }, []);
+    // useEffect(() => {
+    //     setStudyMembers([
+    //         {
+    //             id: 1,
+    //             nickname: '박경모',
+    //             imageId: '/images/group_thumbnail_1.png',
+    //             role: '팀원',
+    //             joinDate: '2024-08-04T09:38:48.270Z', // 가입 날짜
+    //         },
+    //         {
+    //             id: 2,
+    //             nickname: '장철현',
+    //             imageId: '/images/group_thumbnail_1.png',
+    //             role: '팀원',
+    //             joinDate: '2024-08-04T09:38:48.270Z', // 가입 날짜
+    //         },
+    //         {
+    //             id: 3,
+    //             nickname: '조성우',
+    //             imageId: '/images/group_thumbnail_1.png',
+    //             role: '팀원',
+    //             joinDate: '2024-08-04T09:38:48.270Z', // 가입 날짜
+    //         },
+    //     ]);
+    // }, []);
 
-    const handleOpenConference = async () => {
-        console.log('컨퍼런스 개최 요청 시작');
-        console.log(conferenceData);
-        try {
-            const response = await POST({
-                API: API,
-                endPoint: `${conferenceId}/open`,
-                body: '',
-                isAuth: true,
-            });
+    // const handleOpenConference = async () => {
+    //     console.log('컨퍼런스 개최 요청 시작');
+    //     console.log(conferenceData);
+    //     try {
+    //         const response = await POST({
+    //             API: API,
+    //             endPoint: `${conferenceId}/open`,
+    //             body: '',
+    //             isAuth: true,
+    //         });
 
-            console.log(
-                '컨퍼런스 개최 성공(handleOpenConference):',
-                response.data,
-            );
-            router.push(`/conference/${conferenceId}`);
-        } catch (error) {
-            console.error('컨퍼런스 개최 실패(handleOpenConference):', error);
-        }
-    };
+    //         console.log(
+    //             '컨퍼런스 개최 성공(handleOpenConference):',
+    //             response.data,
+    //         );
+    //         router.push(`/conference/${conferenceId}`);
+    //     } catch (error) {
+    //         console.error('컨퍼런스 개최 실패(handleOpenConference):', error);
+    //     }
+    // };
 
     // const startTime = new Date(conferenceData?.startTime);
     // const finishTime = new Date(conferenceData?.finishTime);
