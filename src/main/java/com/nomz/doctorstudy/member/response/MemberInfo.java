@@ -36,7 +36,7 @@ public class MemberInfo {
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
-                .imageUrl(member.getImage().getImageUrl())
+                .imageUrl(member.getImage() == null ? null : null)
                 .build();
 
     }
