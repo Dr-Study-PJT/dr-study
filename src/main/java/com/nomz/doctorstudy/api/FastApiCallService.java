@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -11,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 public class FastApiCallService implements ExternalApiCallService{
     @Value("${fast-api.url}")
     private String baseUrl;
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private RestTemplate restTemplate;
 
@@ -31,11 +33,21 @@ public class FastApiCallService implements ExternalApiCallService{
 
         try{
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-            return response.getBody();
+            String responseBody = response.getBody();
+            if (responseBody != null) {
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                return jsonNode.get("answer").asText();
+            } else {
+                return null;
+            }
         } catch (ResourceAccessException e){
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+            throw new RuntimeException(e);
         }
+
     }
 
     @Override
