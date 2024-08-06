@@ -25,13 +25,11 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
             [name]: value,
         });
 
-        // 필드가 터치되었음을 표시합니다잉
         setTouched((prevTouched) => ({
             ...prevTouched,
             [name]: true,
         }));
 
-        // 실시간 유효성 검사 수행함니다잉
         let error: string | undefined;
         switch (name) {
             case 'email':
@@ -74,7 +72,8 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
             <div className="w-full min-h-48 h-max flex flex-row justify-around gap-6 items-center">
                 <section className="CONTENT w-full h-full flex flex-col gap-5">
                     <div className="w-full h-full flex flex-col justify-between gap-3 items-center">
-                        <ImageUpload />
+                        <ImageUpload setData={setData} />{' '}
+                        {/* setData prop 전달 */}
                     </div>
 
                     <div className="flex flex-col gap-4">

@@ -4,10 +4,13 @@ export interface IMember {
     nickname: string;
     password: string;
     imageUrl: string;
+    regDate?: string;
+    leavedDate?: string;
+    isLeaved?: boolean;
 }
 
 export interface IMemberData
-    extends Pick<IMember, 'id' | 'email' | 'nickname'> {}
+    extends Pick<IMember, 'id' | 'email' | 'nickname' | 'imageUrl'> {}
 
 export interface IUploadImage {
     File: file | null;

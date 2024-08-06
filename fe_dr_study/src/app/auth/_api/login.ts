@@ -40,9 +40,10 @@ export const login = async (memerData: ILogInReq) => {
     console.log(response.data.data);
     setAccessToken(response.data.data.tokens.accessToken);
     setSessionStorageItem('memberData', {
-        id: response.data.data.member.id,
-        email: response.data.data.member.email,
-        nickname: response.data.data.member.nickname,
+        id: response.data.data.memberInfo.id,
+        email: response.data.data.memberInfo.email,
+        nickname: response.data.data.memberInfo.nickname,
+        imageUrl: response.data.data.memberInfo.imageUrl,
     });
 
     return response.data;

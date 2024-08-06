@@ -1,8 +1,10 @@
+import { GET } from '@/app/api/routeModule';
 import { IConference } from '@/app/group/[group_id]/dummy';
 import Icon from '@/components/atoms/Icon/Icon';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const dummyConferenceListData: IConference[] = [
     {
@@ -92,9 +94,35 @@ const dummyMyGroupListData: Group[] = [
     },
 ];
 
+const getMyGroups = async () => {
+    let response = null;
+    try {
+        const res = await GET('v1/groups/my-groups', {
+            isAuth: true,
+            revalidateTime: 0,
+        });
+        response = res.data.data;
+    } catch (error) {
+        console.error(error);
+        response = dummyMyGroupListData;
+    }
+
+    return response;
+};
+
 const SideBar = () => {
     const router = useRouter();
     const pathname = usePathname();
+    const [groups, setGroups] = useState<Group[]>([]);
+
+    useEffect(() => {
+        const fetchMyGroups = async () => {
+            const myGroups = await getMyGroups();
+            setGroups(myGroups);
+        };
+
+        fetchMyGroups();
+    }, []);
 
     return (
         <div className="SIDEBAR-BOX fixed z-10 left-0 pt-20 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-[#282B30]">
@@ -141,9 +169,11 @@ const SideBar = () => {
                         );
                     })}
                 </div>
-                <div className="VERTICAL-DIVIDER h-[3px] bg-[#424549] rounded w-[70%] self-center ml-1"></div>
+                {dummyConferenceListData && (
+                    <div className="VERTICAL-DIVIDER h-[3px] bg-[#424549] rounded w-[70%] self-center ml-1"></div>
+                )}
                 <div className="LIST-BUTTON-GROUP flex flex-col gap-3">
-                    {dummyMyGroupListData.map((group) => {
+                    {groups?.map((group) => {
                         const isActive = pathname === `/group/${group.id}`;
                         return (
                             <div
@@ -177,7 +207,6 @@ const SideBar = () => {
                         );
                     })}
                 </div>
-                <div className="VERTICAL-DIVIDER h-[3px] bg-[#424549] rounded w-[70%] self-center ml-1"></div>
             </div>
             <div>
                 <Icon

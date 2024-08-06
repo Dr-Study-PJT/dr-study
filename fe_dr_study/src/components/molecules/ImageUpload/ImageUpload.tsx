@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import React, { Dispatch, SetStateAction, useState, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -11,10 +9,10 @@ import { showToast } from '@/utils/toastUtil';
 import 'react-toastify/dist/ReactToastify.css';
 
 const shapeVariants = tv({
-    base: 'w-10 h-10 border-[1.5px] border-dashed border-gray-400 flex items-center justify-center overflow-hidden border-dr-coral-300',
+    base: 'flex items-center justify-center overflow-hidden ',
     variants: {
         shape: {
-            square: '',
+            square: 'rounded-none',
             'rounded-square': 'rounded-lg',
             circle: 'rounded-full',
         },
@@ -25,6 +23,7 @@ interface ImageUploadProps {
     bodyData?: any;
     setBodyData?: Dispatch<SetStateAction<any>>;
     setImageDisplay?: Dispatch<SetStateAction<any>>;
+    setData?: Dispatch<SetStateAction<any>>; // 추가된 prop
     shape?: 'square' | 'rounded-square' | 'circle';
 }
 
@@ -32,6 +31,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     bodyData,
     setBodyData,
     setImageDisplay,
+    setData, // setData prop 받기
     shape = 'circle',
 }) => {
     const { control } = useForm();
@@ -58,8 +58,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             setImageDisplay && setImageDisplay(imageId);
             setImage(URL.createObjectURL(file));
 
-            if (setBodyData) {
-                setBodyData((prevData: any) => ({
+            // formData에 imageId 추가
+            if (setData) {
+                setData((prevData: any) => ({
                     ...prevData,
                     imageId,
                 }));
@@ -68,7 +69,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             showToast('success', '이미지 업로드 성공!');
         } catch (error) {
             console.error('Image upload failed:', error);
-
             showToast('error', '이미지 업로드 실패!');
         }
     };
@@ -102,32 +102,35 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 name="image"
                 control={control}
                 render={({ field }) => (
-                    <div className="p-8 bg-dr-coral-50 rounded-full">
+                    <div className="IMAGE-AREA w-28 h-28 bg-dr-coral-50 rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors duration-300">
                         <div
-                            className={shapeVariants({ shape })}
+                            className={`${shapeVariants({ shape })} relative w-full h-full cursor-pointer`}
                             onDrop={onDrop}
                             onDragOver={preventDefault}
                             onDragEnter={preventDefault}
                             onDragLeave={preventDefault}
                         >
-                            <label className="flex flex-col items-center justify-center cursor-pointer text-dr-coral-300 ">
-                                {image ? (
-                                    <Image
-                                        src={image}
-                                        alt="Uploaded"
-                                        layout="fill"
-                                        objectFit="cover"
-                                    />
-                                ) : (
-                                    <FaPlus className="text-lg " />
-                                )}
-                                <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={onFileChange}
+                            {image ? (
+                                <Image
+                                    src={image}
+                                    alt="Uploaded"
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="rounded-full"
                                 />
-                            </label>
+                            ) : (
+                                <div className="border-dr-coral-300 border-[1.5px] border-dashed rounded-full p-3">
+                                    <label className="flex flex-col items-center justify-center cursor-pointer text-dr-coral-300">
+                                        <FaPlus className="text-lg" />
+                                    </label>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                accept="image/*"
+                                onChange={onFileChange}
+                            />
                         </div>
                     </div>
                 )}

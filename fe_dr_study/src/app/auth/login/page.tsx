@@ -1,17 +1,18 @@
 'use client';
 
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-import { getSessionStorageItem } from '@/utils/sessionStorage';
+
 import { ILogInReq } from '@/interfaces/members';
 import { login } from '../_api/login';
+
+import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { setMemberState } from '@/store/slices/memberSlice';
 import { setIsSigned, TIsSigned } from '@/store/slices/authSlice';
-import useRedirectIfLoggedIn from '@/hooks/common/useRedirectIfLoggedIn';
 
 const loginPageStyles =
     'flex justify-center items-center w-full h-full bg-gray-800';
@@ -24,8 +25,16 @@ const loginFormContainerStyles = 'w-1/2 p-8 my-auto';
 const loginImageContainerStyles = 'w-1/2 relative';
 
 const LoginPage = () => {
-    useRedirectIfLoggedIn();
     const dispatch = useDispatch();
+    const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push('/');
+        }
+    }, [isLoggedIn]);
+
     const [formData, setFormData] = useState<ILogInReq>({
         email: '',
         password: '',
@@ -40,11 +49,12 @@ const LoginPage = () => {
     const onClickLoginSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            await login(formData);
-            const memberData = getSessionStorageItem('memberData');
-            dispatch(setMemberState(memberData));
+            const response = await login(formData);
+            setIsLoggedIn(true);
+            dispatch(setMemberState(response.data.data.memberInfo));
             dispatch(setIsSigned(TIsSigned.T));
         } catch (error) {
+            console.log('에러:' + error);
             setErrors({
                 email: '이메일이 잘못되었습니다.',
                 password: '비밀번호가 잘못되었습니다.',
