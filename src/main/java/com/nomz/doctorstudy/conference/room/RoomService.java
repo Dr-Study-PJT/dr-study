@@ -42,6 +42,10 @@ public class RoomService {
         blockInterpreter.interpret(roomId);
     }
 
+    public void finishRoom(Long roomId) {
+
+    }
+
     public void closeRoom(Long roomId) {
         if (!joinLockMap.containsKey(roomId)) {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_IN_PROCESS);
@@ -70,6 +74,10 @@ public class RoomService {
         addParticipantIdVariable(roomId, member);
 
         return peerIds;
+    }
+
+    public void quitRoom(Member member, Long roomId, String peerId) {
+
     }
 
     private void addParticipantIdVariable(Long roomId, Member member) {

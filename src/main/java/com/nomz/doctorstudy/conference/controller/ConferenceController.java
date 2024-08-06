@@ -309,7 +309,7 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> inviteMemberConference(
-            @PathVariable Long conferenceId,
+            @PathVariable("conferenceId") Long conferenceId,
             @RequestBody InviteMemberConferenceRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -328,7 +328,18 @@ public class ConferenceController {
 
 
     @GetMapping("/{conferenceId}/participants")
-    public ResponseEntity<SuccessResponse<List<MemberInfo>>> getConferenceParticipantsList(
+    @Operation(summary = "Conference 참여자 리스트 조회", description = "Conference 참여자 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 참여자 리스트 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Conference 참여자 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Conference 참여자 리스트 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<MemberInfo>>> getConferenceParticipantList(
             @PathVariable("conferenceId") Long conferenceId
     ) {
         List<MemberInfo> responses = conferenceService.getConferenceParticipantList(conferenceId).stream()
@@ -337,9 +348,38 @@ public class ConferenceController {
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Conference 참여자 조회에 성공했습니다.",
+                        "Conference 참여자 리스트 조회에 성공했습니다.",
                         responses
                 )
         );
     }
+
+
+    @GetMapping("/{conferenceId}/invitees")
+    @Operation(summary = "Conference 초대받은 멤버 리스트 조회", description = "Conference 초대받은 멤버 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 초대받은 멤버 리스트 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Conference 초대받은 멤버 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Conference 초대받은 멤버 리스트 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<MemberInfo>>> getConferenceInvitees(
+            @PathVariable("conferenceId") Long conferenceId
+    ) {
+        List<MemberInfo> responses = conferenceService.getConferenceInvitees(conferenceId).stream()
+                .map(MemberInfo::of)
+                .toList();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 참여자 리스트 조회에 성공했습니다.",
+                        responses
+                )
+        );
+    }
+
 }

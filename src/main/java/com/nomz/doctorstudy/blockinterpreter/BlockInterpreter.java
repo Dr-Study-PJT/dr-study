@@ -36,6 +36,7 @@ public class BlockInterpreter {
 
         ProcessContext processContext = processManager.getProcessContext(processId);
         threadProcessContext.setProcessContext(processContext);
+        threadProcessContext.setProcessStatus(ProcessStatus.RUNNING);
 
         while (!threadProcessContext.isEndOfBlock()) {
             Block commandBlock = threadProcessContext.currentBlock();

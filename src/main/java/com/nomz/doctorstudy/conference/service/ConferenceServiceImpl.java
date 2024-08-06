@@ -1,8 +1,5 @@
 package com.nomz.doctorstudy.conference.service;
 
-import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
-import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
-import com.nomz.doctorstudy.blockinterpreter.ProcessManager;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -10,7 +7,6 @@ import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
 import com.nomz.doctorstudy.conference.entity.ConferenceMember;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
-import com.nomz.doctorstudy.conference.entity.ConferenceMemberInviteId;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
@@ -90,9 +86,10 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     public List<Member> getConferenceParticipantList(Long conferenceId) {
-        List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByConferenceId(conferenceId);
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
-        return conferenceMembers.stream()
+        return conference.getParticipants().stream()
                 .map(ConferenceMember::getMember)
                 .toList();
     }
@@ -114,6 +111,16 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     @Transactional
+    public void closeConference(Long conferenceId) {
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
+        roomService.closeRoom(conferenceId);
+        conference.updateFinishTime(LocalDateTime.now());
+    }
+
+    @Override
+    @Transactional
     public void startConference(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
@@ -122,27 +129,37 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
-    @Transactional
-    public void closeConference(Long conferenceId) {
+    public void finishConference(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
-        conference.updateFinishTime(LocalDateTime.now());
-
-        roomService.closeRoom(conferenceId);
+        roomService.finishRoom(conferenceId);
     }
 
     @Override
     @Transactional
     public List<String> joinConference(Member requester, Long conferenceId, JoinConferenceRequest request) {
-        List<String> peerIds = roomService.joinRoom(requester, conferenceId, request.getPeerId());
-
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        if (!(requester.getId().equals(conference.getHost().getId())) &&
+                !conference.getInvitees().stream().
+                        map(ConferenceMemberInvite::getMember).
+                        toList().contains(requester))
+        {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_INVITED);
+        }
+
         conferenceMemberRepository.save(ConferenceMember.of(conference, requester));
 
+        List<String> peerIds = roomService.joinRoom(requester, conferenceId, request.getPeerId());
+
         return peerIds;
+    }
+
+    @Override
+    public void quitConference(Member requester, Long conferenceId, QuitConferenceRequest request) {
+        roomService.quitRoom(requester, conferenceId, request.getPeerId());
     }
 
     @Override
@@ -159,11 +176,17 @@ public class ConferenceServiceImpl implements ConferenceService {
         Member member = memberRepository.findById(inviteeId)
                 .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "초대할 멤버의 아이디를 찾을 수 없습니다."));
 
-        ConferenceMemberInvite conferenceMemberInvite = ConferenceMemberInvite.builder()
-                .id(new ConferenceMemberInviteId(conferenceId, inviteeId))
-                .conference(conference)
-                .member(member)
-                .build();
+        ConferenceMemberInvite conferenceMemberInvite = ConferenceMemberInvite.of(conference, member);
         conferenceMemberInviteRepository.save(conferenceMemberInvite);
+    }
+
+    @Override
+    public List<Member> getConferenceInvitees(Long conferenceId) {
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
+        return conference.getInvitees().stream()
+                .map(ConferenceMemberInvite::getMember)
+                .toList();
     }
 }
