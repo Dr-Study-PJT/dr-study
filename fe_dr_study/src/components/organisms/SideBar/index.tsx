@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import React from 'react';
 
-const dummyConferenceListData: IConference[] = [
+export const dummyConferenceListData: IConference[] = [
     {
         id: 1,
         hostId: 1,

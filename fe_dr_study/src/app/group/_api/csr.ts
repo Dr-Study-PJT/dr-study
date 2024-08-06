@@ -1,7 +1,7 @@
 import { groupAPI as API } from '@/app/api/axiosInstanceManager';
 import { ICreateGroupReq } from '../new/_types/type';
 import { GET, POST } from '@/app/api/routeModule';
-import { Conference } from '../[group_id]/dummy';
+import { IConference } from '../[group_id]/dummy';
 
 export const createGroup = async (createGroupData: ICreateGroupReq) => {
     try {
@@ -17,7 +17,7 @@ export const createGroup = async (createGroupData: ICreateGroupReq) => {
     }
 };
 
-export const getConferenceList = async (conferenceData: Conference[]) => {
+export const getConferenceList = async (conferenceData: IConference[]) => {
     try {
         const response = await GET('v1/conferences', {
             isAuth: true,

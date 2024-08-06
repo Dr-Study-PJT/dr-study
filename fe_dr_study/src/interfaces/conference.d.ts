@@ -14,6 +14,7 @@ export interface ConferenceMember {
     id: number;
     nickname: string;
     imageId: string;
+    imageUrl: string;
     role: string;
     joinDate: string;
 }
