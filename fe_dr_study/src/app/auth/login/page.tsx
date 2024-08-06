@@ -51,7 +51,9 @@ const LoginPage = () => {
         try {
             const response = await login(formData);
             setIsLoggedIn(true);
-            dispatch(setMemberState(response.data.data.memberInfo));
+
+            console.log(response);
+            dispatch(setMemberState(response.data.memberInfo));
             dispatch(setIsSigned(TIsSigned.T));
         } catch (error) {
             console.log('에러:' + error);

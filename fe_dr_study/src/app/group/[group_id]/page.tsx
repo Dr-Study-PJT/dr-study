@@ -11,7 +11,6 @@ export default async function GroupDetailPage({
 }: {
     params: { group_id: string };
 }) {
-    // const router = useRouter();
     const groupId = params.group_id;
 
     const groupWithMembers = await fetchGroupWithMembersData(groupId);
@@ -51,7 +50,9 @@ export default async function GroupDetailPage({
                                     스터디원 목록
                                 </Label>
                                 <div className="text-dr-body-4 text-dr-gray-100">
-                                    6 / 8
+                                    {groupWithMembers.members.length &&
+                                        groupWithMembers.members.length + ' /'}
+                                    {' ' + groupWithMembers.memberCapacity}
                                 </div>
                                 <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
                                     {groupWithMembers?.members

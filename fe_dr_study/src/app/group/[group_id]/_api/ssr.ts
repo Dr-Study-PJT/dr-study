@@ -26,7 +26,7 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
         LeavedDate: string;
         imageUrl: string;
     }
-    
+
     console.log('페칭시도');
 
     try {
@@ -36,6 +36,8 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
             isAuth: false,
             revalidateTime: 0,
         });
+        const groupData = response_group.data;
+        console.log(groupData);
 
         // 그룹 멤버 정보 요청
         const response_groupMembers = await GET(
@@ -46,8 +48,10 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
                 revalidateTime: 30,
             },
         );
-        const groupData = response_group.data;
-        const groupMembersData = await response_groupMembers.json();
+
+        // console.log(response_groupMembers.members);
+
+        const groupMembersData = response_groupMembers;
         const { data: members } = groupMembersData;
 
         // 데이터 통합
@@ -55,6 +59,7 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
             ...groupData,
             members: members || [], // members가 없을 경우 빈 배열로 설정
         };
+        console.log('groupWithMembers======');
         console.log(groupWithMembers);
 
         return groupWithMembers;

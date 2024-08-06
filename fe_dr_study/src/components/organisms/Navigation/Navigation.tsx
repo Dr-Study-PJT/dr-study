@@ -16,6 +16,7 @@ import {
 import { GET } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import Image from 'next/image';
 
 const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const pathname = usePathname();
@@ -24,6 +25,8 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
     const isSigned = useSelector((state: RootState) => state.auth.isSigned);
     const member = useSelector((state: RootState) => state.member);
+
+    const memberData = getSessionStorageItem('memberData');
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -53,6 +56,9 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
         const memberData = getSessionStorageItem('memberData');
         if (memberData) {
             dispatch(setMemberState(memberData));
+            dispatch(setIsSigned(TIsSigned.T));
+        } else {
+            dispatch(setIsSigned(TIsSigned.F));
         }
     }, [dispatch]);
 
@@ -135,14 +141,16 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
             <div>
                 {isSigned === TIsSigned.T ? (
                     <div>
-                        <div className="flex">
+                        <div className="flex items-center">
                             <div className="relative">
-                                <img
-                                    src="/path/to/profile-image.jpg"
-                                    alt="Profile"
-                                    className="w-10 h-10 rounded-full cursor-pointer"
-                                    onClick={toggleDropdown}
-                                />
+                                <div className="relative overflow-hidden w-7 h-7 rounded-full cursor-pointer">
+                                    <Image
+                                        alt="avatar"
+                                        src={memberData?.imageUrl}
+                                        layout="fill"
+                                        onClick={toggleDropdown}
+                                    />
+                                </div>
                                 {dropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-20">
                                         <Button
