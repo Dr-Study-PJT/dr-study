@@ -1,0 +1,103 @@
+'use client';
+
+import Link from 'next/link';
+import {
+    FaAngleDoubleLeft,
+    FaAngleLeft,
+    FaAngleRight,
+    FaAngleDoubleRight,
+} from 'react-icons/fa';
+
+export const Pagination = ({
+    currentPage,
+    currentTag,
+    totalPage,
+    pageSize,
+    basePath,
+}: {
+    currentPage: number;
+    currentTag?: string;
+    totalPage: number;
+    pageSize: number;
+    basePath: string;
+}) => {
+    let optionalQueryString = `size=${pageSize}`;
+
+    if (currentTag) {
+        optionalQueryString += `&tag=${currentTag}`;
+    }
+
+    const maxButtons = 5;
+    let startPage = Math.floor((currentPage - 1) / maxButtons) * maxButtons + 1;
+    let endPage = Math.min(startPage + maxButtons - 1, totalPage);
+
+    const pagingButtons = [];
+    for (let i = startPage; i <= endPage; i++) {
+        pagingButtons.push(i);
+    }
+
+    console.log(currentPage);
+
+    return (
+        <>
+            {totalPage > 1 && (
+                <div className="mt-4 flex justify-center w-full h-full bg-dr-dark-300 py-1 rounded-md border-[1px] border-dr-gray-300">
+                    <div className="flex space-x-4">
+                        {currentPage > maxButtons && (
+                            <Link
+                                href={`${basePath}?page=${startPage - maxButtons}&${optionalQueryString}`}
+                            >
+                                <button className="text-dr-gray-400 h-full text-center hover:text-dr-white transition-colors duration-150">
+                                    <FaAngleDoubleLeft />
+                                </button>
+                            </Link>
+                        )}
+                        {currentPage > 1 && (
+                            <Link
+                                href={`${basePath}?page=${currentPage - 1}&${optionalQueryString}`}
+                            >
+                                <button className="text-dr-gray-400 h-full text-center hover:text-dr-white transition-colors duration-150">
+                                    <FaAngleLeft />
+                                </button>
+                            </Link>
+                        )}
+                        {pagingButtons.map((page, idx) => (
+                            <Link
+                                href={`${basePath}?page=${page}&${optionalQueryString}`}
+                                key={idx}
+                            >
+                                <button
+                                    className={`w-6 text-center transition-colors duration-150 ${
+                                        parseInt(`${currentPage}`) === page
+                                            ? 'text-dr-white'
+                                            : 'text-dr-gray-400 hover:text-dr-white'
+                                    }`}
+                                >
+                                    {page}
+                                </button>
+                            </Link>
+                        ))}
+                        {currentPage < totalPage && (
+                            <Link
+                                href={`${basePath}?page=${parseInt(`${currentPage}`) + 1}&${optionalQueryString}`}
+                            >
+                                <button className="text-dr-gray-400 h-full text-center hover:text-dr-white transition-colors duration-150">
+                                    <FaAngleRight />
+                                </button>
+                            </Link>
+                        )}
+                        {endPage < totalPage && (
+                            <Link
+                                href={`${basePath}?page=${endPage + 1}&${optionalQueryString}`}
+                            >
+                                <button className="text-dr-gray-400 h-full text-center hover:text-dr-white transition-colors duration-150">
+                                    <FaAngleDoubleRight />
+                                </button>
+                            </Link>
+                        )}
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};

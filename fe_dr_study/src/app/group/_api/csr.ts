@@ -22,6 +22,8 @@ export const getConferenceList = async (conferenceData: IConference[]) => {
         const response = await GET('v1/conferences', {
             isAuth: true,
         });
+        console.log('컨퍼런스 가져오기 성공');
+        console.log(response.data);
         return response.data;
     } catch {
         console.log('컨퍼런스 리스트 가져오기 실패');

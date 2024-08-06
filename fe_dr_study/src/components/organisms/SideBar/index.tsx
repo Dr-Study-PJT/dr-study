@@ -11,7 +11,7 @@ export const dummyConferenceListData: IConference[] = [
         id: 1,
         hostId: 1,
         studyGroupId: 1,
-        title: '첫 번째 컨퍼런스',
+        title: '첫 번째 더미 컨퍼런스',
         memberCapacity: 10,
         startTime: '2024-08-05T18:42:17.377Z',
         finishTime: null,
@@ -32,7 +32,7 @@ export const dummyConferenceListData: IConference[] = [
         id: 2,
         hostId: 2,
         studyGroupId: 2,
-        title: '두 번째 컨퍼런스',
+        title: '두 번째 더미 컨퍼런스',
         memberCapacity: 15,
         startTime: '2024-08-06T10:30:00.000Z',
         finishTime: null,
@@ -110,10 +110,36 @@ const getMyGroups = async () => {
     return response;
 };
 
+const fetchConferences = async ({
+    memberId,
+    lowerBoundDate,
+    upperBoundDate,
+}: {
+    memberId: string;
+    lowerBoundDate: string;
+    upperBoundDate: string;
+}) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?memberId=${memberId}&lowerBoundDate=${lowerBoundDate}&upperBoundDate=${upperBoundDate}`,
+        );
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log(data);
+        return data.data;
+    } catch (error) {
+        console.error('Error fetching conferences:', error);
+        return dummyConferenceListData; // 실패 시 더미 데이터 사용
+    }
+};
+
 const SideBar = () => {
     const router = useRouter();
     const pathname = usePathname();
     const [groups, setGroups] = useState<Group[]>([]);
+    const [conferences, setConferences] = useState<IConference[]>([]);
 
     useEffect(() => {
         const fetchMyGroups = async () => {
@@ -122,13 +148,32 @@ const SideBar = () => {
         };
 
         fetchMyGroups();
+
+        const loadConferences = async () => {
+            const memberData = getSessionStorageItem('memberData');
+            const memberId = memberData?.id;
+            console.log(memberData);
+            const now = new Date();
+            const lowerBoundDate = new Date(now.setDate(now.getDate() - 1))
+                .toISOString()
+                .slice(0, 19);
+            const upperBoundDate = new Date().toISOString().slice(0, 19);
+            const fetchedConferences = await fetchConferences({
+                memberId,
+                lowerBoundDate,
+                upperBoundDate,
+            });
+            setConferences(fetchedConferences);
+        };
+
+        loadConferences();
     }, []);
 
     return (
         <div className="SIDEBAR-BOX fixed z-10 left-0 pt-20 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-[#282B30]">
             <div className="flex flex-col gap-3">
                 <div className="LIST-BUTTON-CONFERENCE flex flex-col gap-3">
-                    {dummyConferenceListData.map((conference) => {
+                    {conferences.map((conference) => {
                         const isActive =
                             pathname === `/conference/${conference.id}`;
                         return (
@@ -169,7 +214,7 @@ const SideBar = () => {
                         );
                     })}
                 </div>
-                {dummyConferenceListData && (
+                {conferences && (
                     <div className="VERTICAL-DIVIDER h-[3px] bg-[#424549] rounded w-[70%] self-center ml-1"></div>
                 )}
                 <div className="LIST-BUTTON-GROUP flex flex-col gap-3">
