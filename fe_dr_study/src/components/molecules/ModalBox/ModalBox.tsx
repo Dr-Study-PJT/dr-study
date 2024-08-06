@@ -1,7 +1,8 @@
 'use client';
 
 import Icon from '@/components/atoms/Icon/Icon';
-import CreateConferenceForm from '@/components/organisms/CreateConferenceForm/CreateConferenceForm';
+import CreateConferenceForm from '@/components/organisms/forms/CreateConferenceForm/CreateConferenceForm';
+import CreateConferenceProgress from '@/components/organisms/forms/CreateConferenceForm/CreateConferenceProgress';
 import { RootState } from '@/store';
 import { setCloseModal, setIsModalOpen } from '@/store/slices/modalSlice';
 import { usePathname } from 'next/navigation';
@@ -33,7 +34,7 @@ const ModalBox = ({}: ModalBoxProps) => {
     const renderModalContent = () => {
         switch (modalContent) {
             case 'CreateConferenceForm':
-                return <CreateConferenceForm />;
+                return <CreateConferenceProgress />;
             default:
                 return null;
         }
@@ -45,7 +46,7 @@ const ModalBox = ({}: ModalBoxProps) => {
             onClick={closeModal}
         >
             <div
-                className="relative min-w-[50%] bg-gray-800 text-white border-2 border-blue-500 rounded-lg p-5 max-w-lg mx-auto shadow-lg"
+                className="relative bg-gray-800 text-white  rounded-lg  max-w-lg mx-auto shadow-lg min-w[50%]"
                 onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 방지
             >
                 <button

@@ -234,6 +234,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
                 <div className="fixed left-0 bottom-0 w-full h-[10%] ">
                     <ConferenceControlBar
+                        conferenceId={conferenceId}
                         localStream={localStream.current}
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}
