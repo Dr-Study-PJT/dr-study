@@ -4,10 +4,7 @@ import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.conference.entity.Conference;
-import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
-import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
-import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
-import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
+import com.nomz.doctorstudy.conference.request.*;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
 import com.nomz.doctorstudy.member.entity.Member;
@@ -159,9 +156,10 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> openConference(
-            @PathVariable("conference_id") Long conferenceId
+            @PathVariable("conference_id") Long conferenceId,
+            @RequestBody OpenConferenceRequest request
     ) {
-        conferenceService.openConference(conferenceId);
+        conferenceService.openConference(conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -209,7 +207,7 @@ public class ConferenceController {
     }
 
 
-    @PostMapping("/{conference_id}/finish")
+    @PostMapping("/{conference_id}/close")
     @Operation(summary = "Conference 종료", description = "Conference를 종료합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conference 종료 성공", useReturnTypeSchema = true),
@@ -232,10 +230,10 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<?>> finishConference(
+    public ResponseEntity<SuccessResponse<?>> closeConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
-        conferenceService.finishConference(conferenceId);
+        conferenceService.closeConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(

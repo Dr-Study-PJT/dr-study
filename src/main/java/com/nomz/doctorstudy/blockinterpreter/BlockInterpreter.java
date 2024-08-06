@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -36,7 +35,7 @@ public class BlockInterpreter {
         log.info("processId={} started to run", processId);
 
         ProcessContext processContext = processManager.getProcessContext(processId);
-        threadProcessContext.init(processContext);
+        threadProcessContext.setProcessContext(processContext);
 
         while (!threadProcessContext.isEndOfBlock()) {
             Block commandBlock = threadProcessContext.currentBlock();
@@ -104,11 +103,10 @@ public class BlockInterpreter {
             log.info("Block Script Programme\n{}", threadProcessContext.getProgramme());
         }
 
-        threadProcessContext.close();
+        threadProcessContext.setProcessStatus(ProcessStatus.FINISH);
+        threadProcessContext.releaseProcessContext();
 
         log.info("processId={} ended to run", processId);
-
-        close(processId);
     }
 
     private String processEscape(String value) {
@@ -156,10 +154,6 @@ public class BlockInterpreter {
         }
 
         return labelMap;
-    }
-
-    public void close(Long processId) {
-        processManager.removeProcess(processId);
     }
 
     @AllArgsConstructor

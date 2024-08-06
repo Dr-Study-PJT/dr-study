@@ -9,16 +9,24 @@ public class ThreadProcessContext {
     private final ThreadLocal<ProcessContext> threadProcessContext = new ThreadLocal<>();
 
 
-    public void init(ProcessContext processContext) {
+    public void setProcessContext(ProcessContext processContext) {
         this.threadProcessContext.set(processContext);
     }
 
-    public void close() {
+    public void releaseProcessContext() {
         threadProcessContext.remove();
     }
 
     public long getProcessId() {
         return threadProcessContext.get().getId();
+    }
+
+    public void setProcessStatus(ProcessStatus status) {
+        threadProcessContext.get().setStatus(status);
+    }
+
+    public ProcessStatus getProcessStatus() {
+        return threadProcessContext.get().getStatus();
     }
 
     public int getLabelIndex(String name) {

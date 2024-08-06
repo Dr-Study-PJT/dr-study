@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
+import com.nomz.doctorstudy.member.entity.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,36 +15,54 @@ public class ProcessContext {
     private int cursor;
     @Getter @Setter
     private int phase;
-    private final List<Block> commandBlocks;
+    @Getter @Setter
+    private ProcessStatus status;
     private int scopeDepth;
-    private final List<Map<String, Object>> variableMapStack;
-    private final Map<String, Integer> labelMap;
-    private final List<Transcript> transcripts;
-    @Getter
-    private final List<String> programme;
-    private final List<Long> participantMemberIdList;
 
-    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> varMap, Map<String, Integer> labelMap) {
+    private final List<Block> commandBlocks;
+    private final Map<String, Object> initVariableMap;
+    private final Map<String, Integer> labelMap;
+    private final List<Map<String, Object>> variableMapStack = new ArrayList<>();
+    private final List<Transcript> transcripts = new ArrayList<>();
+
+    @Getter
+    private final List<String> programme = new ArrayList<>();
+    private final List<Long> participantMemberIdList = new ArrayList<>();
+
+    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap) {
         this.id = id;
         this.commandBlocks = commandBlocks;
+        this.initVariableMap = new HashMap<>(initVarMap);
+        this.labelMap = new HashMap<>(labelMap);
+    }
+
+    public void initialize() {
+        this.status = ProcessStatus.READY;
         this.cursor = 0;
         this.scopeDepth = 0;
-        this.variableMapStack = new ArrayList<>();
-        this.variableMapStack.add(new HashMap<>(varMap)); // TODO: deepCopy 필요 여부 확인하기
-        this.labelMap = new HashMap<>(labelMap);
-        this.transcripts = new ArrayList<>();
-        this.programme = new ArrayList<>();
-        this.participantMemberIdList = new ArrayList<>();
-        participantMemberIdList.add(0L);
+
+        this.variableMapStack.clear();
+        this.variableMapStack.add(new HashMap<>(initVariableMap));
+
+        this.transcripts.clear();
+        this.programme.clear();
+
+        this.participantMemberIdList.clear();
+        this.participantMemberIdList.add(0L);
+
+        declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), 0);
     }
 
-    public int addParticipantMemberId(Long memberId) {
-        participantMemberIdList.add(memberId);
-        return participantMemberIdList.size() - 1;
-    }
+    public void addParticipant(Member member) {
+        participantMemberIdList.add(member.getId());
+        int participantId = participantMemberIdList.size() - 1;
 
-    public Long getParticipantMemberId(int participant_id) {
-        return participantMemberIdList.get(participant_id);
+        String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + participantId;
+        declareVariable(variableName);
+        setVariable(variableName, member.getNickname());
+
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), (int) getVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken()) + 1);
     }
 
     public void increaseScopeDepth() {
@@ -56,7 +76,7 @@ public class ProcessContext {
 
     public void declareVariable(String key) {
         if (variableMapStack.get(scopeDepth).containsKey(key)) {
-            throw new RuntimeException("이미 키 가지고 있음"); //TODO: 예외 추상화 필요
+            throw new BlockException(BlockErrorCode.VARIABLE_ALREADY_DECLARED);
         }
         variableMapStack.get(scopeDepth).put(key, null);
     }

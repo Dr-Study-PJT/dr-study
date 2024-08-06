@@ -5,6 +5,7 @@ import com.nomz.doctorstudy.blockinterpreter.BlockErrorCode;
 import com.nomz.doctorstudy.blockinterpreter.BlockException;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import com.nomz.doctorstudy.common.audio.AudioUtils;
 import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
@@ -59,7 +60,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
             throw new BlockException(BlockErrorCode.PROCESS_INTERRUPTED, e);
         }
 
-        Object numOfParticipantObj = threadProcessContext.getVariable("num_of_participant");
+        Object numOfParticipantObj = threadProcessContext.getVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
         if (numOfParticipantObj == null) return null;
 
         int numOfParticipant = (int) numOfParticipantObj;
