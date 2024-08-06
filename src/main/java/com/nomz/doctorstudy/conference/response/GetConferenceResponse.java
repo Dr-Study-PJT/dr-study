@@ -26,6 +26,9 @@ public class GetConferenceResponse {
     @Schema(description = "컨퍼런스 제목", example = "컨퍼런스 제목")
     private final String title;
 
+    @Schema(description = "컨퍼런스 주제", example = "컨퍼런스 주제")
+    private final String subject;
+    
     @Schema(description = "컨퍼런스 최대 인원수", example = "10")
     private final Integer memberCapacity;
 
@@ -47,6 +50,7 @@ public class GetConferenceResponse {
                 .hostId(conference.getHost().getId())
                 .studyGroupId(conference.getStudyGroup().getId())
                 .title(conference.getTitle())
+                .subject(conference.getSubject())
                 .memberCapacity(conference.getMemberCapacity())
                 .startTime(conference.getStartTime())
                 .finishTime(conference.getFinishTime())
