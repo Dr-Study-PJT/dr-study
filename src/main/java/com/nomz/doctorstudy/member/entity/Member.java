@@ -40,7 +40,7 @@ public class Member {
     private LocalDateTime regDate;
 
     @ManyToOne
-    @JoinColumn(name = "image_id", nullable = false)
+    @JoinColumn(name = "image_id")
     private Image image;
 
     @ColumnDefault("0")
