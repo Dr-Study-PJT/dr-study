@@ -4,10 +4,7 @@ import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.conference.entity.Conference;
-import com.nomz.doctorstudy.conference.request.CreateConferenceRequest;
-import com.nomz.doctorstudy.conference.request.GetConferenceListRequest;
-import com.nomz.doctorstudy.conference.request.InviteMemberConferenceRequest;
-import com.nomz.doctorstudy.conference.request.JoinConferenceRequest;
+import com.nomz.doctorstudy.conference.request.*;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
 import com.nomz.doctorstudy.member.entity.Member;
@@ -159,9 +156,10 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> openConference(
-            @PathVariable("conference_id") Long conferenceId
+            @PathVariable("conference_id") Long conferenceId,
+            @RequestBody OpenConferenceRequest request
     ) {
-        conferenceService.openConference(conferenceId);
+        conferenceService.openConference(conferenceId, request);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -209,7 +207,7 @@ public class ConferenceController {
     }
 
 
-    @PostMapping("/{conference_id}/finish")
+    @PostMapping("/{conference_id}/close")
     @Operation(summary = "Conference 종료", description = "Conference를 종료합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conference 종료 성공", useReturnTypeSchema = true),
@@ -232,10 +230,10 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<?>> finishConference(
+    public ResponseEntity<SuccessResponse<?>> closeConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
-        conferenceService.finishConference(conferenceId);
+        conferenceService.closeConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -311,7 +309,7 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> inviteMemberConference(
-            @PathVariable Long conferenceId,
+            @PathVariable("conferenceId") Long conferenceId,
             @RequestBody InviteMemberConferenceRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -330,7 +328,18 @@ public class ConferenceController {
 
 
     @GetMapping("/{conferenceId}/participants")
-    public ResponseEntity<SuccessResponse<List<MemberInfo>>> getConferenceParticipantsList(
+    @Operation(summary = "Conference 참여자 리스트 조회", description = "Conference 참여자 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 참여자 리스트 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Conference 참여자 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Conference 참여자 리스트 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<MemberInfo>>> getConferenceParticipantList(
             @PathVariable("conferenceId") Long conferenceId
     ) {
         List<MemberInfo> responses = conferenceService.getConferenceParticipantList(conferenceId).stream()
@@ -339,9 +348,38 @@ public class ConferenceController {
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Conference 참여자 조회에 성공했습니다.",
+                        "Conference 참여자 리스트 조회에 성공했습니다.",
                         responses
                 )
         );
     }
+
+
+    @GetMapping("/{conferenceId}/invitees")
+    @Operation(summary = "Conference 초대받은 멤버 리스트 조회", description = "Conference 초대받은 멤버 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 초대받은 멤버 리스트 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Conference 초대받은 멤버 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Conference 초대받은 멤버 리스트 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<MemberInfo>>> getConferenceInvitees(
+            @PathVariable("conferenceId") Long conferenceId
+    ) {
+        List<MemberInfo> responses = conferenceService.getConferenceInvitees(conferenceId).stream()
+                .map(MemberInfo::of)
+                .toList();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 참여자 리스트 조회에 성공했습니다.",
+                        responses
+                )
+        );
+    }
+
 }

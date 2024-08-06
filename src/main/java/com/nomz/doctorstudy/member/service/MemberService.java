@@ -38,8 +38,11 @@ public class MemberService {
 			throw new MemberException(MemberErrorCode.MEMBER_EMAIL_EXIST_ERROR);
 		}
 
-		Image image = imageRepository.findById(userRegisterInfo.getImage_id())
-				.orElseThrow(() -> new FileException(FileErrorCode.IMAGE_NOT_FOUND));
+		Image image = null;
+		if (userRegisterInfo.getImageId() != null) {
+			image = imageRepository.findById(userRegisterInfo.getImageId())
+					.orElseThrow(() -> new FileException(FileErrorCode.IMAGE_NOT_FOUND));
+		}
 
 		Member member = Member.builder()
 				.email(userRegisterInfo.getEmail())

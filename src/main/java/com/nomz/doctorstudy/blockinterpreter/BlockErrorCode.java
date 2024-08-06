@@ -15,7 +15,8 @@ public enum BlockErrorCode implements ErrorCode {
     PROCESS_ALREADY_EXISTS(HttpStatus.INTERNAL_SERVER_ERROR, "Process가 이미 존재합니다."),
     PROCESS_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Process를 찾을 수 없습니다."),
 
-    // Script
+    // Script,
+    VARIABLE_ALREADY_DECLARED(HttpStatus.BAD_REQUEST, "스코프 내에 이미 같은 이름의 변수가 존재합니다."),
     TRANSCRIPT_INDEX_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, "요청한 발화 내역 인덱스가 범위 밖에 있습니다."),
     VALUE_BLOCK_NOT_FOUND(HttpStatus.BAD_REQUEST, "값 블록이 위치해야 합니다."),
     COMMAND_BLOCK_NOT_FOUND(HttpStatus.BAD_REQUEST, "명령 블록이 위치해야 합니다."),

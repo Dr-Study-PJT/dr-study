@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ConferenceErrorCode implements ErrorCode {
+    CONFERENCE_NOT_INVITED(HttpStatus.FORBIDDEN, "Conference에 초대받지 않은 멤버입니다."),
     CONFERENCE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "해당하는 Conference를 찾을 수 없습니다."),
     CONFERENCE_NOT_IN_PROCESS(HttpStatus.BAD_REQUEST, "개최된 Conference가 아닙니다."),
     CONFERENCE_ALREADY_OPENED(HttpStatus.BAD_REQUEST, "이미 개최된 Conference입니다.")

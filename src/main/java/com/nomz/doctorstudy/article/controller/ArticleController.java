@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.article.controller;
 
+import com.nomz.doctorstudy.article.dto.CommentSummary;
 import com.nomz.doctorstudy.article.entity.Article;
 import com.nomz.doctorstudy.article.request.CreateArticleRequest;
 import com.nomz.doctorstudy.article.request.UpdateArticleRequest;
@@ -8,6 +9,7 @@ import com.nomz.doctorstudy.article.response.GetArticleResponse;
 import com.nomz.doctorstudy.article.service.ArticleService;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -17,6 +19,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -127,16 +131,80 @@ public class ArticleController {
                 .map(articleTag -> articleTag.getTag().getName())
                 .collect(Collectors.toList());
 
+        List<CommentSummary> commentSummaries = article.getComments().stream()
+                .map(comment -> CommentSummary.builder()
+                        .id(comment.getId())
+                        .content(comment.getContent())
+                        .memberInfo(MemberInfo.of(comment.getMember()))
+                        .createdAt(comment.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
 
         GetArticleResponse response = GetArticleResponse.builder()
                 .title(article.getTitle())
                 .content(article.getContent())
                 .createdAt(article.getCreatedAt())
                 .viewCount(article.getViewCount())
-                .writerNickname(article.getWriter().getNickname())
-                .comments(article.getComments())
+                .memberInfo(MemberInfo.of(article.getWriter()))
+                .comments(commentSummaries)
                 .tags(tags)
                 .build();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Article 조회에 성공했습니다.",
+                        response
+                )
+        );
+    }
+
+    @GetMapping("/test/{articleId}")
+    @Operation(summary = "Article 조회(Auth 없는 테스트 버전)", description = "Article을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Article 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 입력입니다.",
+                        "errors": {
+                            "title": "제목은 1자이상 64자 이하여야 합니다.",
+                            "content": "본문을 입력하세요."
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "인증에 실패했습니다.",
+                        "errors": { }
+                    }
+                    """)))
+
+    })
+    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticleNoAuth(@PathVariable("articleId") Long articleId){
+        Article article = articleService.getArticleNoAuth(articleId);
+
+        List<String> tags = article.getArticleTags().stream()
+                .map(articleTag -> articleTag.getTag().getName())
+                .collect(Collectors.toList());
+
+        List<CommentSummary> commentSummaries = article.getComments().stream()
+                .map(comment -> CommentSummary.builder()
+                        .id(comment.getId())
+                        .content(comment.getContent())
+                        .memberInfo(MemberInfo.of(comment.getMember()))
+                        .createdAt(comment.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        GetArticleResponse response = GetArticleResponse.builder()
+                .title(article.getTitle())
+                .content(article.getContent())
+                .createdAt(article.getCreatedAt())
+                .viewCount(article.getViewCount())
+                .memberInfo(MemberInfo.of(article.getWriter()))
+                .comments(commentSummaries)
+                .tags(tags)
+                .build();
+
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Article 조회에 성공했습니다.",
@@ -176,4 +244,35 @@ public class ArticleController {
                 )
         );
     }
+
+//    @GetMapping("/{groupId}")
+//    @Operation(summary = "Study Group Article List 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Article 리스트 조회 성공", useReturnTypeSchema = true),
+//            @ApiResponse(responseCode = "400", description = "Article 리스트 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+//                    {
+//                        "message": "Article 리스트 조회에 실패했습니다.",
+//                        "errors": {
+//                        }
+//                    }
+//                    """)))
+//    })
+//    public ResponseEntity<SuccessResponse<Page<GetArticleListResponse>>> getArticleList(
+//            @PathVariable("groupId") Long groupId,
+//            @RequestParam(name="page", defaultValue = "1") int page,
+//            @RequestParam(name="size", defaultValue = "10") int size){
+//        Pageable pageable = PageRequest.of(page-1, size);
+//        Page<Article> articlePage = articleService.getArticleList(groupId, pageable);
+//
+//        Page<GetArticleResponse> responsePage = articlePage.map(GetArticleResponse::of);
+//
+//        return ResponseEntity.ok(
+//                new SuccessResponse<>(
+//                        "Article 리스트 조회에 성공했습니다.",
+//                        responsePage
+//                )
+//        );
+//
+//    }
+
 }

@@ -24,11 +24,26 @@ public class ConferenceMember {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    private void updateConference(Conference conference) {
+        this.conference = conference;
+        conference.getParticipants().add(this);
+    }
+
+    private void updateMember(Member member) {
+        this.member = member;
+    }
+
     public static ConferenceMember of(Conference conference, Member member) {
-        return ConferenceMember.builder()
+        ConferenceMember conferenceMember = ConferenceMember.builder()
                 .id(new ConferenceMemberId(conference.getId(), member.getId()))
                 .conference(conference)
                 .member(member)
                 .build();
+
+        conferenceMember.updateConference(conference);
+        conferenceMember.updateMember(member);
+
+        return conferenceMember;
+
     }
 }

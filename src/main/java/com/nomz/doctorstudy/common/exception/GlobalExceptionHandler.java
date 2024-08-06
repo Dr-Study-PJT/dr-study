@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.common.exception;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
+@Order(999)
 public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<?> handleCustomException(BusinessException ex) {

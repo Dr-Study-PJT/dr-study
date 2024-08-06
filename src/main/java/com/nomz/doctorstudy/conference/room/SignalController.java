@@ -3,10 +3,7 @@ package com.nomz.doctorstudy.conference.room;
 import com.nomz.doctorstudy.api.ExternalApiCallService;
 import com.nomz.doctorstudy.blockinterpreter.*;
 import com.nomz.doctorstudy.common.audio.AudioUtils;
-import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
-import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
-import com.nomz.doctorstudy.conference.room.signal.ParticipantAudioSignal;
-import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
+import com.nomz.doctorstudy.conference.room.signal.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +20,8 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Room API", description = "Room 제어 API 입니다.")
-public class RoomController {
+public class SignalController {
     private final SignalTransmitter signalTransMitter;
-    private final ScriptPreprocessor scriptPreprocessor;
     private final BlockInterpreter blockInterpreter;
     private final ExternalApiCallService externalApiCallService;
     private final ProcessManager processManager;
@@ -38,7 +34,7 @@ public class RoomController {
     }
 
     @MessageMapping("/signal/{conferenceId}/participant-audio")
-    public void handleSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
+    public void handleParticipantAudioSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
         log.debug("signal: {} from conference: {}", signal, conferenceId);
 
         byte[] rawAudioData = Base64.getDecoder().decode(signal.getRawAudio());
@@ -50,11 +46,16 @@ public class RoomController {
         //
         String testSrcAudio = "audio/participant_audio";
         AudioUtils.saveFile(rawAudioData, testSrcAudio);
-        AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");
-        AudioUtils.playAudio(testSrcAudio + ".wav");
+        //AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");
+        //AudioUtils.playAudio(testSrcAudio + ".wav");
         //
 
         ProcessLockManager.awaken(conferenceId);
+    }
+
+    @MessageMapping("/signal/{conferenceId}/heartbeat")
+    public void handleHeartBeatSignal(@DestinationVariable("conferenceId") Long conferenceId, HeartBeatSignal signal) {
+        log.debug("{} send heartbeat signal from conference: {}", signal.getId(), conferenceId);
     }
 
     //

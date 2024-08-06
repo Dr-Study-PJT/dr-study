@@ -40,7 +40,7 @@ public class Member {
     private LocalDateTime regDate;
 
     @ManyToOne
-    @JoinColumn(name = "image_id", nullable = false)
+    @JoinColumn(name = "image_id")
     private Image image;
 
     @ColumnDefault("0")
@@ -59,6 +59,17 @@ public class Member {
         this.isLeaved = isLeaved;
     }
 
+    public Image getImage() {
+        if (image == null) {
+            return Image.builder()
+                    .imageUrl("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg")
+                    .isDeleted(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+        }
+
+        return image;
+    }
 
     public void update(String password){
         this.password = password;
