@@ -1,17 +1,47 @@
 'use client';
 import Image from 'next/image';
-import { dummyConferenceListData } from '@/components/organisms/SideBar';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/atoms';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
 import ListConferenceToday from '../ConferenceWithMembers';
 import ArticleListContent from './ArticleListContent';
+import { dummyConferenceListData } from '@/components/organisms/SideBar';
 
 interface SectionContentsProps {
     groupId: string;
 }
+
+const fetchTodayConferenceList = async ({
+    studyGroupId,
+    lowerBoundDate,
+    upperBoundDate,
+}: {
+    studyGroupId: string;
+    lowerBoundDate: string;
+    upperBoundDate: string;
+}) => {
+    const url = `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?studyGroupId=${studyGroupId}&lowerBoundDate=${lowerBoundDate}&upperBoundDate=${upperBoundDate}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch conferences');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching conferences:', error);
+        throw error;
+    }
+};
 
 export const SectionContents: React.FC<SectionContentsProps> = ({
     groupId,
@@ -19,8 +49,34 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     const [activeTab, setActiveTab] = useState<
         '게시판' | '채팅방' | '스터디 이력'
     >('게시판');
-
+    const [conferencesWithMembers, setConferencesWithMembers] = useState([]);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        const today = new Date();
+        const lowerBoundDate = new Date(today.setHours(0, 0, 0, 0))
+            .toISOString()
+            .slice(0, 19);
+        const upperBoundDate = new Date(today.setHours(23, 59, 59, 999))
+            .toISOString()
+            .slice(0, 19);
+
+        const fetchConferences = async () => {
+            try {
+                const response = await fetchTodayConferenceList({
+                    studyGroupId: groupId,
+                    lowerBoundDate,
+                    upperBoundDate,
+                });
+                setConferencesWithMembers(response.data);
+            } catch (error) {
+                console.error('Failed to fetch conferences:', error);
+                // setConferencesWithMembers(dummyConferenceListData);
+            }
+        };
+
+        fetchConferences();
+    }, [groupId]);
 
     const handleClickOpenConference = () => {
         dispatch(setIsModalOpen());
@@ -39,8 +95,6 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                 return null;
         }
     };
-
-    const conferencesWithMembers = dummyConferenceListData;
 
     return (
         <div className="SECTION-CONTENTS w-full h-max flex flex-row px-6 mt-8">
@@ -74,8 +128,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                             {activeTab}
                         </div>
                         <div className="SWITCH-DESCRIPTION text-dr-body-3 pb-1">
-                            {`삼성전자 면접 스터디`} 그룹의 게시글을
-                            확인해보세요.
+                            {'@@@수정요망타이틀'} 그룹의 게시글을 확인해보세요.
                         </div>
                     </div>
                     <div className="SWITCH-BUTTON-GROUP flex flex-row gap-2">
