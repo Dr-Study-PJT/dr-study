@@ -122,6 +122,14 @@ public class ArticleServiceImpl implements ArticleService{
     }
 
     @Override
+    public Article getArticleNoAuth(Long articleId) {
+        Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
+                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
+
+        return article;
+    }
+
+    @Override
     public Article deleteArticle(Long articleId, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------

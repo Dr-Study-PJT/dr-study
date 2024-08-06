@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.article.response;
 
+import com.nomz.doctorstudy.article.dto.CommentSummary;
 import com.nomz.doctorstudy.article.entity.Comment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -28,8 +29,9 @@ public class GetArticleResponse {
     private String writerNickname;
 
     @Schema(description = "조회된 게시글 댓글 리스트", example = "[]")
-    private List<Comment> comments;
+    private List<CommentSummary> comments;
 
     @Schema(description = "태그 리스트", example = "[\"#공지사항\", \"#필독\"]")
     private List<String> tags;
 }
+

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name="study_group_article")
+@Table(name="article")
 @Getter
 @Setter
 @Builder
@@ -40,7 +40,7 @@ public class Article {
     private Long viewCount;
 
     @ManyToOne
-    @JoinColumn(name="writer", nullable = false)
+    @JoinColumn(name="member_id", nullable = false)
     private Member writer;
 
     @ManyToOne

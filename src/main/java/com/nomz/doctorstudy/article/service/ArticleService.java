@@ -9,5 +9,6 @@ public interface ArticleService {
     Article createArticle(CreateArticleRequest request, Authentication authentication);
     Article updateArticle(Long articleId, UpdateArticleRequest request, Authentication authentication);
     Article getArticle(Long articleId, Authentication authentication);
+    Article getArticleNoAuth(Long articleId);
     Article deleteArticle(Long articleId, Authentication authentication);
 }

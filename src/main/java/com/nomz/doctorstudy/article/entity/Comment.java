@@ -1,9 +1,11 @@
 package com.nomz.doctorstudy.article.entity;
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -27,9 +29,14 @@ public class Comment {
     @JoinColumn(name = "article_id", nullable = false)
     private Article article;
 
-    @Column(name="is_deleted", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @Column(name="is_deleted")
     private Boolean isDeleted;
 
-    @Column(name="Field")
-    private String field;
+    @Column(name="deleted_at")
+    private LocalDateTime deletedAt;
+
 }
