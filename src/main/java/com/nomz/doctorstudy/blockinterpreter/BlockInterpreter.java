@@ -22,7 +22,7 @@ public class BlockInterpreter {
     public void init(Long processId, String script, Map<String, Object> varMap) {
         List<Block> blocks = scriptPreprocessor.preprocessScript(script);
         Map<String, Integer> labelMap = parseLabels(blocks);
-        processManager.register(processId, blocks, varMap, labelMap);
+        processManager.createProcess(processId, blocks, varMap, labelMap);
     }
 
     //@Async
@@ -36,6 +36,7 @@ public class BlockInterpreter {
 
         ProcessContext processContext = processManager.getProcessContext(processId);
         threadProcessContext.setProcessContext(processContext);
+        threadProcessContext.setProcessStatus(ProcessStatus.RUNNING);
 
         while (!threadProcessContext.isEndOfBlock()) {
             Block commandBlock = threadProcessContext.currentBlock();

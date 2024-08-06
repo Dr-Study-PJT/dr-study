@@ -58,9 +58,13 @@ public class Conference {
     @OneToMany(mappedBy = "conference")
     private List<ConferenceMember> participants;
 
+    @OneToMany(mappedBy = "conference")
+    private List<ConferenceMemberInvite> invitees;
+
     public void updateStartTime(LocalDateTime localDateTime) {
         this.startTime = localDateTime;
     }
+
     public void updateFinishTime(LocalDateTime localDateTime) {
         this.finishTime = localDateTime;
     }

@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Getter
 @Entity
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConferenceMemberInvite {
@@ -24,4 +24,25 @@ public class ConferenceMemberInvite {
     @MapsId("memberId")
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void updateConference(Conference conference) {
+        this.conference = conference;
+        conference.getInvitees().add(this);
+    }
+
+    public void updateMember(Member member) {
+        this.member = member;
+    }
+
+    public static ConferenceMemberInvite of(Conference conference, Member member) {
+        ConferenceMemberInvite invite = ConferenceMemberInvite.builder()
+                .id(new ConferenceMemberInviteId(conference.getId(), member.getId()))
+                .conference(null)
+                .member(null)
+                .build();
+        invite.updateConference(conference);
+        invite.updateMember(member);
+
+        return invite;
+    }
 }
