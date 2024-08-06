@@ -158,17 +158,18 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<?>> updateStudyGroup(
-            @PathVariable Long groupId,
-            @RequestBody UpdateStudyGroupRequest request) {
+            @PathVariable("groupId") Long groupId,
+            @RequestBody UpdateStudyGroupRequest request,
+            Authentication authentication) {
         log.info("UpdateStudyGroupRequest = {}", request);
 
         // 서비스 호출
-        StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request);
+        StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request, authentication);
 
         // service 요청
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "Apply 생성에 성공했습니다.",
+                        "Study Group 업데이트에 성공했습니다.",
                         null
                 )
         );
@@ -247,8 +248,8 @@ public class StudyGroupController {
                     """)))
     })
     @PostMapping("/admission/reply")
-    public ResponseEntity<SuccessResponse<CreateReplyResponse>> createReply(@RequestBody CreateReplyRequest createReplyRequest) {
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.processReply(createReplyRequest);
+    public ResponseEntity<SuccessResponse<CreateReplyResponse>> createReply(@RequestBody CreateReplyRequest createReplyRequest, Authentication authentication) {
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.processReply(createReplyRequest, authentication);
         CreateReplyResponse response = new CreateReplyResponse(memberStudyGroupApply.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -308,7 +309,7 @@ public class StudyGroupController {
                 )
         );
     }
-    @PutMapping("/{groupId}")
+    @DeleteMapping("/{groupId}")
     @Operation(summary = "스터디 그룹 삭제(소프트 삭제)", description = "Study Group을 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 삭제 성공", useReturnTypeSchema = true),
@@ -320,7 +321,7 @@ public class StudyGroupController {
                         }
                         """)))
     })
-    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(@PathVariable Long groupId) {
+    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(@PathVariable(name="groupId") Long groupId) {
         StudyGroup group = studyGroupService.deleteStudyGroup(groupId);
         DeleteGroupResponse response = new DeleteGroupResponse( group.getId());
         return ResponseEntity.ok(
@@ -330,7 +331,7 @@ public class StudyGroupController {
                 )
         );
     }
-    @PutMapping("/member/{groupId}")
+    @DeleteMapping("/member/{groupId}")
     @Operation(summary = "유저가 스터디 그룹을 탈퇴(소프트 탈퇴)", description = "유저가 스터디 그룹에서 탈퇴합니다.(소프트 탈퇴)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 탈퇴 성공", useReturnTypeSchema = true),
@@ -342,7 +343,7 @@ public class StudyGroupController {
                         }
                         """)))
     })
-    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable Long groupId, Authentication authentication) {
+    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable(name="groupId") Long groupId, Authentication authentication) {
         MemberStudyGroup memberStudyGroup = studyGroupService.leaveStudyGroup(groupId, authentication);
         LeaveGroupResponse response = new LeaveGroupResponse(memberStudyGroup.getStudyGroup().getId());
         return ResponseEntity.ok(
@@ -374,7 +375,7 @@ public class StudyGroupController {
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        "나의 StudyGroup 리스트 조회에 성공했습니다.",
                         responseList
                 )
         );

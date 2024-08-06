@@ -19,8 +19,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -245,34 +246,31 @@ public class ArticleController {
         );
     }
 
-//    @GetMapping("/{groupId}")
-//    @Operation(summary = "Study Group Article List 조회")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Article 리스트 조회 성공", useReturnTypeSchema = true),
-//            @ApiResponse(responseCode = "400", description = "Article 리스트 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
-//                    {
-//                        "message": "Article 리스트 조회에 실패했습니다.",
-//                        "errors": {
-//                        }
-//                    }
-//                    """)))
-//    })
-//    public ResponseEntity<SuccessResponse<Page<GetArticleListResponse>>> getArticleList(
-//            @PathVariable("groupId") Long groupId,
-//            @RequestParam(name="page", defaultValue = "1") int page,
-//            @RequestParam(name="size", defaultValue = "10") int size){
-//        Pageable pageable = PageRequest.of(page-1, size);
-//        Page<Article> articlePage = articleService.getArticleList(groupId, pageable);
-//
-//        Page<GetArticleResponse> responsePage = articlePage.map(GetArticleResponse::of);
-//
-//        return ResponseEntity.ok(
-//                new SuccessResponse<>(
-//                        "Article 리스트 조회에 성공했습니다.",
-//                        responsePage
-//                )
-//        );
-//
-//    }
+    @GetMapping("/groups/{groupId}")
+    @Operation(summary = "Study Group Article List 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Article 리스트 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Article 리스트 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Article 리스트 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<Page<GetArticleResponse>>> getArticleList(
+            @PathVariable("groupId") Long groupId,
+            @RequestParam(name="page", defaultValue = "1") int page,
+            @RequestParam(name="size", defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page-1, size);
+        Page<Article> articlePage = articleService.getArticleList(groupId, pageable);
+        Page<GetArticleResponse> responsePage = articlePage.map(GetArticleResponse::of);
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Article 리스트 조회에 성공했습니다.",
+                        responsePage
+                )
+        );
+    }
 
 }
