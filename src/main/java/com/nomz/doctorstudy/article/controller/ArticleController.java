@@ -9,6 +9,7 @@ import com.nomz.doctorstudy.article.response.GetArticleResponse;
 import com.nomz.doctorstudy.article.service.ArticleService;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -134,7 +135,7 @@ public class ArticleController {
                 .map(comment -> CommentSummary.builder()
                         .id(comment.getId())
                         .content(comment.getContent())
-                        .authorNickname(comment.getMember().getNickname())
+                        .memberInfo(MemberInfo.of(comment.getMember()))
                         .createdAt(comment.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
@@ -144,7 +145,7 @@ public class ArticleController {
                 .content(article.getContent())
                 .createdAt(article.getCreatedAt())
                 .viewCount(article.getViewCount())
-                .writerNickname(article.getWriter().getNickname())
+                .memberInfo(MemberInfo.of(article.getWriter()))
                 .comments(commentSummaries)
                 .tags(tags)
                 .build();
@@ -189,7 +190,7 @@ public class ArticleController {
                 .map(comment -> CommentSummary.builder()
                         .id(comment.getId())
                         .content(comment.getContent())
-                        .authorNickname(comment.getMember().getNickname())
+                        .memberInfo(MemberInfo.of(comment.getMember()))
                         .createdAt(comment.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
@@ -199,7 +200,7 @@ public class ArticleController {
                 .content(article.getContent())
                 .createdAt(article.getCreatedAt())
                 .viewCount(article.getViewCount())
-                .writerNickname(article.getWriter().getNickname())
+                .memberInfo(MemberInfo.of(article.getWriter()))
                 .comments(commentSummaries)
                 .tags(tags)
                 .build();
