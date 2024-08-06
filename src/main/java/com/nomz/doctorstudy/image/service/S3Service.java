@@ -28,9 +28,9 @@ public class S3Service {
 
     public String save(MultipartFile file, String filePath) throws IOException {
         String originalFilename = file.getOriginalFilename(); //원본 파일 명
-//        String extention = originalFilename.substring(originalFilename.lastIndexOf(".")); //확장자 명
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); //확장자 명
 
-        String s3FileName = UUID.randomUUID().toString(); //변경된 파일 명
+        String s3FileName = UUID.randomUUID().toString() + extension; //변경된 파일 명
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());

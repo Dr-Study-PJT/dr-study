@@ -8,6 +8,8 @@ import com.nomz.doctorstudy.image.exception.FileException;
 import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.image.request.MediaUploadRequest;
 import com.nomz.doctorstudy.image.response.FileResponse;
+import com.nomz.doctorstudy.image.response.ImageResponse;
+import com.nomz.doctorstudy.image.response.MediaResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,11 +33,12 @@ public class MediaService {
     private String bucket;
 
     @Transactional
-    public String save(MediaUploadRequest mediaUploadRequest){
+    public FileResponse save(MediaUploadRequest mediaUploadRequest){
         MultipartFile file = mediaUploadRequest.getFile();
 //        String domain = mediaUploadRequest.getDomain();
 
         MediaType fileType = validateFileType(file);
+
 
 //        String type;
         return switch (fileType) {
@@ -71,6 +74,7 @@ public class MediaService {
 
         String extension = fileName.substring(lastDotIndex + 1).toLowerCase();
 
+
         return MediaType.fromExtension(extension);
 
     }
@@ -79,7 +83,7 @@ public class MediaService {
         return bucket + "/" + serviceName + "/" + type + "/" + domain;
     }
 
-    private String saveImage(MediaUploadRequest mediaUploadRequest){
+    private FileResponse saveImage(MediaUploadRequest mediaUploadRequest){
         try{
             String filePath = filePath("images", mediaUploadRequest.getDomain());
             String saveS3Url = s3Service.save(mediaUploadRequest.getFile(), filePath);
@@ -88,9 +92,13 @@ public class MediaService {
                     .imageUrl(saveS3Url)
                     .build();
 
-            imageRepository.save(image);
+            Image saveImage = imageRepository.save(image);
 
-            return saveS3Url;
+            return ImageResponse
+                    .builder()
+                    .imageId(saveImage.getId())
+                    .imageUrl(saveImage.getImageUrl())
+                    .build();
         } catch(Exception e){
             log.error("이미지 저장 실패: {}", e.getMessage());
             throw new FileException(FileErrorCode.IMAGE_UPLOAD_FAIL);
@@ -98,11 +106,16 @@ public class MediaService {
 
     }
 
-    private String saveMedia(MediaUploadRequest mediaUploadRequest, String type){
+    private FileResponse saveMedia(MediaUploadRequest mediaUploadRequest, String type){
         try{
             String filePath = filePath(type, mediaUploadRequest.getDomain());
 
-            return s3Service.save(mediaUploadRequest.getFile(), filePath);
+            String url = s3Service.save(mediaUploadRequest.getFile(), filePath);
+
+            return MediaResponse
+                    .builder()
+                    .mediaUrl(url)
+                    .build();
         } catch(Exception e){
             log.error("{} 저장 실패: {}", type, e.getMessage());
             throw new FileException(FileErrorCode.MEDIA_UPLOAD_FAIL);

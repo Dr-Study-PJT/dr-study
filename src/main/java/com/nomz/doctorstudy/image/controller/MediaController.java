@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.image.controller;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.image.request.MediaUploadRequest;
+import com.nomz.doctorstudy.image.response.FileResponse;
 import com.nomz.doctorstudy.image.service.MediaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,14 +41,14 @@ public class MediaController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<?>> saveImg(@Valid @ModelAttribute MediaUploadRequest mediaUploadRequest){
+    public ResponseEntity<SuccessResponse<?>> saveImg(@ModelAttribute MediaUploadRequest mediaUploadRequest){
         log.info("mediaUploadRequest.getFile() = {}", mediaUploadRequest.getFile());
         log.info("mediaUploadRequest.getDomain() = {}", mediaUploadRequest.getDomain());
 
-        String url = mediaService.save(mediaUploadRequest);
+        FileResponse fileResponse = mediaService.save(mediaUploadRequest);
 
         return ResponseEntity.ok(
-                new SuccessResponse<>("파일 업로드에 성공했습니다.", url)
+                new SuccessResponse<>("파일 업로드에 성공했습니다.", fileResponse)
         );
     }
 }
