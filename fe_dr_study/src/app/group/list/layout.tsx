@@ -5,7 +5,7 @@ import { FaUsers } from 'react-icons/fa';
 import LottieCommunity from '../_components/Lotties/Lottie_Community';
 import LottieTrending from '../_components/Lotties/Lottie_Trending';
 
-export const styleTransitionColor = `transition duration-300 ease-in-out`;
+const styleTransitionColor = `transition duration-300 ease-in-out`;
 
 export default function PLPLayout({ children }: { children: React.ReactNode }) {
     return (
