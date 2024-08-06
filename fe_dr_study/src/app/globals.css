@@ -38,14 +38,14 @@ body {
 
 .SIDEBAR-BOX {
     margin-top: 1.4rem;
-    width: 3rem;
+    width: 3.5rem;
 }
 
 .BODY-BOX {
-    width: calc(100vw - 3rem);
+    width: calc(100vw - 3.5rem);
     margin-top: 1.4rem;
 
-    margin-left: 3rem;
+    margin-left: 3.5rem;
 }
 .BODY-CONTENTS {
     padding-top: 2.5rem;

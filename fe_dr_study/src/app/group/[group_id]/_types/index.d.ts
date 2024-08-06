@@ -3,6 +3,9 @@ export interface Member {
     email: string;
     nickname: string;
     imageUrl: string;
+    regDate: string;
+    leavedDate: string | null;
+    leaved: boolean;
 }
 
 export interface ArticleData {

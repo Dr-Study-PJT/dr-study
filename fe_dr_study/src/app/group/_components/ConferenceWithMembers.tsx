@@ -3,10 +3,10 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/atoms';
-import { Conference } from '../[group_id]/dummy';
+import { IConference } from '../[group_id]/dummy';
 
 interface ListConferenceTodayProps {
-    conferences: Conference[];
+    conferences: IConference[];
 }
 
 const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
@@ -30,7 +30,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
 
     return (
         <div className="LIST-CONFERENCE-TODAY space-y-4">
-            {conferences.map((conference, index) => (
+            {conferences?.map((conference, index) => (
                 <div
                     key={index}
                     onClick={() => handleConferenceClick(conference.id)}

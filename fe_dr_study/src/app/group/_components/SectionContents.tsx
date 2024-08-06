@@ -1,9 +1,7 @@
 'use client';
 import Image from 'next/image';
-import {
-    dummyArticlesData,
-    dummyConferencesWithMembers,
-} from '../[group_id]/dummy';
+import { dummyArticlesData } from '../[group_id]/dummy';
+import { dummyConferenceListData } from '@/components/organisms/SideBar';
 import { Button } from '@/components/atoms';
 import { useRouter } from 'next/navigation';
 import { trimString } from '@/utils/trimString';
@@ -102,7 +100,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     };
 
     const router = useRouter();
-    const conferencesWithMembers = dummyConferencesWithMembers;
+    const conferencesWithMembers = dummyConferenceListData;
     return (
         <div className="SECTION-CONTENTS w-full h-max flex flex-row px-6 mt-8">
             <div className="LEFT-CONTENTS flex flex-col w-2/5 h-full  p-4">

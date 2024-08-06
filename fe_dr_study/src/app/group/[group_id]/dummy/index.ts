@@ -1,90 +1,27 @@
 import { IGroup, IGroupListResponse } from '../../_api/ssr';
 import { GroupData, ArticleData, ConferenceData, Member } from '../_types';
 
-export interface Participant {
+interface Participant {
     id: number;
     email: string;
     nickname: string;
     imageUrl: string;
+    regDate: string;
+    leavedDate: string | null;
+    leaved: boolean;
 }
 
-export interface Conference {
+export interface IConference {
     id: number;
+    hostId: number;
+    studyGroupId: number;
     title: string;
+    memberCapacity: number;
     startTime: string;
     finishTime: string | null;
-    imageUrl: string | null;
-    participants: Member[];
+    imageUrl: string;
+    participants: Participant[];
 }
-
-export const dummyConferencesWithMembers: Conference[] = [
-    {
-        id: 1,
-        title: '일일 정기 면접 스터디',
-        startTime: '10:00',
-        finishTime: '11:30',
-        imageUrl: null,
-        participants: [
-            {
-                id: 1,
-                email: 'he1236@ajou.ac.kr',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
-            },
-            {
-                id: 2,
-                email: 'lee5678@ajou.ac.kr',
-                nickname: '이영호',
-                imageUrl: '/images/member_2.png',
-            },
-            {
-                id: 3,
-                email: 'kim9012@ajou.ac.kr',
-                nickname: '김철수',
-                imageUrl: '/images/member_3.png',
-            },
-            {
-                id: 4,
-                email: 'park3456@ajou.ac.kr',
-                nickname: '박민수',
-                imageUrl: '/images/member_4.png',
-            },
-        ],
-    },
-    {
-        id: 2,
-        title: '주간 토론면접 대비 스터디',
-        startTime: '14:30',
-        finishTime: null,
-        imageUrl: null,
-        participants: [
-            {
-                id: 1,
-                email: 'he1236@ajou.ac.kr',
-                nickname: '조성우',
-                imageUrl: '/images/member_1.png',
-            },
-            {
-                id: 2,
-                email: 'lee5678@ajou.ac.kr',
-                nickname: '이영호',
-                imageUrl: '/images/member_2.png',
-            },
-            {
-                id: 3,
-                email: 'kim9012@ajou.ac.kr',
-                nickname: '김철수',
-                imageUrl: '/images/member_3.png',
-            },
-            {
-                id: 4,
-                email: 'park3456@ajou.ac.kr',
-                nickname: '박민수',
-                imageUrl: '/images/member_4.png',
-            },
-        ],
-    },
-];
 
 export const dummyGroupData: IGroup = {
     id: 1,
@@ -143,18 +80,36 @@ export const dummyMembersData: Member[] = [
         email: 'he1236@ajou.ac.kr',
         nickname: '조성우',
         imageUrl: '/images/member_1.png',
+        regDate: '2024-08-05T07:06:05.361Z',
+        leavedDate: '2024-08-06T07:06:05.361Z',
+        leaved: false,
     },
     {
         id: 2,
-        email: 'he1236@ajou.ac.kr',
-        nickname: '신재민',
+        email: 'lee5678@ajou.ac.kr',
+        nickname: '이영호',
         imageUrl: '/images/member_2.png',
+        regDate: '2024-08-05T07:06:05.361Z',
+        leavedDate: null,
+        leaved: false,
     },
     {
         id: 3,
-        email: 'he1236@ajou.ac.kr',
-        nickname: '장철현',
+        email: 'kim9012@ajou.ac.kr',
+        nickname: '김철수',
         imageUrl: '/images/member_3.png',
+        regDate: '2024-08-05T07:06:05.361Z',
+        leavedDate: '2024-08-06T07:06:05.361Z',
+        leaved: false,
+    },
+    {
+        id: 4,
+        email: 'park3456@ajou.ac.kr',
+        nickname: '박민수',
+        imageUrl: '/images/member_4.png',
+        regDate: '2024-08-05T07:06:05.361Z',
+        leavedDate: null,
+        leaved: true,
     },
 ];
 
@@ -171,6 +126,9 @@ export const dummyArticlesData: ArticleData[] = [
             email: 'he1236@ajou.ac.kr',
             nickname: '조성우',
             imageUrl: '/images/member_1.png',
+            regDate: '2024-08-05T07:06:05.361Z',
+            leavedDate: '2024-08-06T07:06:05.361Z',
+            leaved: false,
         },
     },
     {
@@ -185,6 +143,9 @@ export const dummyArticlesData: ArticleData[] = [
             email: 'he1236@ajou.ac.kr',
             nickname: '조성우',
             imageUrl: '/images/member_1.png',
+            regDate: '2024-08-05T07:06:05.361Z',
+            leavedDate: '2024-08-06T07:06:05.361Z',
+            leaved: false,
         },
     },
     {
@@ -195,10 +156,13 @@ export const dummyArticlesData: ArticleData[] = [
         tags: ['스터디 운영', '공지사항'],
         timeAgo: '3시간 전',
         member: {
-            email: 'he1236@ajou.ac.kr',
             id: 1,
+            email: 'he1236@ajou.ac.kr',
             nickname: '조성우',
             imageUrl: '/images/member_1.png',
+            regDate: '2024-08-05T07:06:05.361Z',
+            leavedDate: '2024-08-06T07:06:05.361Z',
+            leaved: false,
         },
     },
 ];
