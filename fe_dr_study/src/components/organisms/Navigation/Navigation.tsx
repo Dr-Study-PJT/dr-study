@@ -219,7 +219,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
                             <div className="relative w-7 h-7">
                                 {isNotificationOpen && (
-                                    <div className="absolute right-0 top-[112%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 ">
+                                    <div className="absolute right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 ">
                                         <ul className="flex flex-col text-dr-body-3 ">
                                             {notifications.map(
                                                 (notification, index) => (

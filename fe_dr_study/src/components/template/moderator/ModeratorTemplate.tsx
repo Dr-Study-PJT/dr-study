@@ -2,8 +2,7 @@
 
 import Image from 'next/image';
 import { Moderator } from '@/interfaces/moderator';
-import { useEffect, useState } from 'react';
-import { GET, POST } from '@/app/api/routeModule';
+import { useState } from 'react';
 import { Button } from '@/components/atoms';
 
 const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
