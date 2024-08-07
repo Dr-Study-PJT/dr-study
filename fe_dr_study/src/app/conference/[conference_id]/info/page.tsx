@@ -6,6 +6,7 @@ import { ConferenceData } from '@/app/group/[group_id]/_types';
 import ConferenceInfoTemplate from '@/components/template/conference/ConferenceInfoTemplate';
 import { ConferenceMember } from '@/interfaces/conference';
 import { Moderator } from '@/interfaces/moderator';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -18,6 +19,7 @@ interface ConferenceInfoPageProps {
 const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
     const router = useRouter();
     const conferenceId = params.conference_id;
+    const memberData = getSessionStorageItem('memberData');
 
     const [conferenceData, setConferenceData] = useState<any>({}); // any 타입 수정 !필요!
 
@@ -42,8 +44,8 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
                 revalidateTime: 10,
             });
 
-            console.log('컨퍼런스 조회 성공:', response.data);
-            const { data } = response.data;
+            console.log('컨퍼런스 조회 성공:', response);
+            const { data } = response;
 
             setConferenceData(data);
         } catch (error) {
@@ -60,9 +62,9 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
                 revalidateTime: 10,
             });
 
-            console.log('스터디 멤버 리스트 조회 성공:', response.data);
+            console.log('스터디 멤버 리스트 조회 성공:', response);
 
-            setStudyMembers(response.data.content);
+            setStudyMembers(response.data);
         } catch (error) {
             console.error('스터디 멤버 리스트 조회 실패:', error);
         }
@@ -77,8 +79,8 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
                 revalidateTime: 10,
             });
 
-            console.log('사회자 리스트 조회 성공:', response.data);
-            const { data } = response.data;
+            console.log('사회자 리스트 조회 성공:', response);
+            const { data } = response;
 
             setModerators(data);
         } catch (error) {
@@ -96,41 +98,22 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
             const response = await POST({
                 API: API,
                 endPoint: `${conferenceId}/open`,
-                body: '',
+                body: {
+                    moderatorId: 1,
+                },
                 isAuth: true,
             });
 
-            console.log(
-                '컨퍼런스 개최 성공(handleOpenConference):',
-                response.data,
-            );
+            console.log('컨퍼런스 개최 성공(handleOpenConference):', response);
             router.push(`/conference/${conferenceId}`);
         } catch (error) {
             console.error('컨퍼런스 개최 실패(handleOpenConference):', error);
         }
     };
 
-    // mock conference data
-    // useEffect(() => {
-    //     setConferenceData({
-    //         id: 1,
-    //         hostId: 1,
-    //         studyGroupId: 1,
-    //         title: '정보처리기사 시험 대비 컨퍼런스',
-    //         subject: '한 주 회고',
-    //         memberCapacity: 10,
-    //         startTime: '2024-08-04T09:02:19.887Z',
-    //         finishTime: '2024-08-04T09:02:19.887Z',
-    //         imageUrl: '/images/group_thumbnail_1.png',
-    //     });
-    // }, []);
-
-    // if (!conferenceData) {
-    //     return <div>Loading...</div>; // 데이터 로딩 중 표시
-    // }
-
     return (
         <ConferenceInfoTemplate
+            memberData={memberData}
             conferenceId={params.conference_id}
             conferenceData={conferenceData}
             moderators={moderators}

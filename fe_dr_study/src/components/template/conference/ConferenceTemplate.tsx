@@ -8,7 +8,6 @@ import ModeratorAvatar from '@/components/organisms/ModeratorAvatar/Mod';
 import Signal from '@/components/organisms/Signal/Signal';
 import Video from '@/components/organisms/Video/Video';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
-import axios from 'axios';
 import Peer from 'peerjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
@@ -99,8 +98,6 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     });
                 });
         });
-
-        console.log('myPeer.current.open 여부 :' + myPeer.current.open);
     };
 
     // 2. 스트림 생성 및 설정
@@ -169,12 +166,12 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         if (!isFlag) return;
 
         console.log('회의에 Join 하려는 클라이언트 데이터 => ', {
-            memberId: memberData.id,
+            memberId: memberData?.id,
             peerId: peerId,
             streamId: localStream.current?.id,
         });
         client.current = {
-            memberId: memberData.id,
+            memberId: memberData?.id,
             peerId,
             streamId: localStream.current?.id as string,
         };
@@ -191,7 +188,10 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             const { data } = response.data;
             data.forEach((remotePeerId: string) => makeCall(remotePeerId));
             console.log('모든 피어에 전화 연결 성공 => ', data);
-            setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
+            setExistingPeerIds([
+                ...existingPeerIds,
+                ...data.data.existingPeerIds,
+            ]); // 방에 존재하는 peerIds 저장
         } catch (error) {
             console.error('Error fetching room list:', error);
         }
@@ -212,6 +212,10 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         }
     };
 
+    useEffect(() => {
+        console.log('existingPeers:', existingPeers);
+    }, [existingPeers]);
+
     return (
         <div className="flex bg-dr-indigo-200 h-[100%] w-full">
             <div className="flex flex-col h-full w-full">
@@ -226,7 +230,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                                 key={peerId}
                                 existingPeers={existingPeers}
                                 peerId={peerId}
-                                focusing={memberData.id === focusingMemberId}
+                                focusing={memberData?.id === focusingMemberId}
                             />
                         </>
                     ))}
