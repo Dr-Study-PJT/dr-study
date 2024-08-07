@@ -33,11 +33,12 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await GET('/v1/notifications', {
+                const response = await GET('v1/notifications', {
                     isAuth: true,
                     revalidateTime: 0,
                 });
-                setNotifications(response.data.data || []);
+                console.log('GET 알림 데이터 : ', response.data.data);
+                setNotifications(response.data.notificaitonItem || []);
             } catch (error) {
                 console.error('Failed to fetch notifications:', error);
             }
