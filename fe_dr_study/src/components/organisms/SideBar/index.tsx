@@ -101,10 +101,9 @@ const getMyGroups = async () => {
             isAuth: true,
             revalidateTime: 0,
         });
-        response = res.data.data;
+        response = res.data;
     } catch (error) {
         console.error(error);
-        // response = dummyMyGroupListData;
     }
 
     return response;
@@ -144,6 +143,8 @@ const SideBar = () => {
     useEffect(() => {
         const fetchMyGroups = async () => {
             const myGroups = await getMyGroups();
+            console.log('내 그룹:');
+            console.log(myGroups);
             setGroups(myGroups);
         };
 
