@@ -124,7 +124,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                         </Link>
                     </li>
                     <li>
-                        <Link href="/group" className={linkClasses('/group')}>
+                        <Link
+                            href="/group/list"
+                            className={linkClasses('/group')}
+                        >
                             스터디 그룹
                         </Link>
                     </li>
@@ -159,16 +162,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                             내정보갱신
                                         </Button>
                                         <Link
-                                            href="/mypage"
+                                            href={`/members/${member.id}`}
                                             className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                         >
                                             마이페이지
-                                        </Link>
-                                        <Link
-                                            href="/my-study-groups"
-                                            className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                                        >
-                                            내 스터디그룹
                                         </Link>
                                         <button
                                             onClick={onClickSetLogout}
