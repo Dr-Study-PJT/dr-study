@@ -60,6 +60,8 @@ public class SignalController {
 
     //
 
+    //
+
     @PostMapping("/v1/conferences/{conferenceId}/send-mute-signal")
     public ResponseEntity<?> sendMuteSignal(
             @PathVariable("conferenceId") Long conferenceId,
