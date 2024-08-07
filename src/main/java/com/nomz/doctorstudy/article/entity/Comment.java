@@ -1,16 +1,14 @@
 package com.nomz.doctorstudy.article.entity;
 import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,12 +24,12 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "article_id", nullable = false)
-    private Article article;
-
-    @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
 
     @Column(name="is_deleted")
     private Boolean isDeleted;
