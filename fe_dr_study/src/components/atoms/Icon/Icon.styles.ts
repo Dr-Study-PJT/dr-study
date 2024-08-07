@@ -1,7 +1,7 @@
 import { tv } from 'tailwind-variants';
 
 export const iconStyles = tv({
-    base: 'p-3 rounded-full transition duration-200 relative group', // group 추가
+    base: 'p-2 rounded-full transition duration-200 relative group', // group 추가
     variants: {
         cursor: {
             pointer: 'cursor-pointer',

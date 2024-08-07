@@ -144,9 +144,9 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
             <div>
                 {isSigned === TIsSigned.T ? (
                     <div>
-                        <div className="flex items-center">
-                            <div className="relative">
-                                <div className="relative overflow-hidden w-7 h-7 rounded-full cursor-pointer">
+                        <div className="flex items-center content-center gap-[0.5rem]">
+                            <div className="relative flex items-center">
+                                <div className="relative overflow-hidden w-[2.2rem] h-[2.2rem] rounded-full cursor-pointer">
                                     <Image
                                         alt="avatar"
                                         src={memberData?.imageUrl}
@@ -155,42 +155,82 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                     />
                                 </div>
                                 {dropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-20">
-                                        <Button
-                                            onClick={onClickGetLoginMemberInfo}
-                                        >
-                                            내정보갱신
-                                        </Button>
-                                        <Link
-                                            href={`/members/${member.id}`}
-                                            className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                                        >
-                                            마이페이지
-                                        </Link>
-                                        <button
-                                            onClick={onClickSetLogout}
-                                            className="text-left block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                                        >
-                                            로그아웃
-                                        </button>
+                                    <div className="absolute right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200">
+                                        <div className="flex p-[1rem] gap-dr-10 border-b border-dr-gray-500">
+                                            <div className="relative  w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">
+                                                <Image
+                                                    alt="avatar"
+                                                    src={memberData?.imageUrl}
+                                                    layout="fill"
+                                                    onClick={toggleDropdown}
+                                                />
+                                            </div>
+                                            <div className="flex-1 text-dr-body-3">
+                                                <p className="font-semibold">
+                                                    {memberData?.nickname}
+                                                </p>
+                                                <p className="text-dr-gray-300">
+                                                    {memberData?.email}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <ul className="flex flex-col text-dr-body-3">
+                                            <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
+                                                <Link
+                                                    href={`/members/${member.id}`}
+                                                    className="block text-white  hover:bg-dr-dark-100"
+                                                ></Link>
+                                                <Icon icon="person" size="sm" />{' '}
+                                                <p className="min-w-[10rem]">
+                                                    마이페이지
+                                                </p>
+                                            </li>
+                                            <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
+                                                <button
+                                                    onClick={onClickSetLogout}
+                                                    className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100"
+                                                ></button>
+                                                <Icon icon="logout" size="sm" />{' '}
+                                                <p className="min-w-[10rem]">
+                                                    로그아웃
+                                                </p>
+                                            </li>
+                                        </ul>
                                     </div>
                                 )}
                             </div>
-                            <div
-                                className="relative"
-                                onClick={toggleIsNotificationOpen}
-                            >
-                                <Icon icon="send" size="sm" />
+                            <div className="text-dr-white bg-dr-gray-500 rounded-full cursor-pointer">
+                                <div onClick={toggleIsNotificationOpen}>
+                                    <Icon icon="bell" size="sm" hover="gray" />
+                                </div>
+                            </div>
+
+                            <div className="relative w-7 h-7">
                                 {isNotificationOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-20">
-                                        <ul>
+                                    <div className="absolute right-0 top-[112%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 ">
+                                        <ul className="flex flex-col text-dr-body-3 ">
                                             {notifications.map(
                                                 (notification) => (
                                                     <li
-                                                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
                                                         key={notification.id}
+                                                        className="flex pr-[0.5rem] items-center cursor-pointer hover:bg-dr-dark-100"
                                                     >
-                                                        {notification.message}
+                                                        <Link
+                                                            href={`/members/${member.id}`}
+                                                            className="block text-white  hover:bg-dr-dark-100"
+                                                        ></Link>
+                                                        <Icon
+                                                            icon="bell"
+                                                            size="sm"
+                                                        />{' '}
+                                                        <p className="min-w-[10rem]">
+                                                            {
+                                                                notification.message
+                                                            }
+                                                        </p>
+                                                        <Button color="gray">
+                                                            입장하기
+                                                        </Button>
                                                     </li>
                                                 ),
                                             )}

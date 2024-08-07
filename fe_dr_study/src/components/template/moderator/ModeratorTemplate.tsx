@@ -56,7 +56,7 @@ const ModeratorList = ({
 }) => {
     return (
         <div className="flex flex-wrap justify-center ">
-            {moderators.map((moderator) => (
+            {moderators?.map((moderator) => (
                 <div
                     key={moderator.id}
                     className={`w-[25%] flex flex-col p-[0.5rem] rounded-md gap-dr-5 items-center cursor-pointer hover:bg-dr-gray-500 transition duration-200 ${

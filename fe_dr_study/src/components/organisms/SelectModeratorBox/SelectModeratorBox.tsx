@@ -102,7 +102,7 @@ const SelectModeratorBox = ({ moderators }: SelectModeratorBoxProps) => {
         <div>
             <p className="text-dr-header-2 pb-2">AI 사회자 선택하기</p>
             <div className="flex flex-wrap gap-dr-20 justify-center h-[14rem] overflow-y-scroll">
-                {tempModerators.map((moderator) => (
+                {tempModerators?.map((moderator) => (
                     <div
                         className={`flex flex-col items-center p-1 cursor-pointer rounded-md ${
                             selectedModerator?.id === moderator.id
