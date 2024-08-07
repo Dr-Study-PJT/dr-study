@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.studygroup.response;
 
-import com.nomz.doctorstudy.studygroup.Status;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,7 +30,7 @@ public class GetApplyResponse {
         return GetApplyResponse.builder()
                 .memberId(application.getId())
                 .groupId(application.getStudyGroup().getId())
-                .status(application.getStatus())
+                .applicationStatus(application.getApplicationStatus())
                 .message(application.getMessage())
                 .createdAt(application.getCreatedAt())
                 .build();
