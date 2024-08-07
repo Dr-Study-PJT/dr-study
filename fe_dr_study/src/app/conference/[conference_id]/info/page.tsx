@@ -22,12 +22,8 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
     const memberData = getSessionStorageItem('memberData');
 
     const [conferenceData, setConferenceData] = useState<any>({}); // any 타입 수정 !필요!
-
     const [studyMembers, setStudyMembers] = useState<ConferenceMember[]>([]); // 스터디 멤버 상태
-
     const [moderators, setModerators] = useState<Moderator[]>([]); // 사회자 여부
-    const [isModeratorInvited, setIsModeratorInvited] =
-        useState<boolean>(false); // 사회자 선택 여부
 
     useEffect(() => {
         handleGetConferenceInfo();
