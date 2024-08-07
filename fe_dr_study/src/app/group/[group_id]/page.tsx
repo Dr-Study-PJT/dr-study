@@ -41,14 +41,6 @@ export default function GroupDetailPage({
 
     console.log('memberData => ', memberData);
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error.message}</div>;
-    }
-
     // // 현재 사용자가 그룹장인지, 멤버인지 확인
     const myMemberData = membersInThisGroup?.find(
         (member) => member.memberInfo.id === 1,
