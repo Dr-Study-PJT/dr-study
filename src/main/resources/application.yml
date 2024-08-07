@@ -43,9 +43,6 @@ springdoc:
 audio-utils:
   upper-path: "audio/"
 
-fast-api:
-  url: ""
-
 ---
 ## local
 spring:
