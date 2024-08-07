@@ -33,6 +33,8 @@ public class ConferenceQueryRepository {
                 .where(
                         eqStudyGroupMember(filter.getMemberId()),
                         eqStudyGroup(filter.getStudyGroupId()),
+                        notOpened(filter.getIsOpened()),
+                        notClosed(filter.getIsClosed()),
                         notStarted(filter.getIsStarted()),
                         notFinished(filter.getIsFinished())
                                    )
@@ -55,6 +57,30 @@ public class ConferenceQueryRepository {
     private BooleanExpression eqStudyGroup(Long studyGroupId) {
         if (studyGroupId != null) {
             return conference.studyGroup.id.eq(studyGroupId);
+        }
+        return null;
+    }
+
+    private BooleanExpression notOpened(Boolean isOpened) {
+        if (isOpened != null) {
+            if (isOpened) {
+                return conference.startTime.isNotNull();
+            }
+            else {
+                return conference.startTime.isNull();
+            }
+        }
+        return null;
+    }
+
+    private BooleanExpression notClosed(Boolean isClosed) {
+        if (isClosed != null) {
+            if (isClosed) {
+                return conference.finishTime.isNotNull();
+            }
+            else {
+                return conference.finishTime.isNull();
+            }
         }
         return null;
     }

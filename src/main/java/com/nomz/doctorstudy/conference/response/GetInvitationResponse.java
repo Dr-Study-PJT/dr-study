@@ -16,6 +16,9 @@ public class GetInvitationResponse {
     @Schema(description = "초대 받은 멤버 아이디", example = "1")
     private final Long memberId;
 
+    @Schema(description = "스터디그룹 아이디", example = "1")
+    private final Long groupId;
+
     @Schema(description = "초대 일시", example = "2024-08-07T11:09:32.483173")
     private final LocalDateTime createdAt;
 

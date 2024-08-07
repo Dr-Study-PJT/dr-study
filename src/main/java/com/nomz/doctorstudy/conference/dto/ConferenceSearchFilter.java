@@ -12,6 +12,8 @@ public class ConferenceSearchFilter {
     private Long studyGroupId;
     private Long mainCategoryId;
     private Long subCategoryId;
+    private Boolean isOpened;
+    private Boolean isClosed;
     private Boolean isStarted;
     private Boolean isFinished;
     private LocalDateTime lowerBoundTime;

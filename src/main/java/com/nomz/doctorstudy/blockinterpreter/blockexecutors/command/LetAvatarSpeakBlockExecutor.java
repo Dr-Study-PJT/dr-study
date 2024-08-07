@@ -27,8 +27,8 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
     @Value("${audio-utils.upper-path}")
     private String audioUpperPath;
-    private static final String AUDIO_FILE_NAME = "avatar_audio";
-    private static final String AUDIO_EXT = ".wav";
+    private static final String AUDIO_FILE_NAME = "avatar_audio_";
+    private static final String AUDIO_EXT = ".mp3";
 
     public LetAvatarSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransMitter, ExternalApiCallService externalApiCallService) {
         super(void.class, List.of(String.class));
@@ -45,14 +45,15 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
         byte[] speechAudio = externalApiCallService.tts(speechContent);
 
-        String audioPath = audioUpperPath + AUDIO_FILE_NAME + AUDIO_EXT;
+        long processId = threadProcessContext.getProcessId();
+
+        String audioPath = audioUpperPath + AUDIO_FILE_NAME + processId + AUDIO_EXT;
         AudioUtils.saveFile(speechAudio, audioPath);
         File file = new File(audioPath);
 
         int audioDurationMills = AudioUtils.getAudioLength(file.getAbsolutePath());
         log.debug("tts audio duration={}", audioDurationMills);
 
-        long processId = threadProcessContext.getProcessId();
 
         try {
             Thread.sleep(audioDurationMills);

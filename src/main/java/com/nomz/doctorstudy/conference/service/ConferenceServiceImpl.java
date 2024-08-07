@@ -73,11 +73,14 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
+    @Transactional
     public List<Conference> getConferenceList(GetConferenceListRequest request) {
         return conferenceQueryRepository.getConferenceList(
                 ConferenceSearchFilter.builder()
                         .memberId(request.getMemberId())
                         .studyGroupId(request.getStudyGroupId())
+                        .isOpened(request.getIsOpened())
+                        .isClosed(request.getIsClosed())
                         .isStarted(request.getIsStarted())
                         .isFinished(request.getIsFinished())
                         .build()
@@ -85,6 +88,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
+    @Transactional
     public List<Member> getConferenceParticipantList(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
@@ -104,7 +108,7 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
         conference.updateModerator(moderator);
-        conference.updateStartTime(LocalDateTime.now());
+        conference.updateOpenTime(LocalDateTime.now());
 
         roomService.openRoom(conferenceId, moderator.getProcessor().getScript());
     }
@@ -115,7 +119,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
-        conference.updateFinishTime(LocalDateTime.now());
+        conference.updateCloseTime(LocalDateTime.now());
 
         roomService.closeRoom(conferenceId);
     }
@@ -126,13 +130,18 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        conference.updateStartTime(LocalDateTime.now());
+
         roomService.startRoom(conferenceId);
     }
 
     @Override
+    @Transactional
     public void finishConference(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
+        conference.updateFinishTime(LocalDateTime.now());
 
         roomService.finishRoom(conferenceId);
     }
@@ -159,6 +168,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
+    @Transactional
     public void quitConference(Member requester, Long conferenceId, QuitConferenceRequest request) {
         roomService.quitRoom(requester, conferenceId, request.getPeerId());
     }
@@ -182,6 +192,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
+    @Transactional
     public List<Member> getConferenceInvitees(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));

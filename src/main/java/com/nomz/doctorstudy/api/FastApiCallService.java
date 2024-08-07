@@ -41,11 +41,10 @@ public class FastApiCallService implements ExternalApiCallService{
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 
         try{
-            log.info("sent gpt request to FastAPI server, url={}", url);
+            log.debug("sent gpt request to FastAPI server, url={}", url);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-            log.info("received gpt response from FastAPI server, response={}", response);
+            log.debug("received gpt response from FastAPI server, response={}", response);
             String responseBody = response.getBody();
-            log.info("received gpt response from FastAPI server, responseBody={}", responseBody);
             if (responseBody != null) {
                 JsonNode jsonNode = objectMapper.readTree(responseBody);
                 return jsonNode.get("answer").asText();
@@ -73,9 +72,9 @@ public class FastApiCallService implements ExternalApiCallService{
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 
         try{
-            log.info("sent tts request to FastAPI server, url={}", url);
+            log.debug("sent tts request to FastAPI server, url={}", url);
             ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.POST, entity, byte[].class);
-            log.info("received gpt response from FastAPI server, response={}", response);
+            log.debug("received tts response from FastAPI server, response={}", response);
             return response.getBody();
         }catch (ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
@@ -93,9 +92,9 @@ public class FastApiCallService implements ExternalApiCallService{
         HttpEntity<byte[]> entity = new HttpEntity<>(audio, headers);
 
         try{
-            log.info("sent tts request to FastAPI server, url={}", url);
+            log.debug("sent stt request to FastAPI server, url={}", url);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-            log.info("received gpt response from FastAPI server, response={}", response);
+            log.debug("received stt response from FastAPI server, response={}", response);
 
             return response.getBody();
         }catch(ResourceAccessException e) {
