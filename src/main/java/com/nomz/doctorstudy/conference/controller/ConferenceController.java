@@ -170,6 +170,43 @@ public class ConferenceController {
     }
 
 
+    @PostMapping("/{conference_id}/close")
+    @Operation(summary = "Conference 폐회", description = "Conference를 폐회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 폐회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "인증에 실패했습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "권한이 없습니다. 호스트 유저만이 폐회시킬 수 있습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "Conference 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "존재하지 않는 Conference입니다.",
+                        "errors": { }
+                    }
+                    """))),
+    })
+    public ResponseEntity<SuccessResponse<?>> closeConference(
+            @PathVariable("conference_id") Long conferenceId
+    ) {
+        conferenceService.closeConference(conferenceId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 폐회에 성공했습니다.",
+                        null
+                )
+        );
+    }
+
+
     @PostMapping("/{conference_id}/start")
     @Operation(summary = "Conference 시작", description = "Conference를 시작합니다.")
     @ApiResponses(value = {
@@ -207,7 +244,7 @@ public class ConferenceController {
     }
 
 
-    @PostMapping("/{conference_id}/close")
+    @PostMapping("/{conference_id}/finish")
     @Operation(summary = "Conference 종료", description = "Conference를 종료합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conference 종료 성공", useReturnTypeSchema = true),
@@ -230,10 +267,10 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<?>> closeConference(
+    public ResponseEntity<SuccessResponse<?>> finishConference(
             @PathVariable("conference_id") Long conferenceId
     ) {
-        conferenceService.closeConference(conferenceId);
+        conferenceService.finishConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(

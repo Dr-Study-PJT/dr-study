@@ -16,6 +16,12 @@ public class GetConferenceListRequest {
     @Schema(description = "스터디 그룹", example = "")
     private Long studyGroupId;
 
+    @Schema(description = "개최 여부", example = "")
+    private Boolean isOpened;
+
+    @Schema(description = "폐회 여부", example = "")
+    private Boolean isClosed;
+
     @Schema(description = "시작 여부", example = "")
     private Boolean isStarted;
 

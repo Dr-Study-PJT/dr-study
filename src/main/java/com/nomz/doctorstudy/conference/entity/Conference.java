@@ -50,6 +50,12 @@ public class Conference {
     private Image image;
 
     @Column
+    private LocalDateTime openTime;
+
+    @Column
+    private LocalDateTime closeTime;
+
+    @Column
     private LocalDateTime startTime;
 
     @Column
@@ -61,16 +67,24 @@ public class Conference {
     @OneToMany(mappedBy = "conference")
     private List<ConferenceMemberInvite> invitees;
 
-    public void updateStartTime(LocalDateTime localDateTime) {
-        this.startTime = localDateTime;
-    }
-
-    public void updateFinishTime(LocalDateTime localDateTime) {
-        this.finishTime = localDateTime;
-    }
-
     public void updateModerator(Moderator moderator) {
         this.moderator = moderator;
+    }
+
+    public void updateOpenTime(LocalDateTime openTime) {
+        this.openTime = openTime;
+    }
+
+    public void updateCloseTime(LocalDateTime closeTime) {
+        this.closeTime = closeTime;
+    }
+
+    public void updateStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void updateFinishTime(LocalDateTime finishTime) {
+        this.finishTime = finishTime;
     }
 
     public Image getImage() {

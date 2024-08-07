@@ -1,9 +1,8 @@
 package com.nomz.doctorstudy.notification;
 
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
-import com.nomz.doctorstudy.conference.response.GetInvitationResponse;
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
-import com.nomz.doctorstudy.studygroup.response.GetApplyResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,7 +26,7 @@ public class GetNotificationResponse {
         return GetNotificationResponse.builder()
                 .notificationItemType(NotificationItemType.STUDY_GROUP_APPLICATION.getToken())
                 .createdAt(application.getCreatedAt())
-                .notificationItem(GetApplyResponse.of(application))
+                .notificationItem(MemberInfo.of(application.getMember()))
                 .build();
     }
 
@@ -35,7 +34,7 @@ public class GetNotificationResponse {
         return GetNotificationResponse.builder()
                 .notificationItemType(NotificationItemType.CONFERENCE_INVITATION.getToken())
                 .createdAt(invitation.getCreatedAt())
-                .notificationItem(GetInvitationResponse.of(invitation))
+                .notificationItem(ConferenceNotificationItem.of(invitation.getConference()))
                 .build();
     }
 }
