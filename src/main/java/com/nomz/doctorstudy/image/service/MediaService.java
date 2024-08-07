@@ -81,6 +81,10 @@ public class MediaService {
     }
 
     private String filePath(String type, String domain){
+        if(domain == null || domain.isEmpty()){
+            return bucket + "/" + serviceName + "/" + type;
+        }
+
         return bucket + "/" + serviceName + "/" + type + "/" + domain;
     }
 
