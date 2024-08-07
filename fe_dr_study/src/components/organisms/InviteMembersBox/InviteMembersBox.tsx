@@ -26,17 +26,20 @@ const InviteMembersBox = ({
     const [isMemberSelected, setIsMemberSelected] = useState<boolean>(false); // 멤버 선택 여부
 
     // 멤버 초대 핸들러
-    const handleInviteMember = (member: ConferenceMember) => {
+    const handleAddMember = (member: ConferenceMember) => {
+        console.log('member =>', member, '\nmemberData => ', memberData);
         // 이미 선택된 멤버인지 확인
         if (
             selectedMembers.some(
-                (member) => member.memberInfo.id === memberData?.id,
+                (currentMember) =>
+                    currentMember.memberInfo.id === member?.memberInfo.id,
             )
         ) {
             // 선택된 멤버라면 목록에서 제거
             setSelectedMembers((prev) =>
                 prev.filter(
-                    (member) => member.memberInfo.id !== memberData?.id,
+                    (currentMember) =>
+                        currentMember.memberInfo.id !== member?.memberInfo.id,
                 ),
             );
         } else {
@@ -62,12 +65,12 @@ const InviteMembersBox = ({
         try {
             // 모든 초대 요청을 Promise 배열로 만들기
             const invitePromises = selectedMembers.map((member) => {
-                console.log('초대할 멤버 아이디: ', memberData?.id);
+                console.log('초대할 멤버 아이디: ', member?.memberInfo.id);
                 return POST({
                     API: API,
                     endPoint: `${conferenceId}/invite`,
                     body: {
-                        inviteeId: memberData?.id,
+                        inviteeId: member?.memberInfo?.id,
                     },
                     isAuth: true,
                 });
@@ -112,14 +115,15 @@ const InviteMembersBox = ({
                         <div
                             className={`bg-dr-indigo-100 p-[1rem] w-[7rem] h-[7rem] duration-200 hover:bg-dr-gray-500 cursor-pointer flex flex-col items-center gap-1 rounded-md ${
                                 selectedMembers.some(
-                                    (member) =>
-                                        member.memberInfo.id === memberData?.id,
+                                    (currentMember) =>
+                                        currentMember.memberInfo.id ===
+                                        member?.memberInfo.id,
                                 )
                                     ? 'border border-blue-500'
                                     : ''
                             }`}
-                            key={memberData?.id}
-                            onClick={() => handleInviteMember(member)} // 멤버 클릭 시 초대 핸들러 호출
+                            key={member.memberInfo?.id}
+                            onClick={() => handleAddMember(member)} // 멤버 클릭 시 초대 핸들러 호출
                         >
                             <div className="relative w-[4rem] h-[4rem]">
                                 <Image
@@ -130,7 +134,7 @@ const InviteMembersBox = ({
                                 />
                             </div>
                             <p className="w-full text-center text-dr-body-4 overflow-hidden text-ellipsis whitespace-nowrap">
-                                {memberData?.nickname}
+                                {member.memberInfo?.nickname}
                             </p>
                         </div>
                     ))}
@@ -155,19 +159,19 @@ const InviteMembersBox = ({
                                         ? 'border border-blue-500'
                                         : ''
                                 }`}
-                                key={memberData?.id}
+                                key={member.memberInfo?.id}
                                 onClick={() => handleRemoveMember(member)} // 멤버 클릭 시 초대 핸들러 호출
                             >
                                 <div className="relative w-[4rem] h-[4rem]">
                                     <Image
-                                        src={memberData?.imageId}
+                                        src={member.memberInfo?.imageUrl}
                                         alt="profile-image"
                                         fill
                                         className="rounded-md"
                                     />
                                 </div>
                                 <p className="w-full text-center text-dr-body-4 overflow-hidden text-ellipsis whitespace-nowrap">
-                                    {memberData?.nickname}
+                                    {member.memberInfo?.nickname}
                                 </p>
                             </div>
                         ))}

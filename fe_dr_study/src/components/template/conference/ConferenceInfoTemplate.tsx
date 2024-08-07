@@ -28,9 +28,14 @@ const ConferenceInfoTemplate = ({
     studyMembers,
     handleOpenConference,
 }: ConferenceInfoProps) => {
-    const [isMemberInvited, setIsMemberInvited] = useState<boolean>(true); // 멤버 초대 여부
+    const [isMemberInvited, setIsMemberInvited] = useState<boolean>(false); // 멤버 초대 여부
     const [isClosedConference, setIsClosedConference] =
         useState<boolean>(false); // 컨퍼런스 종료 여부
+
+    const [selectedModerator, setSelectedModerator] =
+        useState<Moderator | null>(null);
+    const [isModeratorSelected, setIsModeratorInvited] =
+        useState<boolean>(false); // 사회자 선택 여부
 
     // console.log('conferenceData =>', conferenceData);
     // useEffect(() => {
@@ -45,7 +50,7 @@ const ConferenceInfoTemplate = ({
     // const [isMemberInvited, setIsMemberInvited] = useState<boolean>(true); // 멤버 초대 여부
 
     // const [moderators, setModerators] = useState<Moderator[]>([]); // 사회자 여부
-    // const [isModeratorInvited, setIsModeratorInvited] =
+    // const [isModeratorSelected, setIsModeratorInvited] =
     //     useState<boolean>(false); // 사회자 선택 여부
 
     // // 스터디 멤버를 가져오는 함수
@@ -139,14 +144,14 @@ const ConferenceInfoTemplate = ({
     //     }
     // };
 
-    // const startTime = new Date(conferenceData?.startTime);
-    // const finishTime = new Date(conferenceData?.finishTime);
-    // const durationInMs = finishTime.getTime() - startTime.getTime();
+    const startTime = new Date(conferenceData?.startTime);
+    const finishTime = new Date(conferenceData?.finishTime);
+    const durationInMs = finishTime.getTime() - startTime.getTime();
 
-    // // 밀리초를 시간과 분으로 변환
-    // const durationInMinutes = Math.floor(durationInMs / 60000);
-    // const hours = Math.floor(durationInMinutes / 60);
-    // const minutes = durationInMinutes % 60;
+    // 밀리초를 시간과 분으로 변환
+    const durationInMinutes = Math.floor(durationInMs / 60000);
+    const hours = Math.floor(durationInMinutes / 60);
+    const minutes = durationInMinutes % 60;
 
     return (
         <div className=" text-dr-white flex flex-col justify-center items-center bg-dr-indigo-200 p-[6rem]">
@@ -172,10 +177,10 @@ const ConferenceInfoTemplate = ({
                             <div className="flex flex-col gap-3 text-dr-body-1">
                                 <p className="text-dr-body-4 text-dr-gray-300">
                                     <span>
-                                        {/* {startTime.toLocaleString()} |{' '}
-                                    {finishTime.toLocaleString()} ({' '}
-                                    {`${hours}시간 ${minutes}분`} ) */}
-                                    </span>{' '}
+                                        {startTime.toLocaleString()} |{' '}
+                                        {finishTime.toLocaleString()} ({' '}
+                                        {`${hours}시간 ${minutes}분`} )
+                                    </span>
                                 </p>
                                 <div className="relative w-[10rem] h-[10rem] rounded-lg overflow-hidden">
                                     <Image
@@ -202,7 +207,12 @@ const ConferenceInfoTemplate = ({
 
                     <hr className="border-t border-dr-gray-500 my-4" />
 
-                    <SelectModeratorBox moderators={moderators} />
+                    <SelectModeratorBox
+                        moderators={moderators}
+                        setIsModeratorInvited={setIsModeratorInvited}
+                        selectedModerator={selectedModerator}
+                        setSelectedModerator={setSelectedModerator}
+                    />
 
                     <hr className="border-t border-dr-gray-500 my-4" />
                     <InviteMembersBox
@@ -216,16 +226,26 @@ const ConferenceInfoTemplate = ({
                     <div className="py-[1rem]">
                         <Button
                             onClick={handleOpenConference}
-                            color={`${!isMemberInvited ? 'gray' : 'coral'}`}
-                            disabled={!isMemberInvited}
+                            color={`${isMemberInvited && isModeratorSelected ? 'coral' : 'gray'}`}
+                            disabled={!isMemberInvited && !isModeratorSelected}
                             size="lg"
                             classNameStyles={`relative group ${!isMemberInvited ? 'cursor-not-allowed' : ''}`}
                         >
                             컨퍼런스 개최
-                            <ToolTip
-                                isVisible={!isMemberInvited}
-                                content="한 명 이상 초대하여 컨퍼런스를 시작할 수 있습니다."
-                            />
+                            <div className="text-start absolute top-[-0.25rem] hidden group-hover:block bg-black text-white text-dr-body-4 rounded -mt-10 left-[100%] transform -translate-x-1/2 whitespace-nowrap">
+                                {!isMemberInvited && (
+                                    <ToolTip
+                                        isVisible={!isMemberInvited}
+                                        content="- 한 명 이상 초대하여 컨퍼런스를 시작할 수 있습니다."
+                                    />
+                                )}
+                                {!isModeratorSelected && (
+                                    <ToolTip
+                                        isVisible={!isModeratorSelected}
+                                        content="- AI 사회자를 선택하여 컨퍼런스를 시작할 수 있습니다."
+                                    />
+                                )}
+                            </div>
                         </Button>
                     </div>
                 </div>

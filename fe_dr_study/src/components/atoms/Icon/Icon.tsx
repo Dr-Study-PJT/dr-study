@@ -13,6 +13,8 @@ import {
     BsFillMicMuteFill,
     BsXLg,
     BsFillSendFill,
+    BsBoxArrowInRight,
+    BsBell,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -32,6 +34,8 @@ const iconName: IconKeyValue = {
     micOff: <BsFillMicMuteFill />,
     xMark: <BsXLg />,
     send: <BsFillSendFill />,
+    logout: <BsBoxArrowInRight />,
+    bell: <BsBell />,
 };
 
 // Icon 컴포넌트
