@@ -11,9 +11,10 @@ public enum SignalType {
     PARTICIPANT_SPEAK("participant-speak"),
     AVATAR_SPEAK("avatar-speak"),
     GPT_SUMMARY("gpt-summary"),
+    HEART_STOP("heartstop"),
 
     PARTICIPANT_AUDIO("participant-audio"),
-    HEARTBEAT("heartbeat")
+    HEART_BEAT("heartbeat")
     ;
 
     private final String token;

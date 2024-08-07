@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,12 +26,12 @@ public class BlockInterpreter {
         processManager.createProcess(processId, blocks, varMap, labelMap);
     }
 
-    //@Async
+    @Async
     public void interpret(Long processId) {
         interpret(processId, ProcessMode.RUN);
     }
 
-    //@Async
+    @Async
     public void interpret(Long processId, ProcessMode processMode) {
         log.info("processId={} started to run", processId);
 
