@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { Button, Label } from '@/components/atoms';
 
@@ -6,28 +8,53 @@ import { SectionContents } from '../_components/SectionContents';
 import GroupApplyButton from '../_components/GroupApplyButton';
 import { fetchGroupWithMembersData, getGroupMembers } from './_api/ssr';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
+import { useQuery } from '@tanstack/react-query';
+import { login } from '@/app/auth/_api/login';
 
-export default async function GroupDetailPage({
+export default function GroupDetailPage({
     params,
 }: {
     params: { group_id: string };
 }) {
     const groupId = params.group_id;
 
-    const groupWithMembers = await fetchGroupWithMembersData(groupId);
-    const membersInThisGroup = await getGroupMembers(groupId);
+    const {
+        data: groupWithMembers,
+        error,
+        isLoading,
+    } = useQuery({
+        queryKey: ['groupWithMembers', groupId],
+        queryFn: () => fetchGroupWithMembersData(groupId),
+    });
+    const {
+        data: membersInThisGroup,
+        error: membersInThisGroupError,
+        isLoading: membersInThisGroupIsLoading,
+    } = useQuery({
+        queryKey: ['membersInThisGroup', groupId],
+        queryFn: () => getGroupMembers(groupId),
+    });
 
-    const myId = await getSessionStorageItem('memberData')?.id;
+    const { data: memberData } = useQuery({
+        queryKey: ['memberData'],
+    });
 
-    // 현재 사용자가 그룹장인지, 멤버인지 확인
-    const myMemberData = membersInThisGroup.find(
-        (member) => member.memberInfo.id === myId,
+    console.log('memberData => ', memberData);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
+
+    // // 현재 사용자가 그룹장인지, 멤버인지 확인
+    const myMemberData = membersInThisGroup?.find(
+        (member) => member.memberInfo.id === 1,
     );
     const isLeader = myMemberData?.role === 'CAPTAIN';
     const isMember = !!myMemberData;
-
-    console.log('isLeader : ', isLeader);
-    console.log('isMember', isMember);
 
     return (
         <div className="w-full bg-dr-indigo-200 flex flex-col">
