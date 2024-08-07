@@ -8,7 +8,7 @@ export async function GET(
         isAuth = false,
         revalidateTime = 10,
     }: {
-        params?: string | null | undefined;
+        params?: string | number | null | undefined;
         isAuth?: boolean;
         revalidateTime?: number;
     } = {

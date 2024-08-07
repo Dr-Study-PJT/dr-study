@@ -18,4 +18,3 @@ export const createModerator = async (
         console.error('사회자 생성 에반뎅');
     }
 };
-
