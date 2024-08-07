@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
+import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.member.service.MemberService;
 import com.nomz.doctorstudy.studygroup.Status;
@@ -30,6 +31,7 @@ import com.nomz.doctorstudy.tag.TagRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -51,7 +53,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public StudyGroup createStudyGroup(CreateStudyGroupRequest request, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------
-        if(authentication == null){
+        if (authentication == null) {
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
         }
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
@@ -62,8 +64,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         Long imageId = request.getImageId();
         if (imageId != null) {
             image = imageRepository.findById(imageId)
-                    .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
-        }else{
+                    .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_NOT_FOUND));
+        } else {
             image = imageRepository.findById(1L)
                     .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
         }
@@ -80,7 +82,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         studyGroupRepository.save(studyGroup);
         log.info("[new studyGroup] id={}, title={}", studyGroup.getId(), studyGroup.getName());
 
-        if(request.getTags() != null && !request.getTags().isEmpty()){
+        if (request.getTags() != null && !request.getTags().isEmpty()) {
             List<StudyGroupTag> studyGroupTags = request.getTags().stream()
                     .map(name -> {
                         Tag tag = tagRepository.findByName(name)
@@ -90,7 +92,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
             studyGroupTagRepository.saveAll(studyGroupTags);
         }
-        MemberStudyGroupId memberStudyGroupIdObject  = new MemberStudyGroupId(member.getId(), studyGroup.getId());
+        MemberStudyGroupId memberStudyGroupIdObject = new MemberStudyGroupId(member.getId(), studyGroup.getId());
         MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
                 .memberStudyGroupId(memberStudyGroupIdObject)
                 .member(member)
@@ -123,7 +125,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------
-        if(authentication == null){
+        if (authentication == null) {
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
         }
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
@@ -133,7 +135,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         StudyGroup studyGroup = studyGroupRepository.findById(createApplyRequest.getStudyGroupId())
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
 
-        if(memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(member.getId(), createApplyRequest.getStudyGroupId()).isPresent()){
+        if (memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(member.getId(), createApplyRequest.getStudyGroupId()).isPresent()) {
             throw new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_ALREADY_JOINED_ERROR);
         }
 
@@ -159,18 +161,30 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Override
     @Transactional
-    public MemberStudyGroupApply processReply(CreateReplyRequest createReplyRequest) {
-         // 1. 지원 정보 가져오기
+    public MemberStudyGroupApply processReply(CreateReplyRequest createReplyRequest, Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if (authentication == null) {
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        // 1. 지원 정보 가져오기
         MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(createReplyRequest.getApplyId())
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
 
-        // 2. status 변경
+        // 2. 그룹장인지 확인
+        if (!Objects.equals(member.getId(), apply.getStudyGroup().getCaptain().getId())) {
+            throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
+        }
+        // 3. status 변경
         apply.setStatus(createReplyRequest.getStatus());
 
-        // 3. StudyGroup의 memberCount 1 증가
         if (createReplyRequest.getStatus() == Status.APPROVED) {
-        // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
-            MemberStudyGroupId memberStudyGroupIdObject  = new MemberStudyGroupId(apply.getMember().getId(), apply.getStudyGroup().getId());
+            // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
+            MemberStudyGroupId memberStudyGroupIdObject = new MemberStudyGroupId(apply.getMember().getId(), apply.getStudyGroup().getId());
             MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
                     .memberStudyGroupId(memberStudyGroupIdObject)
                     .member(apply.getMember())
@@ -184,14 +198,28 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         return apply;
     }
 
+    @Transactional
     @Override
-    public StudyGroup updateStudyGroup(Long groupId, UpdateStudyGroupRequest request) {
+    public StudyGroup updateStudyGroup(Long groupId, UpdateStudyGroupRequest request, Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if (authentication == null) {
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
         Member captain = memberRepository.findById(request.getCaptainId())
-                .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
         Image image = imageRepository.findById(request.getImageId())
-                .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_NOT_FOUND));
+
+        if (!Objects.equals(member.getId(), captain.getId()))
+            throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
+
         if (request.getName() != null) {
             studyGroup.setName(request.getName());
         }
@@ -205,13 +233,13 @@ public class StudyGroupServiceImpl implements StudyGroupService {
             studyGroup.setImage(image);
         }
         // 기타 필드에 대해 동일하게 처리
-        return studyGroupRepository.save(studyGroup);
+        return studyGroup;
     }
 
     @Override
     public List<MemberStudyGroup> getMemberListByStudyGroupId(Long studyGroupId) {
         List<MemberStudyGroup> memberStudyGroups = memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(studyGroupId);
-        if(memberStudyGroups.isEmpty()){
+        if (memberStudyGroups.isEmpty()) {
             throw new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR);
         }
         return memberStudyGroups;
@@ -221,14 +249,13 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public List<MemberStudyGroupApply> getWaiterList(Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------
-        if(authentication == null){
+        if (authentication == null) {
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
         }
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         String email = memberDetails.getUsername();
         Member member = memberService.getUserByEmail(email);
         // --------------------------------------------------------------------------
-
         // 1. 이 멤버가 그룹장인지 찾기
         List<StudyGroup> GroupList = studyGroupRepository.findByCaptain(member);
         if (GroupList.isEmpty()) {
@@ -242,19 +269,21 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         return memberStudyGroupApplyRepository.findByStudyGroupIdInAndStatus(groupIds, Status.WAITING);
     }
 
+    @Transactional
     @Override
     public StudyGroup deleteStudyGroup(Long groupId) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
         studyGroup.setIsDeleted(Boolean.TRUE);
-        return studyGroupRepository.save(studyGroup);
+        return studyGroup;
     }
 
+    @Transactional
     @Override
     public MemberStudyGroup leaveStudyGroup(Long groupId, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------
-        if(authentication == null){
+        if (authentication == null) {
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
         }
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
@@ -269,9 +298,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         memberStudyGroup.setIsLeaved(Boolean.TRUE);
         memberStudyGroup.setLeavedDate(LocalDateTime.now());
 
-        StudyGroup studyGroup = studyGroupRepository.findById(memberStudyGroup.getStudyGroup().getId())
-                        .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
-
         return memberStudyGroup;
     }
 
@@ -279,7 +305,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public List<MemberStudyGroup> getStudyGroupListByMemberId(Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------
-        if(authentication == null){
+        if (authentication == null) {
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
         }
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
@@ -288,76 +314,4 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         // --------------------------------------------------------------------------
         return memberStudyGroupRepository.findByMemberId(member.getId());
     }
-
-//    @Override
-//    public StudyGroup updateStudyGroup(Long groupId, StudyGroup studyGroupDetails) {
-//        StudyGroup existingStudyGroup = studyGroupRepository.findById(groupId)
-//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
-//
-//        existingStudyGroup.setName(studyGroupDetails.getName());
-//     Group.setImageId(studyGroupDetails.getImageId());
-//        existingStudy   existingStudyGroup.setCaptainId(studyGroupDetails.getCaptainId());
-//        existingStudyGroup.setDescription(studyGroupDetails.getDescription());
-//        existingStudyGroup.setGoal(studyGroupDetails.getGoal());
-//        existingStudyGroup.setDueDate(studyGroupDetails.getDueDate());
-//        existingStudyGroup.setMemberCapacity(studyGroupDetails.getMemberCapacity());
-//
-//        return studyGroupRepository.save(existingStudyGroup);
-//    }
-
-//
-//    @Override
-//    public List<StudyGroup> getAllStudyGroups() {
-//        return studyGroupRepository.findAll();
-//    }
-//
-//    @Override
-//    public void deleteStudyGroup(Long groupId) {
-//        StudyGroup existingStudyGroup = studyGroupRepository.findById(groupId)
-//                .orElseThrow(() -> new RuntimeException("StudyGroup not found"));
-//        studyGroupRepository.delete(existingStudyGroup);
-//    }
-//
-//    @Override
-//    public void applyForStudyGroup(AdmissionRequest admissionRequest) {
-//
-//    }
-//
-//    @Override
-//    public void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest) {
-//
-//    }
-//
-//    @Override
-//    public List<AdmissionResponse> getAllStudyGroupApplications() {
-//        return List.of();
-//    }
-
-
-//
-//    @Override
-//    public void respondToStudyGroupApplication(AdmissionResponseRequest admissionResponseRequest) {
-//        // Handle the response to application
-//        MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(admissionResponseRequest.getAdmissionId())
-//                .orElseThrow(() -> new RuntimeException("Application not found"));
-//
-//        apply.setStatus(admissionResponseRequest.isApproved() ? "APPROVED" : "REJECTED");
-//        memberStudyGroupApplyRepository.save(apply);
-//    }
-//
-//    @Override
-//    public List<AdmissionResponse> getAllStudyGroupApplications() {
-//        // Retrieve all applications
-//        List<MemberStudyGroupApply> applications = memberStudyGroupApplyRepository.findAll();
-//        return applications.stream().map(application -> {
-//            AdmissionResponse response = new AdmissionResponse();
-//            response.setAdmissionId(application.getId());
-//            response.setMemberId(application.getMemberId());
-//            response.setStudyGroupId(application.getStudyGroupId());
-//            response.setMessage(application.getMessage());
-//            response.setApproved("APPROVED".equals(application.getStatus()));
-//            return response;
-//        }).collect(Collectors.toList());
-//    }
-
 }

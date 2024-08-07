@@ -14,7 +14,6 @@ import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.service.MemberService;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
-import com.nomz.doctorstudy.studygroup.entity.StudyGroupTag;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.repository.MemberStudyGroupRepository;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
@@ -22,6 +21,8 @@ import com.nomz.doctorstudy.tag.Tag;
 import com.nomz.doctorstudy.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -149,5 +150,10 @@ public class ArticleServiceImpl implements ArticleService{
         article.setIsDeleted(Boolean.TRUE);
         article.setDeletedAt(LocalDateTime.now());
         return articleRepository.save(article);
+    }
+
+    @Override
+    public Page<Article> getArticleList(Long groupId, Pageable pageable) {
+        return articleRepository.findByStudyGroupId(groupId, pageable);
     }
 }

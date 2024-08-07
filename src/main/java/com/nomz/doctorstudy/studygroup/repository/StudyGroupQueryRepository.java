@@ -54,14 +54,6 @@ public class StudyGroupQueryRepository {
 
         return new PageImpl<>(results, pageable, total);
 
-//        return queryBuilder.where(
-//                likeName(filter.getName()),
-//                equalMemberCapacity(filter.getMemberCapacity()),
-//                likeTagName(filter.getTagName()),
-//                isNotDeleted()  // isDeleted 필터 추가
-//        )
-//                .fetch();
-
     }
 
     private BooleanExpression likeName(String name){
