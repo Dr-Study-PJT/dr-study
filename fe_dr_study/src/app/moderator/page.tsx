@@ -213,7 +213,7 @@ const mockModerators: Moderator[] = [
 ];
 
 const ModeratorListPage = () => {
-    const [moderators, setModerators] = useState<Moderator[]>(mockModerators);
+    const [moderators, setModerators] = useState<Moderator[]>([]);
 
     useEffect(() => {
         const fetchModerators = async () => {
@@ -224,7 +224,7 @@ const ModeratorListPage = () => {
                     revalidateTime: 10,
                 });
                 console.log('사회자 리스트 조회 성공:', response);
-                setModerators(mockModerators);
+                setModerators(response.data.data);
             } catch (error) {
                 console.error(error);
             }
