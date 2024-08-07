@@ -31,6 +31,38 @@ VALUES (1, 1, 'ADMIN', NOW(), false),
        (6, 3, 'ADMIN', NOW(), false)
 ;
 
+--Tag--
+INSERT INTO tag (id, name)
+VALUES (1, '태그1'),
+       (2, '태그2'),
+       (3, '태그3'),
+       (4, '태그4'),
+       (5, '태그5')
+;
+
+--STUDY GROUP TAG--
+INSERT INTO study_group_tag (tag_id, study_group_id)
+VALUES (1, 1),
+       (2, 2),
+       (3, 3),
+       (1, 1),
+       (2, 1),
+       (3, 1),
+       (4, 1),
+       (5, 1)
+;
+
+--MEMBER STUDY GROUP APPLY--
+INSERT INTO member_study_group_apply (member_id, study_group_id, status, created_at, message)
+VALUES (1, 3, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 1'),
+       (1, 2, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 2'),
+       (2, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 3'),
+       (3, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 4'),
+       (4, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 5'),
+       (5, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 6'),
+       (6, 1, 'WAITING', NOW(), '스터디 그룹 가입 신청 메시지 6')
+;
+
 --AVATAR--
 INSERT INTO avatar (creator_id, character_type, model_type, voice_type, created_at)
 VALUES (1, 1, 3, 2, NOW()),
@@ -91,3 +123,29 @@ VALUES (1, 1, 1, 1, 'Conference 1 Title', 'Conference 1 Subject', 10, DATE_ADD(N
        (2, 2, 1, 1, 'Conference 3 Title', 'Conference 3 Subject', 10, DATE_ADD(NOW(), INTERVAL -2 HOUR), DATE_ADD(NOW(), INTERVAL 2 HOUR), "Conference 3 Review!"),
        (2, 2, 2, 1, 'Conference 4 Title', 'Conference 4 Subject', 10, DATE_ADD(NOW(), INTERVAL -4 HOUR), DATE_ADD(NOW(), INTERVAL 4 HOUR), "Conference 4 Review!")
 ;
+
+--ARTICLES--
+INSERT INTO article (id, title, content, created_at, is_deleted, view_count, member_id, study_group_id)
+VALUES (1, '제목 1', '내용 1', NOW(), FALSE, 0, 1, 1),
+       (2, '제목 2', '내용 2', NOW(), FALSE, 0, 2, 1),
+       (3, '제목 3', '내용 3', NOW(), FALSE, 0, 3, 2),
+       (4, '제목 4', '내용 4', NOW(), FALSE, 0, 4, 2),
+       (5, '제목 5', '내용 5', NOW(), FALSE, 0, 5, 3)
+;
+
+--COMMENTS--
+INSERT INTO comment (content, created_at, article_id, member_id)
+VALUES ('댓글 1', NOW(), 1, 1),
+       ('댓글 2', NOW(), 1, 2),
+       ('댓글 3', NOW(), 2, 3),
+       ('댓글 4', NOW(), 3, 4),
+       ('댓글 5', NOW(), 4, 5);
+
+--ARTICLE_TAGS--
+INSERT INTO article_tag (article_id, tag_id)
+VALUES (1, 1),
+       (1, 2),
+       (2, 1),
+       (3, 3),
+       (4, 4),
+       (5, 5);

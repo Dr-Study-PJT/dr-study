@@ -1,13 +1,15 @@
 package com.nomz.doctorstudy.article.response;
 
-import com.nomz.doctorstudy.article.entity.Comment;
+import com.nomz.doctorstudy.article.dto.CommentSummary;
+import com.nomz.doctorstudy.article.entity.Article;
+import com.nomz.doctorstudy.member.response.MemberInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -24,12 +26,40 @@ public class GetArticleResponse {
     @Schema(description = "조회된 게시글 조회수", example = "1")
     private Long viewCount;
 
-    @Schema(description = "조회된 게시글 작성자", example = "박경모")
-    private String writerNickname;
+    @Schema(description = "조회된 게시글 작성자 정보")
+    private MemberInfo memberInfo;
 
     @Schema(description = "조회된 게시글 댓글 리스트", example = "[]")
-    private List<Comment> comments;
+    private List<CommentSummary> comments;
 
     @Schema(description = "태그 리스트", example = "[\"#공지사항\", \"#필독\"]")
     private List<String> tags;
+
+    public static GetArticleResponse of(Article article){
+        List<String> tagNames = article.getArticleTags().stream()
+                .map(articleTag -> articleTag.getTag().getName())
+                .collect(Collectors.toList());
+
+        List<CommentSummary> commentSummaries = article.getComments().stream()
+                .map(comment -> CommentSummary.builder()
+                        .id(comment.getId())
+                        .content(comment.getContent())
+                        .memberInfo(MemberInfo.of(comment.getMember()))
+                        .createdAt(comment.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        return builder()
+                .title(article.getTitle())
+                .content(article.getContent())
+                .createdAt(article.getCreatedAt())
+                .viewCount(article.getViewCount())
+                .memberInfo(MemberInfo.of(article.getWriter()))
+                .comments(commentSummaries)
+                .tags(tagNames)
+                .build();
+    }
 }
+
+
+
