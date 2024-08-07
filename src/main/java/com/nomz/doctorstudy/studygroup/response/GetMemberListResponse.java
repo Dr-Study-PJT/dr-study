@@ -23,7 +23,7 @@ public class GetMemberListResponse {
     public static GetMemberListResponse of(MemberStudyGroup memberStudyGroup){
         return builder()
                 .memberInfo(MemberInfo.of(memberStudyGroup.getMember()))
-                .role(memberStudyGroup.getRole())
+                .role(memberStudyGroup.getRole().toString())
                 .joinDate(memberStudyGroup.getJoinDate())
                 .build();
     }

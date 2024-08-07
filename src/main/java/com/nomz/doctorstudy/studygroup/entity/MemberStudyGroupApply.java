@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
 import com.nomz.doctorstudy.member.entity.Member;
-import com.nomz.doctorstudy.studygroup.Status;
+import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +28,7 @@ public class MemberStudyGroupApply {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status; // e.g., "APPROVED", "DENIED", "WAITING"
+    private ApplicationStatus applicationStatus; // e.g., "APPROVED", "DENIED", "WAITING"
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
