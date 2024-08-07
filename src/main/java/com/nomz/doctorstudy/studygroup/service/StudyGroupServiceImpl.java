@@ -3,7 +3,7 @@ package com.nomz.doctorstudy.studygroup.service;
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.image.entity.Image;
-import com.nomz.doctorstudy.image.exception.ImageErrorCode;
+import com.nomz.doctorstudy.image.exception.FileErrorCode;
 import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
@@ -67,7 +67,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                     .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_NOT_FOUND));
         } else {
             image = imageRepository.findById(1L)
-                    .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_NOT_FOUND));
+                    .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
         }
         StudyGroup studyGroup = StudyGroup.builder()
                 .name(request.getName())
