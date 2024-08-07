@@ -15,10 +15,16 @@ public class GetConferenceListRequest {
 
     @Schema(description = "스터디 그룹", example = "")
     private Long studyGroupId;
-    
-    @Schema(description = "조회 기간 하한 범위 [yyyy-MM-ddTHH:mm:ss]", example = "")
-    private LocalDateTime lowerBoundDate;
 
-    @Schema(description = "조회 기간 상한 범위 [yyyy-MM-ddTHH:mm:ss]", example = "")
-    private LocalDateTime upperBoundDate;
+    @Schema(description = "시작 여부", example = "")
+    private Boolean isStarted;
+
+    @Schema(description = "종료 여부", example = "")
+    private Boolean isFinished;
+
+    @Schema(description = "메인 카테고리 아이디")
+    private String mainCategory;
+
+    @Schema(description = "서브 카테고리 아이디")
+    private String subCategory;
 }

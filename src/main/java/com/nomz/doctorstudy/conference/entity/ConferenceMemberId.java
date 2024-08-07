@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 @Embeddable
 @Getter
-@Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor

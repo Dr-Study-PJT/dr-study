@@ -78,8 +78,8 @@ public class ConferenceServiceImpl implements ConferenceService {
                 ConferenceSearchFilter.builder()
                         .memberId(request.getMemberId())
                         .studyGroupId(request.getStudyGroupId())
-                        .lowerBoundDate(request.getLowerBoundDate())
-                        .upperBoundDate(request.getUpperBoundDate())
+                        .isStarted(request.getIsStarted())
+                        .isFinished(request.getIsFinished())
                         .build()
         );
     }
@@ -115,8 +115,9 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
-        roomService.closeRoom(conferenceId);
         conference.updateFinishTime(LocalDateTime.now());
+
+        roomService.closeRoom(conferenceId);
     }
 
     @Override

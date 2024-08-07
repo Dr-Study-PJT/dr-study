@@ -33,8 +33,9 @@ public class ConferenceQueryRepository {
                 .where(
                         eqStudyGroupMember(filter.getMemberId()),
                         eqStudyGroup(filter.getStudyGroupId()),
-                        dateInBound(filter.getLowerBoundDate(), filter.getUpperBoundDate())
-                )
+                        notStarted(filter.getIsStarted()),
+                        notFinished(filter.getIsFinished())
+                                   )
                 .fetch();
     }
 
@@ -54,6 +55,20 @@ public class ConferenceQueryRepository {
     private BooleanExpression eqStudyGroup(Long studyGroupId) {
         if (studyGroupId != null) {
             return conference.studyGroup.id.eq(studyGroupId);
+        }
+        return null;
+    }
+
+    private BooleanExpression notStarted(Boolean isStarted) {
+        if (isStarted != null) {
+            return conference.startTime.isNull();
+        }
+        return null;
+    }
+
+    private BooleanExpression notFinished(Boolean isFinished) {
+        if (isFinished != null) {
+            return conference.finishTime.isNull();
         }
         return null;
     }
