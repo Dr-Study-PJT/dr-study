@@ -173,7 +173,7 @@ const SideBar = () => {
         <div className="SIDEBAR-BOX fixed z-10 left-0 pt-20 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-[#282B30]">
             <div className="flex flex-col gap-3">
                 <div className="LIST-BUTTON-CONFERENCE flex flex-col gap-3">
-                    {conferences.map((conference) => {
+                    {conferences?.map((conference) => {
                         const isActive =
                             pathname === `/conference/${conference.id}`;
                         return (
