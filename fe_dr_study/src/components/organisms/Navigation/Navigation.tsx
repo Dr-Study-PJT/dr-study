@@ -17,6 +17,7 @@ import { GET } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Image from 'next/image';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const pathname = usePathname();
@@ -29,6 +30,8 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [notifications, setNotifications] = useState<NotificationData[]>([]);
+
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -61,9 +64,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     }, [dispatch]);
 
     const onClickSetLogout = async () => {
+        removeMemberData();
         dispatch(clearMemberState());
         dispatch(setIsSigned(TIsSigned.F));
-        removeMemberData();
+        queryClient.removeQueries({ queryKey: ['memberData'] });
     };
 
     const toggleDropdown = () => {

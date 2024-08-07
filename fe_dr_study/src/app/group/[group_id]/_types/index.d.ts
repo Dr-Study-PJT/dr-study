@@ -20,7 +20,7 @@ export interface ArticleData {
 export interface GroupData {
     id: string;
     name: string;
-    imageUrl: '';
+    imageUrl: string;
     createdAt: string;
     dueDate: string;
     isDeleted: boolean;
@@ -33,7 +33,7 @@ export interface GroupData {
 export interface GroupWithMembersData {
     id: string | number;
     name: string;
-    imageUrl: '';
+    imageUrl: string;
     createdAt: string;
     dueDate: string;
     isDeleted: boolean;

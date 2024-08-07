@@ -100,7 +100,7 @@ const LoginPage = () => {
                             type="email"
                             id="email"
                             placeholder="이메일을 입력해주세요."
-                            value={formData.email}
+                            value={formData?.email}
                             onChange={handleChange}
                             error={errors.email}
                         />
@@ -109,7 +109,7 @@ const LoginPage = () => {
                             type="password"
                             id="password"
                             placeholder="비밀번호를 입력해주세요."
-                            value={formData.password}
+                            value={formData?.password}
                             onChange={handleChange}
                             error={errors.password}
                         />

@@ -65,7 +65,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                                             <div className="relative overflow-hidden w-10 h-10 rounded-xl">
                                                 <Image
                                                     alt="avatar"
-                                                    src={`/images/member_thumbnail_${participant.id}.png`}
+                                                    src={participant.imageUrl}
                                                     layout="fill"
                                                 />
                                             </div>

@@ -3,7 +3,13 @@
  * @param {string} isoString - The ISO 8601 date string
  * @returns {string} - Formatted date string
  */
-function formatDate(isoString: string): string {
+/**
+ * Convert ISO 8601 date string to a readable format "YYYY-MM-DD HH:mm:ss"
+ * @param {string | undefined} isoString - The ISO 8601 date string
+ * @returns {string} - Formatted date string
+ */
+export function formatDate(isoString: string | undefined): string {
+    if (!isoString) return '';
     const date = new Date(isoString);
 
     const year = date.getFullYear();
@@ -24,7 +30,7 @@ type DateTimePartType = 'date' | 'time';
  * @param {DateTimePartType} type - The type of output: 'date' or 'time'
  * @returns {string} - Formatted date or time string
  */
-function getDateTimePart(
+export function getDateTimePart(
     formattedDate: string,
     type: DateTimePartType,
 ): string {
@@ -46,7 +52,7 @@ function getDateTimePart(
  * @param {'hours' | 'minutes'} unit - The unit of the difference ('hours' or 'minutes')
  * @returns {number} - The difference in the specified unit
  */
-function calculateDifference(
+export function calculateDateDifference(
     start: string,
     end: string,
     unit: 'hours' | 'minutes',
@@ -65,15 +71,29 @@ function calculateDifference(
     }
 }
 
+/**
+ * Calculate the difference between a given ISO 8601 date string and the current date in days.
+ * @param {string} start - The starting ISO 8601 date string
+ * @returns {number} - The difference in days
+ */
+function calculateDateDifferenceInDays(start: string): number {
+    const startDate = new Date(start);
+    const currentDate = new Date();
+    const differenceInMilliseconds =
+        currentDate.getTime() - startDate.getTime();
+    return Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+}
+
+// Test the functions
 const startIsoDate = '2024-08-05T01:12:54.082Z';
 const endIsoDate = '2024-08-05T03:18:51.111Z';
 
-const differenceInHours = calculateDifference(
+const differenceInHours = calculateDateDifference(
     startIsoDate,
     endIsoDate,
     'hours',
 );
-const differenceInMinutes = calculateDifference(
+const differenceInMinutes = calculateDateDifference(
     startIsoDate,
     endIsoDate,
     'minutes',
@@ -87,3 +107,6 @@ const formattedDate = formatDate(isoDate);
 console.log(formattedDate); // Output: "2024-08-05 01:12:54"
 console.log(getDateTimePart(formattedDate, 'date')); // Output: "2024-08-05"
 console.log(getDateTimePart(formattedDate, 'time')); // Output: "01:12"
+
+const differenceInDays = calculateDateDifferenceInDays(startIsoDate);
+console.log(`현재까지 ${differenceInDays}일째 진행 중`); // Output: "현재까지 x일째 진행 중"

@@ -52,8 +52,7 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
                             className="absolute right-1 top-2.5  text-black  rounded min-w-fit"
                             onClick={(e) => e.preventDefault()}
                         >
-                            <BiSearch className="text-dr-gray-400 text-dr-black h-full mr-1" />{' '}
-                            {/* SearchIcon 대체 */}
+                            <BiSearch className="text-dr-gray-400 h-full mr-1" />{' '}
                         </button>
                     </form>
 
@@ -129,7 +128,6 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
                                             </div>
                                             <div className="w-2/12 flex flex-row gap-1 mt-[1px]">
                                                 <FaUsers className="text-dr-gray-400" />{' '}
-                                                {/* ChatIcon 대체 */}
                                                 <span className="text-xs ">
                                                     {item.commentCnt}
                                                 </span>

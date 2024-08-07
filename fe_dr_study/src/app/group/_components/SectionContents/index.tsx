@@ -97,7 +97,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     };
 
     return (
-        <div className="SECTION-CONTENTS w-full h-max flex flex-row px-6 mt-8">
+        <div className="SECTION-CONTENTS w-full h-max flex flex-row px-6 mt-8 mb-12">
             <div className="LEFT-CONTENTS flex flex-col w-2/5 h-full p-4">
                 <div className="SUBTITLE flex flex-row gap-4 items-end text-dr-white mb-4">
                     <div className="text-dr-header-2 font-medium text-dr-white pl-2">
@@ -111,19 +111,19 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                     conferences={conferencesWithMembers}
                     isMember={isMember}
                 />
-                {isMember && (
-                    <div className="mt-6 text-center">
-                        <Button
-                            onClick={handleClickOpenConference}
-                            outlined
-                            rounded
-                            fullWidth
-                            classNameStyles="text-dr-white"
-                        >
-                            새 컨퍼런스 개설
-                        </Button>
-                    </div>
-                )}
+                <div
+                    className={`mt-6 text-center ${isMember ? 'block' : 'hidden'}`}
+                >
+                    <Button
+                        onClick={handleClickOpenConference}
+                        outlined
+                        rounded
+                        fullWidth
+                        classNameStyles="text-dr-white"
+                    >
+                        새 컨퍼런스 개설
+                    </Button>
+                </div>
             </div>
             <div className="DIVIDER-VERTICAL mx-8 w-[1.5px] h-auto my-32 bg-dr-dark-200 "></div>
             <div className="RIGHT-CONTENTS flex flex-col justify-start gap-2 w-3/5 h-auto">
