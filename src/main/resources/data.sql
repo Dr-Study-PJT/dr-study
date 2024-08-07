@@ -23,12 +23,12 @@ VALUES (1, 1, "StudyGroup1", "StudyGroup1 Description", "StudyGroup1 Goal", DATE
 
 --MEMBER STUDY GROUP--
 INSERT INTO member_study_group (member_id, study_group_id, role, join_date, is_leaved)
-VALUES (1, 1, 'ADMIN', NOW(), false),
-       (2, 1, 'USER', NOW(), false),
-       (3, 1, 'USER', NOW(), false),
-       (4, 2, 'ADMIN', NOW(), false),
-       (5, 2, 'USER', NOW(), false),
-       (6, 3, 'ADMIN', NOW(), false)
+VALUES (1, 1, 'CAPTAIN', NOW(), false),
+       (2, 1, 'MEMBER', NOW(), false),
+       (3, 1, 'MEMBER', NOW(), false),
+       (4, 2, 'CAPTAIN', NOW(), false),
+       (5, 2, 'MEMBER', NOW(), false),
+       (6, 3, 'CAPTAIN', NOW(), false)
 ;
 
 --Tag--

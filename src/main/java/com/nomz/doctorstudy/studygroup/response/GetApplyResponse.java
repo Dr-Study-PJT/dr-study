@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.studygroup.response;
 
 import com.nomz.doctorstudy.studygroup.Status;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
+import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class GetApplyResponse {
     private final Long groupId;
 
     @Schema(description = "그룹 가입 상태", example = "APPROVED")
-    private final Status status;
+    private final ApplicationStatus applicationStatus;
 
     @Schema(description = "그룹 가입 요청 때 보낸 메시지", example = "열심히 스터디 참여하겠습니다!")
     private final String message;

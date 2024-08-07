@@ -204,7 +204,7 @@ public class StudyGroupController {
                 )
         );
     }
-    @GetMapping("/admission")
+    @GetMapping("/applications")
     @Operation(summary = "Study Group 지원 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 지원 조회 성공", useReturnTypeSchema = true),
@@ -242,9 +242,9 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    @PostMapping("/admission/reply")
-    public ResponseEntity<SuccessResponse<CreateReplyResponse>> createReply(@RequestBody CreateReplyRequest createReplyRequest, Authentication authentication) {
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.processReply(createReplyRequest, authentication);
+    @PostMapping("/applications/{applyId}/reply")
+    public ResponseEntity<SuccessResponse<CreateReplyResponse>> createReply(@PathVariable(name="applyId") Long applyId, @RequestBody CreateReplyRequest createReplyRequest, Authentication authentication) {
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.processReply(applyId, createReplyRequest, authentication);
         CreateReplyResponse response = new CreateReplyResponse(memberStudyGroupApply.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -278,7 +278,7 @@ public class StudyGroupController {
         );
     }
 
-    @GetMapping("/waiters")
+    @GetMapping("/applicants")
     @Operation(summary = "Study Group 장이 자신의 그룹에 승인 대기중인 멤버를 조회", description = "Study Group 승인 대기자를 검색합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 승인 대기자 검색 성공", useReturnTypeSchema = true),

@@ -19,6 +19,7 @@ import com.nomz.doctorstudy.studygroup.repository.MemberStudyGroupRepository;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
 import com.nomz.doctorstudy.tag.Tag;
 import com.nomz.doctorstudy.tag.TagRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -81,6 +82,7 @@ public class ArticleServiceImpl implements ArticleService{
         return article;
     }
 
+    @Transactional
     @Override
     public Article updateArticle(Long articleId, UpdateArticleRequest request, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
