@@ -64,7 +64,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         Long imageId = request.getImageId();
         if (imageId != null) {
             image = imageRepository.findById(imageId)
-                    .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_NOT_FOUND));
+                    .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
         } else {
             image = imageRepository.findById(1L)
                     .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
@@ -215,7 +215,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         Member captain = memberRepository.findById(request.getCaptainId())
                 .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
         Image image = imageRepository.findById(request.getImageId())
-                .orElseThrow(() -> new BusinessException(ImageErrorCode.IMAGE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
 
         if (!Objects.equals(member.getId(), captain.getId()))
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
