@@ -56,11 +56,11 @@ const ModeratorList = ({
 }) => {
     return (
         <div className="flex flex-wrap justify-center ">
-            {moderators.map((moderator) => (
+            {moderators?.map((moderator) => (
                 <div
-                    key={moderator.id}
+                    key={moderator?.id}
                     className={`w-[25%] flex flex-col p-[0.5rem] rounded-md gap-dr-5 items-center cursor-pointer hover:bg-dr-gray-500 transition duration-200 ${
-                        selectedModerator?.id === moderator.id
+                        selectedModerator?.id === moderator?.id
                             ? 'border-blue-500 highlight' // 강조된 테두리 클래스 추가
                             : 'border-transparent' // 비선택 상태에서는 투명한 테두리
                     } border-2`} // 항상 2px 테두리 유지
@@ -68,14 +68,14 @@ const ModeratorList = ({
                 >
                     <div className="relative w-full h-[6rem]">
                         <Image
-                            src={moderator.thumbnailUrl}
-                            alt={moderator.name}
+                            src={moderator?.thumbnailUrl}
+                            alt={moderator?.name}
                             fill
                             className="rounded-md mb-2"
                         />
                     </div>
                     <p className="text-dr-body-3 text-center">
-                        {moderator.name}
+                        {moderator?.name}
                     </p>
                 </div>
             ))}

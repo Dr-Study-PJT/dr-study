@@ -152,6 +152,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         src={memberData?.imageUrl}
                                         layout="fill"
                                         onClick={toggleDropdown}
+                                        unoptimized
                                     />
                                 </div>
                                 {dropdownOpen && (
