@@ -66,18 +66,18 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
     } catch (error) {
         console.error('Error fetching groupWithMembers data:', error);
         // 오류 시 더미 데이터 반환
-        return {
-            id: groupId,
-            name: '',
-            imageUrl: '',
-            createdAt: '',
-            dueDate: '',
-            isDeleted: false,
-            description: '',
-            memberCount: 0,
-            memberCapacity: 0,
-            tags: [],
-            members: [], // 오류 시 빈 배열 설정
-        };
+        // return {
+        //     id: groupId,
+        //     name: '',
+        //     imageUrl: '',
+        //     createdAt: '',
+        //     dueDate: '',
+        //     isDeleted: false,
+        //     description: '',
+        //     memberCount: 0,
+        //     memberCapacity: 0,
+        //     tags: [],
+        //     members: [], // 오류 시 빈 배열 설정
+        // };
     }
 };

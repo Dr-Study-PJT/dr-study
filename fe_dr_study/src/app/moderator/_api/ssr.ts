@@ -40,7 +40,7 @@ export const getModeratorListBy = async ({
     size,
     tagName,
     name,
-}: SearchParams): Promise<IGroupListResponse> => {
+}: SearchParams): Promise<IGroupListResponse | void> => {
     'use server';
     const baseUrl = `v1/groups?page=${page}&size=${size}`;
     let urlWithFilterQuery = `${baseUrl}`;
@@ -64,7 +64,7 @@ export const getModeratorListBy = async ({
         console.log('GET 실패 : 그룹리스트 : 더미데이터로 대체합니다.');
         console.error('에러:' + error);
 
-        return dummyGroupListData as IGroupListResponse;
+        // return dummyGroupListData as IGroupListResponse;
     }
 };
 

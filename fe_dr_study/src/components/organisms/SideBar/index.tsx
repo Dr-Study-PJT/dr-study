@@ -104,7 +104,7 @@ const getMyGroups = async () => {
         response = res.data.data;
     } catch (error) {
         console.error(error);
-        response = dummyMyGroupListData;
+        // response = dummyMyGroupListData;
     }
 
     return response;
@@ -131,7 +131,7 @@ const fetchConferences = async ({
         return data.data;
     } catch (error) {
         console.error('Error fetching conferences:', error);
-        return dummyConferenceListData; // 실패 시 더미 데이터 사용
+        // return dummyConferenceListData; // 실패 시 더미 데이터 사용
     }
 };
 
