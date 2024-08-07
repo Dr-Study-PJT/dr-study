@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy all files to the container
 COPY . .
 
+RUN apk update && apk add --no-cache ffmpeg
+
 # Run Gradle build
 RUN chmod +x ./gradlew
 
