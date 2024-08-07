@@ -1,8 +1,6 @@
 package com.nomz.doctorstudy.image.exception;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
-import com.nomz.doctorstudy.member.exception.member.MemberException;
-import jakarta.validation.constraints.Max;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -18,17 +16,18 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 @Order(1)
-public class ImageExceptionHandler {
-    @ExceptionHandler(ImageException.class)
-    public ResponseEntity<?> imageException1(ImageException e){
-        log.info("Image error");
+public class FileExceptionHandler {
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<?> fileException1(FileException e){
+        log.info("File error");
+        log.info("fileException = {}", e);
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<?> imageException2(MaxUploadSizeExceededException e){
+    public ResponseEntity<?> fileException2(MaxUploadSizeExceededException e){
         log.info("파일크기가 너무 커요");
 
         Map<String, String> map = new HashMap<>();

@@ -6,6 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ImageException extends RuntimeException{
+public class FileException extends RuntimeException{
     private final ErrorCode errorCode;
 }
