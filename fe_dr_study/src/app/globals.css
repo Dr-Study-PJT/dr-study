@@ -11,6 +11,19 @@ body {
     font-size: 20px; /* 기본 폰트 크기 */
 }
 
+.clip-octagon {
+    clip-path: polygon(
+        25% 0%,
+        75% 0%,
+        100% 25%,
+        100% 75%,
+        75% 100%,
+        25% 100%,
+        0% 75%,
+        0% 25%
+    );
+}
+
 .WINDOW-HEADER {
     background-color: #23272a;
     color: white;

@@ -24,7 +24,7 @@ const CreateConferenceTemplate = () => {
                 isAuth: true, // 항상 true로
             });
 
-            console.log('컨퍼런스 생성 성공:', response.data);
+            console.log('컨퍼런스 생성 성공:', response);
         } catch (error) {
             console.error('컨퍼런스 생성 실패:', error);
         }
@@ -37,7 +37,7 @@ const CreateConferenceTemplate = () => {
                 isAuth: true,
                 revalidateTime: 10,
             });
-            console.log(response.data);
+            console.log(response);
         } catch (error) {
             console.error('컨퍼런스 조회 실패:', error);
         }

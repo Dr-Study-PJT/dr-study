@@ -4,7 +4,7 @@ import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { POST } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
 import ToolTip from '@/components/atoms/Tooltip/ToolTip';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 interface ConferenceControlBarProps {
