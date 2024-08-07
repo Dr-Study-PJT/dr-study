@@ -153,10 +153,16 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
         if (!(requester.getId().equals(conference.getHost().getId())) &&
-                !conference.getInvitees().stream().
-                        map(ConferenceMemberInvite::getMember).
-                        toList().contains(requester))
+                !conference.getInvitees().stream().map(ConferenceMemberInvite::getMember)
+                        .map(Member::getId).toList().contains(requester.getId()))
         {
+            log.debug("join requester id = {}", requester.getId());
+            StringBuilder sb = new StringBuilder();
+            sb.append("---------- INVITEE LIST ----------\n");
+            for (Long s : conference.getInvitees().stream().map(ConferenceMemberInvite::getMember).map(Member::getId).toList()) {
+                sb.append(s).append('\n');
+            }
+            log.debug(sb.toString());
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_INVITED);
         }
 
