@@ -61,14 +61,24 @@ public class ConferenceQueryRepository {
 
     private BooleanExpression notStarted(Boolean isStarted) {
         if (isStarted != null) {
-            return conference.startTime.isNull();
+            if (isStarted) {
+                return conference.startTime.isNotNull();
+            }
+            else {
+                return conference.startTime.isNull();
+            }
         }
         return null;
     }
 
     private BooleanExpression notFinished(Boolean isFinished) {
         if (isFinished != null) {
-            return conference.finishTime.isNull();
+            if (isFinished) {
+                return conference.finishTime.isNotNull();
+            }
+            else {
+                return conference.finishTime.isNull();
+            }
         }
         return null;
     }

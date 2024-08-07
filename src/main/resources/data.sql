@@ -118,10 +118,18 @@ VALUES (1, 1, 1, 'First Moderator', NOW()),
 
 --CONFERENCE--
 INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, start_time, finish_time, ai_review)
-VALUES (1, 1, 1, 1, 'Conference 1 Title', 'Conference 1 Subject', 10, DATE_ADD(NOW(), INTERVAL -30 MINUTE), DATE_ADD(NOW(), INTERVAL 30 MINUTE), "Conference 1 Review!"),
-       (1, 1, 2, 1, 'Conference 2 Title', 'Conference 2 Subject', 10, DATE_ADD(NOW(), INTERVAL -1 HOUR), DATE_ADD(NOW(), INTERVAL 1 HOUR), "Conference 2 Review!"),
-       (2, 2, 1, 1, 'Conference 3 Title', 'Conference 3 Subject', 10, DATE_ADD(NOW(), INTERVAL -2 HOUR), DATE_ADD(NOW(), INTERVAL 2 HOUR), "Conference 3 Review!"),
-       (2, 2, 2, 1, 'Conference 4 Title', 'Conference 4 Subject', 10, DATE_ADD(NOW(), INTERVAL -4 HOUR), DATE_ADD(NOW(), INTERVAL 4 HOUR), "Conference 4 Review!")
+VALUES (1, 1, 1, 1, 'Conference 1 Title', 'Conference 1 Subject', 10, null, null, "Conference 1 Review!"),
+       (1, 1, 2, 1, 'Conference 2 Title', 'Conference 2 Subject', 10, null, null, "Conference 2 Review!"),
+       (2, 2, 1, 1, 'Conference 3 Title', 'Conference 3 Subject', 10, null, null, "Conference 3 Review!"),
+       (2, 2, 2, 1, 'Conference 4 Title', 'Conference 4 Subject', 10, null, null, "Conference 4 Review!")
+;
+
+--CONFERENCE_MEMBER_INVITE--
+INSERT INTO conference_member_invite (conference_id, member_id, created_at)
+VALUES (2, 1, DATE_ADD(NOW(), INTERVAL -2 HOUR)),
+       (3, 1, DATE_ADD(NOW(), INTERVAL -50 MINUTE)),
+       (1, 2, DATE_ADD(NOW(), INTERVAL -40 MINUTE)),
+       (1, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE))
 ;
 
 --ARTICLES--
