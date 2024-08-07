@@ -5,69 +5,72 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-
 import { ILogInReq } from '@/interfaces/members';
 import { login } from '../_api/login';
-
 import { useRouter } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { setMemberState } from '@/store/slices/memberSlice';
-import { setIsSigned, TIsSigned } from '@/store/slices/authSlice';
-
-const loginPageStyles =
-    'flex justify-center items-center w-full h-full bg-gray-800';
-
-const loginContainerStyles =
-    'w-3/5 flex bg-gray-900 text-white rounded-lg shadow-lg overflow-hidden border-[1px] border-dr-gray-300 relative';
-
-const loginFormContainerStyles = 'w-1/2 p-8 my-auto';
-
-const loginImageContainerStyles = 'w-1/2 relative';
+import { TIsSigned, setIsSigned } from '@/store/slices/authSlice';
 
 const LoginPage = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            router.push('/');
-        }
-    }, [isLoggedIn]);
-
     const [formData, setFormData] = useState<ILogInReq>({
         email: '',
         password: '',
     });
     const [errors, setErrors] = useState({ email: '', password: '' });
+    const queryClient = useQueryClient();
+
+    // 로그인 후 memberData를 저장할 상태
+    const { data: memberData, refetch } = useQuery({
+        queryKey: ['memberData'],
+    });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
         setErrors({ ...errors, [e.target.id]: '' }); // Clear error on input change
     };
 
-    const onClickLoginSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await login(formData);
+    // useMutation을 사용하여 로그인 요청 처리
+    const loginMutation = useMutation({
+        mutationFn: login,
+        onSuccess: (data) => {
+            // 로그인 성공 후 memberData를 'memberData' 키에 저장
+            console.log('query success =>', data);
             setIsLoggedIn(true);
-
-            console.log(response);
-            dispatch(setMemberState(response.data.memberInfo));
+            queryClient.setQueryData(['memberData'], data.data.memberInfo);
+            dispatch(setMemberState(data.data.memberInfo));
             dispatch(setIsSigned(TIsSigned.T));
-        } catch (error) {
+
+            router.push('/'); // 로그인 후 홈으로 이동
+        },
+        onError: (error: any) => {
             console.log('에러:' + error);
             setErrors({
                 email: '이메일이 잘못되었습니다.',
                 password: '비밀번호가 잘못되었습니다.',
             });
-        }
+        },
+    });
+
+    const onClickLoginSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        loginMutation.mutate(formData);
     };
 
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push('/');
+        }
+    }, [isLoggedIn, router]);
+
     return (
-        <div className={loginPageStyles}>
-            <div className={loginContainerStyles}>
-                <div className={loginImageContainerStyles}>
+        <div className="flex justify-center items-center w-full h-full bg-gray-800">
+            <div className="w-3/5 flex bg-gray-900 text-white rounded-lg shadow-lg overflow-hidden border-[1px] border-dr-gray-300 relative">
+                <div className="w-1/2 relative">
                     <Image
                         src="/images/login_thumbnail.png"
                         width={526}
@@ -84,13 +87,13 @@ const LoginPage = () => {
                         </p>
                     </div>
                 </div>
-                <div className={loginFormContainerStyles}>
+                <div className="w-1/2 p-8 my-auto">
                     <h2 className="text-dr-header-2 text-dr-coral-200 font-bold mb-6">
                         로그인
                     </h2>
                     <form
                         onSubmit={onClickLoginSubmit}
-                        className="SECTION-INPUT-LIST flex flex-col gap-4"
+                        className="flex flex-col gap-4"
                     >
                         <InputWithLabelAndError
                             label="이메일 입력"
@@ -110,6 +113,7 @@ const LoginPage = () => {
                             onChange={handleChange}
                             error={errors.password}
                         />
+
                         <Button fullWidth type="submit">
                             로그인
                         </Button>

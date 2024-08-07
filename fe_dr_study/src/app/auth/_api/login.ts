@@ -31,11 +31,10 @@ API.interceptors.response.use(
     },
 );
 
-export const login = async (memerData: ILogInReq) => {
+export const login = async (memberData: ILogInReq) => {
     const response = await API.post(
         `${process.env.NEXT_PUBLIC_HOST}/v1/auth/login`,
-        // 'https://api.dr-study.kro.kr/v1/auth/login',
-        memerData,
+        memberData,
     );
     console.log(response.data.data);
     setAccessToken(response.data.data.tokens.accessToken);
@@ -49,7 +48,7 @@ export const login = async (memerData: ILogInReq) => {
     return response.data;
 };
 
-export const getLoginedMemberInfo = async () => {
+export const getLoggedInMemberInfo = async () => {
     try {
         const response = await GET('v1/members', {
             isAuth: true,

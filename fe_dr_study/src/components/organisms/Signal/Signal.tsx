@@ -100,7 +100,7 @@ const Signal = ({
         subscribeToSignal('avatar-speak', handleAvatarSpeakSignal);
         subscribeToSignal('gpt-summary', handleGPTSummarySignal);
         subscribeToSignal('next-step', handleNextStepSignal);
-        subscribeToSignal('death-signal', handleDeathSignal);
+        subscribeToSignal('heartstop', handleHeartstop);
     };
 
     // 신호 수신을 위한 구독 함수
@@ -186,8 +186,8 @@ const Signal = ({
     };
 
     // 방송 종료 신호 처리
-    const handleDeathSignal = () => {
-        console.log(`handleDeathSignal: 모든 스트림 연결 종료 (구현중)`);
+    const handleHeartstop = () => {
+        console.log(`handleHeartstop: 모든 스트림 연결 종료 (구현중)`);
     };
 
     // 메시지 전송 함수

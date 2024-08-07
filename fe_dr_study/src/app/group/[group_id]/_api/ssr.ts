@@ -1,3 +1,5 @@
+'use server';
+
 import { GET } from '@/app/api/routeModule';
 import { GroupWithMembersData } from '../_types';
 
@@ -32,7 +34,7 @@ interface GroupMember {
 }
 
 export const fetchGroupWithMembersData = async (groupId: string) => {
-    'use server';
+    // 'use server';
 
     console.log('페칭시도');
 
@@ -75,7 +77,7 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
 export const getGroupMembers = async (
     groupId: string,
 ): Promise<GroupMember[]> => {
-    'use server';
+    // 'use server';
     try {
         const response_members = await GET(`v1/groups/${groupId}/members`, {
             isAuth: true,
