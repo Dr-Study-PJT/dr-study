@@ -3,9 +3,9 @@ package com.nomz.doctorstudy.conference.room.signal;
 import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
 public class HeartBeatSignal implements Signal {
-    private final Long id;
+    private Long id;
 
     @Override
     public SignalType getSignalType() {
