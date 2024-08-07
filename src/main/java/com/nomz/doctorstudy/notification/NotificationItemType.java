@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum NotificationItemType {
-    STUDY_GROUP_APPLICATION("Application"),
-    CONFERENCE_INVITATION("Invitation")
+    STUDY_GROUP_APPLICATION("StudyGroup Application"),
+    CONFERENCE_INVITATION("Conference Invitation")
     ;
 
     private final String token;
