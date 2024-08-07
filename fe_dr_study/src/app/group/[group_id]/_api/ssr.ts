@@ -1,31 +1,38 @@
 import { GET } from '@/app/api/routeModule';
 import { GroupWithMembersData } from '../_types';
 
+interface GroupData {
+    id: number | string;
+    name: string;
+    imageUrl: string;
+    createdAt: string;
+    dueDate: string;
+    isDeleted: boolean;
+    description: string;
+    memberCount: number;
+    memberCapacity: number;
+    tags: string[];
+    members?: Member[];
+}
+
+interface Member {
+    id: number;
+    email: string;
+    nickname: string;
+    regDate: string;
+    isLeaved: boolean;
+    LeavedDate: string;
+    imageUrl: string;
+}
+
+interface GroupMember {
+    memberInfo: Member;
+    role: 'CAPTAIN' | 'MEMBER';
+    joinDate: string;
+}
+
 export const fetchGroupWithMembersData = async (groupId: string) => {
     'use server';
-    interface GroupData {
-        id: number | string;
-        name: string;
-        imageUrl: string;
-        createdAt: string;
-        dueDate: string;
-        isDeleted: boolean;
-        description: string;
-        memberCount: number;
-        memberCapacity: number;
-        tags: string[];
-        members?: Member[];
-    }
-
-    interface Member {
-        id: number;
-        email: string;
-        nickname: string;
-        regDate: string;
-        isLeaved: boolean;
-        LeavedDate: string;
-        imageUrl: string;
-    }
 
     console.log('페칭시도');
 
@@ -49,15 +56,12 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
             },
         );
 
-        // console.log(response_groupMembers.members);
-
         const groupMembersData = response_groupMembers;
         const { data: members } = groupMembersData;
 
-        // 데이터 통합
         const groupWithMembers: GroupWithMembersData = {
             ...groupData,
-            members: members || [], // members가 없을 경우 빈 배열로 설정
+            members: members || [],
         };
         console.log('groupWithMembers======');
         console.log(groupWithMembers);
@@ -65,19 +69,25 @@ export const fetchGroupWithMembersData = async (groupId: string) => {
         return groupWithMembers;
     } catch (error) {
         console.error('Error fetching groupWithMembers data:', error);
-        // 오류 시 더미 데이터 반환
-        // return {
-        //     id: groupId,
-        //     name: '',
-        //     imageUrl: '',
-        //     createdAt: '',
-        //     dueDate: '',
-        //     isDeleted: false,
-        //     description: '',
-        //     memberCount: 0,
-        //     memberCapacity: 0,
-        //     tags: [],
-        //     members: [], // 오류 시 빈 배열 설정
-        // };
+    }
+};
+
+export const getGroupMembers = async (
+    groupId: string,
+): Promise<GroupMember[]> => {
+    'use server';
+    try {
+        const response_members = await GET(`v1/groups/${groupId}/members`, {
+            isAuth: true,
+            revalidateTime: 0,
+        });
+
+        const membersData: GroupMember[] = response_members.data;
+        console.log('그룹멤버 GET');
+        console.log(membersData);
+        return membersData;
+    } catch (error) {
+        console.error('에러;; 그룹멤버:', error);
+        return [];
     }
 };

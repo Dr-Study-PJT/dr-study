@@ -4,7 +4,8 @@ import { Button, Label } from '@/components/atoms';
 import { postGroupAdmissionApply } from './_api/csr';
 import { SectionContents } from '../_components/SectionContents';
 import GroupApplyButton from '../_components/GroupApplyButton';
-import { fetchGroupWithMembersData } from './_api/ssr';
+import { fetchGroupWithMembersData, getGroupMembers } from './_api/ssr';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
 
 export default async function GroupDetailPage({
     params,
@@ -14,6 +15,19 @@ export default async function GroupDetailPage({
     const groupId = params.group_id;
 
     const groupWithMembers = await fetchGroupWithMembersData(groupId);
+    const membersInThisGroup = await getGroupMembers(groupId);
+
+    const myId = await getSessionStorageItem('memberData')?.id;
+
+    // 현재 사용자가 그룹장인지, 멤버인지 확인
+    const myMemberData = membersInThisGroup.find(
+        (member) => member.memberInfo.id === myId,
+    );
+    const isLeader = myMemberData?.role === 'CAPTAIN';
+    const isMember = !!myMemberData;
+
+    console.log('isLeader : ', isLeader);
+    console.log('isMember', isMember);
 
     return (
         <div className="w-full bg-dr-indigo-200 flex flex-col">
@@ -21,15 +35,18 @@ export default async function GroupDetailPage({
                 <div className="LEFT-IMAGE-THUMBNAIL w-1/3 h-[50vh] rounded-l-xl bg-red-200 relative overflow-hidden">
                     <Image
                         alt="avatar"
-                        src="/images/group_thumbnail_1.png"
+                        src={
+                            groupWithMembers?.imageUrl ||
+                            '/path/to/fallback-image.png'
+                        }
                         fill
                     />
                 </div>
                 <div className="RIGHT-INFO-GROUP flex flex-col px-10 py-6 w-2/3 h-auto">
-                    <div className=" w-full h-full flex flex-col justify-between">
-                        <div className="TOP-INFO-GROUP w-full h-1/2  flex flex-row justify-between">
-                            <div className="TL-LIST-INFO-BASE flex flex-col justify-between gap-3  w-max h-full max-w-[33%]">
-                                <div className="INFO-TITLE text-dr-header-3 text-dr-white font-bold w-">
+                    <div className="w-full h-full flex flex-col justify-between">
+                        <div className="TOP-INFO-GROUP w-full h-1/2 flex flex-row justify-between">
+                            <div className="TL-LIST-INFO-BASE flex flex-col justify-between gap-3 w-max h-full max-w-[33%]">
+                                <div className="INFO-TITLE text-dr-header-3 text-dr-white font-bold">
                                     {groupWithMembers?.name}
                                 </div>
                                 <div className="INFO-DUE-DATE text-dr-body-4 text-dr-gray-100">{`${groupWithMembers?.createdAt} ~ ${groupWithMembers?.dueDate} | 1일째 진행 중`}</div>
@@ -38,7 +55,34 @@ export default async function GroupDetailPage({
                                 </div>
                             </div>
                             <div className="TR-BUTTON">
-                                <GroupApplyButton groupId={groupId} />
+                                {isMember ? (
+                                    <>
+                                        {isLeader && (
+                                            <>
+                                                <Button
+                                                    color="dark"
+                                                    // onClick={onClickRouteToGroupManage}
+                                                >
+                                                    그룹 관리
+                                                </Button>
+                                                <Button
+                                                    color="dark"
+                                                    // onClick={onClickRouteToMemberManage}
+                                                >
+                                                    팀원 관리
+                                                </Button>
+                                            </>
+                                        )}
+                                        <Button
+                                            color="dark"
+                                            // onClick={onClickRouteToLeave}
+                                        >
+                                            탈퇴
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <GroupApplyButton groupId={groupId} />
+                                )}
                             </div>
                         </div>
                         <div className="BOTTOM-INFO-GROUP w-full h-max flex flex-row justify-between items-end">
@@ -57,12 +101,16 @@ export default async function GroupDetailPage({
                                 <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
                                     {groupWithMembers?.members
                                         .slice(0, 3)
-                                        .map((_, i) => (
+                                        .map((memberInfo, i) => (
                                             <li key={i}>
                                                 <div className="relative overflow-hidden w-10 h-10 rounded-xl">
                                                     <Image
                                                         alt="avatar"
-                                                        src={`/images/member_thumbnail_${i + 1}.png`}
+                                                        src={
+                                                            memberInfo?.imageUrl ||
+                                                            '/path/to/fallback-image.png'
+                                                        }
+                                                        unoptimized
                                                         fill
                                                     />
                                                 </div>
@@ -82,32 +130,17 @@ export default async function GroupDetailPage({
                                     )}
                                 </ul>
                             </div>
-                            <div className="BR-LIST-BUTTON flex flex-row gap-3 h-8">
-                                <Button
-                                    color="dark"
-                                    // onClick={onClickRouteToGroupManage}
-                                >
-                                    그룹 관리
-                                </Button>
-                                <Button
-                                    color="dark"
-                                    // onClick={onClickRouteToMemberManage}
-                                >
-                                    팀원 관리
-                                </Button>
-                                <Button
-                                    color="dark"
-                                    // onClick={onClickRouteToLeave}
-                                >
-                                    탈퇴
-                                </Button>
-                            </div>
+                            {/* Additional components if needed */}
                         </div>
                     </div>
                 </div>
             </div>
-            {/* 요자리에 섹션컨텐츠 들어가야함 */}
-            <SectionContents groupId={groupId} />
+            {/* SectionContents 컴포넌트에 필요한 props 전달 */}
+            <SectionContents
+                groupId={groupId}
+                isLeader={isLeader}
+                isMember={isMember}
+            />
         </div>
     );
 }

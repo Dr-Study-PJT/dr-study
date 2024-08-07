@@ -1,16 +1,15 @@
 'use client';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/atoms';
-import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
 import ListConferenceToday from '../ConferenceWithMembers';
 import ArticleListContent from './ArticleListContent';
-import { dummyConferenceListData } from '@/components/organisms/SideBar';
 
 interface SectionContentsProps {
     groupId: string;
+    isLeader: boolean;
+    isMember: boolean;
 }
 
 const fetchTodayConferenceList = async ({
@@ -45,6 +44,8 @@ const fetchTodayConferenceList = async ({
 
 export const SectionContents: React.FC<SectionContentsProps> = ({
     groupId,
+    isLeader,
+    isMember,
 }) => {
     const [activeTab, setActiveTab] = useState<
         '게시판' | '채팅방' | '스터디 이력'
@@ -71,7 +72,6 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                 setConferencesWithMembers(response.data);
             } catch (error) {
                 console.error('Failed to fetch conferences:', error);
-                // setConferencesWithMembers(dummyConferenceListData);
             }
         };
 
@@ -107,18 +107,23 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                         오늘의 스터디 일정을 확인하세요.
                     </div>
                 </div>
-                <ListConferenceToday conferences={conferencesWithMembers} />
-                <div className="mt-6 text-center">
-                    <Button
-                        onClick={handleClickOpenConference}
-                        outlined
-                        rounded
-                        fullWidth
-                        classNameStyles="text-dr-white"
-                    >
-                        새 컨퍼런스 개설
-                    </Button>
-                </div>
+                <ListConferenceToday
+                    conferences={conferencesWithMembers}
+                    isMember={isMember}
+                />
+                {isMember && (
+                    <div className="mt-6 text-center">
+                        <Button
+                            onClick={handleClickOpenConference}
+                            outlined
+                            rounded
+                            fullWidth
+                            classNameStyles="text-dr-white"
+                        >
+                            새 컨퍼런스 개설
+                        </Button>
+                    </div>
+                )}
             </div>
             <div className="DIVIDER-VERTICAL mx-8 w-[1.5px] h-auto my-32 bg-dr-dark-200 "></div>
             <div className="RIGHT-CONTENTS flex flex-col justify-start gap-2 w-3/5 h-auto">

@@ -7,10 +7,12 @@ import { IConference } from '../[group_id]/dummy';
 
 interface ListConferenceTodayProps {
     conferences: IConference[];
+    isMember: boolean;
 }
 
 const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
     conferences,
+    isMember,
 }) => {
     const router = useRouter();
 
@@ -83,7 +85,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                                 )}
                             </ul>
                         </div>
-                        {!conference.finishTime && (
+                        {!conference.finishTime && isMember && (
                             <Button
                                 classNameStyles="!h-8 bg-dr-coral-100"
                                 onClick={(e) =>
