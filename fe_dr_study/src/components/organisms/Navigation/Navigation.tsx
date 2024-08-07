@@ -24,33 +24,30 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const dispatch = useDispatch();
 
     const isSigned = useSelector((state: RootState) => state.auth.isSigned);
-    const member = useSelector((state: RootState) => state.member);
-
-    const memberData = getSessionStorageItem('memberData');
+    const memberData = useSelector((state: RootState) => state.member);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-    const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            message: '알림1',
-        },
-        {
-            id: 2,
-            message: '알림2',
-        },
-    ]);
+    const [notifications, setNotifications] = useState<NotificationData[]>([]);
 
-    const onClickGetLoginMemberInfo = async () => {
-        try {
-            const response = await GET('v1/members', {
-                isAuth: true,
-            });
-            return response.data;
-        } catch {
-            console.log('로그인사용자 정보 가져오기 실패');
-        }
-    };
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await GET('/v1/notifications', {
+                    isAuth: true,
+                    revalidateTime: 0,
+                });
+                setNotifications(response.data.data || []);
+            } catch (error) {
+                console.error('Failed to fetch notifications:', error);
+            }
+        };
+
+        fetchNotifications();
+        const intervalId = setInterval(fetchNotifications, 30000); // 30초마다 알림 데이터 가져오기
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     useEffect(() => {
         const memberData = getSessionStorageItem('memberData');
@@ -150,7 +147,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                     <Image
                                         alt="avatar"
                                         src={memberData?.imageUrl}
-                                        layout="fill"
+                                        fill
                                         onClick={toggleDropdown}
                                         unoptimized
                                     />
@@ -162,7 +159,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                                 <Image
                                                     alt="avatar"
                                                     src={memberData?.imageUrl}
-                                                    layout="fill"
+                                                    fill
                                                     onClick={toggleDropdown}
                                                 />
                                             </div>
@@ -178,31 +175,44 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         <ul className="flex flex-col text-dr-body-3">
                                             <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
                                                 <Link
-                                                    href={`/members/${member.id}`}
+                                                    href={`/members/${memberData.id}`}
                                                     className="block text-white  hover:bg-dr-dark-100"
-                                                ></Link>
-                                                <Icon icon="person" size="sm" />{' '}
-                                                <p className="min-w-[10rem]">
-                                                    마이페이지
-                                                </p>
+                                                >
+                                                    <Icon
+                                                        icon="person"
+                                                        size="sm"
+                                                    />
+                                                    <p className="min-w-[10rem]">
+                                                        마이페이지
+                                                    </p>
+                                                </Link>
                                             </li>
                                             <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
                                                 <button
                                                     onClick={onClickSetLogout}
                                                     className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100"
-                                                ></button>
-                                                <Icon icon="logout" size="sm" />{' '}
-                                                <p className="min-w-[10rem]">
-                                                    로그아웃
-                                                </p>
+                                                >
+                                                    <Icon
+                                                        icon="logout"
+                                                        size="sm"
+                                                    />{' '}
+                                                    <p className="min-w-[10rem]">
+                                                        로그아웃
+                                                    </p>
+                                                </button>
                                             </li>
                                         </ul>
                                     </div>
                                 )}
                             </div>
-                            <div className="text-dr-white bg-dr-gray-500 rounded-full cursor-pointer">
+                            <div className="relative text-dr-white bg-dr-gray-500 rounded-full cursor-pointer">
                                 <div onClick={toggleIsNotificationOpen}>
                                     <Icon icon="bell" size="sm" hover="gray" />
+                                    {notifications.length > 0 && (
+                                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-300 text-black text-xs rounded-full flex items-center justify-center">
+                                            {notifications.length}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -211,27 +221,29 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                     <div className="absolute right-0 top-[112%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 ">
                                         <ul className="flex flex-col text-dr-body-3 ">
                                             {notifications.map(
-                                                (notification) => (
+                                                (notification, index) => (
                                                     <li
-                                                        key={notification.id}
+                                                        key={index}
                                                         className="flex pr-[0.5rem] items-center cursor-pointer hover:bg-dr-dark-100"
                                                     >
                                                         <Link
-                                                            href={`/members/${member.id}`}
+                                                            href={`/members/${memberData.id}`}
                                                             className="block text-white  hover:bg-dr-dark-100"
-                                                        ></Link>
-                                                        <Icon
-                                                            icon="bell"
-                                                            size="sm"
-                                                        />{' '}
-                                                        <p className="min-w-[10rem]">
-                                                            {
-                                                                notification.message
-                                                            }
-                                                        </p>
-                                                        <Button color="gray">
-                                                            입장하기
-                                                        </Button>
+                                                        >
+                                                            <Icon
+                                                                icon="bell"
+                                                                size="sm"
+                                                            />{' '}
+                                                            <p className="min-w-[10rem]">
+                                                                {
+                                                                    notification.notificationItemType
+                                                                }{' '}
+                                                                알림
+                                                            </p>
+                                                            <Button color="gray">
+                                                                입장하기
+                                                            </Button>
+                                                        </Link>
                                                     </li>
                                                 ),
                                             )}
@@ -254,3 +266,37 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 };
 
 export default Navigation;
+
+interface InvitationNotificationItem {
+    conferenceId: number;
+    memberId: number;
+    createdAt: string;
+}
+interface ApplicationNotificationItem {
+    memberId: number;
+    groupId: number;
+    applicationStatus: 'WAITING' | 'APPROVED' | 'REJECTED';
+    message: string;
+    createdAt: string;
+}
+
+interface InvitationNotificationData {
+    notificationItemType: 'Invitation';
+    createdAt: string;
+    notificationItem: InvitationNotificationItem;
+}
+
+interface ApplicationNotificationData {
+    notificationItemType: 'Application';
+    createdAt: string;
+    notificationItem: ApplicationNotificationItem;
+}
+
+type NotificationData =
+    | InvitationNotificationData
+    | ApplicationNotificationData;
+
+interface NotificationsResponse {
+    message: string;
+    data: NotificationData[];
+}

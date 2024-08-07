@@ -224,7 +224,7 @@ const ModeratorListPage = () => {
                     revalidateTime: 10,
                 });
                 console.log('사회자 리스트 조회 성공:', response);
-                setModerators(response.data.data);
+                setModerators(response.data);
             } catch (error) {
                 console.error(error);
             }
