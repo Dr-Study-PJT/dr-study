@@ -134,9 +134,7 @@ public class StudyGroupController {
     ) {
         Pageable pageable = PageRequest.of(page -1, size);
         Page<StudyGroup> studyGroupPage = studyGroupService.getStudyGroupList(request, pageable);
-
         Page<GetStudyGroupListResponse> responsePage = studyGroupPage.map(GetStudyGroupListResponse::of);
-
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(

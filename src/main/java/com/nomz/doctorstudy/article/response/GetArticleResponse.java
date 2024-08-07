@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 public class GetArticleResponse {
+    @Schema(description = "조회된 게시글 아이디", example = "1")
+    private Long id;
+
     @Schema(description = "조회된 게시글 제목", example = "가입 인사글")
     private String title;
 
@@ -50,6 +53,7 @@ public class GetArticleResponse {
                 .collect(Collectors.toList());
 
         return builder()
+                .id(article.getId())
                 .title(article.getTitle())
                 .content(article.getContent())
                 .createdAt(article.getCreatedAt())
