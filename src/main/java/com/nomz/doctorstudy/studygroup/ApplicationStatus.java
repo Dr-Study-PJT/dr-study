@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.studygroup;
 
-public enum Status {
+public enum ApplicationStatus {
     APPROVED,
     DENIED,
     WAITING

@@ -11,7 +11,8 @@ import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.member.service.MemberService;
-import com.nomz.doctorstudy.studygroup.Status;
+import com.nomz.doctorstudy.studygroup.ApplicationStatus;
+import com.nomz.doctorstudy.studygroup.StudyGroupRole;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.nomz.doctorstudy.studygroup.entity.*;
@@ -97,7 +98,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .memberStudyGroupId(memberStudyGroupIdObject)
                 .member(member)
                 .studyGroup(studyGroup)
-                .role("LEADER") // 기본 역할 설정
+                .role(StudyGroupRole.CAPTAIN) // 기본 역할 설정
                 .joinDate(LocalDateTime.now())
                 .isLeaved(false)
                 .build();
@@ -144,7 +145,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .member(member)
                 .studyGroup(studyGroup)
                 .message(createApplyRequest.getMessage())
-                .status(Status.WAITING)
+                .applicationStatus(ApplicationStatus.WAITING)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -161,7 +162,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Override
     @Transactional
-    public MemberStudyGroupApply processReply(CreateReplyRequest createReplyRequest, Authentication authentication) {
+    public MemberStudyGroupApply processReply(Long applyId, CreateReplyRequest createReplyRequest, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------
         if (authentication == null) {
@@ -172,7 +173,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         Member member = memberService.getUserByEmail(email);
         // --------------------------------------------------------------------------
         // 1. 지원 정보 가져오기
-        MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(createReplyRequest.getApplyId())
+        MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(applyId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
 
         // 2. 그룹장인지 확인
@@ -180,16 +181,16 @@ public class StudyGroupServiceImpl implements StudyGroupService {
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
         }
         // 3. status 변경
-        apply.setStatus(createReplyRequest.getStatus());
+        apply.setApplicationStatus(createReplyRequest.getApplicationStatus());
 
-        if (createReplyRequest.getStatus() == Status.APPROVED) {
+        if (createReplyRequest.getApplicationStatus() == ApplicationStatus.APPROVED) {
             // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
             MemberStudyGroupId memberStudyGroupIdObject = new MemberStudyGroupId(apply.getMember().getId(), apply.getStudyGroup().getId());
             MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
                     .memberStudyGroupId(memberStudyGroupIdObject)
                     .member(apply.getMember())
                     .studyGroup(apply.getStudyGroup())
-                    .role("MEMBER") // 기본 역할 설정
+                    .role(StudyGroupRole.MEMBER) // 기본 역할 설정
                     .joinDate(LocalDateTime.now())
                     .isLeaved(false)
                     .build();
@@ -266,7 +267,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .map(StudyGroup::getId)
                 .toList();
 
-        return memberStudyGroupApplyRepository.findByStudyGroupIdInAndStatus(groupIds, Status.WAITING);
+        return memberStudyGroupApplyRepository.findByStudyGroupIdInAndApplicationStatus(groupIds, ApplicationStatus.WAITING);
     }
 
     @Transactional

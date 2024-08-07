@@ -26,7 +26,7 @@ public interface StudyGroupService {
     MemberStudyGroupApply getApply(Long userId, Long groupId);
 
     // 스터디 그룹 지원 응답 처리 + 멤버-스터디그룹 테이블 저장
-    MemberStudyGroupApply processReply(CreateReplyRequest createReplyRequest, Authentication authentication);
+    MemberStudyGroupApply processReply(Long applyId, CreateReplyRequest createReplyRequest, Authentication authentication);
 
     // 스터디 그룹 업데이트
     StudyGroup updateStudyGroup(Long groupId, UpdateStudyGroupRequest request, Authentication authentication);

@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.studygroup.StudyGroupRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,8 +25,9 @@ public class MemberStudyGroup {
     @MapsId("studyGroupId")
     private StudyGroup studyGroup;
 
-    @Column(nullable = false, length = 32)
-    private String role;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private StudyGroupRole role;
 
     @Column(nullable = false)
     private LocalDateTime joinDate;
