@@ -21,6 +21,11 @@ public class FastApiCallService implements ExternalApiCallService{
         this.restTemplate = restTemplate;
     }
 
+    @PostConstruct
+    public void printLogBaseUrl() {
+        log.info("----------FastAPI URL={}----------", baseUrl);
+    }
+
     @Override
     public String gpt(String s) {
         String url = baseUrl + "/gpt/";
