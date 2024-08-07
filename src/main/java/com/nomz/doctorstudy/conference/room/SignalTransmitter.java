@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 public class SignalTransmitter {
     private final SimpMessagingTemplate template;
 
-    public void transmitSignal(Long conferenceId, Signal signal) {
-        String destination = String.format("/topic/signal/%s/%d", signal.getSignalType().getToken(), conferenceId);
-        log.debug("\ntransmitted signal:{} to conference:{}, destination:{}", signal.getClass().getName(), conferenceId, destination);
+    public void transmitSignal(Long roomId, Signal signal) {
+        String destination = String.format("/topic/signal/%s/%d", signal.getSignalType().getToken(), roomId);
+        log.debug("\ntransmitted signal:{} to room:{}, destination:{}", signal.getClass().getName(), roomId, destination);
         template.convertAndSend(destination, signal);
     }
 }
