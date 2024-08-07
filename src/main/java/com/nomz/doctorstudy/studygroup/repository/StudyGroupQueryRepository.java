@@ -49,7 +49,7 @@ public class StudyGroupQueryRepository {
                 ).offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        long total = queryBuilder.fetchCount(); // 전체 데이터 수 조회
+        long total = queryBuilder.fetch().size(); // 전체 데이터 수 조회
         List<StudyGroup> results = pagedQuery.fetch(); // 페이징된 데이터 조회
 
         return new PageImpl<>(results, pageable, total);
