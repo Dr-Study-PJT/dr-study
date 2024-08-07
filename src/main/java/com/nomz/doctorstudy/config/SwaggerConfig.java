@@ -21,21 +21,22 @@ public class SwaggerConfig {
                 .title("Doctor Study API")
                 .description("닥터 스터디 프로젝트 API");
 
-        SecurityScheme securityScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
-                .in(SecurityScheme.In.HEADER).name("Authorization");
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
+        SecurityScheme devMemberIdScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.HEADER)
+                .name("dev_member_id")
+                .scheme("bearer"); // API Key 스키마로 설정
+
+        SecurityRequirement securityRequirement = new SecurityRequirement()
+                .addList("dev_member_id");
 
         Server server = new Server()
                 .url(servletContext.getContextPath());
 
         return new OpenAPI()
                 .info(info)
-                .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
+                .components(new Components().addSecuritySchemes("dev_member_id", devMemberIdScheme))
                 .security(List.of(securityRequirement))
-                .servers(List.of(server))
-                ;
+                .servers(List.of(server));
     }
 }

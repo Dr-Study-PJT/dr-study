@@ -6,19 +6,19 @@ VALUES ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg", false, NOW())
 
 --MEMBER-- password -> 'test'
 INSERT INTO member (email, password, nickname, image_id, reg_date, leaved_date, is_leaved)
-VALUES ('test1@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'Im YH', 1, NOW(), null, false),
-       ('test2@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'SW', 1, NOW(), null, false),
-       ('test3@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'Im CH', 1, NOW(), null, false),
-       ('test4@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'KJH', 1, NOW(), null, false),
-       ('test5@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'KM', 1, NOW(), null, false),
-       ('test6@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'SJM', 1, NOW(), null, false)
+VALUES ('test1@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '유영한이다', 1, NOW(), null, false),
+       ('test2@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '어 나 성운데', 1, NOW(), null, false),
+       ('test3@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'Im 철현', 1, NOW(), null, false),
+       ('test4@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '김주현인데요', 1, NOW(), null, false),
+       ('test5@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '갱모', 1, NOW(), null, false),
+       ('test6@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '신재민이에요', 1, NOW(), null, false)
 ;
 
 --STUDY_GROUP--
 INSERT INTO study_group (captain_id, image_id, name, description, goal, due_date, member_capacity, created_at, is_deleted)
-VALUES (1, 1, "StudyGroup1", "StudyGroup1 Description", "StudyGroup1 Goal", DATE_ADD(NOW(), INTERVAL 7 DAY), 25, NOW(), false),
-       (2, 1, "StudyGroup2", "StudyGroup2 Description", "StudyGroup2 Goal", DATE_ADD(NOW(), INTERVAL 14 DAY), 50, NOW(), false),
-       (3, 1, "StudyGroup3", "StudyGroup3 Description", "StudyGroup3 Goal", DATE_ADD(NOW(), INTERVAL 30 DAY), 50, NOW(), false)
+VALUES (1, 1, "스터디그룹1", "스터디그룹1 설명", "스터디그룹1 목표", DATE_ADD(NOW(), INTERVAL 7 DAY), 25, NOW(), false),
+       (2, 1, "스터디그룹2", "스터디그룹2 설명", "스터디그룹2 목표", DATE_ADD(NOW(), INTERVAL 14 DAY), 50, NOW(), false),
+       (3, 1, "스터디그룹3", "스터디그룹3 설명", "스터디그룹3 목표", DATE_ADD(NOW(), INTERVAL 30 DAY), 50, NOW(), false)
 ;
 
 --MEMBER STUDY GROUP--
@@ -54,13 +54,13 @@ VALUES (1, 1),
 
 --MEMBER STUDY GROUP APPLY--
 INSERT INTO member_study_group_apply (member_id, study_group_id, status, created_at, message)
-VALUES (1, 3, 'WAITING', NOW(), 'Study Group Apply Message 1'),
-       (1, 2, 'WAITING', NOW(), 'Study Group Apply Message 2'),
-       (2, 1, 'WAITING', NOW(), 'Study Group Apply Message 3'),
-       (3, 1, 'WAITING', NOW(), 'Study Group Apply Message 4'),
-       (4, 1, 'WAITING', NOW(), 'Study Group Apply Message 5'),
-       (5, 1, 'WAITING', NOW(), 'Study Group Apply Message 6'),
-       (6, 1, 'WAITING', NOW(), 'Study Group Apply Message 6')
+VALUES (1, 3, 'WAITING', NOW(), '스터디그룹 가입신청합니다~! 1'),
+       (1, 2, 'WAITING', NOW(), '스터디그룹 가입신청합니다~! 2'),
+       (2, 1, 'WAITING', NOW(), '스터디그룹 가입신청합니다~! 3'),
+       (3, 1, 'WAITING', NOW(), '스터디그룹 가입신청합니다~! 4'),
+       (4, 1, 'WAITING', NOW(), '스터디그룹 가입신청합니다~! 5'),
+       (5, 1, 'WAITING', NOW(), '스터디그룹 가입신청합니다~! 6'),
+       (6, 1, 'WAITING', NOW(), '스터디그룹 가입신청합니다~! 6')
 ;
 
 --AVATAR--
@@ -75,7 +75,7 @@ VALUES (1, 1, 3, 2, NOW()),
 
 --PROCESSOR--
 INSERT INTO processor (creator_id, description, pre_prompt, script, created_at)
-VALUES (1, "Simply print block logs.", "PrePrompt 1.",
+VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트",
         "
                 phase(1) {
                     log(string_concat('hello ', 'world! ', '반갑습니다 ', '여러분들!'));
@@ -84,7 +84,7 @@ VALUES (1, "Simply print block logs.", "PrePrompt 1.",
                 }
 ",
         NOW()),
-       (2, "Print logs while going through nested loops.", "PrePrompt 2.",
+       (2, "중첩 반복문 돌면서 로그 출력 수행", "2번 사전 프롬프트",
         "
                 phase(1) {
                     loop(3) {
@@ -97,7 +97,7 @@ VALUES (1, "Simply print block logs.", "PrePrompt 1.",
                 }
 ",
         NOW()),
-       (3, "Let Avatar Speak", "PrePrompt 3.",
+       (3, "아바타 말하기 스크립트", "3번 사전 프롬프트",
         "
                 phase(1) {
                     loop(3) {
@@ -110,18 +110,18 @@ VALUES (1, "Simply print block logs.", "PrePrompt 1.",
 
 --MODERATOR--
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
-VALUES (1, 1, 1, 'First Moderator', NOW()),
-       (1, 2, 2, 'Second Moderator', NOW()),
-       (2, 3, 1, 'Third Moderator', NOW()),
-       (3, 4, 2, 'Fourth Moderator', NOW())
+VALUES (1, 1, 1, '1번 사회자', NOW()),
+       (1, 2, 2, '2번 사회자', NOW()),
+       (2, 3, 1, '3번 사회자', NOW()),
+       (3, 4, 2, '4번 사회자', NOW())
 ;
 
 --CONFERENCE--
 INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, start_time, finish_time, ai_review)
-VALUES (1, 1, 1, 1, 'Conference 1 Title', 'Conference 1 Subject', 10, null, null, "Conference 1 Review!"),
-       (1, 1, 2, 1, 'Conference 2 Title', 'Conference 2 Subject', 10, null, null, "Conference 2 Review!"),
-       (2, 2, 1, 1, 'Conference 3 Title', 'Conference 3 Subject', 10, null, null, "Conference 3 Review!"),
-       (2, 2, 2, 1, 'Conference 4 Title', 'Conference 4 Subject', 10, null, null, "Conference 4 Review!")
+VALUES (1, 1, 1, 1, '컨퍼런스 1 제목', '컨퍼런스 1 주제', 10, null, null, "컨퍼런스 1 리뷰!"),
+       (1, 1, 2, 1, '컨퍼런스 2 제목', '컨퍼런스 2 주제', 10, null, null, "컨퍼런스 2 리뷰!"),
+       (2, 2, 1, 1, '컨퍼런스 3 제목', '컨퍼런스 3 주제', 10, null, null, "컨퍼런스 3 리뷰!"),
+       (2, 2, 2, 1, '컨퍼런스 4 제목', '컨퍼런스 4 주제', 10, null, null, "컨퍼런스 4 리뷰!")
 ;
 
 --CONFERENCE_MEMBER_INVITE--
@@ -134,20 +134,20 @@ VALUES (2, 1, DATE_ADD(NOW(), INTERVAL -2 HOUR)),
 
 --ARTICLES--
 INSERT INTO article (id, title, content, created_at, is_deleted, view_count, member_id, study_group_id)
-VALUES (1, 'title 1', 'content 1', NOW(), FALSE, 0, 1, 1),
-       (2, 'title 2', 'content 2', NOW(), FALSE, 0, 2, 1),
-       (3, 'title 3', 'content 3', NOW(), FALSE, 0, 3, 2),
-       (4, 'title 4', 'content 4', NOW(), FALSE, 0, 4, 2),
-       (5, 'title 5', 'content 5', NOW(), FALSE, 0, 5, 3)
+VALUES (1, '게시글 제목 1', '게시글 내용 1', NOW(), FALSE, 0, 1, 1),
+       (2, '게시글 제목 2', '게시글 내용 2', NOW(), FALSE, 0, 2, 1),
+       (3, '게시글 제목 3', '게시글 내용 3', NOW(), FALSE, 0, 3, 2),
+       (4, '게시글 제목 4', '게시글 내용 4', NOW(), FALSE, 0, 4, 2),
+       (5, '게시글 제목 5', '게시글 내용 5', NOW(), FALSE, 0, 5, 3)
 ;
 
 --COMMENTS--
 INSERT INTO comment (content, created_at, article_id, member_id)
-VALUES ('comment_content 1', NOW(), 1, 1),
-       ('comment_content 2', NOW(), 1, 2),
-       ('comment_content 3', NOW(), 2, 3),
-       ('comment_content 4', NOW(), 3, 4),
-       ('comment_content 5', NOW(), 4, 5);
+VALUES ('댓글 내용 1', NOW(), 1, 1),
+       ('댓글 내용 2', NOW(), 1, 2),
+       ('댓글 내용 3', NOW(), 2, 3),
+       ('댓글 내용 4', NOW(), 3, 4),
+       ('댓글 내용 5', NOW(), 4, 5);
 
 --ARTICLE_TAGS--
 INSERT INTO article_tag (article_id, tag_id)

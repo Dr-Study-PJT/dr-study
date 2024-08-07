@@ -6,10 +6,8 @@ import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.request.MemberLoginPostReq;
-import com.nomz.doctorstudy.member.response.MemberLoginPostRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,7 +45,7 @@ public class AuthService {
         Member member = memberService.getUserByEmail(email);
 
         if(!passwordEncoder.matches(password, member.getPassword())){
-            throw new AuthException(AuthErrorCode.AUTH_FAIL_LOGIN);
+            throw new AuthException(AuthErrorCode.AUTH_INVALID_ID_PASSWORD);
         }
 
         String accessToken = jwtUtil.getAccessToken(email);

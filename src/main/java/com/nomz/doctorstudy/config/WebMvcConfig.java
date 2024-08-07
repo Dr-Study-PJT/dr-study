@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.config;
 
 
 import com.nomz.doctorstudy.common.jwt.JwtUtil;
+import com.nomz.doctorstudy.member.LoginMemberArgumentResolver;
 import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +15,19 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
+    private final LoginMemberArgumentResolver loginMemberArgumentResolver;
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -86,4 +92,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return registration;
     }
 
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(loginMemberArgumentResolver);
+    }
 }

@@ -7,7 +7,7 @@ import com.nomz.doctorstudy.moderator.request.CreateModeratorRequest;
 import java.util.List;
 
 public interface ModeratorService {
-    Long createModerator(/*Member requester, */CreateModeratorRequest request);
+    Long createModerator(Member requester, CreateModeratorRequest request);
     Moderator getModerator(Long moderatorId);
     List<Moderator> getModeratorList();
 }
