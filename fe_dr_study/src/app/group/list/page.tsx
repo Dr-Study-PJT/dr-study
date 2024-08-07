@@ -37,7 +37,7 @@ export default async function GroupListPage({
         propsGetGroupListBy.name = name;
     }
 
-    const groupListResponse: IGroupListResponse =
+    const groupListResponse: void | IGroupListResponse =
         await getGroupListBy(propsGetGroupListBy);
     const groupList_content = groupListResponse?.content;
 
@@ -50,7 +50,7 @@ export default async function GroupListPage({
             <section className="SECTION1-THUMBNAIL w-full h-max flex justify-center items-center p-14">
                 <div className="SECTION-BOX w-full flex flex-col justify-start gap-8">
                     <div className="CONETENTS w-full h-max flex flex-col items-center">
-                        {groupList_content.length === 0 && (
+                        {groupList_content?.length === 0 && (
                             <div className="w-full flex flex-col items-center mb-12">
                                 <div className="w-full flex flex-col items-center">
                                     <ErrorLottie />

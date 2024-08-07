@@ -17,7 +17,7 @@ export const Pagination = ({
 }: {
     currentPage: number;
     currentTag?: string;
-    totalPage: number;
+    totalPage: number | undefined;
     pageSize: number;
     basePath: string;
 }) => {
@@ -29,7 +29,7 @@ export const Pagination = ({
 
     const maxButtons = 5;
     let startPage = Math.floor((currentPage - 1) / maxButtons) * maxButtons + 1;
-    let endPage = Math.min(startPage + maxButtons - 1, totalPage);
+    let endPage = Math.min(startPage + maxButtons - 1, totalPage as number);
 
     const pagingButtons = [];
     for (let i = startPage; i <= endPage; i++) {
@@ -40,7 +40,7 @@ export const Pagination = ({
 
     return (
         <>
-            {totalPage > 1 && (
+            {(totalPage as number) > 1 && (
                 <div className="mt-4 flex justify-center w-full h-full bg-dr-dark-300 py-1 rounded-md border-[1px] border-dr-gray-300">
                     <div className="flex space-x-4">
                         {currentPage > maxButtons && (
@@ -77,7 +77,7 @@ export const Pagination = ({
                                 </button>
                             </Link>
                         ))}
-                        {currentPage < totalPage && (
+                        {currentPage < (totalPage as number) && (
                             <Link
                                 href={`${basePath}?page=${parseInt(`${currentPage}`) + 1}&${optionalQueryString}`}
                             >
@@ -86,7 +86,7 @@ export const Pagination = ({
                                 </button>
                             </Link>
                         )}
-                        {endPage < totalPage && (
+                        {endPage < (totalPage as number) && (
                             <Link
                                 href={`${basePath}?page=${endPage + 1}&${optionalQueryString}`}
                             >

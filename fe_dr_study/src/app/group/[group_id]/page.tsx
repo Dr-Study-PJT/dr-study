@@ -50,9 +50,9 @@ export default async function GroupDetailPage({
                                     스터디원 목록
                                 </Label>
                                 <div className="text-dr-body-4 text-dr-gray-100">
-                                    {groupWithMembers.members.length &&
-                                        groupWithMembers.members.length + ' /'}
-                                    {' ' + groupWithMembers.memberCapacity}
+                                    {groupWithMembers?.members.length &&
+                                        groupWithMembers?.members.length + ' /'}
+                                    {' ' + groupWithMembers?.memberCapacity}
                                 </div>
                                 <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
                                     {groupWithMembers?.members
