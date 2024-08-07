@@ -25,6 +25,7 @@ interface ImageUploadProps {
     setImageDisplay?: Dispatch<SetStateAction<any>>;
     setData?: Dispatch<SetStateAction<any>>; // 추가된 prop
     shape?: 'square' | 'rounded-square' | 'circle';
+    type?: 'members' | 'conferences' | 'groups';
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -33,6 +34,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setImageDisplay,
     setData, // setData prop 받기
     shape = 'circle',
+    type = 'members',
 }) => {
     const { control } = useForm();
     const [image, setImage] = useState<string | null>(null);
@@ -41,7 +43,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('type', 'members');
+            formData.append('type', type);
 
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_HOST}/v1/images`,

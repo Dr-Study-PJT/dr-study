@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-import Image from 'next/image';
 import { StepProps } from '../_types/type';
 import ImageUpload from '@/components/molecules/ImageUpload/ImageUpload';
-import FieldTagFactory from './FieldTagFactory';
 
 const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     const handleChange = (name: string, value: string) => {
@@ -21,7 +19,7 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
             <div className="w-max h-max flex flex-row justify-around gap-6 items-center">
                 <section className="CONTENT w-full h-full flex flex-col gap-5">
                     <div className="w-full h-full flex flex-col justify-between gap-3 items-center">
-                        <ImageUpload />
+                        <ImageUpload setData={setData} type="groups" />
                     </div>
 
                     <div className="flex flex-col gap-4 w-64">
