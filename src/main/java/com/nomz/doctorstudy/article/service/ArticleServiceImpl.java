@@ -2,10 +2,13 @@ package com.nomz.doctorstudy.article.service;
 
 import com.nomz.doctorstudy.article.entity.Article;
 import com.nomz.doctorstudy.article.entity.ArticleTag;
+import com.nomz.doctorstudy.article.entity.Comment;
 import com.nomz.doctorstudy.article.exception.ArticleErrorCode;
 import com.nomz.doctorstudy.article.repository.ArticleRepository;
 import com.nomz.doctorstudy.article.repository.ArticleTagRepository;
+import com.nomz.doctorstudy.article.repository.CommentReposirory;
 import com.nomz.doctorstudy.article.request.CreateArticleRequest;
+import com.nomz.doctorstudy.article.request.CommentRequest;
 import com.nomz.doctorstudy.article.request.UpdateArticleRequest;
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.exception.BusinessException;
@@ -42,6 +45,7 @@ public class ArticleServiceImpl implements ArticleService{
     private final MemberStudyGroupRepository memberStudyGroupRepository;
     private final TagRepository tagRepository;
     private final ArticleTagRepository articleTagRepository;
+    private final CommentReposirory commentReposirory;
     @Override
     public Article createArticle(CreateArticleRequest request, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
@@ -106,33 +110,34 @@ public class ArticleServiceImpl implements ArticleService{
         return articleRepository.save(article);
     }
 
+//    @Override
+//    public Article getArticle(Long articleId, Authentication authentication) {
+//        // JWT 토큰에서 사용자 가져오기
+//        // --------------------------------------------------------------------------
+//        if(authentication == null){
+//            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+//        }
+//        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+//        String email = memberDetails.getUsername();
+//        Member member = memberService.getUserByEmail(email);
+//        // --------------------------------------------------------------------------
+//        Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
+//                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
+//
+//        return article;
+//
+//    }
+
     @Override
-    public Article getArticle(Long articleId, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if(authentication == null){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public Article getArticle(Long articleId) {
         Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
         return article;
-
     }
 
     @Override
-    public Article getArticleNoAuth(Long articleId) {
-        Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
-                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
-
-        return article;
-    }
-
-    @Override
+    @Transactional
     public Article deleteArticle(Long articleId, Authentication authentication) {
         // JWT 토큰에서 사용자 가져오기
         // --------------------------------------------------------------------------
@@ -151,11 +156,85 @@ public class ArticleServiceImpl implements ArticleService{
 
         article.setIsDeleted(Boolean.TRUE);
         article.setDeletedAt(LocalDateTime.now());
-        return articleRepository.save(article);
+        return article;
     }
 
     @Override
     public Page<Article> getArticleList(Long groupId, Pageable pageable) {
         return articleRepository.findByStudyGroupId(groupId, pageable);
     }
+
+    @Override
+    public Comment createComment(Long articleId, CommentRequest request, Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
+
+        Comment comment = Comment.builder()
+                .content(request.getContent())
+                .createdAt(LocalDateTime.now())
+                .member(member)
+                .article(article)
+                .isDeleted(Boolean.FALSE)
+                .build();
+
+        return commentReposirory.save(comment);
+    }
+
+    @Override
+    @Transactional
+    public Comment updateComment(Long commentId, CommentRequest request, Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        Comment comment = commentReposirory.findByIdAndIsDeletedFalse(commentId)
+                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
+
+        if(!Objects.equals(member.getId(), comment.getMember().getId())){
+            throw new BusinessException(ArticleErrorCode.COMMENT_NOT_AUTHORIZED);
+        }
+        comment.setContent(request.getContent());
+
+        return comment;
+    }
+
+    @Override
+    @Transactional
+    public Comment deleteComment(Long commentId, Authentication authentication) {
+        // JWT 토큰에서 사용자 가져오기
+        // --------------------------------------------------------------------------
+        if(authentication == null){
+            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+        }
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String email = memberDetails.getUsername();
+        Member member = memberService.getUserByEmail(email);
+        // --------------------------------------------------------------------------
+        Comment comment = commentReposirory.findByIdAndIsDeletedFalse(commentId)
+                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
+
+        if(!Objects.equals(member.getId(), comment.getMember().getId())){
+            throw new BusinessException(ArticleErrorCode.COMMENT_NOT_AUTHORIZED);
+        }
+        comment.setIsDeleted(Boolean.TRUE);
+        comment.setDeletedAt(LocalDateTime.now());
+
+        return comment;
+    }
+
+
 }

@@ -36,7 +36,7 @@ public class SecurityConfig  {
             "/v1/members/**", "/error", "/v1/conferences/**", "/room/**", "/v1/moderators/**",
             "/v1/media/**", "v1/articles/test/**", "v1/articles/groups/**",
             "/v1/media/**", "/v1/groups", "v1/articles/test/**",
-            "/v1/groups", "v1/articles/test/**", "v1/articles/groups/**"
+            "/v1/groups"
     };
 
     @Bean
@@ -70,6 +70,7 @@ public class SecurityConfig  {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers(HttpMethod.GET, "/v1/groups/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v1/articles/**").permitAll()
                         //@PreAuthrization을 사용할 것이기 때문에 모든 경로에 대한 인증처리는 Pass
                         .anyRequest().authenticated()
 //                        .anyRequest().authenticated()

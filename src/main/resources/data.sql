@@ -138,12 +138,12 @@ VALUES (1, 'title 1', 'content 1', DATE_ADD(NOW(), INTERVAL -10 MINUTE), FALSE, 
 ;
 
 --COMMENTS--
-INSERT INTO comment (content, created_at, article_id, member_id)
-VALUES ('comment_content 1', DATE_ADD(NOW(), INTERVAL -1 MINUTE), 1, 1),
-       ('comment_content 2', DATE_ADD(NOW(), INTERVAL -2 MINUTE), 1, 2),
-       ('comment_content 3', DATE_ADD(NOW(), INTERVAL -3 MINUTE), 2, 3),
-       ('comment_content 4', DATE_ADD(NOW(), INTERVAL -4 MINUTE), 3, 4),
-       ('comment_content 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5);
+INSERT INTO comment (content, created_at, article_id, member_id, is_deleted)
+VALUES ('comment_content 1', DATE_ADD(NOW(), INTERVAL -1 MINUTE), 1, 1, FALSE),
+       ('comment_content 2', DATE_ADD(NOW(), INTERVAL -2 MINUTE), 1, 2, FALSE),
+       ('comment_content 3', DATE_ADD(NOW(), INTERVAL -3 MINUTE), 2, 3, FALSE),
+       ('comment_content 4', DATE_ADD(NOW(), INTERVAL -4 MINUTE), 3, 4, FALSE),
+       ('comment_content 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5, FALSE);
 
 --ARTICLE_TAGS--
 INSERT INTO article_tag (article_id, tag_id)
