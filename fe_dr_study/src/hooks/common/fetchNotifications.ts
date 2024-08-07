@@ -14,7 +14,7 @@ export const fetchNotifications = () => {
                 body: '',
                 isAuth: true,
             });
-            const { data } = response.data;
+            const { data } = response;
             console.log('알림 요청 성공 => ', data);
 
             // 알림 목록을 리듀서에 저장

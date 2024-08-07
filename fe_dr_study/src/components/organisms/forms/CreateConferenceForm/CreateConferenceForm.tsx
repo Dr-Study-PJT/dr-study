@@ -57,7 +57,7 @@ const CreateConferenceForm = () => {
                 body: formData,
                 isAuth: true,
             });
-            const { conferenceId } = response.data.data;
+            const { conferenceId } = response.data;
             console.log('컨퍼런스 생성 성공:', conferenceId);
             router.push(`/conference/${conferenceId}/info`);
         } catch (error) {

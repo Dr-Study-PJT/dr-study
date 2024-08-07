@@ -8,13 +8,19 @@ export interface ConferenceData {
     startTime: string;
     finishTime: string;
     imageUrl: string;
+    participants: ConferenceMember[];
 }
 
 export interface ConferenceMember {
-    id: number;
-    nickname: string;
-    imageId: string;
-    imageUrl: string;
     role: string;
     joinDate: string;
+    memberInfo: {
+        id: number;
+        email: string;
+        nickname: string;
+        imageUrl: string;
+        regDate: Date;
+        leavedDate: Date;
+        leaved: boolean;
+    };
 }

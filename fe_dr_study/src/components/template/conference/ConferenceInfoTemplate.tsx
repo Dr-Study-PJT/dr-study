@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 interface ConferenceInfoProps {
+    memberData: any; // any 타입 수정 !필요!
     conferenceId: number; // 회의 ID
     conferenceData: ConferenceData; // 회의 데이터
     moderators: Moderator[]; // 사회자 리스트
@@ -20,6 +21,7 @@ interface ConferenceInfoProps {
 }
 
 const ConferenceInfoTemplate = ({
+    memberData,
     conferenceId,
     conferenceData,
     moderators,
@@ -30,11 +32,12 @@ const ConferenceInfoTemplate = ({
     const [isClosedConference, setIsClosedConference] =
         useState<boolean>(false); // 컨퍼런스 종료 여부
 
-    useEffect(() => {
-        if (new Date(conferenceData.finishTime) < new Date()) {
-            setIsClosedConference(true);
-        }
-    }, [conferenceData]);
+    // console.log('conferenceData =>', conferenceData);
+    // useEffect(() => {
+    //     if (new Date(conferenceData?.finishTime) < new Date()) {
+    //         setIsClosedConference(true);
+    //     }
+    // }, [conferenceData]);
 
     // const router = useRouter();
 
@@ -203,6 +206,7 @@ const ConferenceInfoTemplate = ({
 
                     <hr className="border-t border-dr-gray-500 my-4" />
                     <InviteMembersBox
+                        memberData={memberData}
                         members={studyMembers}
                         conferenceId={conferenceId}
                         setIsMemberInvited={setIsMemberInvited}
