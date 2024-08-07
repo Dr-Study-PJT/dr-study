@@ -40,7 +40,7 @@ interface IPostReqProps {
 }
 
 interface IUpdateReqProps extends IPostReqProps {
-    params?: string | null | undefined;
+    params?: string | number | null | undefined;
     query?: string;
 }
 
@@ -114,7 +114,7 @@ async function REQUEST({
     endPoint: string;
     isAuth: boolean;
     body?: any;
-    params?: string | undefined | null;
+    params?: string | undefined | null | number;
     query?: string;
 }): Promise<any> {
     const headers = await handleAuthentication(isAuth);

@@ -3,13 +3,35 @@ import { Button, Heading, Span } from '@/components/atoms';
 import { PageContainer } from '@/components/atoms/PageContainer/PageContainer';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { fetchingArticle } from './_api/ssr';
-import { deletingArticle, postingComment, updatingComment, deletingComment,} from './_api/csr';
 import { register } from '@/app/auth/register/_api/register';
-import { useForm } from 'react-hook-form';
-import { handleCommentSubmit, handleCommentUpdate, handleCommentDelete, handleArticleDelete } from './_handler';
-import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode, Key } from 'react';
-import { Member, CommentData, ArticleData } from './_types';
+// import CommentForm from './_api/CommentForm';
 
+interface MemberInfo {
+    id: number;
+    email: string;
+    nickname: string;
+    imageUrl: string;
+    regDate: string | null;
+    leavedDate: string | null;
+    leaved: boolean;
+}
+
+interface Comment {
+    id: number;
+    content: string;
+    createdAt: string;
+    memberInfo: MemberInfo;
+}
+
+interface Article {
+    title: string;
+    content: string;
+    createdAt: string;
+    viewCount: number;
+    memberInfo: MemberInfo;
+    comments: Comment[];
+    tags: string[];
+}
 
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
@@ -29,17 +51,13 @@ export default async function ArticleDetailPage({
     const articleId = params.article_id;
     const article = await fetchingArticle(Number(articleId));
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-    } = useForm();
-
+    const errors = {
+        comment_content: null,
+    };
 
     return (
         <PageContainer className="bg-[#36393E]">
-            <Box variant="articleDetail">
+            <Box variant="articleDetail" className="">
                 <Heading
                     variant="h2"
                     color="white"
@@ -51,12 +69,15 @@ export default async function ArticleDetailPage({
                     variant="articleCreateAtAndViews"
                     className="flex flex-row justify-between"
                 >
-                    <p className="text-gray-400 text-sm">
+                    <Heading
+                        variant="h5" // 이거 필요없는 거임.
+                        className="text-gray-400 text-sm"
+                    >
                         {formatDate(article.createdAt)}
-                    </p>
-                    <p className="text-gray-400 text-sm">
+                    </Heading>
+                    <Heading variant="h5" className="text-gray-400 text-sm">
                         조회수: {article.viewCount}
-                    </p>
+                    </Heading>
                 </Box>
                 <div className="w-1/2 border-t border-[#5E658B]"></div>
                 <Box variant="articleContentsSection">
@@ -71,10 +92,9 @@ export default async function ArticleDetailPage({
                         className="flex flex-row rounded-full w-auto h-full mr-2 object-cover"
                     />
                     <form
-                        onSubmit={handleSubmit((data) => handleCommentSubmit(data, Number(articleId)))}
+                        // onSubmit={handleSubmit(() => {})}
                         className="w-full flex items-center"
-                    > 
-                    
+                    >
                         <div className="flex flex-col w-full">
                             <InputWithLabelAndError
                                 label={''}
@@ -83,16 +103,10 @@ export default async function ArticleDetailPage({
                                 {...register('comment_content', {
                                     required: '댓글 내용을 입력해주세요.',
                                 })}
-                                error={errors.comment_content?.message}
+                                error={errors.comment_content}
                             />
                             <div className="flex justify-end space-x-2 mt-2">
-                                <Button
-                                    color="red"
-                                    type="button"
-                                    onClick={() => reset()}
-                                >
-                                    취소
-                                </Button>
+                                <Button color="red">취소</Button>
                                 <Button type="submit">댓글 작성</Button>
                             </div>
                         </div>
@@ -100,7 +114,7 @@ export default async function ArticleDetailPage({
                 </Box>
                 <Box variant="articleCommentsListContainer">
                     <Box variant="commentPDP">
-                        {article.comments.map((comment: { memberInfo: { imageUrl: string | undefined; nickname: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; }; createdAt: string | number | Date; content: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<AwaitedReactNode> | null | undefined; id: number; }, index: Key | null | undefined) => (
+                        {article.comments.map((comment, index) => (
                             <Box key={index} className="flex flex-row">
                                 <div className="w-full flex flex-col">
                                     <Box variant="commentPDPHeader">
@@ -136,36 +150,14 @@ export default async function ArticleDetailPage({
                                         </Span>
                                     </Box>
                                     <div className="flex justify-end space-x-2 mt-2">
-                                        <Button
-                                            color="red"
-                                            onClick={() =>
-                                                handleCommentDelete(comment.id)
-                                            }
-                                        >
-                                            삭제
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            onClick={() =>
-                                                handleCommentUpdate(
-                                                    comment.id,
-                                                    comment.content as string,
-                                                )
-                                            }
-                                        >
-                                            수정
-                                        </Button>
+                                        <Button color="red">삭제</Button>
+                                        <Button type="submit">수정</Button>
                                     </div>
                                 </div>
                             </Box>
                         ))}
                     </Box>
                 </Box>
-                <div className="flex justify-end space-x-2 mt-2">
-                    <Button color="red" onClick={(event) => handleArticleDelete(Number(articleId))}>
-                        게시글 삭제
-                    </Button>
-                </div>
             </Box>
         </PageContainer>
     );

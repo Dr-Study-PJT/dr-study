@@ -1,5 +1,8 @@
 import { A } from 'msw/lib/core/HttpResponse-B07UKAkU';
-import { articleAPI, commentAPI } from '../../../../../api/axiosInstanceManager';
+import {
+    articleAPI,
+    commentAPI,
+} from '../../../../../api/axiosInstanceManager';
 import { UpdateArticle } from '../../../../../../interfaces/articles';
 import { title } from 'process';
 // types.ts
@@ -35,33 +38,24 @@ export interface ArticleData {
     viewCount: number;
     memberInfo: Member;
     comments: CommentData[]; // CommentData 배열로 수정
-    studyGroupId?: number; 
+    studyGroupId?: number;
     tags: string[];
 }
 
 // 생성 요청에 대한 것들임!
 export interface ICreateArticleReq
-    extends Pick<
-        ArticleData,
-        | 'title'
-        | 'content'
-        | 'studyGroupId'
-        | 'tags'
-    > {}
-
+    extends Pick<ArticleData, 'title' | 'content' | 'studyGroupId' | 'tags'> {}
 
 export interface CreateCommentContent {
     content: string;
-
 }
 
-// 업데이트에 관한 것들임!!
-export interface UpdateArticle {
-    title: string;  
+// 수정에 관한 것들임!!
+export interface UpdateArticleReq {
+    title: string;
     content: string;
 }
 
-export interface UpdateComment {
-
-
+export interface UpdateCommentReq {
+    content: string;
 }
