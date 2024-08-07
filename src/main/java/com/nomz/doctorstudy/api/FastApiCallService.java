@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 public class FastApiCallService implements ExternalApiCallService{
+
     @Value("${fast-api.url}")
     private String baseUrl;
     private final ObjectMapper objectMapper = new ObjectMapper();
