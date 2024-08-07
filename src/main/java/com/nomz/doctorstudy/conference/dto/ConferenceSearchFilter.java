@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 public class ConferenceSearchFilter {
     private Long memberId;
     private Long studyGroupId;
-    private LocalDateTime lowerBoundDate;
-    private LocalDateTime upperBoundDate;
+    private Long mainCategoryId;
+    private Long subCategoryId;
+    private Boolean isStarted;
+    private Boolean isFinished;
+    private LocalDateTime lowerBoundTime;
+    private LocalDateTime upperBoundTime;
 }

@@ -1,14 +1,15 @@
 package com.nomz.doctorstudy.studygroup.response;
 
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class GetApplyResponse {
     @Schema(description = "조회한 멤버 아이디", example = "1")
     private final Long memberId;
@@ -24,4 +25,14 @@ public class GetApplyResponse {
 
     @Schema(description = "그룹 가입 신청 일시", example = "2024-07-29")
     private final LocalDateTime createdAt;
+
+    public static GetApplyResponse of(MemberStudyGroupApply application) {
+        return GetApplyResponse.builder()
+                .memberId(application.getId())
+                .groupId(application.getStudyGroup().getId())
+                .applicationStatus(application.getApplicationStatus())
+                .message(application.getMessage())
+                .createdAt(application.getCreatedAt())
+                .build();
+    }
 }

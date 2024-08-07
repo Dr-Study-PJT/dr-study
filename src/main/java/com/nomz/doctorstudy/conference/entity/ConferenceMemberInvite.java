@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -25,6 +26,9 @@ public class ConferenceMemberInvite {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column
+    private LocalDateTime createdAt;
+
     public void updateConference(Conference conference) {
         this.conference = conference;
         conference.getInvitees().add(this);
@@ -39,6 +43,7 @@ public class ConferenceMemberInvite {
                 .id(new ConferenceMemberInviteId(conference.getId(), member.getId()))
                 .conference(null)
                 .member(null)
+                .createdAt(LocalDateTime.now())
                 .build();
         invite.updateConference(conference);
         invite.updateMember(member);

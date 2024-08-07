@@ -54,5 +54,17 @@ public class StudyGroup {
 
     @OneToMany(mappedBy = "studyGroup")
     private List<Article> articles;
+
+    public Image getImage() {
+        if (image == null) {
+            return Image.builder()
+                    .imageUrl("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg")
+                    .isDeleted(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+        }
+
+        return image;
+    }
 }
 

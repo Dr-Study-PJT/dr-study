@@ -276,6 +276,20 @@ class BlockInterpreterTest {
         blockInterpreter.init(id, script, Map.of());
         blockInterpreter.interpret(id);
     }
+    
+    @Test
+    @DisplayName("아바타 GPT 동시 테스트")
+    public void avatarGptTest() {
+        String script =
+                """
+                phase(1) {
+                    let_avatar_speak(gpt_query('반갑다. 너는 얼마나 반갑니'));
+                }
+                """;
+        long id = getProcessContextIdSequence();
+        blockInterpreter.init(id, script, Map.of());
+        blockInterpreter.interpret(id);
+    }
 
     @Test
     @DisplayName("사회자 생성 페이지 결과 스크립트 테스트")

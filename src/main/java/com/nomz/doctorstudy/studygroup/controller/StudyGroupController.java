@@ -222,13 +222,8 @@ public class StudyGroupController {
 
         // Service 로직
         MemberStudyGroupApply memberStudyGroupApply = studyGroupService.getApply(userId, groupId);
-        GetApplyResponse response = new GetApplyResponse(
-                memberStudyGroupApply.getMember().getId(),
-                memberStudyGroupApply.getStudyGroup().getId(),
-                memberStudyGroupApply.getApplicationStatus(),
-                memberStudyGroupApply.getMessage(),
-                memberStudyGroupApply.getCreatedAt()
-        );
+        GetApplyResponse response = GetApplyResponse.of(memberStudyGroupApply);
+
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Apply 조회에 성공했습니다.",
