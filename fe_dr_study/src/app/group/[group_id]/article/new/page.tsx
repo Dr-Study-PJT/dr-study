@@ -110,7 +110,7 @@ const NewArticlePage: React.FC = async ({ params: { group_id } }: any) => {
     } = useForm();
 
     const groupId = group_id;
-    const onSubmit = async (data: any, groupId: number) => {
+    const onSubmit = async (data: any) => {
         // 여기서 memberInfo를 실제 사용자 정보로 대체
         const memberInfo = {}; // Replace {} with the actual member information
 
@@ -127,12 +127,12 @@ const NewArticlePage: React.FC = async ({ params: { group_id } }: any) => {
         <PageContainer className="bg-[#36393E]">
             <Box variant="createStudyGroupStepBox">
                 <CreateArticle
+                    groupId={groupId}
                     setFocus={setFocus}
                     handleSubmit={handleSubmit(onSubmit)}
                     register={register}
                     errors={errors}
                     reset={reset}
-                    groupId={groupId}
                 />
             </Box>
         </PageContainer>
