@@ -1,5 +1,29 @@
 import { AxiosInstance } from 'axios';
 import { handleAuthentication } from './jwt';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
+
+async function getDevMemberId() {
+    if (process.env.NEXT_PUBLIC_IS_DEVELOP === 'true') {
+        const memberData = await getSessionStorageItem('memberData');
+        if (memberData && memberData.id) {
+            return memberData.id;
+        } else {
+            console.error(
+                'DEV 인가 에러: 세션 스토리지에 멤버 데이터가 없습니다.',
+            );
+        }
+    }
+    return null;
+}
+
+async function getHeaders(isAuth: boolean) {
+    const headers = await handleAuthentication(isAuth);
+    const devMemberId = await getDevMemberId();
+    if (devMemberId) {
+        headers['dev-member-id'] = devMemberId;
+    }
+    return headers;
+}
 
 export async function GET(
     endPoint: string,
@@ -8,7 +32,7 @@ export async function GET(
         isAuth = false,
         revalidateTime = 10,
     }: {
-        params?: string | number | null | undefined;
+        params?: string | null | undefined;
         isAuth?: boolean;
         revalidateTime?: number;
     } = {
@@ -17,7 +41,7 @@ export async function GET(
         revalidateTime: 10,
     },
 ): Promise<any> {
-    const headers = await handleAuthentication(isAuth);
+    const headers = await getHeaders(isAuth);
 
     const reqPath = params
         ? `${process.env.NEXT_PUBLIC_HOST}/${endPoint}/${params}`
@@ -40,7 +64,7 @@ interface IPostReqProps {
 }
 
 interface IUpdateReqProps extends IPostReqProps {
-    params?: string | number | null | undefined;
+    params?: string | null | undefined;
     query?: string;
 }
 
@@ -99,7 +123,7 @@ export function DELETE({
     });
 }
 
-// POST, PUT, PATCH의 평가부 추상화
+// POST, PUT, PATCH, DELETE의 평가부 추상화
 async function REQUEST({
     API,
     method,
@@ -114,10 +138,10 @@ async function REQUEST({
     endPoint: string;
     isAuth: boolean;
     body?: any;
-    params?: string | undefined | null | number;
+    params?: string | undefined | null;
     query?: string;
 }): Promise<any> {
-    const headers = await handleAuthentication(isAuth);
+    const headers = await getHeaders(isAuth);
 
     const cleanedEndPoint = endPoint.endsWith('/')
         ? endPoint.slice(0, -1)
@@ -144,3 +168,4 @@ async function REQUEST({
     console.log(`IN ${method}`, response);
     return response;
 }
+

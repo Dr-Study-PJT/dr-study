@@ -14,7 +14,7 @@ export const boxStyles = tv({
             articleDetail:
                 'w-1/2 space-y-8 p-[55px] flex flex-col justify-center items-center text-center bg-[#282B30] rounded-[10px] border border-white',
             articleContainer:
-                'w-full flew flew-col flex-between items-center bg-[#282B30] rounded-[10px] border border-white ',
+                'w-full flew flew-col flex-between items-center bg-[#282B30]  ',
             articleElement:
                 'w-full flex flex -col flex-between bg-[#282B30] rounded-[10px] border border-white ',
             articlePagination:
@@ -22,7 +22,7 @@ export const boxStyles = tv({
             articleModal:
                 'w-full p-[55px] flex flex-col justify-center items-center text-center bg-[#282B30] rounded-[10px] border border-white',
             articleTitleSection:
-                'w-full flex flex-row justify-center items-center text-center ',
+                'w-full flex flex-col justify-center items-center text-center ',
             articleDetailTitleSection:
                 'w-full flex flex-col justify-center items-center text-center ',
 

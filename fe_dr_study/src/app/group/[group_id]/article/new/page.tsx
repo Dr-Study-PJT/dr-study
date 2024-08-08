@@ -15,8 +15,12 @@ import { formWrapperStyles } from '@/components/molecules/Form/Form.styles';
 import { handleKeyDownForNextInput } from '@/components/organisms/forms/_utils/handleKeyDownForNextInput';
 import formConditions from '@/constants/formConditions';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
+import { useRouter } from 'next/navigation';
+import { handleArticleSubmit } from './_handler';
+import { fetchingMemberData } from '../[article_id]/_api/ssr';
 
-interface DashboardArticleCreateProps {
+interface ArticleCreateProps {
+    groupId: number;
     handleSubmit: (event?: React.BaseSyntheticEvent) => Promise<void>;
     register: UseFormRegister<any>;
     errors: FieldErrors<any>;
@@ -24,13 +28,16 @@ interface DashboardArticleCreateProps {
     reset: () => void;
 }
 
-const CreateArticle: React.FC<DashboardArticleCreateProps> = ({
+const CreateArticle: React.FC<ArticleCreateProps> = ({
+    groupId,
     setFocus,
     handleSubmit,
     register,
     errors,
     reset,
 }) => {
+    const router = useRouter();
+
     useEffect(() => {
         setFocus('articleTitle');
     }, [setFocus]);
@@ -70,7 +77,6 @@ const CreateArticle: React.FC<DashboardArticleCreateProps> = ({
                         id="description"
                         label="내용"
                         textareaSize="lg"
-                        name="description"
                         placeholder="내용을 입력해주세요"
                         {...register('description')}
                         error={errors.description}
@@ -80,10 +86,11 @@ const CreateArticle: React.FC<DashboardArticleCreateProps> = ({
                             color="red"
                             type="button"
                             onClick={() => {
-                                reset();
+                                reset(); // 폼을 리셋합니다.
+                                router.back(); // 이전 페이지로 이동합니다.
                             }}
                         >
-                            리셋
+                            취소하기
                         </Button>
                         <Button type="submit">등록하기</Button>
                     </Box>
@@ -93,7 +100,7 @@ const CreateArticle: React.FC<DashboardArticleCreateProps> = ({
     );
 };
 
-const NewArticlePage: React.FC = () => {
+const NewArticlePage: React.FC = async ({ params: { group_id } }: any) => {
     const {
         register,
         handleSubmit,
@@ -102,28 +109,17 @@ const NewArticlePage: React.FC = () => {
         reset,
     } = useForm();
 
-    const onSubmit = async (data: any) => {
-        try {
-            const response = await fetch(
-                `https://api.dr-study.kro.kr/v1/articles`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        group_id: 1,
-                        articleTitle: data.articleTitle,
-                        description: data.description,
-                    }),
-                },
-            );
+    const groupId = group_id;
+    const onSubmit = async (data: any, groupId: number) => {
+        // 여기서 memberInfo를 실제 사용자 정보로 대체
+        const memberInfo = {}; // Replace {} with the actual member information
 
-            const result = await response.json();
-            console.log(result.message);
-            // 필요한 경우 추가적인 작업 수행
+        try {
+            await handleArticleSubmit(data, groupId);
+            alert('게시글이 성공적으로 작성되었습니다.');
+            reset();
         } catch (error) {
-            console.log('서버 작동안되서 더미데이터 사용중');
+            console.error('게시글 작성 실패', error);
         }
     };
 
@@ -136,6 +132,7 @@ const NewArticlePage: React.FC = () => {
                     register={register}
                     errors={errors}
                     reset={reset}
+                    groupId={groupId}
                 />
             </Box>
         </PageContainer>

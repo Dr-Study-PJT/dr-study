@@ -1,16 +1,16 @@
 import { A } from 'msw/lib/core/HttpResponse-B07UKAkU';
-import {
-    articleAPI,
-    commentAPI,
-} from '../../../../../api/axiosInstanceManager';
-import { UpdateArticle } from '../../../../../../interfaces/articles';
+import { articleAPI, commentAPI } from '@/app/api/axiosInstanceManager';
+import { UpdateArticle } from '@/interfaces/articles';
 import { title } from 'process';
 // types.ts
 // 일단 삭제는 싹 다 배제하고, 생성과 삭제에 관련한 response만..!
 
 // 이것들은 Request로서 필요한것들임!
-export interface ArticleReq {
-    articleId: number;
+export interface ArticlePostReq {
+    title: string;
+    content: string;
+    studyGroupId: number;
+    tags?: [];
 }
 
 // 이것들은 Response로서 필요한것들임!

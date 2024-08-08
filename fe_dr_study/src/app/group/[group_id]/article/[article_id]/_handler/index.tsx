@@ -1,19 +1,21 @@
-import { Router } from 'next/router';
+'use client'
 import {
     postingComment,
     updatingComment,
     deletingComment,
     deletingArticle,
-} from './_api/csr';
+    updatingArticle,
+} from '../_api/csr';
 import { useRouter } from 'next/navigation';
 
     const router = useRouter();
     
+// 생성 페이지
 export const handleCommentSubmit = async (data: any, articleId: number) => {
         try {
-            await postingComment(articleId), {
+            await postingComment(articleId, {
                 content: data.comment_content,
-            };
+            });
             alert('댓글이 성공적으로 작성되었습니다.');
             // reset();
         } catch (error) {
@@ -21,6 +23,7 @@ export const handleCommentSubmit = async (data: any, articleId: number) => {
         }
     };
 
+// 게시글 조회 페이지
 export const handleCommentUpdate = async (
     commentId: number,
     content: string,
@@ -53,6 +56,16 @@ export const handleArticleDelete = async (articleId: number) => {
     }
 };
 
+// export const handleArticleEdit = async (articleId: number) => {
+//     try {
+//         await updatingArticle(articleId, { content:  });
+//         alert('게시글이 성공적으로 삭제되었습니다.');
+//         const group_id = 'your_group_id'; // 질문! Replace 'your_group_id' with the actual group ID
+//         router.push(`/group/${group_id}`);
+//     } catch (error) {
+//         console.error('게시글 삭제 실패', error);
+//     }
+// };
 
 // export const handleLike = async (article, setArticle, articleId) => {
 //     try {

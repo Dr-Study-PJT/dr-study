@@ -4,6 +4,7 @@ import { PageContainer } from '@/components/atoms/PageContainer/PageContainer';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { fetchingArticle } from './_api/ssr';
 import { register } from '@/app/auth/register/_api/register';
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode, Key } from 'react';
 // import CommentForm from './_api/CommentForm';
 
 interface MemberInfo {
@@ -69,15 +70,13 @@ export default async function ArticleDetailPage({
                     variant="articleCreateAtAndViews"
                     className="flex flex-row justify-between"
                 >
-                    <Heading
-                        variant="h5" // 이거 필요없는 거임.
-                        className="text-gray-400 text-sm"
-                    >
+                    <p className="text-gray-400 text-sm">
                         {formatDate(article.createdAt)}
-                    </Heading>
-                    <Heading variant="h5" className="text-gray-400 text-sm">
+                    </p>
+
+                    <p className="text-gray-400 text-sm">
                         조회수: {article.viewCount}
-                    </Heading>
+                    </p>
                 </Box>
                 <div className="w-1/2 border-t border-[#5E658B]"></div>
                 <Box variant="articleContentsSection">
@@ -100,10 +99,10 @@ export default async function ArticleDetailPage({
                                 label={''}
                                 id="comment_content"
                                 placeholder="댓글을 입력해주세요."
-                                {...register('comment_content', {
-                                    required: '댓글 내용을 입력해주세요.',
-                                })}
-                                error={errors.comment_content}
+                                // {...register('comment_content', {
+                                //     required: '댓글 내용을 입력해주세요.',
+                                // })}
+                                // error={errors.comment_content} //질문! -> 이 부분은 어떻게 처리해야 할까요?
                             />
                             <div className="flex justify-end space-x-2 mt-2">
                                 <Button color="red">취소</Button>
@@ -114,7 +113,7 @@ export default async function ArticleDetailPage({
                 </Box>
                 <Box variant="articleCommentsListContainer">
                     <Box variant="commentPDP">
-                        {article.comments.map((comment, index) => (
+                        {article.comments.map((comment: { memberInfo: { imageUrl: string | undefined; nickname: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; }; createdAt: string | number | Date; content: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined; }, index: Key | null | undefined) => (
                             <Box key={index} className="flex flex-row">
                                 <div className="w-full flex flex-col">
                                     <Box variant="commentPDPHeader">

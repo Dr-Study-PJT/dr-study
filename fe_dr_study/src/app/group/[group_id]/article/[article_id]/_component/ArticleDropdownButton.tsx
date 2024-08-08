@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-// 이 delete에 handler를 넣어서 삭제를 누르면 삭제되게끔 만들어야함 질문!
-const DropdownButton: React.FC<{
+import { handleArticleDelete } from '../_handler';
+
+const ArticleDropdownButton: React.FC<{
     onEdit: () => void;
     onDelete: () => void;
 }> = ({ onEdit, onDelete }) => {
@@ -61,4 +62,24 @@ const DropdownButton: React.FC<{
     );
 };
 
-export default DropdownButton;
+// 사용 예시 컴포넌트
+const ArticleDropdownButtonComponent: React.FC<{ articleId: number }> = ({ articleId }) => {
+    const handleEdit = () => {
+        // 예제 핸들러 - 실제 수정 기능 구현
+        // handleCommentUpdate(articleId, '새로운 내용'); // 수정 필요!
+    };
+
+    const handleDelete = () => {
+        // 예제 핸들러 - 실제 삭제 기능 구현
+        handleArticleDelete(articleId);
+    };
+
+    return (
+        <ArticleDropdownButton
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+        />
+    );
+};
+
+export default ArticleDropdownButtonComponent; // 수정됨!
