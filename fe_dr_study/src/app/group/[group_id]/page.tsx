@@ -3,20 +3,22 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Button, Label } from '@/components/atoms';
+import { Button, Label, Input } from '@/components/atoms';
+import { Textarea } from '@/components/atoms/Textarea';
 import { SectionContents } from '../_components/SectionContents';
 import GroupApplyButton from '../_components/GroupApplyButton';
 import {
     fetchGroupWithMembersData,
     getGroupMembers,
-    GroupMember,
+    // updateGroupData,
+    // deleteGroup,
 } from './_api/ssr';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { RootState } from '@/store';
-import { GroupWithMembersData, Member } from './_types';
+import { GroupWithMembersData } from './_types';
+import { GroupMember } from './_api/ssr';
 import { formatDate, getDateTimePart } from '@/utils/date';
 import Tooltip from '@/components/organisms/SideBar/Tooltip';
-
 import { FaUsers } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
@@ -45,6 +47,10 @@ export default function GroupDetailPage({
     const [memberData, setMemberData] = useState<IMemberInfo | null>(
         getSessionStorageItem('memberData'),
     );
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedGroup, setEditedGroup] = useState<
+        Partial<GroupWithMembersData>
+    >({});
 
     const memberRedux = useSelector((state: RootState) => state.member);
 
@@ -92,6 +98,42 @@ export default function GroupDetailPage({
         return <div>Loading...</div>;
     }
 
+    const handleEditClick = () => {
+        setEditedGroup({
+            name: groupWithMembers?.name,
+            description: groupWithMembers?.description,
+            memberCapacity: groupWithMembers?.memberCapacity,
+        });
+        setIsEditing(true);
+    };
+
+    const handleCancelClick = () => {
+        setIsEditing(false);
+        setEditedGroup({});
+    };
+
+    const handleSaveClick = async () => {
+        try {
+            // await updateGroupData(groupId, editedGroup);
+            // setGroupWithMembers((prev) => ({
+            //     ...prev,
+            //     ...editedGroup,
+            // }));
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating group:', error);
+        }
+    };
+
+    const handleDeleteClick = async () => {
+        try {
+            // await deleteGroup(groupId);
+            router.push('/groups'); // 삭제 후 그룹 목록 페이지로 이동
+        } catch (error) {
+            console.error('Error deleting group:', error);
+        }
+    };
+
     return (
         <div className="w-full bg-dr-indigo-200 flex flex-col h-max">
             <div className="SECTION-THUMBNAIL w-full h-max flex flex-row bg-dr-indigo-400 rounded-l-xl">
@@ -116,24 +158,91 @@ export default function GroupDetailPage({
                     <div className="w-full h-full flex flex-col justify-between">
                         <div className="TOP-INFO-GROUP w-full h-1/2 flex flex-row justify-between">
                             <div className="TL-LIST-INFO-BASE flex flex-col gap-1 w-max h-full max-w-[33%]">
-                                <div className="INFO-TITLE text-dr-header-3 text-dr-white font-bold">
-                                    {groupWithMembers?.name}
-                                </div>
-                                <div className="flex flex-col">
-                                    <div className="INFO-DUE-DATE text-dr-body-4 text-dr-gray-300 flex flex-row gap-8">
-                                        {`시작일: ${getDateTimePart(formatDate(groupWithMembers?.createdAt), 'date')}`}
-                                    </div>
-                                    <div className="INFO-DUE-DATE text-dr-body-4 text-dr-gray-300">
-                                        {`목표 종료일: ${getDateTimePart(formatDate(groupWithMembers?.dueDate), 'date')}`}
-                                    </div>
-                                </div>
-                                <div className="INFO-DESCRIPTION text-dr-body-4 text-dr-gray-300 mt-3">
-                                    {groupWithMembers?.description}
+                                {isEditing ? (
+                                    <>
+                                        {/* <Input
+                                            value={editedGroup.name || ''}
+                                            onChange={(e) =>
+                                                setEditedGroup({
+                                                    ...editedGroup,
+                                                    name: e.target.value,
+                                                })
+                                            }
+                                            className="text-dr-header-3 text-dr-white font-bold"
+                                        /> */}
+                                        <Textarea
+                                            value={
+                                                editedGroup.description || ''
+                                            }
+                                            onChange={(e) =>
+                                                setEditedGroup({
+                                                    ...editedGroup,
+                                                    description: e.target.value,
+                                                })
+                                            }
+                                            className="text-dr-body-4 text-dr-gray-300 mt-3"
+                                        />
+                                        {/* <Input
+                                            type="number"
+                                            value={
+                                                editedGroup.memberCapacity || ''
+                                            }
+                                            onChange={(e) =>
+                                                setEditedGroup({
+                                                    ...editedGroup,
+                                                    memberCapacity: parseInt(
+                                                        e.target.value,
+                                                        10,
+                                                    ),
+                                                })
+                                            }
+                                            className="text-dr-body-4 text-dr-gray-300 mt-3"
+                                        /> */}
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="INFO-TITLE text-dr-header-3 text-dr-white font-bold">
+                                            {groupWithMembers?.name}
+                                        </div>
+                                        <div className="INFO-DUE-DATE text-dr-body-4 text-dr-gray-300 flex flex-row gap-8">
+                                            {`시작일: ${getDateTimePart(
+                                                formatDate(
+                                                    groupWithMembers?.createdAt,
+                                                ),
+                                                'date',
+                                            )}`}
+                                        </div>
+                                        <div className="INFO-DUE-DATE text-dr-body-4 text-dr-gray-300">
+                                            {`목표 종료일: ${getDateTimePart(
+                                                formatDate(
+                                                    groupWithMembers?.dueDate,
+                                                ),
+                                                'date',
+                                            )}`}
+                                        </div>
+                                        <div className="INFO-DESCRIPTION text-dr-body-4 text-dr-gray-300 mt-3">
+                                            {groupWithMembers?.description}
+                                        </div>
+                                    </>
+                                )}
+                                <div className="INFO-TAGS flex flex-wrap mt-3">
+                                    {groupWithMembers?.tags.map(
+                                        (tag, index) => (
+                                            <span
+                                                key={index}
+                                                className="px-3 py-[3px] bg-dr-gray-500 text-dr-body-4 rounded-full text-dr-coral-100 cursor-pointer hover:font-bold transition-all duration-200 mr-2 mb-2"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ),
+                                    )}
                                 </div>
                             </div>
                             <div className="TR-BUTTON">
                                 <div
-                                    className={`${!isMember ? 'block' : 'hidden'} animate-popIn`}
+                                    className={`${
+                                        !isMember ? 'block' : 'hidden'
+                                    } animate-popIn`}
                                 >
                                     <GroupApplyButton groupId={groupId} />
                                 </div>
@@ -159,7 +268,6 @@ export default function GroupDetailPage({
                                         </div>
                                     </div>
                                 </div>
-
                                 <ul className="LIST-MEMBER-IMAGES flex flex-row gap-2">
                                     {membersInThisGroup
                                         ?.slice(0, 3)
@@ -202,8 +310,6 @@ export default function GroupDetailPage({
                                                                             objectFit:
                                                                                 'cover',
                                                                         }}
-                                                                        layout="fill"
-                                                                        objectFit="cover"
                                                                     />
                                                                 </div>
                                                             </Tooltip>
@@ -239,22 +345,43 @@ export default function GroupDetailPage({
                                 </ul>
                             </div>
                             <div className="BR-BOTTONS flex flex-row justify-between gap-3">
-                                <div
-                                    className={`${
-                                        isLeader ? 'block' : 'hidden'
-                                    } flex flex-row justify-between gap-3`}
-                                >
-                                    <Button
-                                        color="dark"
-                                        onClick={(e) => {
-                                            alert(
-                                                '그룹 기본정보 수정 가능하게',
-                                            );
-                                        }}
-                                    >
-                                        그룹 관리
-                                    </Button>
-                                </div>
+                                {isLeader && (
+                                    <>
+                                        {isEditing ? (
+                                            <>
+                                                <Button
+                                                    classNameStyles="animate-popIn"
+                                                    color="coral"
+                                                    onClick={handleSaveClick}
+                                                >
+                                                    수정
+                                                </Button>
+                                                <Button
+                                                    classNameStyles="animate-popIn"
+                                                    color="red"
+                                                    onClick={handleDeleteClick}
+                                                >
+                                                    삭제
+                                                </Button>
+                                                <Button
+                                                    classNameStyles="animate-popIn"
+                                                    color="dark"
+                                                    onClick={handleCancelClick}
+                                                >
+                                                    취소
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <Button
+                                                classNameStyles="animate-popIn"
+                                                color="dark"
+                                                onClick={handleEditClick}
+                                            >
+                                                그룹 관리
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
                                 <Button
                                     color="gray"
                                     classNameStyles={

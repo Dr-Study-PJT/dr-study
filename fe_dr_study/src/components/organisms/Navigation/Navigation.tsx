@@ -218,7 +218,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         onClickSetLogout={onClickSetLogout}
                                         profileImageBoxRef={profileImageBoxRef}
                                     />
-                                )}
+                                ) : null}
                             </div>
                             <div
                                 className={`relative text-dr-white rounded-full cursor-pointer`}
