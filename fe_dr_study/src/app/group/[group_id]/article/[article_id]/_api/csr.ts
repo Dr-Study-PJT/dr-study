@@ -54,7 +54,7 @@ export const updatingArticle = async (
             API: articleAPI,
             endPoint: ``,
             body: updateArticleBody,
-            params: articleId,
+            params: articleId.toString(), // Convert articleId to string
             isAuth: true,
         });
         return response;
@@ -72,7 +72,7 @@ export const updatingComment = async (
             API: articleAPI,
             endPoint: `/comments`,
             body: updateCommentBody,
-            params: commentId,
+            params: commentId.toString(), // Convert commentId to string
             isAuth: true,
         });
         return response;
@@ -89,7 +89,7 @@ export const deletingArticle = async (articleId: number) => {
             endPoint: ``,
             // body: aticleData,  => delete는 body가 필요없음!
             isAuth: true,
-            params: articleId,
+            params: articleId.toString(), // Convert articleId to string
         });
         return response;
     } catch (error) {
@@ -104,7 +104,7 @@ export const deletingComment = async (commentId: number) => {
             endPoint: `/comments`, // 질문! / 넣어야하나??
             // body: aticleData,  => delete는 body가 필요없음!
             isAuth: true,
-            params: commentId,
+            params: commentId.toString(), // Convert articleId to string
         });
         return response;
     } catch (error) {

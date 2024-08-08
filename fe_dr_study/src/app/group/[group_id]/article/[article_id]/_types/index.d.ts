@@ -32,6 +32,7 @@ export interface CommentData {
 }
 
 export interface ArticleData {
+    id: number;
     title: string;
     content: string;
     createdAt: string;
@@ -42,7 +43,7 @@ export interface ArticleData {
     tags: string[];
 }
 
-// 생성 요청에 대한 것들임!
+// 생성 요청에 대한 것들임! => 
 export interface ICreateArticleReq
     extends Pick<ArticleData, 'title' | 'content' | 'studyGroupId' | 'tags'> {}
 

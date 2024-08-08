@@ -1,6 +1,5 @@
-// page.tsx
-import { fetchingArticle } from './_api/ssr';
-import ArticleDetailClient from './_api/ArticleDetailClient';
+import { fetchingArticle } from './ssr';
+import ArticleDetailClient from './ArticleDetailClient';
 
 export default async function ArticleDetailPage({
     params,
