@@ -176,7 +176,7 @@ public class StudyGroupController {
         );
     }
 
-    @PostMapping("/admission/apply")
+    @PostMapping("/apply")
     @Operation(summary = "Study Group 지원")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 리스트 지원 성공", useReturnTypeSchema = true),

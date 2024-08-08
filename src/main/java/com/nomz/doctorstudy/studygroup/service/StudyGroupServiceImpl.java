@@ -156,6 +156,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         }
         // 3. status 변경
         apply.setApplicationStatus(createReplyRequest.getApplicationStatus());
+        apply.setReplyMessage(createReplyRequest.getReplyMessage());
 
         if (createReplyRequest.getApplicationStatus() == ApplicationStatus.APPROVED) {
             // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
@@ -170,6 +171,9 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                     .build();
             memberStudyGroupRepository.save(memberStudyGroup);
         }
+
+        notificationService.createNotification(apply);
+
         return apply;
     }
 

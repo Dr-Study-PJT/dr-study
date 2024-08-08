@@ -70,12 +70,10 @@ public class NotificationController {
         List<Notification> notifications = notificationService.getUnreadNotifications(requester);
 
         for (Notification notification : notifications) {
-            if (notification.getItemType() == NotificationItemType.STUDY_GROUP_APPLICATION) {
-                responses.add(getApplicationNotificationInfo(notification));
-            }
-            if (notification.getItemType() == NotificationItemType.CONFERENCE_INVITATION) {
-                responses.add(getInvitationNotificationInfo(notification));
-            }
+            responses.add(switch (notification.getItemType()) {
+                case STUDY_GROUP_APPLICATION, STUDY_GROUP_APPLICATION_REPLY -> getApplicationNotificationInfo(notification);
+                case CONFERENCE_INVITATION ->  getInvitationNotificationInfo(notification);
+            });
         }
 
         return ResponseEntity.ok(new SuccessResponse<>(
@@ -123,6 +121,12 @@ public class NotificationController {
     }
 
 
+    private NotificationInfo getApplicationNotificationInfo(Notification notification) {
+        MemberStudyGroupApply application = memberStudyGroupApplyRepository.findById(notification.getItemId())
+                .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
+        return NotificationInfo.of(notification, application);
+    }
+
     private NotificationInfo getInvitationNotificationInfo(Notification notification) {
         List<ConferenceMemberInvite> invitations = conferenceMemberInviteQueryRepository.getConferenceMemberInviteList(
                 ConferenceMemberInviteSearchFilter.builder().
@@ -133,15 +137,7 @@ public class NotificationController {
         if (invitations.size() != 1) {
             throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "컨퍼런스 초대 알림 조회 중, 알 수 없는 오류가 발생했습니다.");
         }
-        NotificationInfo notificationInfo = NotificationInfo.of(notification, invitations.get(0));
-        return notificationInfo;
-    }
-
-    private NotificationInfo getApplicationNotificationInfo(Notification notification) {
-        MemberStudyGroupApply application = memberStudyGroupApplyRepository.findById(notification.getItemId())
-                .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
-        NotificationInfo notificationInfo = NotificationInfo.of(notification, application);
-        return notificationInfo;
+        return NotificationInfo.of(notification, invitations.get(0));
     }
 
 }

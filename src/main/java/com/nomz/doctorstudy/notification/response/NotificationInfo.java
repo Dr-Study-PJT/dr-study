@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.notification.response;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
 import com.nomz.doctorstudy.notification.NotificationItemType;
 import com.nomz.doctorstudy.notification.entity.Notification;
+import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -31,13 +32,21 @@ public class NotificationInfo {
 
 
     public static NotificationInfo of(Notification notification, MemberStudyGroupApply application) {
-        return NotificationInfo.builder()
+        NotificationInfoBuilder builder = NotificationInfo.builder()
                 .id(notification.getId())
                 .createdAt(notification.getCreatedAt())
-                .imageUrl(application.getMember().getImage().getImageUrl())
-                .itemType(NotificationItemType.STUDY_GROUP_APPLICATION.getToken())
-                .itemInfo(ApplicationNotificationInfo.of(application))
-                .build();
+                .imageUrl(application.getMember().getImage().getImageUrl());
+
+        return switch (application.getApplicationStatus()) {
+            case WAITING -> builder
+                    .itemType(NotificationItemType.STUDY_GROUP_APPLICATION.getToken())
+                    .itemInfo(ApplicationNotificationInfo.of(application))
+                    .build();
+            default -> builder
+                    .itemType(NotificationItemType.STUDY_GROUP_APPLICATION_REPLY.getToken())
+                    .itemInfo(ApplicationReplyNotificationInfo.of(application))
+                    .build();
+        };
     }
 
     public static NotificationInfo of(Notification notification, ConferenceMemberInvite invitation) {

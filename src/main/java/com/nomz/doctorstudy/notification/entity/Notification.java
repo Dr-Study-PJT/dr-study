@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.notification.entity;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.notification.NotificationItemType;
+import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,10 +42,21 @@ public class Notification {
     }
 
     public static Notification of(MemberStudyGroupApply application) {
+        Member recipient;
+        NotificationItemType notificationItemType;
+        if (application.getApplicationStatus() == ApplicationStatus.WAITING) {
+            recipient = application.getStudyGroup().getCaptain();
+            notificationItemType = NotificationItemType.STUDY_GROUP_APPLICATION;
+        }
+        else {
+            recipient = application.getMember();
+            notificationItemType = NotificationItemType.STUDY_GROUP_APPLICATION_REPLY;
+        }
+
         return builder()
-                .itemType(NotificationItemType.STUDY_GROUP_APPLICATION)
-                .recipient(application.getMember())
-                .itemId(application.getStudyGroup().getId())
+                .itemType(notificationItemType)
+                .recipient(recipient)
+                .itemId(application.getId())
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
