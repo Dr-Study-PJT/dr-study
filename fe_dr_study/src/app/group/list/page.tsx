@@ -5,7 +5,7 @@ import { Pagination } from './Pagenation';
 import { getGroupListBy, SearchParams, IGroupListResponse } from '../_api/ssr';
 import { ErrorLottie } from '../../_components/Lottie/Error/ErrorLottie';
 
-const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black rounded-xl border-[1px] border-dr-gray-400`;
+const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-indigo-400 rounded-xl border-[1px] border-dr-indigo-100`;
 
 const PAGENATION_SIZE = 5;
 
@@ -47,7 +47,7 @@ export default async function GroupListPage({
 
     return (
         <div className={pageStyles}>
-            <section className="SECTION1-THUMBNAIL w-full h-max flex justify-center items-center p-14">
+            <section className="SECTION1-THUMBNAIL w-full h-max flex justify-center items-center px-12 py-10">
                 <div className="SECTION-BOX w-full flex flex-col justify-start gap-8">
                     <div className="CONETENTS w-full h-max flex flex-col items-center">
                         {groupList_content?.length === 0 && (
@@ -60,14 +60,14 @@ export default async function GroupListPage({
                                 </p>
                             </div>
                         )}
-                        <div className="bg-dr-gray-800 rounded-lg w-full">
+                        <div className="rounded-lg w-full">
                             {groupList_content?.map((group, index) => (
                                 <Link
                                     href={`/group/${group.id}`}
                                     key={index}
                                     passHref
                                 >
-                                    <div className="cursor-pointer relative w-full flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 hover:bg-dr-dark-100 transition-all duration-200 rounded-lg h-max min-h-36">
+                                    <div className="cursor-pointer relative w-full flex items-start justify-between gap-4 mb-4 bg-dr-indigo-300 hover:bg-dr-indigo-200 transition-all duration-200 rounded-lg h-max min-h-36">
                                         <div className="flex flex-row relative left-[-4.5rem] h-36">
                                             <div className="relative w-36 h-36 mr-4 rounded-full overflow-hidden">
                                                 <Image

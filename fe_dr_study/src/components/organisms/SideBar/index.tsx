@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import Tooltip from './Tooltip';
-import { fetchConfereneList } from '@/app/group/_components/SectionContents';
+import { fetchConferenceList } from '@/app/group/_components/SectionContents';
 
 // 그룹 인터페이스 정의
 interface Group {
@@ -67,7 +67,7 @@ const SideBar = () => {
             if (!memberId) return;
             console.log(memberData);
 
-            const fetchedConferences = await fetchConfereneList({
+            const fetchedConferences = await fetchConferenceList({
                 memberId,
                 isOpened: true,
                 isClose: false,
@@ -80,7 +80,7 @@ const SideBar = () => {
     }, [memberData]);
 
     return (
-        <div className="SIDEBAR-BOX fixed z-10 left-0 pt-12 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-[#282B30]">
+        <div className="SIDEBAR-BOX fixed z-10 left-0 pt-12 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-dr-indigo-300 border-r-[1px] border-dr-indigo-100">
             <div className="flex flex-col gap-3">
                 <div className="LIST-BUTTON-CONFERENCE flex flex-col gap-3">
                     <div className="text-dr-body-4 text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
@@ -103,7 +103,7 @@ const SideBar = () => {
                                     className={`FOCUS-MARK absolute left-0 w-[9%] h-[20%] rounded-r-full bg-dr-white opacity-0 ${
                                         isActive
                                             ? 'bg-dr-white h-[70%] opacity-100'
-                                            : 'h-[0%] hover:bg-dr-white opacity-0 group-hover:opacity-0 transition-all duration-500'
+                                            : 'h-[0%] hover:bg-dr-white opacity-0 group-hover:opacity-0 transition-all duration-400'
                                     }`}
                                 ></div>
                                 <Tooltip
@@ -175,15 +175,6 @@ const SideBar = () => {
                         );
                     })}
                 </div>
-            </div>
-            <div>
-                <Icon
-                    icon="gear"
-                    text="gray"
-                    bg="gray"
-                    size="sm"
-                    cursor="pointer"
-                />
             </div>
         </div>
     );

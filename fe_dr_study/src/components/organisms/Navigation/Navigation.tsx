@@ -28,6 +28,7 @@ import {
     NotificationData,
     ProfileDropDownProps,
 } from './Navigation.types';
+import Tooltip from '../SideBar/Tooltip';
 
 const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const pathname = usePathname();
@@ -97,19 +98,19 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     };
 
     const arrowButtonStyles =
-        'rounded-full p-1 bg-dr-gray-500 text-white flex items-center justify-center hover:bg-dr-gray-400 transition-colors duration-200';
+        'rounded-full p-1 bg-dr-indigo-0 text-white flex items-center justify-center hover:bg-zinc-600 transition-colors duration-200';
 
     const navBoxStyles = {
         backdropFilter:
             scrollPosition === 'top' ? 'none' : 'blur(6px) saturate(180%)',
         backgroundColor:
-            scrollPosition === 'top' ? '#262627' : 'rgba(38, 38, 39, 0.5)',
+            scrollPosition === 'top' ? '#181b27' : 'rgba(38, 38, 39, 0.5)',
         transition: 'background-color 0.3s, backdrop-filter 0.3s',
     };
 
     return (
         <div
-            className={`NAVIGATION-BOX w-full fixed flex flex-row justify-between top-0 h-[3rem] items-center px-3`}
+            className={`NAVIGATION-BOX  w-full fixed flex flex-row justify-between top-0 h-[3rem] items-center px-3 border-b-[1px] border-dr-indigo-100`}
             style={navBoxStyles}
         >
             <div className="flex gap-2 ml-1">
@@ -132,7 +133,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                     <div>
                         <div className="flex items-center content-center gap-[0.5rem]">
                             <div className="relative flex items-center">
-                                <div
+                                {/* <div
                                     ref={profileImageBoxRef}
                                     className="relative overflow-hidden w-[1.8rem] h-[1.8rem] rounded-full cursor-pointer"
                                 >
@@ -143,7 +144,25 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         onClick={toggleDropdown}
                                         unoptimized
                                     />
-                                </div>
+                                </div> */}
+                                <Tooltip
+                                    text={memberData?.nickname as string}
+                                    direction="bottom"
+                                >
+                                    <div
+                                        ref={profileImageBoxRef}
+                                        className="relative hover:w-[2.1rem] hover:h-[2.1rem] transition-all duration-300 w-[2rem] h-[2rem] animate-popIn overflow-hidden cursor-pointer"
+                                    >
+                                        <Image
+                                            onClick={toggleDropdown}
+                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-gray-100 transition-all duration-300"
+                                            src={memberData?.imageUrl}
+                                            alt="Group Image"
+                                            layout="fill"
+                                            objectFit="cover"
+                                        />
+                                    </div>
+                                </Tooltip>
                                 {dropdownOpen && (
                                     <ProfileDropDown
                                         memberData={memberData}
@@ -154,19 +173,21 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                 )}
                             </div>
                             <div className="relative text-dr-white rounded-full cursor-pointer">
-                                <div onClick={toggleIsNotificationOpen}>
-                                    <Icon
-                                        icon="bell"
-                                        size="sm"
-                                        hover="gray"
-                                        text="gray"
-                                    />
-                                    {notifications.length > 0 && (
-                                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-300 text-black text-xs rounded-full flex items-center justify-center">
-                                            {notifications.length}
-                                        </div>
-                                    )}
-                                </div>
+                                <Tooltip text={'알림'} direction="top">
+                                    <div onClick={toggleIsNotificationOpen}>
+                                        <Icon
+                                            icon="bell"
+                                            size="sm"
+                                            hover="gray"
+                                            text="gray"
+                                        />
+                                        {notifications.length > 0 && (
+                                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-300 text-black text-xs rounded-full flex items-center justify-center">
+                                                {notifications.length}
+                                            </div>
+                                        )}
+                                    </div>
+                                </Tooltip>
                             </div>
 
                             <div className="relative w-7 h-7">
@@ -279,7 +300,7 @@ const ProfileDropDown = ({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [toggleDropdown]);
+    }, []);
 
     return (
         <div
@@ -310,11 +331,11 @@ const ProfileDropDown = ({
                         <p className="min-w-[10rem]">마이페이지</p>
                     </Link>
                 </li>
-                <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
-                    <button
-                        onClick={onClickSetLogout}
-                        className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100"
-                    >
+                <li
+                    className="flex items-center cursor-pointer hover:bg-dr-dark-100"
+                    onClick={onClickSetLogout}
+                >
+                    <button className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100">
                         <Icon icon="logout" size="sm" />{' '}
                     </button>
                     <p className="min-w-[10rem]">로그아웃</p>

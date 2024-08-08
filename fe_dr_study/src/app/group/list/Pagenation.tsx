@@ -41,7 +41,7 @@ export const Pagination = ({
     return (
         <>
             {(totalPage as number) > 0 && (
-                <div className="mt-4 flex justify-center w-full h-full bg-dr-dark-300 py-1 rounded-md border-[1px] border-dr-gray-300">
+                <div className=" flex justify-center w-full h-full bg-dr-indigo-100 rounded-md border-[1px] border-dr-indigo-0 py-3">
                     <div className="flex space-x-4">
                         {currentPage > maxButtons && (
                             <Link

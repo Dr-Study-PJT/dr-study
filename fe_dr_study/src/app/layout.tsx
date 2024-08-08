@@ -112,7 +112,7 @@ export default function RootLayout({
                                         window.electron?.doubleClickTitleBar();
                                     }}
                                 >
-                                    <div className="text-dr-coral-300 cursor-default text-[14px] font-bold px-4 -webkit-app-region: drag;">
+                                    <div className="text-dr-gray-100 cursor-default text-[14px] font-bold px-4 -webkit-app-region: drag;">
                                         Dr. Study
                                     </div>
                                     <div
@@ -155,7 +155,7 @@ export default function RootLayout({
                                 </div>
 
                                 {/* 앱 네비게이션 */}
-                                <div className="APP-HEADER relative z-100">
+                                <div className="APP-HEADER relative z-50">
                                     <Navigation
                                         scrollPosition={scrollPosition}
                                     />
@@ -163,7 +163,7 @@ export default function RootLayout({
                                 <SideBar />
                                 {/* 사이드바 및 메인 컨텐츠 */}
                                 <div className="BODY-BOX flex h-full">
-                                    <div className="BODY-CONTENTS flex-1 overflow-auto bg-dr-dark-300">
+                                    <div className="BODY-CONTENTS flex-1 overflow-auto bg-dr-indigo-400">
                                         {children}
                                     </div>
                                 </div>

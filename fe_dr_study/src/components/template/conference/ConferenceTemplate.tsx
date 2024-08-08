@@ -93,7 +93,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         myPeer.current.on('call', (call: any) => {
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
-                .then((stream) => {
+                ?.then((stream) => {
                     call.answer(stream); // Answer the call with an A/V stream.
                     call.on('stream', (remoteStream: MediaStream) => {
                         setExistingPeers((prevPeers) => ({
