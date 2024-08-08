@@ -34,9 +34,12 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
-        if (member != null) {
-            return member;
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof MemberDetails) {
+            Member member = ((MemberDetails) principal).getUser();
+            if (member != null) {
+                return member;
+            }
         }
 
         //

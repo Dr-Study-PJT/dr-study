@@ -31,11 +31,11 @@ VALUES (1, 1, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
 
 --Tag--
 INSERT INTO tag (id, name)
-VALUES (1, 'tag1'),
-       (2, 'tag2'),
-       (3, 'tag3'),
-       (4, 'tag4'),
-       (5, 'tag5')
+VALUES (1, '태그1'),
+       (2, '태그2'),
+       (3, '태그3'),
+       (4, '태그4'),
+       (5, '태그5')
 ;
 
 --STUDY GROUP TAG--
@@ -51,12 +51,12 @@ VALUES (1, 1),
 ;
 
 --MEMBER STUDY GROUP APPLY--
-INSERT INTO member_study_group_apply (member_id, study_group_id, status, created_at, message)
-VALUES (1, 3, 'WAITING', DATE_ADD(NOW(), INTERVAL -10 MINUTE), 'Study Group Apply Message 1'),
-       (1, 2, 'WAITING', DATE_ADD(NOW(), INTERVAL -20 MINUTE), 'Study Group Apply Message 2'),
-       (3, 1, 'WAITING', DATE_ADD(NOW(), INTERVAL -40 MINUTE), 'Study Group Apply Message 3'),
-       (4, 1, 'DENIED', DATE_ADD(NOW(), INTERVAL -1 HOUR), 'Study Group Apply Message 4'),
-       (5, 1, 'APPROVED', DATE_ADD(NOW(), INTERVAL -2 HOUR), 'Study Group Apply Message 5')
+INSERT INTO member_study_group_apply (member_id, study_group_id, status, created_at, apply_message)
+VALUES (1, 3, 'WAITING', DATE_ADD(NOW(), INTERVAL -10 MINUTE),  '스터디그룹 가입 신청 메시지 1'),
+       (1, 2, 'WAITING', DATE_ADD(NOW(), INTERVAL -20 MINUTE),  '스터디그룹 가입 신청 메시지 2'),
+       (3, 1, 'WAITING', DATE_ADD(NOW(), INTERVAL -40 MINUTE),  '스터디그룹 가입 신청 메시지 3'),
+       (4, 1, 'DENIED', DATE_ADD(NOW(), INTERVAL -1 HOUR),      '스터디그룹 가입 신청 메시지 4'),
+       (5, 1, 'APPROVED', DATE_ADD(NOW(), INTERVAL -2 HOUR),    '스터디그룹 가입 신청 메시지 5')
 ;
 
 --AVATAR--
@@ -130,20 +130,20 @@ VALUES (2, 1, DATE_ADD(NOW(), INTERVAL -2 HOUR)),
 
 --ARTICLES--
 INSERT INTO article (id, title, content, created_at, is_deleted, view_count, member_id, study_group_id)
-VALUES (1, 'title 1', 'content 1', DATE_ADD(NOW(), INTERVAL -10 MINUTE), FALSE, 0, 1, 1),
-       (2, 'title 2', 'content 2', DATE_ADD(NOW(), INTERVAL -20 MINUTE), FALSE, 0, 2, 1),
-       (3, 'title 3', 'content 3', DATE_ADD(NOW(), INTERVAL -30 MINUTE), FALSE, 0, 3, 2),
-       (4, 'title 4', 'content 4', DATE_ADD(NOW(), INTERVAL -40 MINUTE), FALSE, 0, 4, 2),
-       (5, 'title 5', 'content 5', DATE_ADD(NOW(), INTERVAL -50 MINUTE), FALSE, 0, 5, 3)
+VALUES (1, '게시글 제목 1', '게시글 내용 1', DATE_ADD(NOW(), INTERVAL -10 MINUTE), FALSE, 0, 1, 1),
+       (2, '게시글 제목 2', '게시글 내용 2', DATE_ADD(NOW(), INTERVAL -20 MINUTE), FALSE, 0, 2, 1),
+       (3, '게시글 제목 3', '게시글 내용 3', DATE_ADD(NOW(), INTERVAL -30 MINUTE), FALSE, 0, 3, 2),
+       (4, '게시글 제목 4', '게시글 내용 4', DATE_ADD(NOW(), INTERVAL -40 MINUTE), FALSE, 0, 4, 2),
+       (5, '게시글 제목 5', '게시글 내용 5', DATE_ADD(NOW(), INTERVAL -50 MINUTE), FALSE, 0, 5, 3)
 ;
 
 --COMMENTS--
 INSERT INTO comment (content, created_at, article_id, member_id, is_deleted)
-VALUES ('comment_content 1', DATE_ADD(NOW(), INTERVAL -1 MINUTE), 1, 1, FALSE),
-       ('comment_content 2', DATE_ADD(NOW(), INTERVAL -2 MINUTE), 1, 2, FALSE),
-       ('comment_content 3', DATE_ADD(NOW(), INTERVAL -3 MINUTE), 2, 3, FALSE),
-       ('comment_content 4', DATE_ADD(NOW(), INTERVAL -4 MINUTE), 3, 4, FALSE),
-       ('comment_content 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5, FALSE);
+VALUES ('댓글 내용 1', DATE_ADD(NOW(), INTERVAL -1 MINUTE), 1, 1, FALSE),
+       ('댓글 내용 2', DATE_ADD(NOW(), INTERVAL -2 MINUTE), 1, 2, FALSE),
+       ('댓글 내용 3', DATE_ADD(NOW(), INTERVAL -3 MINUTE), 2, 3, FALSE),
+       ('댓글 내용 4', DATE_ADD(NOW(), INTERVAL -4 MINUTE), 3, 4, FALSE),
+       ('댓글 내용 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5, FALSE);
 
 --ARTICLE_TAGS--
 INSERT INTO article_tag (article_id, tag_id)
