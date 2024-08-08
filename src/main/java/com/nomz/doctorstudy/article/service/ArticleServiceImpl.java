@@ -7,14 +7,11 @@ import com.nomz.doctorstudy.article.exception.ArticleErrorCode;
 import com.nomz.doctorstudy.article.repository.ArticleRepository;
 import com.nomz.doctorstudy.article.repository.ArticleTagRepository;
 import com.nomz.doctorstudy.article.repository.CommentReposirory;
-import com.nomz.doctorstudy.article.request.CreateArticleRequest;
 import com.nomz.doctorstudy.article.request.CommentRequest;
+import com.nomz.doctorstudy.article.request.CreateArticleRequest;
 import com.nomz.doctorstudy.article.request.UpdateArticleRequest;
-import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.member.entity.Member;
-import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
-import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.service.MemberService;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
@@ -27,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -47,16 +43,7 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleTagRepository articleTagRepository;
     private final CommentReposirory commentReposirory;
     @Override
-    public Article createArticle(CreateArticleRequest request, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if(authentication == null){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public Article createArticle(CreateArticleRequest request, Member requester) {
         StudyGroup studyGroup = studyGroupRepository.findById(request.getStudyGroupId())
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
 
@@ -67,7 +54,7 @@ public class ArticleServiceImpl implements ArticleService{
                 .createdAt(LocalDateTime.now())
                 .isDeleted(Boolean.FALSE)
                 .viewCount(0L)
-                .writer(member)
+                .writer(requester)
                 .studyGroup(studyGroup)
                 .build();
 
@@ -88,19 +75,11 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Transactional
     @Override
-    public Article updateArticle(Long articleId, UpdateArticleRequest request, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if(authentication == null){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        // --------------------------------------------------------------------------
+    public Article updateArticle(Long articleId, UpdateArticleRequest request, Member requester) {
         Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
-        if(!article.getWriter().getEmail().equals(email)){
+        if(!article.getWriter().getId().equals(requester.getId())){
             throw new BusinessException(ArticleErrorCode.ARTICLE_NOT_AUTHORIZED);
         }
 
@@ -109,24 +88,6 @@ public class ArticleServiceImpl implements ArticleService{
 
         return articleRepository.save(article);
     }
-
-//    @Override
-//    public Article getArticle(Long articleId, Authentication authentication) {
-//        // JWT 토큰에서 사용자 가져오기
-//        // --------------------------------------------------------------------------
-//        if(authentication == null){
-//            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-//        }
-//        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-//        String email = memberDetails.getUsername();
-//        Member member = memberService.getUserByEmail(email);
-//        // --------------------------------------------------------------------------
-//        Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
-//                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
-//
-//        return article;
-//
-//    }
 
     @Override
     public Article getArticle(Long articleId) {
@@ -138,19 +99,10 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Override
     @Transactional
-    public Article deleteArticle(Long articleId, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if(authentication == null){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public Article deleteArticle(Long articleId, Member requester) {
         Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
-        if(!Objects.equals(article.getWriter().getId(), member.getId())){
+        if(!Objects.equals(article.getWriter().getId(), requester.getId())){
             throw new BusinessException(ArticleErrorCode.ARTICLE_NOT_AUTHORIZED);
         }
 
@@ -165,23 +117,14 @@ public class ArticleServiceImpl implements ArticleService{
     }
 
     @Override
-    public Comment createComment(Long articleId, CommentRequest request, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if(authentication == null){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public Comment createComment(Long articleId, CommentRequest request, Member requester) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
                 .createdAt(LocalDateTime.now())
-                .member(member)
+                .member(requester)
                 .article(article)
                 .isDeleted(Boolean.FALSE)
                 .build();
@@ -191,20 +134,12 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Override
     @Transactional
-    public Comment updateComment(Long commentId, CommentRequest request, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if(authentication == null){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public Comment updateComment(Long commentId, CommentRequest request, Member requester) {
+
         Comment comment = commentReposirory.findByIdAndIsDeletedFalse(commentId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
-        if(!Objects.equals(member.getId(), comment.getMember().getId())){
+        if(!Objects.equals(requester.getId(), comment.getMember().getId())){
             throw new BusinessException(ArticleErrorCode.COMMENT_NOT_AUTHORIZED);
         }
         comment.setContent(request.getContent());
@@ -214,20 +149,12 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Override
     @Transactional
-    public Comment deleteComment(Long commentId, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if(authentication == null){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public Comment deleteComment(Long commentId, Member requester) {
+
         Comment comment = commentReposirory.findByIdAndIsDeletedFalse(commentId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
 
-        if(!Objects.equals(member.getId(), comment.getMember().getId())){
+        if(!Objects.equals(requester.getId(), comment.getMember().getId())){
             throw new BusinessException(ArticleErrorCode.COMMENT_NOT_AUTHORIZED);
         }
         comment.setIsDeleted(Boolean.TRUE);
