@@ -1,14 +1,19 @@
 import { Stomp } from '@stomp/stompjs';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Frame } from 'stompjs';
 import Recorder from './Recorder';
 import { Button } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
+import { ConferenceMember } from '@/interfaces/conference';
+import Image from 'next/image';
 
 interface Message {
     id: number;
+    nickname: string;
     message: string;
+    imageUrl: string;
+    time: string;
 }
 
 interface Signal {
@@ -18,8 +23,10 @@ interface Signal {
 }
 
 interface SignalProps {
+    subscriptionList: string[];
+    stompClient: any;
+    memberData?: any;
     conferenceId: number;
-    memberId: number;
     setIsMutedBySystem: Dispatch<SetStateAction<boolean>>;
     setFocusingMemberId: Dispatch<SetStateAction<number>>;
     setIsAvatarSpeaking: Dispatch<SetStateAction<boolean>>;
@@ -32,8 +39,10 @@ interface SignalProps {
 }
 
 const Signal = ({
+    subscriptionList,
+    stompClient,
     conferenceId,
-    memberId,
+    memberData,
     setIsMutedBySystem,
     setFocusingMemberId,
     setIsAvatarSpeaking,
@@ -45,40 +54,34 @@ const Signal = ({
     setIsStartRecordingAudio,
 }: SignalProps) => {
     const CHANNEL = 'topic'; // 채널 이름
-
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
+    const messagesEndRef = useRef(null); // 메시지 목록 끝에 대한 참조
+
     const [signals, setSignals] = useState<Signal[]>([]); // 수신된 신호 목록을 저장하는 상태
 
-    const [stompClient, setStompClient] = useState<any>(null); // Stomp 클라이언트 상태
-
-    const BACK_HOST = process.env.NEXT_PUBLIC_HOST;
-    const ENDPOINT = 'room';
-    const sockTargetUrl = `${BACK_HOST}/${ENDPOINT}`;
-    // 소켓 생성 및 Stomp 클라이언트 생성
-    useEffect(() => {
-        const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
-        const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
-
-        setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
-    }, []);
-
     // 소켓 연결 및 메시지 수신
+    let heartbeatInterval: NodeJS.Timeout;
     useEffect(() => {
+        // 10초마다 생존 신고 전송
+
         // 소켓 연결
         stompClient?.connect({}, () => {
             // 메시지를 수신하기 위한 구독 설정
             subscribeToMessages();
             subscribeToSignals();
 
-            // 10초마다 생존 신고 전송
-            const heartbeatInterval = setInterval(() => {
-                sendHeartbeat(memberId); // memberId는 현재 멤버의 ID로 설정해야 합니다.
+            heartbeatInterval = setInterval(() => {
+                sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
             }, 10000); // 10초
-
-            // 컴포넌트 언마운트 시 interval 클리어
-            return () => clearInterval(heartbeatInterval);
         });
+
+        // 컴포넌트 언마운트 시 interval 클리어
+        if (!!stompClient && !stompClient.connected) {
+            return () => {
+                clearInterval(heartbeatInterval);
+            };
+        }
     }, [stompClient]);
 
     // URL 생성 함수
@@ -88,6 +91,7 @@ const Signal = ({
     const subscribeToMessages = () => {
         stompClient?.subscribe(generateUrl('chat'), (message: any) => {
             const newMessage: Message = JSON.parse(message.body); // 수신된 메시지 파싱
+            subscriptionList.push(newMessage.message); // 수신된 메시지를 구독 목록에 추가
             setMessages((prevMessages) => [...prevMessages, newMessage]); // 수신된 메시지를 메시지 목록에 추가
         });
     };
@@ -124,20 +128,20 @@ const Signal = ({
     // Mute 신호 처리
     const handleMuteSignal = (newSignal: Signal) => {
         console.log('before handleMuteSignal', newSignal);
-        if (newSignal.id === memberId) {
+        if (newSignal.id === memberData?.id) {
             setIsMutedBySystem(true); // mute 상태로 변경
             console.log(
-                `handleMuteSignal: 멤버(${memberId}) => Mute 상태로 전환`,
+                `handleMuteSignal: 멤버(${memberData?.id}) => Mute 상태로 전환`,
             );
         }
     };
 
     // Unmute 신호 처리
     const handleUnmuteSignal = (newSignal: Signal) => {
-        if (newSignal.id === memberId) {
+        if (newSignal.id === memberData?.id) {
             setIsMutedBySystem(false); // unmute 상태로 변경
             console.log(
-                `handleUnmuteSignal: 멤버(${memberId}) => Unmute 상태로 전환`,
+                `handleUnmuteSignal: 멤버(${memberData?.id}) => Unmute 상태로 전환`,
             );
         }
     };
@@ -198,67 +202,61 @@ const Signal = ({
                 `/pub/chat/${conferenceId}`, // 메시지를 보낼 경로
                 {},
                 JSON.stringify({
-                    id: memberId, // 송신자 ID
-                    message, // 송신할 메시지
+                    id: memberData?.id, // 송신자 ID
+                    message: message.trim(), // 송신할 메시지
+                    nickname: memberData?.nickname, // 송신자 닉네임
+                    imageUrl: memberData?.imageUrl, // 송신자 이미지 URL
+                    time: new Date(), // 송신 시간
                 }),
             );
-            console.log(`sendMessage: 메시지 전송 => ${memberId}: ${message}`);
             setMessage(''); // 메시지 입력 필드 초기화
         }
     };
 
     // 10초마다 생존 신고
-    const sendHeartbeat = (memberId: number) => {
+    const sendHeartbeat = (id: number) => {
         if (stompClient) {
             // Stomp 클라이언트가 존재할 때
             stompClient?.send(
                 `/pub/signal/${conferenceId}/heartbeat`, // 메시지를 보낼 경로
                 {},
                 JSON.stringify({
-                    id: memberId, // 송신자 ID
+                    id: id, // 송신자 ID
                 }),
             );
             setMessage(''); // 메시지 입력 필드 초기화
         }
     };
 
-    const tempMessages = [
-        { id: 1, message: 'Hello' },
-        { id: 2, message: 'Hi' },
-        { id: 3, message: 'Good morning' },
-        { id: 4, message: 'Good afternoon' },
-        { id: 5, message: 'Good evening' },
-        { id: 6, message: 'Good night' },
-        { id: 7, message: 'Goodbye' },
-        { id: 8, message: 'Bye' },
-        { id: 9, message: 'See you later' },
-        { id: 10, message: 'See you soon' },
-    ];
-
     return (
-        <div className="flex flex-col h-full bg-dr-dark-300">
-            <div className="flex h-full w-full overflow-y-scroll">
-                <div className="px-[10px] flex gap-dr-10 flex-col  h-full w-full ">
+        <div className="flex flex-col h-full bg-dr-dark-300 p-[0.5rem]">
+            <div
+                ref={messagesEndRef}
+                className="flex h-full w-full overflow-y-scroll"
+            >
+                <div className="flex gap-dr-10 flex-col  h-full w-full ">
                     {messages.map((msg, index) => (
                         <div
                             key={index}
-                            className="flex items-start p-2 bg-gray-800 rounded-lg"
+                            className="flex items-start p-2 rounded-lg"
                         >
-                            <div className="mr-2">
-                                {/* 프로필 사진 또는 아이콘을 추가할 수 있습니다. */}
-                                <img
-                                    src="/images/member_thumbnail_1.png"
+                            <div className="relative mr-2 min-w-[2rem] min-h-[2rem] rounded-full overflow-hidden">
+                                <Image
+                                    src={`${msg?.imageUrl || '/images/speaking.png'}`}
                                     alt="Profile"
-                                    className="w-8 h-8 rounded-full"
+                                    fill
                                 />
                             </div>
                             <div className="flex flex-col">
                                 <div className="flex items-center">
                                     <span className="font-semibold text-white">
-                                        {msg.id}
+                                        {msg?.nickname}
                                     </span>
                                     <span className="text-gray-400 text-sm ml-2">
-                                        10:30 AM
+                                        {msg?.time &&
+                                            new Date(
+                                                msg?.time,
+                                            ).toLocaleDateString()}
                                     </span>{' '}
                                     {/* 시간 표시 추가 */}
                                 </div>
@@ -271,22 +269,42 @@ const Signal = ({
                 </div>
             </div>
 
-            <div className="flex h-[10%] p-2 gap-dr-10">
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    sendMessage();
+                }}
+                className="relative flex h-[10%] gap-dr-10"
+            >
                 <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            if (e.shiftKey) {
+                                return; // 아무 동작도 하지 않음
+                            } else {
+                                e.preventDefault(); // 기본 줄바꿈 방지
+                                sendMessage(); // 메시지 제출
+                            }
+                        }
+                    }}
                     placeholder="Enter message"
-                    className="bg-dr-dark-300 border border-dr-coral-200 rounded-[10px] p-2 text-white" // 배경색, 테두리, 둥근 모서리 추가
+                    className="pr-[15%] bg-dr-dark-300 border  w-full border-dr-coral-200 rounded-[10px] p-2 text-white" // 배경색, 테두리, 둥근 모서리 추가
                 />
-                <Button onClick={sendMessage} size="sm">
+                <Button
+                    classNameStyles="absolute right-0 bottom-0 bg-transparent hover:bg-transparent"
+                    onClick={sendMessage}
+                    size="sm"
+                >
                     <Icon icon="send" size="sm" shape="contained" />
                 </Button>
-            </div>
+            </form>
 
             <div className="fixed left-8 bottom-8 p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40">
                 <Recorder
                     conferenceId={conferenceId}
-                    memberId={memberId}
+                    memberId={memberData?.id}
                     stompClient={stompClient}
                     timeForAudioRecord={timeForAudioRecord}
                     setTimeForAudioRecord={setTimeForAudioRecord}

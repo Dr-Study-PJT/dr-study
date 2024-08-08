@@ -134,7 +134,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                             <div className="relative flex items-center">
                                 <div
                                     ref={profileImageBoxRef}
-                                    className="relative overflow-hidden w-[2.2rem] h-[2.2rem] rounded-full cursor-pointer"
+                                    className="relative overflow-hidden w-[1.8rem] h-[1.8rem] rounded-full cursor-pointer"
                                 >
                                     <Image
                                         alt="avatar"
@@ -153,9 +153,14 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                     />
                                 )}
                             </div>
-                            <div className="relative text-dr-white bg-dr-gray-500 rounded-full cursor-pointer">
+                            <div className="relative text-dr-white rounded-full cursor-pointer">
                                 <div onClick={toggleIsNotificationOpen}>
-                                    <Icon icon="bell" size="sm" hover="gray" />
+                                    <Icon
+                                        icon="bell"
+                                        size="sm"
+                                        hover="gray"
+                                        text="gray"
+                                    />
                                     {notifications.length > 0 && (
                                         <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-300 text-black text-xs rounded-full flex items-center justify-center">
                                             {notifications.length}

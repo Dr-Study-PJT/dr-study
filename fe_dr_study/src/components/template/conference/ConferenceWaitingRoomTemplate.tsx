@@ -44,14 +44,14 @@ const ConferenceWaitingRoomTemplate = ({
                     <div className="flex text-dr-body-3 text-dr-gray-300 gap-dr-10">
                         <p>
                             입장 가능 시간{' '}
-                            {openTime?.toLocaleTimeString() || '00:00'} -{' '}
-                            {startTime?.toLocaleTimeString() || '00:00'}
+                            {/* {openTime?.toLocaleTimeString() || '00:00'} -{' '}
+                            {startTime?.toLocaleTimeString() || '00:00'} */}
                         </p>{' '}
                         <p>|</p>
                         <p>
                             스터디 진행 시간{' '}
-                            {startTime?.toLocaleTimeString() || '00:00'} -{' '}
-                            {closeTime?.toLocaleTimeString() || '00:00'}
+                            {/* {startTime?.toLocaleTimeString() || '00:00'} -{' '}
+                            {closeTime?.toLocaleTimeString() || '00:00'} */}
                         </p>
                         <p>|</p>
                         <p>컨퍼런스 정원: {memberCapacity}명</p>
@@ -59,16 +59,12 @@ const ConferenceWaitingRoomTemplate = ({
                     <HrLine />
                     <div className="flex gap-dr-10">
                         <Button size="lg">
-                            <Link
-                                href={`${process.env.NEXT_PUBLIC_HOST}/conference/${id}`}
-                            >
+                            <Link href={`/conference/${id}`}>
                                 컨퍼런스 입장하기
                             </Link>
                         </Button>
                         <Button size="lg" color="gray">
-                            <Link
-                                href={`${process.env.NEXT_PUBLIC_HOST}/group/${studyGroupId}`}
-                            >
+                            <Link href={`/group/${studyGroupId}`}>
                                 스터디 그룹 정보
                             </Link>
                         </Button>
@@ -80,9 +76,7 @@ const ConferenceWaitingRoomTemplate = ({
                     </div>
                     <div></div>
                     <HrLine />
-                    <MeetingIdBox>
-                        {`${process.env.NEXT_PUBLIC_HOST}/conference/${id}`}
-                    </MeetingIdBox>
+                    <MeetingIdBox>{`/conference/${id}`}</MeetingIdBox>
                     <HrLine />
                     <div>
                         <h3 className="mt-6 text-xl font-semibold">

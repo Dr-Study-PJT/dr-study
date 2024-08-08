@@ -4,10 +4,14 @@ import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { POST } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
 import ToolTip from '@/components/atoms/Tooltip/ToolTip';
+import { ClientInterface } from '@/components/template/conference/ConferenceTemplate';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 interface ConferenceControlBarProps {
+    subscriptionList: string[];
+    client: ClientInterface;
+    stompClient: any;
     localStream: MediaStream | null;
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
@@ -16,6 +20,9 @@ interface ConferenceControlBarProps {
 }
 
 const ConferenceControlBar = ({
+    subscriptionList,
+    client,
+    stompClient,
     localStream,
     existingPeers,
     setExistingPeers,
@@ -67,18 +74,27 @@ const ConferenceControlBar = ({
     const handleDisconnectAll = async () => {
         // 모든 연결된 사용자와의 통화 종료
         Object.keys(existingPeers).forEach((peerId) => disconnectCall(peerId));
-        // (home 같은 경로로 주소 이동)
+        // 모든 구독 해제
+        subscriptionList.forEach((sub) => {
+            stompClient.unsubscribe(sub);
+        });
+
+        // 연결 종료
+        stompClient.disconnect(() => {
+            console.log('모든 구독 해제 및 연결 종료');
+        });
+
         try {
             const response = await POST({
                 API: API,
-                endPoint: `${conferenceId}/finish`,
-                body: '',
+                endPoint: `${conferenceId}/quit`,
+                body: {},
                 isAuth: true,
             });
-            console.log('컨퍼런스 종료 성공:', response);
+            console.log('컨퍼런스 나가기 성공:', response);
             router.push(`/conference/${conferenceId}/info`);
         } catch (error) {
-            console.error('컨퍼런스 종료 실패:', error);
+            console.error('컨퍼런스 나가기 실패:', error);
         }
     };
 
