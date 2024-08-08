@@ -62,7 +62,5 @@ export const getGroupListBy = async ({
     } catch (error) {
         console.log('GET 실패 : 그룹리스트 : 더미데이터로 대체합니다.');
         console.error('에러:' + error);
-
-        // return dummyGroupListData as IGroupListResponse;
     }
 };
