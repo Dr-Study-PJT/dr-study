@@ -2,6 +2,8 @@ package com.nomz.doctorstudy.studygroup.controller;
 
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.member.Login;
+import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
@@ -9,6 +11,7 @@ import com.nomz.doctorstudy.studygroup.request.*;
 import com.nomz.doctorstudy.studygroup.response.*;
 import com.nomz.doctorstudy.studygroup.service.StudyGroupService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +26,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,10 +62,11 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateStudyGroupResponse>> createStudyGroup(
-            @Valid @RequestBody CreateStudyGroupRequest request, Authentication authentication
+            @Valid @RequestBody CreateStudyGroupRequest request,
+            @Parameter(hidden = true) @Login Member requester
     ) {
         log.info("CreateStudyGroupRequest = {}", request);
-        StudyGroup studyGroup = studyGroupService.createStudyGroup(request, authentication);
+        StudyGroup studyGroup = studyGroupService.createStudyGroup(request, requester);
         CreateStudyGroupResponse response = new CreateStudyGroupResponse(studyGroup.getId());
         log.info("CreateStudyGroupResponse = {}", response);
         return ResponseEntity.ok(
@@ -158,11 +161,11 @@ public class StudyGroupController {
     public ResponseEntity<SuccessResponse<?>> updateStudyGroup(
             @PathVariable("groupId") Long groupId,
             @RequestBody UpdateStudyGroupRequest request,
-            Authentication authentication) {
+            @Parameter(hidden = true) @Login Member requester) {
         log.info("UpdateStudyGroupRequest = {}", request);
 
         // 서비스 호출
-        StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request, authentication);
+        StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request, requester);
 
         // service 요청
         return ResponseEntity.ok(
@@ -173,7 +176,7 @@ public class StudyGroupController {
         );
     }
 
-    @PostMapping("/admission/apply")
+    @PostMapping("/apply")
     @Operation(summary = "Study Group 지원")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 리스트 지원 성공", useReturnTypeSchema = true),
@@ -186,15 +189,11 @@ public class StudyGroupController {
                     """)))
     })
 
-    // 사용자는 스터디 그룹에 지원 할 수 있다.
-    // 이미 지원 신청 한 사용자는 중복 지원이 불가능 하다 -> 구현 o
-    // 이미 그룹에 속해 있는 사람들은 자신의 그룹에 지원이 불가능 하다 -> 구현 X
     public ResponseEntity<SuccessResponse<CreateApplyResponse>> createApply
-            (@Valid @RequestBody CreateApplyRequest request, Authentication authentication) {
-        log.info("CreateApplyRequest = {}", request);
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request, authentication);
+            (@Valid @RequestBody CreateApplyRequest request,
+             @Parameter(hidden = true) @Login Member requester) {
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request, requester);
         CreateApplyResponse response = new CreateApplyResponse(memberStudyGroupApply.getId());
-        log.info("CreateApplyResponse = {}", response);
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Apply 생성에 성공했습니다.",
@@ -241,8 +240,10 @@ public class StudyGroupController {
                     """)))
     })
     @PostMapping("/applications/{applyId}/reply")
-    public ResponseEntity<SuccessResponse<CreateReplyResponse>> createReply(@PathVariable(name="applyId") Long applyId, @RequestBody CreateReplyRequest createReplyRequest, Authentication authentication) {
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.processReply(applyId, createReplyRequest, authentication);
+    public ResponseEntity<SuccessResponse<CreateReplyResponse>> createReply(@PathVariable(name="applyId") Long applyId,
+                                                                            @RequestBody CreateReplyRequest createReplyRequest,
+                                                                            @Parameter(hidden = true) @Login Member requester) {
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.processReply(applyId, createReplyRequest, requester);
         CreateReplyResponse response = new CreateReplyResponse(memberStudyGroupApply.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -288,11 +289,13 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getWaiterList(Authentication authentication) {
-        List<MemberStudyGroupApply> waiterList = studyGroupService.getWaiterList(authentication);
+    public ResponseEntity<SuccessResponse<List<GetApplicantListResponse>>> getApplicants(
+            @Parameter(hidden = true) @Login Member requester
+    ) {
+        List<MemberStudyGroupApply> waiterList = studyGroupService.getApplicants(requester);
 
-        List<GetWaiterListResponse> responseList = waiterList.stream()
-                .map(GetWaiterListResponse::of)
+        List<GetApplicantListResponse> responseList = waiterList.stream()
+                .map(GetApplicantListResponse::of)
                 .toList();
 
         return ResponseEntity.ok(
@@ -314,9 +317,11 @@ public class StudyGroupController {
                         }
                         """)))
     })
-    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(@PathVariable(name="groupId") Long groupId) {
-        StudyGroup group = studyGroupService.deleteStudyGroup(groupId);
-        DeleteGroupResponse response = new DeleteGroupResponse( group.getId());
+    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(
+            @PathVariable(name="groupId") Long groupId,
+            @Parameter(hidden = true) @Login Member requester) {
+        StudyGroup deletedGroup = studyGroupService.deleteStudyGroup(groupId, requester);
+        DeleteGroupResponse response = new DeleteGroupResponse(deletedGroup.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "StudyGroup 삭제에 성공했습니다.",
@@ -336,8 +341,9 @@ public class StudyGroupController {
                         }
                         """)))
     })
-    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable(name="groupId") Long groupId, Authentication authentication) {
-        MemberStudyGroup memberStudyGroup = studyGroupService.leaveStudyGroup(groupId, authentication);
+    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable(name="groupId") Long groupId,
+                                                                               @Parameter(hidden = true) @Login Member requester) {
+        MemberStudyGroup memberStudyGroup = studyGroupService.leaveStudyGroup(groupId, requester);
         LeaveGroupResponse response = new LeaveGroupResponse(memberStudyGroup.getStudyGroup().getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -359,8 +365,8 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetStudyGroupListResponse>>> GetStudyGroupListByMemberId(Authentication authentication) {
-        List<MemberStudyGroup> memberStudyGroups  = studyGroupService.getStudyGroupListByMemberId(authentication);
+    public ResponseEntity<SuccessResponse<List<GetStudyGroupListResponse>>> GetStudyGroupListByMemberId( @Parameter(hidden = true) @Login Member requester) {
+        List<MemberStudyGroup> memberStudyGroups  = studyGroupService.getStudyGroupListByMemberId(requester);
         List<GetStudyGroupListResponse> responseList = memberStudyGroups.stream()
                 .map(memberStudyGroup -> GetStudyGroupListResponse.of(memberStudyGroup.getStudyGroup()))
                 .collect(Collectors.toList());

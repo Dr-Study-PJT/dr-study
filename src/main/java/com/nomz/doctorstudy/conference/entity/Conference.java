@@ -50,6 +50,9 @@ public class Conference {
     private Image image;
 
     @Column
+    private LocalDateTime scheduledTime;
+
+    @Column
     private LocalDateTime openTime;
 
     @Column

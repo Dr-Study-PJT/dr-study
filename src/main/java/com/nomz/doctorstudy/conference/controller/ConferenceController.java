@@ -299,7 +299,7 @@ public class ConferenceController {
                         "errors": { }
                     }
                     """))),
-            @ApiResponse(responseCode = "404", description = "Conference 참여 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+            @ApiResponse(responseCode = "404", description = "Conference 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
                         "message": "존재하지 않는 Conference입니다.",
                         "errors": { }
@@ -317,6 +317,44 @@ public class ConferenceController {
                 new SuccessResponse<>(
                         "Conference 참여에 성공했습니다.",
                         existingParticipants
+                )
+        );
+    }
+
+
+    @PostMapping("/{conferenceId}/quit")
+    @Operation(summary = "Conference 퇴장", description = "Conference에 퇴장합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Conference 퇴장 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "인증에 실패했습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "잘못된 요청입니다. 입장한 유저만이 퇴장할 수 있습니다.",
+                        "errors": { }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "Conference 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "존재하지 않는 Conference입니다.",
+                        "errors": { }
+                    }
+                    """))),
+    })
+    public ResponseEntity<SuccessResponse<?>> quitConference(
+            @Parameter(hidden = true) @Login Member requester,
+            @PathVariable("conferenceId") Long conferenceId
+    ) {
+        conferenceService.quitConference(requester, conferenceId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Conference 퇴장에 성공했습니다.",
+                        null
                 )
         );
     }

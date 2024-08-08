@@ -37,7 +37,9 @@ public class MemberInfo {
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .imageUrl(member.getImage().getImageUrl())
+                .regDate(member.getRegDate())
+                .leavedDate(member.getLeavedDate())
+                .isLeaved(member.isLeaved())
                 .build();
-
     }
 }
