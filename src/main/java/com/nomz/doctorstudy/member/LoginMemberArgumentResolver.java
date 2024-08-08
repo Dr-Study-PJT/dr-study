@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -30,15 +32,30 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        // code for test in development environment
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            return authentication.getPrincipal();
+        }
+
+        //
+        // bypass code for test in development environment
+        //
+        log.debug("Controller that requires authentication received request. But request doesn't have token header");
+        log.debug("Trying to find bypass header -> 'dev_member_id'");
+
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String devMemberIdStr = request.getHeader("dev_member_id");
         if (devMemberIdStr == null) {
             throw new AuthException(AuthErrorCode.AUTH_INVALID_DEV_MEMBER_ID);
         }
         Long devMemberId = Long.parseLong(devMemberIdStr);
+
+        log.debug("Acquired memberId={} from 'dev_member_id' header", devMemberId);
+
         return memberRepository.findById(devMemberId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_INVALID_ID_PASSWORD));
+        //
+        //
         //
     }
 }
