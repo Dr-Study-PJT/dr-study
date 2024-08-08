@@ -35,7 +35,7 @@ public class SecurityConfig  {
             "/v1/no-auth/**", "/v1/email/**", "/v1/images/**", "/v1/images", "/v1/need-auth",
             "/v1/members/**", "/error", "/v1/conferences/**", "/room/**", "/v1/moderators/**",
             "/v1/media/**", "v1/articles/test/**", "v1/articles/groups/**",
-            "/v1/media/**", "/v1/groups/**", "v1/articles/test/**"
+            "/v1/media/**", "/v1/groups/**", "v1/articles/**", "v1/articles"
     };
 
     @Bean
