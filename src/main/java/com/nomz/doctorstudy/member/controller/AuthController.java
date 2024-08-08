@@ -5,6 +5,7 @@ import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.jwt.JwtUtil;
 import com.nomz.doctorstudy.common.redis.RedisUtil;
+import com.nomz.doctorstudy.member.Login;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.request.*;
 import com.nomz.doctorstudy.member.response.MemberAndTokensResponse;
@@ -127,11 +128,13 @@ public class AuthController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<String>> logout(Authentication authentication, HttpServletResponse response){
-        MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
-        String email = userDetails.getUsername();
+    public ResponseEntity<SuccessResponse<String>> logout(Authentication authentication, @Login Member loginMember, HttpServletResponse response){
+//        MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
+//        String email = userDetails.getUsername();
 
-        authService.logout(email);
+        log.info("member Login = {}", loginMember.getEmail());
+
+        authService.logout(loginMember.getEmail());
 
         ResponseCookie accessCookie = ResponseCookie.from("access_token", null)
                 .httpOnly(true)
