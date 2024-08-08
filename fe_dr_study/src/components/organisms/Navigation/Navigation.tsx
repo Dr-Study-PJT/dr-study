@@ -2,16 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Logo } from '@/components/atoms/Logo/Logo';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsSigned, TIsSigned } from '@/store/slices/authSlice';
-import {
-    setMemberState,
-    clearMemberState,
-    IMemberInfo,
-} from '@/store/slices/memberSlice';
+import { setMemberState, clearMemberState } from '@/store/slices/memberSlice';
 import { RootState } from '@/store';
 import {
     getSessionStorageItem,
@@ -22,7 +17,6 @@ import Icon from '@/components/atoms/Icon/Icon';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
-import { Member } from '@/app/group/[group_id]/_types';
 import {
     NavigationLinksProps,
     NotificationData,
@@ -170,7 +164,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         onClickSetLogout={onClickSetLogout}
                                         profileImageBoxRef={profileImageBoxRef}
                                     />
-                                )}
+                                ) : null}
                             </div>
                             <div className="relative text-dr-white rounded-full cursor-pointer">
                                 <Tooltip text={'알림'} direction="top">
