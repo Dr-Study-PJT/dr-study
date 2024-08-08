@@ -3,8 +3,8 @@ package com.nomz.doctorstudy.article.controller;
 import com.nomz.doctorstudy.article.dto.CommentSummary;
 import com.nomz.doctorstudy.article.entity.Article;
 import com.nomz.doctorstudy.article.entity.Comment;
-import com.nomz.doctorstudy.article.request.CreateArticleRequest;
 import com.nomz.doctorstudy.article.request.CommentRequest;
+import com.nomz.doctorstudy.article.request.CreateArticleRequest;
 import com.nomz.doctorstudy.article.request.UpdateArticleRequest;
 import com.nomz.doctorstudy.article.response.ArticleResponse;
 import com.nomz.doctorstudy.article.response.CommentResponse;
@@ -12,8 +12,11 @@ import com.nomz.doctorstudy.article.response.GetArticleResponse;
 import com.nomz.doctorstudy.article.service.ArticleService;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.member.Login;
+import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.response.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,8 +66,9 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<ArticleResponse>> createArticle(@RequestBody CreateArticleRequest request, Authentication authentication) {
-        Article createdArticle = articleService.createArticle(request, authentication);
+    public ResponseEntity<SuccessResponse<ArticleResponse>> createArticle(@RequestBody CreateArticleRequest request,
+                                                                          @Parameter(hidden = true) @Login Member requester) {
+        Article createdArticle = articleService.createArticle(request, requester);
         ArticleResponse response = new ArticleResponse(createdArticle.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -96,8 +99,10 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<ArticleResponse>> updateArticle(@PathVariable("articleId") Long articleId, @RequestBody UpdateArticleRequest request, Authentication authentication){
-        Article updatedArticle = articleService.updateArticle(articleId, request, authentication);
+    public ResponseEntity<SuccessResponse<ArticleResponse>> updateArticle(@PathVariable("articleId") Long articleId,
+                                                                          @RequestBody UpdateArticleRequest request,
+                                                                          @Parameter(hidden = true) @Login Member requester){
+        Article updatedArticle = articleService.updateArticle(articleId, request, requester);
         ArticleResponse response = new ArticleResponse(updatedArticle.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -106,61 +111,6 @@ public class ArticleController {
                 )
         );
     }
-
-//    @GetMapping("/{articleId}")
-//    @Operation(summary = "Article 조회", description = "Article을 조회합니다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Article 조회 성공"),
-//            @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
-//                    {
-//                        "message": "유효하지 않은 입력입니다.",
-//                        "errors": {
-//                            "title": "제목은 1자이상 64자 이하여야 합니다.",
-//                            "content": "본문을 입력하세요."
-//                        }
-//                    }
-//                    """))),
-//            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
-//                    {
-//                        "message": "인증에 실패했습니다.",
-//                        "errors": { }
-//                    }
-//                    """)))
-//
-//    })
-//    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticle(@PathVariable("articleId") Long articleId, Authentication authentication){
-//        Article article = articleService.getArticle(articleId, authentication);
-//
-//        List<String> tags = article.getArticleTags().stream()
-//                .map(articleTag -> articleTag.getTag().getName())
-//                .collect(Collectors.toList());
-//
-//        List<CommentSummary> commentSummaries = article.getComments().stream()
-//                .map(comment -> CommentSummary.builder()
-//                        .id(comment.getId())
-//                        .content(comment.getContent())
-//                        .memberInfo(MemberInfo.of(comment.getMember()))
-//                        .createdAt(comment.getCreatedAt())
-//                        .build())
-//                .collect(Collectors.toList());
-//
-//        GetArticleResponse response = GetArticleResponse.builder()
-//                .title(article.getTitle())
-//                .content(article.getContent())
-//                .createdAt(article.getCreatedAt())
-//                .viewCount(article.getViewCount())
-//                .memberInfo(MemberInfo.of(article.getWriter()))
-//                .comments(commentSummaries)
-//                .tags(tags)
-//                .build();
-//
-//        return ResponseEntity.ok(
-//                new SuccessResponse<>(
-//                        "Article 조회에 성공했습니다.",
-//                        response
-//                )
-//        );
-//    }
 
     @GetMapping("/{articleId}")
     @Operation(summary = "Article 조회(Auth 없는 버전)", description = "Article을 조회합니다.")
@@ -239,8 +189,9 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<ArticleResponse>> deleteArticle(@PathVariable("articleId") Long articleId, Authentication authentication){
-        Article article = articleService.deleteArticle(articleId, authentication);
+    public ResponseEntity<SuccessResponse<ArticleResponse>> deleteArticle(@PathVariable("articleId") Long articleId,
+                                                                          @Parameter(hidden = true) @Login Member requester){
+        Article article = articleService.deleteArticle(articleId, requester);
         ArticleResponse response = new ArticleResponse(article.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -291,10 +242,10 @@ public class ArticleController {
     public ResponseEntity<SuccessResponse<CommentResponse>> createComment(
             @PathVariable("articleId") Long articleId,
             @RequestBody CommentRequest request,
-            Authentication authentication
+            @Parameter(hidden = true) @Login Member requester
 
     ){
-        Comment Createdcomment = articleService.createComment(articleId, request, authentication);
+        Comment Createdcomment = articleService.createComment(articleId, request, requester);
         CommentResponse response = new CommentResponse(Createdcomment.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -320,9 +271,9 @@ public class ArticleController {
 
             @PathVariable("commentId") Long commentId,
             @RequestBody CommentRequest request,
-            Authentication authentication
+            @Parameter(hidden = true) @Login Member requester
     ){
-        Comment updatedComment = articleService.updateComment(commentId, request, authentication);
+        Comment updatedComment = articleService.updateComment(commentId, request, requester);
         CommentResponse response = new CommentResponse(updatedComment.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -345,9 +296,9 @@ public class ArticleController {
     })
     public ResponseEntity<SuccessResponse<CommentResponse>> deleteComment(
             @PathVariable("commentId") Long commentId,
-            Authentication authentication
+            @Parameter(hidden = true) @Login Member requester
     ){
-        Comment deletedComment = articleService.deleteComment(commentId, authentication);
+        Comment deletedComment = articleService.deleteComment(commentId, requester);
         CommentResponse response = new CommentResponse(deletedComment.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(

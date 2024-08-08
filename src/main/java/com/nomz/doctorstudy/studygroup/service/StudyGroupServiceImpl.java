@@ -1,34 +1,29 @@
 package com.nomz.doctorstudy.studygroup.service;
 
-import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.image.entity.Image;
 import com.nomz.doctorstudy.image.exception.FileErrorCode;
 import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.member.entity.Member;
-import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
-import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.member.service.MemberService;
 import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import com.nomz.doctorstudy.studygroup.StudyGroupRole;
-import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.nomz.doctorstudy.studygroup.entity.*;
+import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
 import com.nomz.doctorstudy.studygroup.repository.*;
 import com.nomz.doctorstudy.studygroup.request.*;
+import com.nomz.doctorstudy.tag.Tag;
+import com.nomz.doctorstudy.tag.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-
 import org.springframework.data.domain.Pageable;
-import com.nomz.doctorstudy.tag.Tag;
-import com.nomz.doctorstudy.tag.TagRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,16 +46,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final ImageRepository imageRepository;
 
     @Override
-    public StudyGroup createStudyGroup(CreateStudyGroupRequest request, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if (authentication == null) {
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public StudyGroup createStudyGroup(CreateStudyGroupRequest request, Member requester) {
         Image image = null;
         Long imageId = request.getImageId();
         if (imageId != null) {
@@ -73,7 +59,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         StudyGroup studyGroup = StudyGroup.builder()
                 .name(request.getName())
                 .image(image)
-                .captain(member)
+                .captain(requester)
                 .createdAt(LocalDateTime.now())
                 .isDeleted(false)
                 .description(request.getDescription())
@@ -93,10 +79,10 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
             studyGroupTagRepository.saveAll(studyGroupTags);
         }
-        MemberStudyGroupId memberStudyGroupIdObject = new MemberStudyGroupId(member.getId(), studyGroup.getId());
+        MemberStudyGroupId memberStudyGroupIdObject = new MemberStudyGroupId(requester.getId(), studyGroup.getId());
         MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
                 .memberStudyGroupId(memberStudyGroupIdObject)
-                .member(member)
+                .member(requester)
                 .studyGroup(studyGroup)
                 .role(StudyGroupRole.CAPTAIN) // 기본 역할 설정
                 .joinDate(LocalDateTime.now())
@@ -123,26 +109,18 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if (authentication == null) {
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
-        StudyGroup studyGroup = studyGroupRepository.findById(createApplyRequest.getStudyGroupId())
+    public MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest, Member requester) {
+
+        StudyGroup studyGroup = studyGroupRepository.findById(createApplyRequest.getGroupId())
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
 
-        if (memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(member.getId(), createApplyRequest.getStudyGroupId()).isPresent()) {
+        if (memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(requester.getId(), createApplyRequest.getGroupId()).isPresent()) {
             throw new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_ALREADY_JOINED_ERROR);
         }
 
         // 새로운 멤버-그룹-지원 엔티티 생성
         MemberStudyGroupApply apply = MemberStudyGroupApply.builder()
-                .member(member)
+                .member(requester)
                 .studyGroup(studyGroup)
                 .message(createApplyRequest.getMessage())
                 .applicationStatus(ApplicationStatus.WAITING)
@@ -162,22 +140,13 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Override
     @Transactional
-    public MemberStudyGroupApply processReply(Long applyId, CreateReplyRequest createReplyRequest, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if (authentication == null) {
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public MemberStudyGroupApply processReply(Long applyId, CreateReplyRequest createReplyRequest, Member requester) {
         // 1. 지원 정보 가져오기
         MemberStudyGroupApply apply = memberStudyGroupApplyRepository.findById(applyId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
 
         // 2. 그룹장인지 확인
-        if (!Objects.equals(member.getId(), apply.getStudyGroup().getCaptain().getId())) {
+        if (!Objects.equals(requester.getId(), apply.getStudyGroup().getCaptain().getId())) {
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
         }
         // 3. status 변경
@@ -201,16 +170,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional
     @Override
-    public StudyGroup updateStudyGroup(Long groupId, UpdateStudyGroupRequest request, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if (authentication == null) {
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public StudyGroup updateStudyGroup(Long groupId, UpdateStudyGroupRequest request, Member requester) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
         Member captain = memberRepository.findById(request.getCaptainId())
@@ -218,7 +178,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         Image image = imageRepository.findById(request.getImageId())
                 .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
 
-        if (!Objects.equals(member.getId(), captain.getId()))
+        if (!Objects.equals(requester.getId(), captain.getId()))
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
 
         if (request.getName() != null) {
@@ -247,18 +207,9 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public List<MemberStudyGroupApply> getWaiterList(Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if (authentication == null) {
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
+    public List<MemberStudyGroupApply> getApplicants(Member requester) {
         // 1. 이 멤버가 그룹장인지 찾기
-        List<StudyGroup> GroupList = studyGroupRepository.findByCaptain(member);
+        List<StudyGroup> GroupList = studyGroupRepository.findByCaptain(requester);
         if (GroupList.isEmpty()) {
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
         }
@@ -281,17 +232,9 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional
     @Override
-    public MemberStudyGroup leaveStudyGroup(Long groupId, Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if (authentication == null) {
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
-        MemberStudyGroupId memberStudyGroupId = new MemberStudyGroupId(member.getId(), groupId);
+    public MemberStudyGroup leaveStudyGroup(Long groupId, Member requester) {
+
+        MemberStudyGroupId memberStudyGroupId = new MemberStudyGroupId(requester.getId(), groupId);
 
         MemberStudyGroup memberStudyGroup = memberStudyGroupRepository.findById(memberStudyGroupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
@@ -303,16 +246,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public List<MemberStudyGroup> getStudyGroupListByMemberId(Authentication authentication) {
-        // JWT 토큰에서 사용자 가져오기
-        // --------------------------------------------------------------------------
-        if (authentication == null) {
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
-        }
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        String email = memberDetails.getUsername();
-        Member member = memberService.getUserByEmail(email);
-        // --------------------------------------------------------------------------
-        return memberStudyGroupRepository.findByMemberId(member.getId());
+    public List<MemberStudyGroup> getStudyGroupListByMemberId(Member requester) {
+
+        return memberStudyGroupRepository.findByMemberId(requester.getId());
     }
 }
