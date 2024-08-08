@@ -94,7 +94,7 @@ export default function GroupDetailPage({
 
     return (
         <div className="w-full bg-dr-indigo-200 flex flex-col h-max">
-            <div className="SECTION-THUMBNAIL w-full h-max flex flex-row bg-dr-dark-300 rounded-l-xl">
+            <div className="SECTION-THUMBNAIL w-full h-max flex flex-row bg-dr-indigo-400 rounded-l-xl">
                 <div className="LEFT-IMAGE-THUMBNAIL w-1/3 h-[50vh] rounded-l-xl bg-red-200 relative overflow-hidden">
                     {groupWithMembers?.imageUrl ? (
                         <Image

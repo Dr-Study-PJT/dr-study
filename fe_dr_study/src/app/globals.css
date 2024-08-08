@@ -25,7 +25,7 @@ body {
 }
 
 .WINDOW-HEADER {
-    background-color: #23272a;
+    background-color: #11131c;
     color: white;
     height: 1.4rem;
     display: flex;
@@ -90,7 +90,6 @@ body {
     background-color: rgba(0, 0, 0, 0.75);
     z-index: 1000;
 }
-
 /* =================================== */
 
 /* Firefox */
