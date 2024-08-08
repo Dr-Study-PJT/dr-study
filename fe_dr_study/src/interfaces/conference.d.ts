@@ -5,10 +5,22 @@ export interface ConferenceData {
     title: string;
     subject: string;
     memberCapacity: number;
-    startTime: string;
-    finishTime: string;
+    openTime: Date | null;
+    closeTime: Date | null;
+    startTime: Date | null;
+    finishTime: Date | null;
     imageUrl: string;
-    participants: ConferenceMember[];
+    participants: Participant[];
+}
+
+export interface Participant {
+    id: number;
+    email: string;
+    nickname: string;
+    imageUrl: string;
+    regDate: Date | null;
+    leavedDate: Date | null;
+    leaved: boolean;
 }
 
 export interface ConferenceMember {

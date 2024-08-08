@@ -85,7 +85,7 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
     };
 
     // 컨퍼런스 개최 요청 함수
-    const handleOpenConference = async () => {
+    const handleOpenConference = async (moderator: Moderator) => {
         console.log(
             '컨퍼런스 개최 요청 시작. conferenceData =>',
             conferenceData,
@@ -95,7 +95,7 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
                 API: API,
                 endPoint: `${conferenceId}/open`,
                 body: {
-                    moderatorId: 1,
+                    moderatorId: moderator.id,
                 },
                 isAuth: true,
             });

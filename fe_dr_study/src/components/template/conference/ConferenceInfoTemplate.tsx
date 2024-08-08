@@ -2,7 +2,9 @@
 
 import { ErrorLottie } from '@/app/_components/Lottie/Error/ErrorLottie';
 import { Button } from '@/components/atoms';
+import HrLine from '@/components/atoms/HrLine/HrLine';
 import ToolTip from '@/components/atoms/Tooltip/ToolTip';
+import MeetingIdBox from '@/components/molecules/MeetingIdBox/MeetingIdBox';
 import InviteMembersBox from '@/components/organisms/InviteMembersBox/InviteMembersBox';
 import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/SelectModeratorBox';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
@@ -17,7 +19,7 @@ interface ConferenceInfoProps {
     conferenceData: ConferenceData; // 회의 데이터
     moderators: Moderator[]; // 사회자 리스트
     studyMembers: ConferenceMember[]; // 스터디 멤버 리스트
-    handleOpenConference: () => void; // 컨퍼런스 개최 함수
+    handleOpenConference: (moderator: Moderator) => void; // 컨퍼런스 개최 함수
 }
 
 const ConferenceInfoTemplate = ({
@@ -89,16 +91,12 @@ const ConferenceInfoTemplate = ({
                             </div>
                         </div>
                     </div>
-                    <hr className="border-t border-dr-gray-500 my-4" />
+                    <HrLine />
+                    <MeetingIdBox>
+                        {`${process.env.NEXT_PUBLIC_HOST}/conference/${conferenceData?.id}`}
+                    </MeetingIdBox>
 
-                    <div className="flex flex-col text-center">
-                        <p className="text-dr-body-4 text-dr-gray-300">
-                            Meeting URL:
-                        </p>
-                        <p className="text-dr-header-2 font-semibold">{`${process.env.NEXT_PUBLIC_HOST}/conference/${conferenceData?.id}`}</p>
-                    </div>
-
-                    <hr className="border-t border-dr-gray-500 my-4" />
+                    <HrLine />
 
                     <SelectModeratorBox
                         moderators={moderators}
@@ -107,7 +105,7 @@ const ConferenceInfoTemplate = ({
                         setSelectedModerator={setSelectedModerator}
                     />
 
-                    <hr className="border-t border-dr-gray-500 my-4" />
+                    <HrLine />
                     <InviteMembersBox
                         memberData={memberData}
                         members={studyMembers}
@@ -115,10 +113,14 @@ const ConferenceInfoTemplate = ({
                         setIsMemberInvited={setIsMemberInvited}
                         capacity={conferenceData?.memberCapacity}
                     />
-                    <hr className="border-t border-dr-gray-500 my-4" />
+                    <HrLine />
                     <div className="py-[1rem]">
                         <Button
-                            onClick={handleOpenConference}
+                            onClick={() =>
+                                handleOpenConference(
+                                    selectedModerator as Moderator,
+                                )
+                            }
                             color={`${isMemberInvited && isModeratorSelected ? 'coral' : 'gray'}`}
                             disabled={!isMemberInvited && !isModeratorSelected}
                             size="lg"
