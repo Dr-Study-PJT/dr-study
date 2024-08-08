@@ -2,15 +2,20 @@ import { Button } from '@/components/atoms';
 import HrLine from '@/components/atoms/HrLine/HrLine';
 import MeetingIdBox from '@/components/molecules/MeetingIdBox/MeetingIdBox';
 import { ConferenceData, Participant } from '@/interfaces/conference';
+import { IMemberData } from '@/interfaces/members';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface ConferenceWaitingRoomTemplateProps {
+    memberData: IMemberData | null;
     conferenceInfo: ConferenceData | null;
     conferenceInvitees: Participant[];
 }
 
 const ConferenceWaitingRoomTemplate = ({
+    memberData,
     conferenceInfo,
     conferenceInvitees,
 }: ConferenceWaitingRoomTemplateProps) => {
@@ -35,6 +40,18 @@ const ConferenceWaitingRoomTemplate = ({
             <div className="text-white">컨퍼런스 정보를 불러오는 중입니다.</div>
         );
     }
+
+    const router = useRouter();
+    useEffect(() => {
+        // 스터디 멤버가 아니거나 컨퍼런스 초대자가 아닌 경우 홈으로 이동
+        if (
+            conferenceInfo?.hostId !== memberData?.id &&
+            !conferenceInvitees.some((invitee) => invitee.id === memberData?.id)
+        ) {
+            console.log('스터디 멤버가 아닙니다.');
+            router.push('/');
+        }
+    }, [conferenceInvitees, memberData]);
 
     return (
         <div className="flex items-center justify-center p-[4rem] bg-dr-indigo-200 text-dr-white">

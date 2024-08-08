@@ -71,7 +71,8 @@ const Signal = ({
         // 10초마다 생존 신고 전송
         // 소켓 연결
         const connectSocket = () => {
-            stompClient?.connect({}, () => {
+            console.log('memberId before connect SockJS', memberData.id);
+            stompClient?.connect({ memberId: 'abc' }, () => {
                 if (stompClient?.connected) {
                     subscribeToMessages();
                     subscribeToSignals();
@@ -218,6 +219,10 @@ const Signal = ({
 
     // 메시지 전송 함수
     const sendMessage = () => {
+        if (!message.trim()) {
+            return; // 메시지가 없을 경우 아무 동작도 하지 않음
+        }
+
         if (stompClient) {
             // Stomp 클라이언트가 존재할 때
             stompClient?.send(

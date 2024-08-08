@@ -127,18 +127,6 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                     <div>
                         <div className="flex items-center content-center gap-[0.5rem]">
                             <div className="relative flex items-center">
-                                {/* <div
-                                    ref={profileImageBoxRef}
-                                    className="relative overflow-hidden w-[1.8rem] h-[1.8rem] rounded-full cursor-pointer"
-                                >
-                                    <Image
-                                        alt="avatar"
-                                        src={memberData?.imageUrl}
-                                        fill
-                                        onClick={toggleDropdown}
-                                        unoptimized
-                                    />
-                                </div> */}
                                 <Tooltip
                                     text={memberData?.nickname as string}
                                     direction="bottom"
@@ -157,7 +145,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         />
                                     </div>
                                 </Tooltip>
-                                {dropdownOpen && (
+                                {dropdownOpen ? (
                                     <ProfileDropDown
                                         memberData={memberData}
                                         toggleDropdown={toggleDropdown}

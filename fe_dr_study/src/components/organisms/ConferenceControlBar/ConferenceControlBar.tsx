@@ -52,7 +52,6 @@ const ConferenceControlBar = ({
 
     // 비디오 토글 핸들러
     const toggleVideo = () => {
-        console.log('toggleVideo: 클릭');
         if (localStream) {
             localStream.getVideoTracks().forEach((track) => {
                 track.enabled = !track.enabled;

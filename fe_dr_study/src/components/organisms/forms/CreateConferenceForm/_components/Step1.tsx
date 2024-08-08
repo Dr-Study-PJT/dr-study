@@ -9,6 +9,7 @@ import {
     validateTitle,
     validateSubject,
     validateMemberCapacity,
+    validateDueDate,
 } from '../_validation';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 
@@ -16,6 +17,7 @@ interface CreateConferenceTouchable {
     title?: boolean;
     subject?: boolean;
     memberCapacity?: boolean;
+    scheduledTime?: boolean;
 }
 
 const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
@@ -36,7 +38,6 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
 
         // 실시간 유효성 검사 수행함니다잉
         let error: string | undefined;
-        console.log(value, 'value');
         switch (name) {
             case 'title':
                 error = validateTitle(value);
@@ -46,6 +47,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                 break;
             case 'memberCapacity':
                 error = validateMemberCapacity(value);
+                break;
+            case 'scheduledTime':
+                error = validateDueDate();
                 break;
         }
 
@@ -62,6 +66,7 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
             title: true,
             subject: true,
             memberCapacity: true,
+            scheduledTime: true,
         });
 
         if (Object.values(newErrors).every((error) => !error)) {
@@ -107,7 +112,22 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     : undefined
                             }
                         />
-
+                        {/* 데이트 입력 폼 넣어야 함 !필요! */}
+                        <div className="hidden">
+                            <InputWithLabelAndError
+                                className="hidden"
+                                id="scheduledTime"
+                                label="예정 시작 시간"
+                                inputSize="md"
+                                name="scheduledTime"
+                                onChange={(e) =>
+                                    handleChange(
+                                        'scheduledTime',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                        </div>
                         <TextareaWithLabel
                             id="subject"
                             label="컨퍼런스 주제"

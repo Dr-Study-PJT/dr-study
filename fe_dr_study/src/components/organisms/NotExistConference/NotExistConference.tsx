@@ -10,9 +10,11 @@ const NotExistConference = () => {
                     이미 종료되었거나 존재하지 않는 컨퍼런스 입니다.
                 </h2>
                 <ErrorLottie />
-                <Button rounded color="gray" fullWidth>
-                    <Link href="/">홈으로</Link>
-                </Button>
+                <Link href="/">
+                    <Button rounded color="gray" fullWidth>
+                        홈으로
+                    </Button>
+                </Link>
             </div>
         </div>
     );
