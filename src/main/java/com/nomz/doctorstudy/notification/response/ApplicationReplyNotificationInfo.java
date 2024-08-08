@@ -22,12 +22,16 @@ public class ApplicationReplyNotificationInfo {
     @Schema(description = "지원 그룹 아이디")
     private Long groupId;
 
+    @Schema(description = "지원한 그룹 이름")
+    private String groupName;
+
     public static ApplicationReplyNotificationInfo of(MemberStudyGroupApply application) {
         return builder()
                 .applicationId(application.getId())
                 .isApproved(application.getApplicationStatus() == ApplicationStatus.APPROVED)
                 .replyMessage(application.getReplyMessage())
                 .groupId(application.getStudyGroup().getId())
+                .groupName(application.getStudyGroup().getName())
                 .build();
     }
 }
