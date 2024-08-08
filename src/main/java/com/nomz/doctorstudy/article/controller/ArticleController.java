@@ -2,9 +2,12 @@ package com.nomz.doctorstudy.article.controller;
 
 import com.nomz.doctorstudy.article.dto.CommentSummary;
 import com.nomz.doctorstudy.article.entity.Article;
+import com.nomz.doctorstudy.article.entity.Comment;
 import com.nomz.doctorstudy.article.request.CreateArticleRequest;
+import com.nomz.doctorstudy.article.request.CommentRequest;
 import com.nomz.doctorstudy.article.request.UpdateArticleRequest;
 import com.nomz.doctorstudy.article.response.ArticleResponse;
+import com.nomz.doctorstudy.article.response.CommentResponse;
 import com.nomz.doctorstudy.article.response.GetArticleResponse;
 import com.nomz.doctorstudy.article.service.ArticleService;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
@@ -104,8 +107,63 @@ public class ArticleController {
         );
     }
 
+//    @GetMapping("/{articleId}")
+//    @Operation(summary = "Article 조회", description = "Article을 조회합니다.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Article 조회 성공"),
+//            @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+//                    {
+//                        "message": "유효하지 않은 입력입니다.",
+//                        "errors": {
+//                            "title": "제목은 1자이상 64자 이하여야 합니다.",
+//                            "content": "본문을 입력하세요."
+//                        }
+//                    }
+//                    """))),
+//            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+//                    {
+//                        "message": "인증에 실패했습니다.",
+//                        "errors": { }
+//                    }
+//                    """)))
+//
+//    })
+//    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticle(@PathVariable("articleId") Long articleId, Authentication authentication){
+//        Article article = articleService.getArticle(articleId, authentication);
+//
+//        List<String> tags = article.getArticleTags().stream()
+//                .map(articleTag -> articleTag.getTag().getName())
+//                .collect(Collectors.toList());
+//
+//        List<CommentSummary> commentSummaries = article.getComments().stream()
+//                .map(comment -> CommentSummary.builder()
+//                        .id(comment.getId())
+//                        .content(comment.getContent())
+//                        .memberInfo(MemberInfo.of(comment.getMember()))
+//                        .createdAt(comment.getCreatedAt())
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//        GetArticleResponse response = GetArticleResponse.builder()
+//                .title(article.getTitle())
+//                .content(article.getContent())
+//                .createdAt(article.getCreatedAt())
+//                .viewCount(article.getViewCount())
+//                .memberInfo(MemberInfo.of(article.getWriter()))
+//                .comments(commentSummaries)
+//                .tags(tags)
+//                .build();
+//
+//        return ResponseEntity.ok(
+//                new SuccessResponse<>(
+//                        "Article 조회에 성공했습니다.",
+//                        response
+//                )
+//        );
+//    }
+
     @GetMapping("/{articleId}")
-    @Operation(summary = "Article 조회", description = "Article을 조회합니다.")
+    @Operation(summary = "Article 조회(Auth 없는 버전)", description = "Article을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Article 조회 성공"),
             @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
@@ -125,14 +183,15 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticle(@PathVariable("articleId") Long articleId, Authentication authentication){
-        Article article = articleService.getArticle(articleId, authentication);
+    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticle(@PathVariable("articleId") Long articleId){
+        Article article = articleService.getArticle(articleId);
 
         List<String> tags = article.getArticleTags().stream()
                 .map(articleTag -> articleTag.getTag().getName())
                 .collect(Collectors.toList());
 
         List<CommentSummary> commentSummaries = article.getComments().stream()
+                .filter(comment -> !comment.getIsDeleted())
                 .map(comment -> CommentSummary.builder()
                         .id(comment.getId())
                         .content(comment.getContent())
@@ -159,62 +218,7 @@ public class ArticleController {
         );
     }
 
-    @GetMapping("/test/{articleId}")
-    @Operation(summary = "Article 조회(Auth 없는 테스트 버전)", description = "Article을 조회합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Article 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
-                    {
-                        "message": "유효하지 않은 입력입니다.",
-                        "errors": {
-                            "title": "제목은 1자이상 64자 이하여야 합니다.",
-                            "content": "본문을 입력하세요."
-                        }
-                    }
-                    """))),
-            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
-                    {
-                        "message": "인증에 실패했습니다.",
-                        "errors": { }
-                    }
-                    """)))
-
-    })
-    public ResponseEntity<SuccessResponse<GetArticleResponse>> getArticleNoAuth(@PathVariable("articleId") Long articleId){
-        Article article = articleService.getArticleNoAuth(articleId);
-
-        List<String> tags = article.getArticleTags().stream()
-                .map(articleTag -> articleTag.getTag().getName())
-                .collect(Collectors.toList());
-
-        List<CommentSummary> commentSummaries = article.getComments().stream()
-                .map(comment -> CommentSummary.builder()
-                        .id(comment.getId())
-                        .content(comment.getContent())
-                        .memberInfo(MemberInfo.of(comment.getMember()))
-                        .createdAt(comment.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
-
-        GetArticleResponse response = GetArticleResponse.builder()
-                .title(article.getTitle())
-                .content(article.getContent())
-                .createdAt(article.getCreatedAt())
-                .viewCount(article.getViewCount())
-                .memberInfo(MemberInfo.of(article.getWriter()))
-                .comments(commentSummaries)
-                .tags(tags)
-                .build();
-
-        return ResponseEntity.ok(
-                new SuccessResponse<>(
-                        "Article 조회에 성공했습니다.",
-                        response
-                )
-        );
-    }
-
-    @PutMapping("/{articleId}")
+    @DeleteMapping("/{articleId}")
     @Operation(summary = "Article 삭제(소프트 삭제)", description = "Article을 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Article 삭제 성공"),
@@ -272,5 +276,87 @@ public class ArticleController {
                 )
         );
     }
+    @PostMapping("/{articleId}/comments")
+    @Operation(summary = "Comment 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Comment 작성 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Comment 작성 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Comment 작성에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<CommentResponse>> createComment(
+            @PathVariable("articleId") Long articleId,
+            @RequestBody CommentRequest request,
+            Authentication authentication
+
+    ){
+        Comment Createdcomment = articleService.createComment(articleId, request, authentication);
+        CommentResponse response = new CommentResponse(Createdcomment.getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Comment 생성에 성공했습니다.",
+                        response
+                )
+        );
+
+    }
+    @PatchMapping("/comments/{commentId}")
+    @Operation(summary = "Comment 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comment 수정 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Comment 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Comment 수정에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<CommentResponse>> updateComment(
+
+            @PathVariable("commentId") Long commentId,
+            @RequestBody CommentRequest request,
+            Authentication authentication
+    ){
+        Comment updatedComment = articleService.updateComment(commentId, request, authentication);
+        CommentResponse response = new CommentResponse(updatedComment.getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Comment 수정에 성공했습니다.",
+                        response
+                )
+        );
+    }
+    @DeleteMapping("/comments/{commentId}")
+    @Operation(summary = "Comment 삭제(소프트 삭제)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comment 삭제 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Comment 삭제 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Comment 삭제에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<CommentResponse>> deleteComment(
+            @PathVariable("commentId") Long commentId,
+            Authentication authentication
+    ){
+        Comment deletedComment = articleService.deleteComment(commentId, authentication);
+        CommentResponse response = new CommentResponse(deletedComment.getId());
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Comment 삭제에 성공했습니다.",
+                        response
+                )
+        );
+
+    }
+
 
 }

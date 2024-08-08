@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor
 @ToString
-public class ArticleResponse {
-    @Schema(description = "처리된 Article 아이디", example = "1")
-    private final Long articleId;
+public class CommentResponse {
+    @Schema(description = "처리된 Comment 아이디", example = "1")
+    private final Long commentId;
 }
