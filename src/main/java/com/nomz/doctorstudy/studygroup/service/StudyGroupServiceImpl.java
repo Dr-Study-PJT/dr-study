@@ -223,9 +223,15 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional
     @Override
-    public StudyGroup deleteStudyGroup(Long groupId) {
+    public StudyGroup deleteStudyGroup(Long groupId, Member requester) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
+
+        // 스터디 그룹을 삭제하려는 사람이 그룹장인지 확인
+        if(!Objects.equals(requester.getId(), studyGroup.getCaptain().getId())){
+            throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
+        }
+
         studyGroup.setIsDeleted(Boolean.TRUE);
         return studyGroup;
     }

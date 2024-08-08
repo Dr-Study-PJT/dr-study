@@ -317,9 +317,11 @@ public class StudyGroupController {
                         }
                         """)))
     })
-    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(@PathVariable(name="groupId") Long groupId) {
-        StudyGroup group = studyGroupService.deleteStudyGroup(groupId);
-        DeleteGroupResponse response = new DeleteGroupResponse( group.getId());
+    public ResponseEntity<SuccessResponse<DeleteGroupResponse>> deleteStudyGroup(
+            @PathVariable(name="groupId") Long groupId,
+            @Parameter(hidden = true) @Login Member requester) {
+        StudyGroup deletedGroup = studyGroupService.deleteStudyGroup(groupId, requester);
+        DeleteGroupResponse response = new DeleteGroupResponse(deletedGroup.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "StudyGroup 삭제에 성공했습니다.",
