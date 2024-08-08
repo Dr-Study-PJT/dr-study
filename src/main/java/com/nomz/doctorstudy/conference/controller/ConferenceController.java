@@ -1,15 +1,16 @@
 package com.nomz.doctorstudy.conference.controller;
 
-import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.request.*;
 import com.nomz.doctorstudy.conference.response.*;
 import com.nomz.doctorstudy.conference.service.ConferenceService;
+import com.nomz.doctorstudy.member.Login;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.response.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,11 +57,10 @@ public class ConferenceController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<CreateConferenceResponse>> createConference(
-            Authentication authentication,
+            @Parameter(hidden = true) @Login Member requester,
             @Valid @RequestBody CreateConferenceRequest request
     ) {
-        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
-        Long conferenceId = conferenceService.createConference(member, request);
+        Long conferenceId = conferenceService.createConference(requester, request);
         CreateConferenceResponse response = CreateConferenceResponse.builder()
                 .conferenceId(conferenceId)
                 .build();
@@ -156,6 +154,7 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> openConference(
+            @Parameter(hidden = true) @Login Member requester,
             @PathVariable("conference_id") Long conferenceId,
             @RequestBody OpenConferenceRequest request
     ) {
@@ -194,6 +193,7 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> closeConference(
+            @Parameter(hidden = true) @Login Member requester,
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.closeConference(conferenceId);
@@ -231,6 +231,7 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> startConference(
+            @Parameter(hidden = true) @Login Member requester,
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.startConference(conferenceId);
@@ -268,6 +269,7 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> finishConference(
+            @Parameter(hidden = true) @Login Member requester,
             @PathVariable("conference_id") Long conferenceId
     ) {
         conferenceService.finishConference(conferenceId);
@@ -305,12 +307,10 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<List<String>>> joinConference(
+            @Parameter(hidden = true) @Login Member requester,
             @PathVariable("conferenceId") Long conferenceId,
-            Authentication authentication,
             @RequestBody JoinConferenceRequest request
-            ) {
-        Member requester = ((MemberDetails) authentication.getPrincipal()).getUser();
-
+    ) {
         List<String> existingParticipants = conferenceService.joinConference(requester, conferenceId, request);
 
         return ResponseEntity.ok(
@@ -346,13 +346,10 @@ public class ConferenceController {
                     """))),
     })
     public ResponseEntity<SuccessResponse<?>> inviteMemberConference(
+            @Parameter(hidden = true) @Login Member requester,
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody InviteMemberConferenceRequest request
     ) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-        Member requester = memberDetails.getUser();
-
         conferenceService.inviteMemberConference(requester, conferenceId, request);
 
         return ResponseEntity.ok(

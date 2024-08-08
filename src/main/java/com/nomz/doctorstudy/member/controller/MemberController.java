@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.member.controller;
 import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
+import com.nomz.doctorstudy.member.Login;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
@@ -10,6 +11,7 @@ import com.nomz.doctorstudy.member.request.MemberRegisterPostReq;
 import com.nomz.doctorstudy.member.response.MemberInfo;
 import com.nomz.doctorstudy.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -77,8 +79,10 @@ public class MemberController {
                     }
                     """))),
     })
-    public ResponseEntity<?> getLoginMemberInfo(Authentication authentication) {
-
+    public ResponseEntity<?> getLoginMemberInfo(
+            /*Authentication authentication*/@Parameter(hidden = true)  @Login Member member
+    ) {
+/*
         if(authentication == null){
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
         }
@@ -87,7 +91,7 @@ public class MemberController {
         String email = memberDetails.getUsername();
 
         Member member = memberService.getUserByEmail(email);
-
+*/
         MemberInfo response = MemberInfo.of(member);
 
         return ResponseEntity.ok(
