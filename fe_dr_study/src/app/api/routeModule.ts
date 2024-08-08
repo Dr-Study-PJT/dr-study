@@ -53,6 +53,7 @@ export async function GET(
         next: { revalidate: revalidateTime },
     });
     const data = await res.json();
+
     return data;
 }
 

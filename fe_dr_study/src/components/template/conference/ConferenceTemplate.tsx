@@ -11,6 +11,8 @@ import { getSessionStorageItem } from '@/utils/sessionStorage';
 import Peer from 'peerjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
 
 interface ConferenceTemplateProps {
     conferenceId: number;
@@ -21,7 +23,7 @@ interface RoomInfoInterface {
     memberCapacity: number;
 }
 
-interface clientInterface {
+export interface ClientInterface {
     memberId: string;
     peerId: string;
     streamId: string;
@@ -66,11 +68,14 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const localStream = useRef<MediaStream | null>(null); // 로컬 미디어 스트림을 참조
 
     // 클라이언트 정보 참조
-    const client = useRef<clientInterface>({
+    const client = useRef<ClientInterface>({
         memberId: '', // 클라이언트 멤버 ID
         peerId: '', // 클라이언트 피어 ID
         streamId: '', // 클라이언트 스트림 ID
     });
+
+    // 구독 목록
+    const subscriptionList = useRef<string[]>([]);
 
     // 1. new Peer 내 피어 생성
     const onClickJoin = (e: React.MouseEvent<HTMLElement>) => {
@@ -216,6 +221,21 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         console.log('existingPeers:', existingPeers);
     }, [existingPeers]);
 
+    console.log('meberData =>', memberData);
+
+    // 소켓 생성 및 Stomp 클라이언트 생성
+    const BACK_HOST = process.env.NEXT_PUBLIC_HOST;
+    const ENDPOINT = 'room';
+    const sockTargetUrl = `${BACK_HOST}/${ENDPOINT}`;
+    const [stompClient, setStompClient] = useState<any>(null); // Stomp 클라이언트 상태
+
+    useEffect(() => {
+        const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
+        const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
+
+        setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
+    }, []);
+
     return (
         <div className="flex bg-dr-indigo-200 h-[100%] w-full">
             <div className="flex flex-col h-full w-full">
@@ -238,6 +258,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
                 <div className="fixed left-0 bottom-0 w-full h-[10%] ">
                     <ConferenceControlBar
+                        subscriptionList={subscriptionList.current}
+                        client={client.current}
+                        stompClient={stompClient}
                         conferenceId={conferenceId}
                         localStream={localStream.current}
                         existingPeers={existingPeers}
@@ -265,10 +288,12 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 </Button>
             </div>
 
-            <div className="absolute w-[15%] h-[80%] right-0 top-[10%]">
+            <div className="absolute w-[25%] max-w-[20rem] h-[80%] right-0 top-[10%]">
                 <Signal
+                    subscriptionList={subscriptionList.current}
+                    stompClient={stompClient}
+                    memberData={memberData}
                     conferenceId={conferenceId}
-                    memberId={1}
                     setIsMutedBySystem={setIsMutedBySystem}
                     setFocusingMemberId={setFocusingMemberId}
                     setIsAvatarSpeaking={setIsAvatarSpeaking}

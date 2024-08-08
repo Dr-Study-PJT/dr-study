@@ -1,13 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Logo } from '@/components/atoms/Logo/Logo';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsSigned, TIsSigned } from '@/store/slices/authSlice';
-import { setMemberState, clearMemberState } from '@/store/slices/memberSlice';
+import {
+    setMemberState,
+    clearMemberState,
+    IMemberInfo,
+} from '@/store/slices/memberSlice';
 import { RootState } from '@/store';
 import {
     getSessionStorageItem,
@@ -18,6 +22,12 @@ import Icon from '@/components/atoms/Icon/Icon';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
+import { Member } from '@/app/group/[group_id]/_types';
+import {
+    NavigationLinksProps,
+    NotificationData,
+    ProfileDropDownProps,
+} from './Navigation.types';
 
 const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const pathname = usePathname();
@@ -26,6 +36,8 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
     const isSigned = useSelector((state: RootState) => state.auth.isSigned);
     const memberData = useSelector((state: RootState) => state.member);
+
+    const profileImageBoxRef = useRef<HTMLDivElement>(null);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -73,19 +85,15 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
         setIsNotificationOpen(false);
+
+        if (dropdownOpen) {
+            setDropdownOpen(false);
+        }
     };
 
     const toggleIsNotificationOpen = () => {
         setDropdownOpen(false);
         setIsNotificationOpen(!isNotificationOpen);
-    };
-
-    const linkClasses = (path: string) => {
-        const baseClasses =
-            'text-dr-gray-100 hover:text-dr-coral-200 text-dr-body-4 hover:text-xs transition-all duration-200';
-        const activeClasses =
-            'text-dr-coral-200 hover:text-dr-coral-200 text-dr-body-4 hover:text-xs transition-all duration-200';
-        return pathname === path ? `${activeClasses}` : baseClasses;
     };
 
     const arrowButtonStyles =
@@ -118,37 +126,16 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                     <FaArrowRight size={16} />
                 </button>
             </div>
-            <div className="w-full flex justify-center items-center">
-                <ul className="flex gap-8">
-                    <li>
-                        <Link href="/" className={linkClasses('/')}>
-                            홈
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            href="/group/list"
-                            className={linkClasses('/group')}
-                        >
-                            스터디 그룹
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            href="/moderator"
-                            className={linkClasses('/moderator')}
-                        >
-                            AI 사회자
-                        </Link>
-                    </li>
-                </ul>
-            </div>
+            <NavigateLinks pathname={pathname} />
             <div>
                 {isSigned === TIsSigned.T ? (
                     <div>
                         <div className="flex items-center content-center gap-[0.5rem]">
                             <div className="relative flex items-center">
-                                <div className="relative overflow-hidden w-[2.2rem] h-[2.2rem] rounded-full cursor-pointer">
+                                <div
+                                    ref={profileImageBoxRef}
+                                    className="relative overflow-hidden w-[1.8rem] h-[1.8rem] rounded-full cursor-pointer"
+                                >
                                     <Image
                                         alt="avatar"
                                         src={memberData?.imageUrl}
@@ -158,61 +145,22 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                     />
                                 </div>
                                 {dropdownOpen && (
-                                    <div className="absolute right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200">
-                                        <div className="flex p-[1rem] gap-dr-10 border-b border-dr-gray-500">
-                                            <div className="relative  w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">
-                                                <Image
-                                                    alt="avatar"
-                                                    src={memberData?.imageUrl}
-                                                    fill
-                                                    onClick={toggleDropdown}
-                                                />
-                                            </div>
-                                            <div className="flex-1 text-dr-body-3">
-                                                <p className="font-semibold">
-                                                    {memberData?.nickname}
-                                                </p>
-                                                <p className="text-dr-gray-300">
-                                                    {memberData?.email}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <ul className="flex flex-col text-dr-body-3">
-                                            <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
-                                                <Link
-                                                    href={`/members/${memberData.id}`}
-                                                    className="block text-white  hover:bg-dr-dark-100"
-                                                >
-                                                    <Icon
-                                                        icon="person"
-                                                        size="sm"
-                                                    />
-                                                    <p className="min-w-[10rem]">
-                                                        마이페이지
-                                                    </p>
-                                                </Link>
-                                            </li>
-                                            <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
-                                                <button
-                                                    onClick={onClickSetLogout}
-                                                    className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100"
-                                                >
-                                                    <Icon
-                                                        icon="logout"
-                                                        size="sm"
-                                                    />{' '}
-                                                    <p className="min-w-[10rem]">
-                                                        로그아웃
-                                                    </p>
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <ProfileDropDown
+                                        memberData={memberData}
+                                        toggleDropdown={toggleDropdown}
+                                        onClickSetLogout={onClickSetLogout}
+                                        profileImageBoxRef={profileImageBoxRef}
+                                    />
                                 )}
                             </div>
-                            <div className="relative text-dr-white bg-dr-gray-500 rounded-full cursor-pointer">
+                            <div className="relative text-dr-white rounded-full cursor-pointer">
                                 <div onClick={toggleIsNotificationOpen}>
-                                    <Icon icon="bell" size="sm" hover="gray" />
+                                    <Icon
+                                        icon="bell"
+                                        size="sm"
+                                        hover="gray"
+                                        text="gray"
+                                    />
                                     {notifications.length > 0 && (
                                         <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-300 text-black text-xs rounded-full flex items-center justify-center">
                                             {notifications.length}
@@ -272,36 +220,106 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
 export default Navigation;
 
-interface InvitationNotificationItem {
-    conferenceId: number;
-    memberId: number;
-    createdAt: string;
-}
-interface ApplicationNotificationItem {
-    memberId: number;
-    groupId: number;
-    applicationStatus: 'WAITING' | 'APPROVED' | 'REJECTED';
-    message: string;
-    createdAt: string;
-}
+const NavigateLinks = ({ pathname }: NavigationLinksProps) => {
+    const linkClasses = (path: string) => {
+        const baseClasses =
+            'text-dr-gray-100 hover:text-dr-coral-200 text-dr-body-4 hover:text-xs transition-all duration-200';
+        const activeClasses =
+            'text-dr-coral-200 hover:text-dr-coral-200 text-dr-body-4 hover:text-xs transition-all duration-200';
+        return pathname === path ? `${activeClasses}` : baseClasses;
+    };
 
-interface InvitationNotificationData {
-    notificationItemType: 'Invitation';
-    createdAt: string;
-    notificationItem: InvitationNotificationItem;
-}
+    return (
+        <div className="w-full flex justify-center items-center">
+            <ul className="flex gap-8">
+                <li>
+                    <Link href="/" className={linkClasses('/')}>
+                        홈
+                    </Link>
+                </li>
+                <li>
+                    <Link href="/group/list" className={linkClasses('/group')}>
+                        스터디 그룹
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        href="/moderator"
+                        className={linkClasses('/moderator')}
+                    >
+                        AI 사회자
+                    </Link>
+                </li>
+            </ul>
+        </div>
+    );
+};
 
-interface ApplicationNotificationData {
-    notificationItemType: 'Application';
-    createdAt: string;
-    notificationItem: ApplicationNotificationItem;
-}
+const ProfileDropDown = ({
+    memberData,
+    toggleDropdown,
+    onClickSetLogout,
+    profileImageBoxRef,
+}: ProfileDropDownProps) => {
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-type NotificationData =
-    | InvitationNotificationData
-    | ApplicationNotificationData;
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                profileImageBoxRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                !profileImageBoxRef.current.contains(event.target as Node)
+            ) {
+                toggleDropdown(); // 드롭다운 닫기
+            }
+        };
 
-interface NotificationsResponse {
-    message: string;
-    data: NotificationData[];
-}
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [toggleDropdown]);
+
+    return (
+        <div
+            ref={dropdownRef}
+            className="absolute  overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
+        >
+            <div className="flex p-[1rem] gap-dr-10 border-b border-dr-gray-500">
+                <div className="relative  w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">
+                    <Image
+                        alt="avatar"
+                        src={memberData?.imageUrl}
+                        fill
+                        onClick={toggleDropdown}
+                    />
+                </div>
+                <div className="flex-1 text-dr-body-3">
+                    <p className="font-semibold">{memberData?.nickname}</p>
+                    <p className="text-dr-gray-300">{memberData?.email}</p>
+                </div>
+            </div>
+            <ul className="flex flex-col text-dr-body-3">
+                <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
+                    <Link
+                        href={`/members/${memberData.id}`}
+                        className="flex items-center text-white  hover:bg-dr-dark-100"
+                    >
+                        <Icon icon="person" size="sm" />
+                        <p className="min-w-[10rem]">마이페이지</p>
+                    </Link>
+                </li>
+                <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
+                    <button
+                        onClick={onClickSetLogout}
+                        className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100"
+                    >
+                        <Icon icon="logout" size="sm" />{' '}
+                    </button>
+                    <p className="min-w-[10rem]">로그아웃</p>
+                </li>
+            </ul>
+        </div>
+    );
+};
