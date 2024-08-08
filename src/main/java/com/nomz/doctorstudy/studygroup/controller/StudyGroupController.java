@@ -288,11 +288,11 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getWaiterList(Authentication authentication) {
+    public ResponseEntity<SuccessResponse<List<GetApplicantListResponse>>> getWaiterList(Authentication authentication) {
         List<MemberStudyGroupApply> waiterList = studyGroupService.getWaiterList(authentication);
 
-        List<GetWaiterListResponse> responseList = waiterList.stream()
-                .map(GetWaiterListResponse::of)
+        List<GetApplicantListResponse> responseList = waiterList.stream()
+                .map(GetApplicantListResponse::of)
                 .toList();
 
         return ResponseEntity.ok(

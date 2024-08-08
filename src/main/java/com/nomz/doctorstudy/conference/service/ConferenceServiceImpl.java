@@ -18,6 +18,7 @@ import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
+import com.nomz.doctorstudy.notification.NotificationService;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
@@ -43,6 +44,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceMemberInviteRepository conferenceMemberInviteRepository;
 
     private final RoomService roomService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -104,6 +106,10 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        if (conference.getOpenTime() != null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_OPENED);
+        }
+
         Moderator moderator = moderatorRepository.findById(request.getModeratorId())
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
@@ -119,6 +125,13 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        if (conference.getOpenTime() == null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
+        }
+        if (conference.getCloseTime() != null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_CLOSED);
+        }
+
         conference.updateCloseTime(LocalDateTime.now());
 
         roomService.closeRoom(conferenceId);
@@ -130,6 +143,13 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        if (conference.getOpenTime() == null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
+        }
+        if (conference.getStartTime() != null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
+        }
+
         conference.updateStartTime(LocalDateTime.now());
 
         roomService.startRoom(conferenceId);
@@ -140,6 +160,13 @@ public class ConferenceServiceImpl implements ConferenceService {
     public void finishConference(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
+        if (conference.getStartTime() == null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_STARTED);
+        }
+        if (conference.getFinishTime() != null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_FINISHED);
+        }
 
         conference.updateFinishTime(LocalDateTime.now());
 
@@ -195,6 +222,8 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         ConferenceMemberInvite conferenceMemberInvite = ConferenceMemberInvite.of(conference, member);
         conferenceMemberInviteRepository.save(conferenceMemberInvite);
+
+        notificationService.createNotification(conferenceMemberInvite);
     }
 
     @Override

@@ -40,20 +40,22 @@ public class Notification {
         isRead = true;
     }
 
-    public Notification of(MemberStudyGroupApply application) {
+    public static Notification of(MemberStudyGroupApply application) {
         return builder()
                 .itemType(NotificationItemType.STUDY_GROUP_APPLICATION)
                 .recipient(application.getMember())
                 .itemId(application.getStudyGroup().getId())
+                .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
-    public Notification of(ConferenceMemberInvite invitation) {
+    public static Notification of(ConferenceMemberInvite invitation) {
         return builder()
                 .itemType(NotificationItemType.CONFERENCE_INVITATION)
                 .recipient(invitation.getMember())
                 .itemId(invitation.getConference().getId())
+                .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

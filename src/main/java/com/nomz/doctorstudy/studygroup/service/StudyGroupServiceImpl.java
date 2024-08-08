@@ -11,6 +11,7 @@ import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.member.service.MemberService;
+import com.nomz.doctorstudy.notification.NotificationService;
 import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import com.nomz.doctorstudy.studygroup.StudyGroupRole;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
@@ -49,6 +50,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final MemberStudyGroupRepository memberStudyGroupRepository;
     private final MemberService memberService;
     private final ImageRepository imageRepository;
+    private final NotificationService notificationService;
 
     @Override
     public StudyGroup createStudyGroup(CreateStudyGroupRequest request, Authentication authentication) {
@@ -150,8 +152,11 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .build();
 
         // Save
-        return memberStudyGroupApplyRepository.save(apply);
+        memberStudyGroupApplyRepository.save(apply);
 
+        notificationService.createNotification(apply);
+
+        return apply;
     }
 
     @Override
