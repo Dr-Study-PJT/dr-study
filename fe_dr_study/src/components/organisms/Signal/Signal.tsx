@@ -1,12 +1,9 @@
-import { Stomp } from '@stomp/stompjs';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import SockJS from 'sockjs-client';
-import { Frame } from 'stompjs';
 import Recorder from './Recorder';
 import { Button } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
-import { ConferenceMember } from '@/interfaces/conference';
 import Image from 'next/image';
+import { Client } from 'stompjs';
 
 interface Message {
     id: number;
@@ -16,15 +13,19 @@ interface Message {
     time: string;
 }
 
-interface Signal {
+interface SignalInterface {
     id?: number;
     time?: number; // 발화 시간 또는 아바타 움직임 시간
     content?: string; // GPT 요약
+    peerId?: string; // 방송 종료 시 peerId
 }
 
 interface SignalProps {
+    isJoined: boolean;
+    existingPeers: Record<string, MediaStream>;
+    setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
     subscriptionList: string[];
-    stompClient: any;
+    stompClient: Client | null;
     memberData?: any;
     conferenceId: number;
     setIsMutedBySystem: Dispatch<SetStateAction<boolean>>;
@@ -39,6 +40,9 @@ interface SignalProps {
 }
 
 const Signal = ({
+    isJoined,
+    existingPeers,
+    setExistingPeers,
     subscriptionList,
     stompClient,
     conferenceId,
@@ -58,31 +62,36 @@ const Signal = ({
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
     const messagesEndRef = useRef(null); // 메시지 목록 끝에 대한 참조
 
-    const [signals, setSignals] = useState<Signal[]>([]); // 수신된 신호 목록을 저장하는 상태
+    const [signals, setSignals] = useState<SignalInterface[]>([]); // 수신된 신호 목록을 저장하는 상태
 
     // 소켓 연결 및 메시지 수신
     let heartbeatInterval: NodeJS.Timeout;
+
     useEffect(() => {
         // 10초마다 생존 신고 전송
-
         // 소켓 연결
-        stompClient?.connect({}, () => {
-            // 메시지를 수신하기 위한 구독 설정
-            subscribeToMessages();
-            subscribeToSignals();
+        const connectSocket = () => {
+            stompClient?.connect({}, () => {
+                if (stompClient?.connected) {
+                    subscribeToMessages();
+                    subscribeToSignals();
 
-            heartbeatInterval = setInterval(() => {
-                sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
-            }, 10000); // 10초
-        });
-
+                    heartbeatInterval = setInterval(() => {
+                        sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
+                    }, 10000); // 10초
+                }
+            });
+        };
+        if (isJoined) {
+            connectSocket();
+        }
         // 컴포넌트 언마운트 시 interval 클리어
         if (!!stompClient && !stompClient.connected) {
             return () => {
                 clearInterval(heartbeatInterval);
             };
         }
-    }, [stompClient]);
+    }, [isJoined]);
 
     // URL 생성 함수
     const generateUrl = (type: string) => `/${CHANNEL}/${type}/${conferenceId}`;
@@ -115,7 +124,7 @@ const Signal = ({
         stompClient?.subscribe(
             generateUrl(`signal/${signalType}`),
             (signal: any) => {
-                const newSignal: Signal = JSON.parse(signal.body); // 수신된 신호 파싱
+                const newSignal: SignalInterface = JSON.parse(signal.body); // 수신된 신호 파싱
                 console.log(
                     `${signalType} signal received => \n newSignal: ${newSignal} \n`,
                 ); // 신호 수신 로그
@@ -126,7 +135,7 @@ const Signal = ({
     };
 
     // Mute 신호 처리
-    const handleMuteSignal = (newSignal: Signal) => {
+    const handleMuteSignal = (newSignal: SignalInterface) => {
         console.log('before handleMuteSignal', newSignal);
         if (newSignal.id === memberData?.id) {
             setIsMutedBySystem(true); // mute 상태로 변경
@@ -137,7 +146,7 @@ const Signal = ({
     };
 
     // Unmute 신호 처리
-    const handleUnmuteSignal = (newSignal: Signal) => {
+    const handleUnmuteSignal = (newSignal: SignalInterface) => {
         if (newSignal.id === memberData?.id) {
             setIsMutedBySystem(false); // unmute 상태로 변경
             console.log(
@@ -147,7 +156,7 @@ const Signal = ({
     };
 
     // 발화 신호 처리
-    const handleParticipantSpeakSignal = (newSignal: Signal) => {
+    const handleParticipantSpeakSignal = (newSignal: SignalInterface) => {
         setFocusingMemberId(newSignal.id as number); // 발화자 id로 포커싱
         setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 타이머
         setIsStartRecordingAudio(true); // 오디오 녹음 시작
@@ -157,7 +166,7 @@ const Signal = ({
     };
 
     // 아바타 발화 신호 처리
-    const handleAvatarSpeakSignal = (newSignal: Signal) => {
+    const handleAvatarSpeakSignal = (newSignal: SignalInterface) => {
         console.log('before setIsAvatarSpeaking', newSignal.time);
         console.log('setTimeOut 시작 전');
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
@@ -177,7 +186,7 @@ const Signal = ({
     };
 
     // GPT 요약 신호 처리
-    const handleGPTSummarySignal = (newSignal: Signal) => {
+    const handleGPTSummarySignal = (newSignal: SignalInterface) => {
         setGPTSummaryBySystem(newSignal.content as string); // 요약 내용 설정
         console.log(
             `handleGPTSummarySignal: 요약 메시지 전달 => \n ${newSignal.content}`,
@@ -190,8 +199,21 @@ const Signal = ({
     };
 
     // 방송 종료 신호 처리
-    const handleHeartstop = () => {
-        console.log(`handleHeartstop: 모든 스트림 연결 종료 (구현중)`);
+    const handleHeartstop = (newSignal: SignalInterface) => {
+        console.log('stop => newSignal:', newSignal);
+        console.log('before existingPeers :', existingPeers);
+
+        console.log(Object.keys(existingPeers));
+        setExistingPeers((existingPeers) => {
+            const newPeers = { ...existingPeers };
+            delete newPeers[newSignal.peerId as string];
+            return newPeers;
+        });
+        console.log(
+            `signal Heartstop => handleHeartstop  => `,
+            newSignal.peerId,
+        );
+        console.log('after existingPeers :', existingPeers);
     };
 
     // 메시지 전송 함수

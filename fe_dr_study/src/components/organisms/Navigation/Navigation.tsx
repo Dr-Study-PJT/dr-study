@@ -2,16 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Logo } from '@/components/atoms/Logo/Logo';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsSigned, TIsSigned } from '@/store/slices/authSlice';
-import {
-    setMemberState,
-    clearMemberState,
-    IMemberInfo,
-} from '@/store/slices/memberSlice';
+import { setMemberState, clearMemberState } from '@/store/slices/memberSlice';
 import { RootState } from '@/store';
 import {
     getSessionStorageItem,
@@ -22,7 +17,6 @@ import Icon from '@/components/atoms/Icon/Icon';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
-import { Member } from '@/app/group/[group_id]/_types';
 import {
     NavigationLinksProps,
     NotificationData,
@@ -144,14 +138,14 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         unoptimized
                                     />
                                 </div>
-                                {dropdownOpen && (
+                                {dropdownOpen ? (
                                     <ProfileDropDown
                                         memberData={memberData}
                                         toggleDropdown={toggleDropdown}
                                         onClickSetLogout={onClickSetLogout}
                                         profileImageBoxRef={profileImageBoxRef}
                                     />
-                                )}
+                                ) : null}
                             </div>
                             <div className="relative text-dr-white rounded-full cursor-pointer">
                                 <div onClick={toggleIsNotificationOpen}>
@@ -279,7 +273,7 @@ const ProfileDropDown = ({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [toggleDropdown]);
+    }, []);
 
     return (
         <div
@@ -310,11 +304,11 @@ const ProfileDropDown = ({
                         <p className="min-w-[10rem]">마이페이지</p>
                     </Link>
                 </li>
-                <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
-                    <button
-                        onClick={onClickSetLogout}
-                        className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100"
-                    >
+                <li
+                    onClick={onClickSetLogout}
+                    className="flex items-center cursor-pointer hover:bg-dr-dark-100"
+                >
+                    <button className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100">
                         <Icon icon="logout" size="sm" />{' '}
                     </button>
                     <p className="min-w-[10rem]">로그아웃</p>

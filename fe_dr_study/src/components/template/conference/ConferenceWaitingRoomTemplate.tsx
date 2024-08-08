@@ -58,11 +58,9 @@ const ConferenceWaitingRoomTemplate = ({
                     </div>
                     <HrLine />
                     <div className="flex gap-dr-10">
-                        <Button size="lg">
-                            <Link href={`/conference/${id}`}>
-                                컨퍼런스 입장하기
-                            </Link>
-                        </Button>
+                        <Link href={`/conference/${id}`}>
+                            <Button size="lg">컨퍼런스 입장하기</Button>
+                        </Link>
                         <Button size="lg" color="gray">
                             <Link href={`/group/${studyGroupId}`}>
                                 스터디 그룹 정보

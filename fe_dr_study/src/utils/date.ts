@@ -99,14 +99,7 @@ const differenceInMinutes = calculateDateDifference(
     'minutes',
 );
 
-console.log(`Difference in hours: ${differenceInHours}`); // Output: Difference in hours: 2.098586388888889
-console.log(`Difference in minutes: ${differenceInMinutes}`); // Output: Difference in minutes: 125.91518333333334
-
 const isoDate = '2024-08-05T01:12:54.082Z';
 const formattedDate = formatDate(isoDate);
-console.log(formattedDate); // Output: "2024-08-05 01:12:54"
-console.log(getDateTimePart(formattedDate, 'date')); // Output: "2024-08-05"
-console.log(getDateTimePart(formattedDate, 'time')); // Output: "01:12"
 
 const differenceInDays = calculateDateDifferenceInDays(startIsoDate);
-console.log(`현재까지 ${differenceInDays}일째 진행 중`); // Output: "현재까지 x일째 진행 중"

@@ -6,6 +6,7 @@ import { Button } from '@/components/atoms';
 import { IConference } from '../[group_id]/dummy';
 import { formatDate, getDateTimePart } from '@/utils/date';
 import { FaUsers } from 'react-icons/fa';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
 
 interface ListConferenceTodayProps {
     conferences: IConference[];
@@ -55,18 +56,23 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
     const router = useRouter();
     const [todayConferences, setTodayConferences] = useState<IConference[]>([]);
 
+    const memberData = getSessionStorageItem('memberData');
+
     useEffect(() => {
-        console.log('conferences:', conferences);
         const filteredConferences = conferences?.filter(
             (conference) => !conference.closeTime,
         );
-        console.log('filteredConferences:', filteredConferences);
 
         setTodayConferences(filteredConferences);
     }, [conferences]);
 
-    const handleConferenceClick = (conferenceId: number) => {
-        router.push(`/conference/${conferenceId}/waiting-room`);
+    const handleConferenceClick = (conference: IConference) => {
+        if (memberData.id == conference.hostId) {
+            router.push(`/conference/${conference.id}/info`);
+            return;
+        }
+
+        router.push(`/conference/${conference.id}/waiting-room`);
     };
 
     const handleJoinConferenceClick = (
@@ -82,7 +88,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
             {todayConferences?.map((conference, index) => (
                 <div
                     key={index}
-                    onClick={() => handleConferenceClick(conference.id)}
+                    onClick={() => handleConferenceClick(conference)}
                     className={`CONFERENCE-CARD h-max min-h-32 p-6 rounded-lg shadow-md cursor-pointer transition-colors duration-200 ${getConferenceCardClass(conference)}`}
                 >
                     <div className="flex flex-col justify-between mb-2">

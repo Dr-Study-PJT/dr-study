@@ -36,6 +36,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         memberCapacity: 0, // 방의 최대 인원 수
     });
 
+    // stompClient 상태
+    const [stompClient, setStompClient] = useState<any>(null);
+
     // 기존 피어 상태
     const [existingPeers, setExistingPeers] = useState<
         Record<string, MediaStream>
@@ -47,6 +50,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const [isPeerCreated, setIsPeerCreate] = useState(false); // 내 피어가 생성되었는지 여부
     const [isMadeLocalStream, setIsMadeLocalStream] = useState(false); // 내 로컬 스트림이 생성되었는지 여부
     const [isFlag, setIsFlag] = useState(0); // 플래그 상태 (사용 용도에 따라 다름)
+
+    // 조인 상태
+    const [isJoined, setIsJoined] = useState<boolean>(false); // 방에 조인되었는지 여부
 
     // 시스템에 의한 상태
     const [isMutedBySystem, setIsMutedBySystem] = useState<boolean>(false); // 시스템에 의해 음소거되었는지 여부
@@ -193,6 +199,14 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             const { data } = response.data;
             data.forEach((remotePeerId: string) => makeCall(remotePeerId));
             console.log('모든 피어에 전화 연결 성공 => ', data);
+
+            const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
+            const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
+
+            setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
+
+            setIsJoined(true);
+            console.log('set isJoined => ');
             setExistingPeerIds([
                 ...existingPeerIds,
                 ...data.data.existingPeerIds,
@@ -227,14 +241,6 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const BACK_HOST = process.env.NEXT_PUBLIC_HOST;
     const ENDPOINT = 'room';
     const sockTargetUrl = `${BACK_HOST}/${ENDPOINT}`;
-    const [stompClient, setStompClient] = useState<any>(null); // Stomp 클라이언트 상태
-
-    useEffect(() => {
-        const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
-        const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
-
-        setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
-    }, []);
 
     return (
         <div className="flex bg-dr-indigo-200 h-[100%] w-full">
@@ -290,6 +296,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
             <div className="absolute w-[25%] max-w-[20rem] h-[80%] right-0 top-[10%]">
                 <Signal
+                    isJoined={isJoined}
+                    existingPeers={existingPeers}
+                    setExistingPeers={setExistingPeers}
                     subscriptionList={subscriptionList.current}
                     stompClient={stompClient}
                     memberData={memberData}

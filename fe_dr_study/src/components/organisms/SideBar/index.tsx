@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import Tooltip from './Tooltip';
-import { fetchConfereneList } from '@/app/group/_components/SectionContents';
+import { fetchConferenceList } from '@/app/group/_components/SectionContents';
 
 // 그룹 인터페이스 정의
 interface Group {
@@ -67,7 +67,7 @@ const SideBar = () => {
             if (!memberId) return;
             console.log(memberData);
 
-            const fetchedConferences = await fetchConfereneList({
+            const fetchedConferences = await fetchConferenceList({
                 memberId,
                 isOpened: true,
                 isClose: false,
