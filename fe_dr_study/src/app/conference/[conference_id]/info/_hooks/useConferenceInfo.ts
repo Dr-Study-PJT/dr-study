@@ -43,8 +43,6 @@ const useConferenceInfo = (conferenceId: number) => {
             const { data } = response;
 
             // 호스트가 아닌 경우 대기실로 이동
-            console.log(data);
-            console.log(memberData.id);
             if (data?.hostId !== memberData.id) {
                 router.push(`/conference/${conferenceId}/waiting-room`);
             }
