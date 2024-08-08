@@ -2,6 +2,7 @@ export interface ValidationErrors {
     title?: string;
     subject?: string;
     memberCapacity?: string;
+    scheduledTime?: string;
 }
 
 export const validateTitle = (title: string): string | undefined => {
@@ -27,12 +28,17 @@ export const validateMemberCapacity = (
     return undefined;
 };
 
+export const validateDueDate = () => {
+    return undefined;
+};
+
 export const validateForm = (data: any): ValidationErrors => {
     const errors: ValidationErrors = {};
 
     errors.title = validateTitle(data.title);
     errors.subject = validateSubject(data.subject);
     errors.memberCapacity = validateMemberCapacity(data.memberCapacity);
+    errors.scheduledTime = validateDueDate();
 
     return errors;
 };

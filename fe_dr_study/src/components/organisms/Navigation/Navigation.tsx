@@ -211,7 +211,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         />
                                     </div>
                                 </Tooltip>
-                                {dropdownOpen && (
+                                {dropdownOpen ? (
                                     <ProfileDropDown
                                         memberData={memberData}
                                         toggleDropdown={toggleDropdown}

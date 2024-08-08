@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GET } from '@/app/api/routeModule';
 import { ConferenceData } from '@/interfaces/conference';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 const useConferenceInfo = () => {
     const conferenceId = useParams().conference_id;

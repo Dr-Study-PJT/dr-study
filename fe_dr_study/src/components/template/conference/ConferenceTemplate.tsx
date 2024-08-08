@@ -13,6 +13,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { useRouter } from 'next/navigation';
 
 interface ConferenceTemplateProps {
     conferenceId: number;
@@ -30,6 +31,13 @@ export interface ClientInterface {
 }
 
 const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
+    const route = useRouter();
+
+    // 로그인 여부 확인
+    useEffect(() => {
+        if (!memberData) route.push('/auth/login');
+    }, []);
+
     // 방 정보 상태
     const [roomInfo, setRoomInfo] = useState<RoomInfoInterface>({
         title: '', // 방 제목
@@ -82,6 +90,11 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
 
     // 구독 목록
     const subscriptionList = useRef<string[]>([]);
+
+    // 소켓 생성 및 Stomp 클라이언트 생성
+    const BACK_HOST = process.env.NEXT_PUBLIC_HOST;
+    const ENDPOINT = 'room';
+    const sockTargetUrl = `${BACK_HOST}/${ENDPOINT}`;
 
     // 1. new Peer 내 피어 생성
     const onClickJoin = (e: React.MouseEvent<HTMLElement>) => {
@@ -230,17 +243,6 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
             console.error('Error fetching room list:', error);
         }
     };
-
-    useEffect(() => {
-        console.log('existingPeers:', existingPeers);
-    }, [existingPeers]);
-
-    console.log('meberData =>', memberData);
-
-    // 소켓 생성 및 Stomp 클라이언트 생성
-    const BACK_HOST = process.env.NEXT_PUBLIC_HOST;
-    const ENDPOINT = 'room';
-    const sockTargetUrl = `${BACK_HOST}/${ENDPOINT}`;
 
     return (
         <div className="flex bg-dr-indigo-200 h-[100%] w-full">

@@ -9,15 +9,13 @@ import { StepProps } from './_types';
 import { POST } from '@/app/api/routeModule';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 
-const pageStyles = `flex justify-center w-full min-h-full bg-gray-800`;
-const containerStyles = `min-w-[50%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4 w-[40rem]`;
-
 export interface CreateConferenceFormData {
     studyGroupId: number;
     imageId: number;
     title: string;
     subject: string;
     memberCapacity: number;
+    scheduledTime: Date;
 }
 
 const initialFormData: CreateConferenceFormData = {
@@ -26,6 +24,7 @@ const initialFormData: CreateConferenceFormData = {
     title: '',
     subject: '',
     memberCapacity: 1,
+    scheduledTime: new Date(new Date().getTime() + 60 * 60 * 1000), // 현재 시간에서 1시간 추가
 };
 
 interface IStep {
@@ -132,8 +131,8 @@ const CreateConferenceProgress = () => {
 
     const StepComponent = steps[currentStep].component;
     return (
-        <div className={pageStyles}>
-            <div className={containerStyles}>
+        <div className="flex justify-center w-full min-h-full bg-gray-800">
+            <div className="w-full h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4 ">
                 <div className="h-max min-h-[60vh] w-full flex flex-col justify-start items-center gap-4">
                     {!isResultPage && (
                         <TitleSection

@@ -66,8 +66,13 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
         setTodayConferences(filteredConferences);
     }, [conferences]);
 
+    console.log(conferences);
+
     const handleConferenceClick = (conference: IConference) => {
-        if (memberData.id == conference.hostId) {
+        const isStartedConference = conference.startTime;
+
+        // 컨퍼런스 시작 전이고, 호스트인 경우 컨퍼런스 정보 페이지로 이동
+        if (!isStartedConference && memberData.id == conference.hostId) {
             router.push(`/conference/${conference.id}/info`);
             return;
         }

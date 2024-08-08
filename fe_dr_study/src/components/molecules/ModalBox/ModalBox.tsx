@@ -42,11 +42,11 @@ const ModalBox = ({}: ModalBoxProps) => {
 
     return (
         <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
             onClick={closeModal}
         >
             <div
-                className="relative bg-gray-800 text-white  rounded-lg  max-w-lg mx-auto shadow-lg min-w[50%]"
+                className="relative bg-gray-800 text-white  rounded-lg  max-w-lg mx-auto shadow-lg w-[50%]"
                 onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 방지
             >
                 <button

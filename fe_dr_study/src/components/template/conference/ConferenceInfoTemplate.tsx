@@ -9,7 +9,8 @@ import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/Select
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
 import { Moderator } from '@/interfaces/moderator';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface ConferenceInfoProps {
     memberData: any; // any 타입 수정 !필요!
@@ -51,10 +52,16 @@ const ConferenceInfoTemplate = ({
                         <div className="flex flex-col gap-3 text-dr-body-1">
                             <p className="text-dr-body-4 text-dr-gray-300">
                                 <span>
-                                    {conferenceData?.startTime?.toLocaleTimeString() ||
+                                    {(conferenceData?.startTime &&
+                                        new Date(
+                                            conferenceData.startTime,
+                                        ).toLocaleTimeString()) ||
                                         currentTime}{' '}
                                     |{' '}
-                                    {conferenceData?.finishTime?.toLocaleTimeString() ||
+                                    {(conferenceData?.finishTime &&
+                                        new Date(
+                                            conferenceData.finishTime,
+                                        ).toLocaleTimeString()) ||
                                         currentTime}{' '}
                                 </span>
                             </p>
