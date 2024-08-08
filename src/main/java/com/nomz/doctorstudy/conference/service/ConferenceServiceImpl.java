@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.conference.service;
 
+import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -45,6 +47,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     private final RoomService roomService;
     private final NotificationService notificationService;
+    private final BlockInterpreter blockInterpreter;
 
     @Override
     @Transactional
@@ -117,7 +120,10 @@ public class ConferenceServiceImpl implements ConferenceService {
         conference.updateModerator(moderator);
         conference.updateOpenTime(LocalDateTime.now());
 
-        roomService.openRoom(conferenceId, moderator.getProcessor().getScript());
+        roomService.openRoom(conferenceId);
+
+        //TODO: 순환참조 풀기
+        blockInterpreter.init(conferenceId, moderator.getProcessor().getScript(), Map.of());
     }
 
     @Override
@@ -152,6 +158,8 @@ public class ConferenceServiceImpl implements ConferenceService {
         }
 
         conference.updateStartTime(LocalDateTime.now());
+
+        blockInterpreter.interpret(conferenceId);
 
         roomService.startRoom(conferenceId);
     }

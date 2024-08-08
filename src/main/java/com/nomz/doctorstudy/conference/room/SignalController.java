@@ -57,8 +57,6 @@ public class SignalController {
     @MessageMapping("/signal/{conferenceId}/heartbeat")
     public void handleHeartBeatSignal(@DestinationVariable("conferenceId") Long conferenceId, HeartBeatSignal signal) {
         log.debug("[member:{}] send heartbeat signal from conference: {}", signal.getId(), conferenceId);
-
-        roomService.updateHeartbeat(conferenceId, signal.getId());
     }
 
     //
