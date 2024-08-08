@@ -32,7 +32,7 @@ public class GetWaiterListResponse {
                 .groupId(memberStudyGroupApply.getStudyGroup().getId())
                 .groupName(memberStudyGroupApply.getStudyGroup().getName())
                 .createdAt(memberStudyGroupApply.getCreatedAt())
-                .message(memberStudyGroupApply.getMessage())
+                .message(memberStudyGroupApply.getApplyMessage())
                 .build();
     }
 }

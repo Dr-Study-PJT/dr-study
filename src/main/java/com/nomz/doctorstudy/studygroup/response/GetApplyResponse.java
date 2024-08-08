@@ -31,7 +31,7 @@ public class GetApplyResponse {
                 .memberId(application.getId())
                 .groupId(application.getStudyGroup().getId())
                 .applicationStatus(application.getApplicationStatus())
-                .message(application.getMessage())
+                .message(application.getApplyMessage())
                 .createdAt(application.getCreatedAt())
                 .build();
     }

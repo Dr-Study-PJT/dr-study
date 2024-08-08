@@ -34,6 +34,9 @@ public class MemberStudyGroupApply {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
-    @Column(name = "message", length = 256)
-    private String message;
+    @Column(name = "apply_message", length = 256)
+    private String applyMessage;
+
+    @Column(name = "reply_message", length = 256)
+    private String replyMessage;
 }
