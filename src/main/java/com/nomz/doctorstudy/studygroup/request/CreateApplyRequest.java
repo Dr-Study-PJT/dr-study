@@ -15,5 +15,5 @@ public class CreateApplyRequest {
     private Long studyGroupId;
 
     @Schema(description = "지원 메시지", example = "열심히 활동하겠습니다. 뽑아주세요!!")
-    private String message;
+    private String applyMessage;
 }

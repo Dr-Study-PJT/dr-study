@@ -70,8 +70,9 @@ public class NotificationController {
 
         for (Notification notification : notifications) {
             if (notification.getItemType() == NotificationItemType.STUDY_GROUP_APPLICATION) {
-                MemberStudyGroupApply application = memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(requester.getId(), notification.getItemId())
+                MemberStudyGroupApply application = memberStudyGroupApplyRepository.findById(notification.getId())
                         .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
+
                 responses.add(NotificationInfo.of(application));
                 // TODO: 지원 상태 체크, 알림 requester는 가입신청인이 아님, 컨퍼런스 초대 아이디 넣는것 고려해보기
             }
