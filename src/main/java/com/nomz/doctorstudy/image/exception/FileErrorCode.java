@@ -19,6 +19,8 @@ public enum FileErrorCode implements ErrorCode{
     DOMAIN_NOT_EXIST(HttpStatus.BAD_REQUEST, "도메인을 입력해주세요"),
     DOMAIN_EXIST(HttpStatus.BAD_REQUEST, "도메인을 빼주세요"),
     NO_VALID_DOMAIN(HttpStatus.BAD_REQUEST, "도메인을 확인해주세요"),
+    CONFERENCE_ID_NOT_EXIST(HttpStatus.BAD_REQUEST, "컨퍼런스 아이디를 입력해주세요"),
+    CONFERENCE_ID_EXIST(HttpStatus.BAD_REQUEST, "컨퍼런스 아이디를 빼주세요"),
     ;
 
     private final HttpStatus httpStatus;
