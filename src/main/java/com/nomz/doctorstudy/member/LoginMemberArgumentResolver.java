@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.member;
 
+import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
@@ -33,11 +34,9 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (!String.valueOf(principal).equals("anonymousUser")) {
-                return principal;
-            }
+        Member member = ((MemberDetails) authentication.getPrincipal()).getUser();
+        if (member != null) {
+            return member;
         }
 
         //

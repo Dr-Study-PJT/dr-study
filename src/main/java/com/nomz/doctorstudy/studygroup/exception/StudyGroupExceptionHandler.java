@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-public class StydyGroupExceptionHandler {
+public class StudyGroupExceptionHandler {
 
     @ExceptionHandler(StudyGroupException.class)
     public ResponseEntity<?> StudyGroupExceptionHandler(StudyGroupException e){
