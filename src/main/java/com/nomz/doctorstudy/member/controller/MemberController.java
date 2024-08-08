@@ -99,8 +99,8 @@ public class MemberController {
         );
     }
 
-    @GetMapping("/{memberEmail}")
-    @Operation(summary = "Member 조회", description = "Member를 조회합니다.")
+    @GetMapping("/email/{memberEmail}")
+    @Operation(summary = "Member 조회", description = "Member email로 Member를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회되었습니다.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "조회에 실패했습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
@@ -124,7 +124,37 @@ public class MemberController {
         Member member = memberService.getUserByEmail(email);
 
         return ResponseEntity.ok(
-                new SuccessResponse<>("조회되었습니다.", member)
+                new SuccessResponse<>("조회되었습니다.", MemberInfo.of(member))
+        );
+    }
+
+    @GetMapping("/{memberId}")
+    @Operation(summary = "Member 조회", description = "Member id로 Member를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회되었습니다.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "조회에 실패했습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 입력입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "다시 로그인해주세요.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 유저입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+    })
+    public ResponseEntity<?> getMemberInfoById(@PathVariable (name = "memberId") Long id){
+
+        log.info("member id = {}", id);
+
+        Member member = memberService.getMemberById(id);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>("조회되었습니다.", MemberInfo.of(member))
         );
     }
 

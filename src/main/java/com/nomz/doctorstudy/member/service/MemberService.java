@@ -68,4 +68,10 @@ public class MemberService {
 		return memberRepository.findByEmail(email)
 				.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_EMAIL_NOT_FOUND_ERROR));
 	}
+
+	public Member getMemberById(Long id){
+
+		return memberRepository.findById(id)
+				.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
+	}
 }
