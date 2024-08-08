@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.image.exception.FileErrorCode;
 import com.nomz.doctorstudy.image.exception.FileException;
 import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.image.request.MediaUploadRequest;
+import com.nomz.doctorstudy.image.request.SaveS3MediaRequest;
 import com.nomz.doctorstudy.image.response.FileResponse;
 import com.nomz.doctorstudy.image.response.ImageResponse;
 import com.nomz.doctorstudy.image.response.MediaResponse;
@@ -80,12 +81,19 @@ public class MediaService {
 
     }
 
-    private String filePath(String type, String domain){
-        if(domain == null || domain.isEmpty()){
+    private String filePath(String type, String type2){
+//        if(domain == null || domain.isEmpty()){
+//            return bucket + "/" + serviceName + "/" + type;
+//        }
+//
+//        return bucket + "/" + serviceName + "/" + type + "/" + domain;
+
+        if(!ImageType.contains(type2)){
             return bucket + "/" + serviceName + "/" + type;
         }
 
-        return bucket + "/" + serviceName + "/" + type + "/" + domain;
+        return bucket + "/" + serviceName + "/" + type + "/" + type2;
+
     }
 
     private FileResponse saveImage(MediaUploadRequest mediaUploadRequest){
@@ -98,9 +106,20 @@ public class MediaService {
             throw new FileException(FileErrorCode.NO_VALID_DOMAIN);
         }
 
+        if(mediaUploadRequest.getConferenceId() != null){
+            throw new FileException(FileErrorCode.CONFERENCE_ID_EXIST);
+        }
+
         try{
             String filePath = filePath("images", mediaUploadRequest.getDomain());
-            String saveS3Url = s3Service.save(mediaUploadRequest.getFile(), filePath);
+            SaveS3MediaRequest saveS3MediaRequest = SaveS3MediaRequest
+                    .builder()
+                    .file(mediaUploadRequest.getFile())
+                    .filePath(filePath)
+                    .conferenceId(mediaUploadRequest.getConferenceId())
+                    .build();
+
+            String saveS3Url = s3Service.save(saveS3MediaRequest, filePath);
 
             Image image = Image.builder()
                     .imageUrl(saveS3Url)
@@ -127,10 +146,21 @@ public class MediaService {
             throw new FileException(FileErrorCode.DOMAIN_EXIST);
         }
 
-        try{
-            String filePath = filePath(type, mediaUploadRequest.getDomain());
+        if(mediaUploadRequest.getConferenceId() == null || mediaUploadRequest.getConferenceId().isEmpty()){
+            throw new FileException(FileErrorCode.CONFERENCE_ID_NOT_EXIST);
+        }
 
-            String url = s3Service.save(mediaUploadRequest.getFile(), filePath);
+        try{
+            String filePath = filePath(type, mediaUploadRequest.getConferenceId());
+
+            SaveS3MediaRequest saveS3MediaRequest = SaveS3MediaRequest
+                    .builder()
+                    .file(mediaUploadRequest.getFile())
+                    .filePath(filePath)
+                    .conferenceId(mediaUploadRequest.getConferenceId())
+                    .build();
+
+            String url = s3Service.save(saveS3MediaRequest, filePath);
 
             return MediaResponse
                     .builder()

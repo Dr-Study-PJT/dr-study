@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.image.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,11 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MediaUploadRequest {
+public class SaveS3MediaRequest {
     private MultipartFile file;
-
-//    @NotBlank(message = "도메인을 선택해주세요")
-    private String domain;
-
+    private String filePath;
     private String conferenceId;
 }
