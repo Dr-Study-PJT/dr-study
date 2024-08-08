@@ -20,7 +20,7 @@ async function getHeaders(isAuth: boolean) {
     const headers = await handleAuthentication(isAuth);
     const devMemberId = await getDevMemberId();
     if (devMemberId) {
-        headers['dev_member_id'] = devMemberId;
+        headers['dev-member-id'] = devMemberId;
     }
     return headers;
 }

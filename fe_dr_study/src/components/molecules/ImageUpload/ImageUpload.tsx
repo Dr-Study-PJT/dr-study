@@ -32,7 +32,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     bodyData,
     setBodyData,
     setImageDisplay,
-    setData, // setData prop 받기
+    setData,
     shape = 'circle',
     type = 'members',
 }) => {
@@ -43,10 +43,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('type', type);
+            formData.append('domain', type);
 
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_HOST}/v1/images`,
+                `${process.env.NEXT_PUBLIC_HOST}/v1/media`,
                 formData,
                 {
                     headers: {
@@ -60,7 +60,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             setImageDisplay && setImageDisplay(imageId);
             setImage(URL.createObjectURL(file));
 
-            // formData에 imageId 추가
             if (setData) {
                 setData((prevData: any) => ({
                     ...prevData,

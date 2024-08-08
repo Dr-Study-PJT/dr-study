@@ -25,19 +25,19 @@ const Tooltip: React.FC<TooltipProps> = ({
         switch (direction) {
             case 'top':
                 top -= tooltipHeight;
-                left += rect.width / 2 - tooltipWidth / 2;
+
                 break;
             case 'right':
                 top += rect.height / 2 - tooltipHeight / 2;
-                left += rect.width;
+                left += rect.width + 1;
                 break;
             case 'bottom':
                 top += rect.height;
-                left += rect.width / 2 - tooltipWidth / 2;
+
                 break;
             case 'left':
                 top += rect.height / 2 - tooltipHeight / 2;
-                left -= tooltipWidth;
+
                 break;
         }
 
@@ -59,7 +59,7 @@ const Tooltip: React.FC<TooltipProps> = ({
             {visible &&
                 createPortal(
                     <div
-                        className={`fixed p-1 bg-dr-gray-500 text-white text-sm rounded shadow-lg z-50 animate-popIn !text-dr-body-5`}
+                        className={`fixed px-2 py-1 min-w-6 bg-dr-gray-500 text-white text-sm rounded shadow-lg z-50 animate-popIn !text-dr-body-5  opacity-80`}
                         style={{ top: coords.top, left: coords.left }}
                     >
                         {text}

@@ -15,6 +15,7 @@ import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { RootState } from '@/store';
 import { GroupWithMembersData, Member } from './_types';
 import { formatDate, getDateTimePart } from '@/utils/date';
+import Tooltip from '@/components/organisms/SideBar/Tooltip';
 
 interface IMemberInfo {
     id: number;
@@ -146,7 +147,7 @@ export default function GroupDetailPage({
                                         groupWithMembers?.members.length + ' /'}
                                     {' ' + groupWithMembers?.memberCapacity}
                                 </div>
-                                <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
+                                <ul className="LIST-MEMBER-IMAGES flex flex-row gap-2">
                                     {membersInThisGroup
                                         ?.slice(0, 3)
                                         .map(
@@ -155,25 +156,58 @@ export default function GroupDetailPage({
                                                 i: number,
                                             ) => (
                                                 <li key={i}>
-                                                    <div className="relative overflow-hidden w-10 h-10 rounded-xl">
+                                                    <div className="relative overflow-hidden w-[2.3rem] h-[2.3rem] rounded-xl cursor-pointer">
                                                         {member.memberInfo
                                                             .imageUrl ? (
-                                                            <Image
-                                                                id={member.memberInfo.id.toString()}
-                                                                alt="avatar"
-                                                                src={
+                                                            <Tooltip
+                                                                text={
                                                                     member
                                                                         .memberInfo
-                                                                        .imageUrl
+                                                                        .nickname
                                                                 }
-                                                                unoptimized
-                                                                fill
-                                                                style={{
-                                                                    objectFit:
-                                                                        'cover',
-                                                                }}
-                                                            />
+                                                                direction="top"
+                                                            >
+                                                                <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
+                                                                    <Image
+                                                                        id={member.memberInfo.id.toString()}
+                                                                        alt="avatar"
+                                                                        src={
+                                                                            member
+                                                                                .memberInfo
+                                                                                .imageUrl
+                                                                        }
+                                                                        unoptimized
+                                                                        fill
+                                                                        style={{
+                                                                            objectFit:
+                                                                                'cover',
+                                                                        }}
+                                                                        layout="fill"
+                                                                        objectFit="cover"
+                                                                    />
+                                                                </div>
+                                                            </Tooltip>
                                                         ) : (
+                                                            // <Tooltip
+                                                            //     text={'string'}
+                                                            // >
+                                                            //     <div className="relative flex-shrink-0 p-[6px] ml-[3px] w-full h-[3rem] flex items-center justify-center">
+                                                            //         <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
+                                                            //             <Image
+                                                            //                 className="rounded-[10rem] hover:rounded-[0.7rem] transition-all duration-300"
+                                                            //                 src={
+                                                            //                     member
+                                                            //                         .memberInfo
+                                                            //                         .imageUrl
+                                                            //                 }
+                                                            //                 alt="Conference Image"
+                                                            //                 layout="fill"
+                                                            //                 objectFit="cover"
+                                                            //             />
+                                                            //         </div>
+                                                            //     </div>
+                                                            //     </Tooltip>
+
                                                             <Image
                                                                 id={member.memberInfo.id.toString()}
                                                                 alt="avatar"
