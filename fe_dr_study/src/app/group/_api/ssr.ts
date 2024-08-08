@@ -1,5 +1,4 @@
 import { GET } from '@/app/api/routeModule';
-import { dummyGroupData, dummyGroupListData } from '../[group_id]/dummy';
 
 export interface SearchParams {
     page?: number;
@@ -66,10 +65,4 @@ export const getGroupListBy = async ({
 
         // return dummyGroupListData as IGroupListResponse;
     }
-};
-
-export const getMyGroupList = async ({}) => {
-    'use server';
-    const response = await GET('');
-    return;
 };

@@ -232,60 +232,6 @@ export default async function HomePage({}: {}) {
                                                 </div>
                                             </div>
                                         </Link>
-                                        // <div
-                                        //     key={index}
-                                        //     className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
-                                        // >
-                                        //     <div className="flex flex-row relative left-[-3rem]">
-                                        //         <div className="relative w-28 h-28 mr-4 rounded-full overflow-hidden">
-                                        //             <Image
-                                        //                 className="pl-[3rem]"
-                                        //                 alt={group.name}
-                                        //                 src={group.imageUrl}
-                                        //                 layout="fill"
-                                        //                 objectFit="cover"
-                                        //             />
-                                        //         </div>
-                                        //         <div className="flex items-center relative h-auto overflow-hidden p-2">
-                                        //             <div className="flex flex-col gap-1 h-full justify-between">
-                                        //                 <div>
-                                        //                     <h3 className="text-dr-header-1 font-semibold text-white">
-                                        //                         {group.name}
-                                        //                     </h3>
-                                        //                     <p className="text-dr-body-4 text-dr-gray-200 ">
-                                        //                         {
-                                        //                             group.description
-                                        //                         }
-                                        //                     </p>
-                                        //                 </div>
-                                        //                 <div className="flex space-x-2">
-                                        //                     {group.tags.map(
-                                        //                         (
-                                        //                             tag,
-                                        //                             tagIndex,
-                                        //                         ) => (
-                                        //                             <span
-                                        //                                 key={
-                                        //                                     tagIndex
-                                        //                                 }
-                                        //                                 className="px-3 py-[3px] bg-dr-gray-500 text-dr-body-4 rounded-full text-dr-coral-100 cursor-pointer hover:font-bold transition-all duration-200"
-                                        //                             >
-                                        //                                 {tag}
-                                        //                             </span>
-                                        //                         ),
-                                        //                     )}
-                                        //                 </div>
-                                        //             </div>
-                                        //         </div>
-                                        //     </div>
-                                        //     <div className="flex items-center space-x-2 text-dr-gray-200 mt-3 mr-5 text-dr-body-4 min-w-12">
-                                        //         <FaUsers />
-                                        //         <span>
-                                        //             {group.memberCount} /{' '}
-                                        //             {group.memberCapacity}
-                                        //         </span>
-                                        //     </div>
-                                        // </div>
                                     ))}
                             </div>
                         </div>
@@ -365,55 +311,6 @@ export default async function HomePage({}: {}) {
                                             </div>
                                         </div>
                                     </Link>
-                                    // <div
-                                    //     key={index}
-                                    //     className="relative flex items-start justify-between gap-4 mb-4 bg-dr-dark-200 rounded-lg h-max"
-                                    // >
-                                    //     <div className="flex flex-row relative left-[-3rem]">
-                                    //         <div className="relative w-28 h-28 mr-4 rounded-full overflow-hidden">
-                                    //             <Image
-                                    //                 className="pl-[3rem]"
-                                    //                 alt={group.name}
-                                    //                 src={group.imageUrl}
-                                    //                 layout="fill"
-                                    //                 objectFit="cover"
-                                    //             />
-                                    //         </div>
-                                    //         <div className="flex items-center relative h-auto overflow-hidden p-2">
-                                    //             <div className="flex flex-col gap-1 h-full justify-between">
-                                    //                 <div>
-                                    //                     <h3 className="text-dr-header-1 font-semibold text-white">
-                                    //                         {group.name}
-                                    //                     </h3>
-                                    //                     <p className="text-dr-body-4 text-dr-gray-200 ">
-                                    //                         {group.description}
-                                    //                     </p>
-                                    //                 </div>
-                                    //                 <div className="flex space-x-2">
-                                    //                     {group.tags.map(
-                                    //                         (tag, tagIndex) => (
-                                    //                             <span
-                                    //                                 key={
-                                    //                                     tagIndex
-                                    //                                 }
-                                    //                                 className="px-3 py-[3px] bg-dr-gray-500 text-dr-body-4 rounded-full text-dr-coral-100 cursor-pointer hover:font-bold transition-all duration-200"
-                                    //                             >
-                                    //                                 {tag}
-                                    //                             </span>
-                                    //                         ),
-                                    //                     )}
-                                    //                 </div>
-                                    //             </div>
-                                    //         </div>
-                                    //     </div>
-                                    //     <div className="flex items-center space-x-2 text-dr-gray-200 mt-3 mr-5 text-dr-body-4 min-w-12">
-                                    //         <FaUsers />
-                                    //         <span>
-                                    //             {group.memberCount} /{' '}
-                                    //             {group.memberCapacity}
-                                    //         </span>
-                                    //     </div>
-                                    // </div>
                                 ))}
                             </div>
                         </div>

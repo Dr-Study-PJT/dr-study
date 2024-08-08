@@ -17,8 +17,8 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     const handleMouseEnter = (event: React.MouseEvent) => {
         const rect = (event.target as HTMLElement).getBoundingClientRect();
-        const tooltipHeight = 40; // Estimated height of the tooltip
-        const tooltipWidth = 100; // Estimated width of the tooltip
+        const tooltipHeight = 40;
+        const tooltipWidth = 100;
         let top = rect.top + window.scrollY;
         let left = rect.left + window.scrollX;
 

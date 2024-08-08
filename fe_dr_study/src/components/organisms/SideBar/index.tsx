@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import Tooltip from './Tooltip';
+import { fetchConfereneList } from '@/app/group/_components/SectionContents';
 
 // 그룹 인터페이스 정의
 interface Group {
@@ -39,31 +40,6 @@ const getMyGroups = async () => {
     return response;
 };
 
-// 컨퍼런스 정보 가져오기
-const fetchConferences = async ({
-    memberId,
-    lowerBoundDate,
-    upperBoundDate,
-}: {
-    memberId: number;
-    lowerBoundDate: string;
-    upperBoundDate: string;
-}) => {
-    try {
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?memberId=${memberId}&lowerBoundDate=${lowerBoundDate}&upperBoundDate=${upperBoundDate}`,
-        );
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        console.log(data);
-        return data.data;
-    } catch (error) {
-        console.error('Error fetching conferences:', error);
-    }
-};
-
 // 사이드바 컴포넌트
 const SideBar = () => {
     const router = useRouter();
@@ -82,7 +58,7 @@ const SideBar = () => {
 
         fetchMyGroups();
 
-        const loadConferences = async () => {
+        const loadMyLiveConferences = async () => {
             if (!memberData.id) {
                 setConferences([]);
                 return;
@@ -90,26 +66,26 @@ const SideBar = () => {
             const memberId = memberData?.id;
             if (!memberId) return;
             console.log(memberData);
-            const now = new Date();
-            const lowerBoundDate = new Date(now.setDate(now.getDate() - 1))
-                .toISOString()
-                .slice(0, 19);
-            const upperBoundDate = new Date().toISOString().slice(0, 19);
-            const fetchedConferences = await fetchConferences({
+
+            const fetchedConferences = await fetchConfereneList({
                 memberId,
-                lowerBoundDate,
-                upperBoundDate,
+                isOpened: true,
+                isClose: false,
             });
-            setConferences(fetchedConferences);
+            console.log('fetchedConferences:', fetchedConferences.data);
+            setConferences(fetchedConferences.data);
         };
 
-        loadConferences();
+        loadMyLiveConferences();
     }, [memberData]);
 
     return (
-        <div className="SIDEBAR-BOX fixed z-10 left-0 pt-20 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-[#282B30]">
+        <div className="SIDEBAR-BOX fixed z-10 left-0 pt-12 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-[#282B30]">
             <div className="flex flex-col gap-3">
                 <div className="LIST-BUTTON-CONFERENCE flex flex-col gap-3">
+                    <div className="text-dr-body-4 text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
+                        실시간
+                    </div>
                     {conferences?.map((conference) => {
                         const isActive =
                             pathname === `/conference/${conference?.id}`;
@@ -158,7 +134,11 @@ const SideBar = () => {
                 {conferences && (
                     <div className="VERTICAL-DIVIDER h-[3px] bg-[#424549] rounded w-[70%] self-center ml-1"></div>
                 )}
+
                 <div className="LIST-BUTTON-GROUP flex flex-col gap-3">
+                    <div className="text-dr-body-4 text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
+                        내 그룹
+                    </div>
                     {groups?.map((group) => {
                         const isActive = pathname === `/group/${group.id}`;
                         return (

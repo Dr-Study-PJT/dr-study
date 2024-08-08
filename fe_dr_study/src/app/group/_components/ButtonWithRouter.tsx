@@ -12,7 +12,7 @@ const ButtonWithRouter = () => {
     const [sessionMemberData, setSessionMemberData] = useState<Member | null>(
         null,
     );
-    const [buttonVisible, setButtonVisible] = useState(true);
+    const [buttonVisible, setButtonVisible] = useState(false);
 
     const router = useRouter();
     const memberData = useSelector((state: RootState) => state.member);
@@ -20,6 +20,7 @@ const ButtonWithRouter = () => {
     useEffect(() => {
         const data = getSessionStorageItem('memberData');
         setSessionMemberData(data);
+        setButtonVisible(true); // Make button visible only after client-side state is set
     }, [memberData]);
 
     const isLoggedIn = Boolean(memberData?.id || sessionMemberData?.id);

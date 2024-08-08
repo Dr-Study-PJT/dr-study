@@ -17,6 +17,9 @@ import { GroupWithMembersData, Member } from './_types';
 import { formatDate, getDateTimePart } from '@/utils/date';
 import Tooltip from '@/components/organisms/SideBar/Tooltip';
 
+import { FaUsers } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+
 interface IMemberInfo {
     id: number;
     email: string;
@@ -75,6 +78,8 @@ export default function GroupDetailPage({
     const myMemberData = membersInThisGroup?.find(
         (member: GroupMember) => member.memberInfo.id === memberData?.id,
     );
+
+    const router = useRouter();
 
     const isLeader = myMemberData?.role === 'CAPTAIN' ?? false;
     const isMember = !!myMemberData;
@@ -136,17 +141,25 @@ export default function GroupDetailPage({
                         </div>
                         <div className="BOTTOM-INFO-GROUP w-full h-max flex flex-row justify-between items-end">
                             <div className="BL-INFO-MEMBER-LIST flex flex-col gap-1">
-                                <Label
-                                    htmlFor=""
-                                    className="font-semibold !text-dr-body-3"
-                                >
-                                    스터디원 목록
-                                </Label>
-                                <div className="text-dr-body-4 text-dr-gray-300">
-                                    {groupWithMembers?.members.length &&
-                                        groupWithMembers?.members.length + ' /'}
-                                    {' ' + groupWithMembers?.memberCapacity}
+                                <div className="flex flex-row gap-2">
+                                    <Label
+                                        htmlFor=""
+                                        className="font-semibold !text-dr-body-3 !text-dr-gray-100"
+                                    >
+                                        스터디원 목록
+                                    </Label>
+                                    <div className="flex flex-row gap-1">
+                                        <FaUsers className="text-dr-gray-400 text-dr-body-3 self-center pb-0" />
+                                        <div className="text-dr-body-4 text-dr-gray-300 flex flex-row gap-1 items-center">
+                                            {groupWithMembers?.members.length &&
+                                                groupWithMembers?.members
+                                                    .length + ' /'}
+                                            {' ' +
+                                                groupWithMembers?.memberCapacity}
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <ul className="LIST-MEMBER-IMAGES flex flex-row gap-2">
                                     {membersInThisGroup
                                         ?.slice(0, 3)
@@ -156,7 +169,14 @@ export default function GroupDetailPage({
                                                 i: number,
                                             ) => (
                                                 <li key={i}>
-                                                    <div className="relative overflow-hidden w-[2.3rem] h-[2.3rem] rounded-xl cursor-pointer">
+                                                    <div
+                                                        className="relative overflow-hidden w-[2.3rem] h-[2.3rem] rounded-xl cursor-pointer"
+                                                        onClick={(e) => {
+                                                            router.push(
+                                                                `/members/${member?.memberInfo?.id}`,
+                                                            );
+                                                        }}
+                                                    >
                                                         {member.memberInfo
                                                             .imageUrl ? (
                                                             <Tooltip
@@ -188,26 +208,6 @@ export default function GroupDetailPage({
                                                                 </div>
                                                             </Tooltip>
                                                         ) : (
-                                                            // <Tooltip
-                                                            //     text={'string'}
-                                                            // >
-                                                            //     <div className="relative flex-shrink-0 p-[6px] ml-[3px] w-full h-[3rem] flex items-center justify-center">
-                                                            //         <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
-                                                            //             <Image
-                                                            //                 className="rounded-[10rem] hover:rounded-[0.7rem] transition-all duration-300"
-                                                            //                 src={
-                                                            //                     member
-                                                            //                         .memberInfo
-                                                            //                         .imageUrl
-                                                            //                 }
-                                                            //                 alt="Conference Image"
-                                                            //                 layout="fill"
-                                                            //                 objectFit="cover"
-                                                            //             />
-                                                            //         </div>
-                                                            //     </div>
-                                                            //     </Tooltip>
-
                                                             <Image
                                                                 id={member.memberInfo.id.toString()}
                                                                 alt="avatar"
@@ -244,8 +244,16 @@ export default function GroupDetailPage({
                                         isLeader ? 'block' : 'hidden'
                                     } flex flex-row justify-between gap-3`}
                                 >
-                                    <Button color="dark">그룹 관리</Button>
-                                    <Button color="dark">팀원 관리</Button>
+                                    <Button
+                                        color="dark"
+                                        onClick={(e) => {
+                                            alert(
+                                                '그룹 기본정보 수정 가능하게',
+                                            );
+                                        }}
+                                    >
+                                        그룹 관리
+                                    </Button>
                                 </div>
                                 <Button
                                     color="gray"

@@ -5,6 +5,9 @@ import { useDispatch } from 'react-redux';
 import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
 import ListConferenceToday from '../ConferenceWithMembers';
 import ArticleListContent from './ArticleListContent';
+import ConferenceHistoryContent from './ConferenceHistoryContent';
+import { ConferenceWithMembersData } from '../../[group_id]/_types';
+import { IConference } from '../../[group_id]/dummy';
 
 interface SectionContentsProps {
     groupId: string;
@@ -12,7 +15,7 @@ interface SectionContentsProps {
     isMember: boolean;
 }
 
-export const fetchTodayConferenceList = async ({
+export const fetchConfereneList = async ({
     memberId,
     studyGroupId,
     isOpened,
@@ -22,16 +25,18 @@ export const fetchTodayConferenceList = async ({
     // lowerBoundDate,
     // upperBoundDate,
 }: {
-    memberId?: string;
+    memberId?: number;
     studyGroupId?: string;
     isOpened?: boolean;
     isClose?: boolean;
     isStart?: boolean;
     isFinish?: boolean;
 }) => {
-    // const url = `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?studyGroupId=${studyGroupId}&lowerBoundDate=${lowerBoundDate}&upperBoundDate=${upperBoundDate}`;
-
     let url = `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?`;
+
+    if (studyGroupId) {
+        url += `memberId=${memberId}&`;
+    }
 
     if (studyGroupId) {
         url += `studyGroupId=${studyGroupId}&`;
@@ -72,20 +77,16 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     isLeader,
     isMember,
 }) => {
-    const [activeTab, setActiveTab] = useState<
-        '게시판' | '채팅방' | '스터디 이력'
-    >('게시판');
+    const [activeTab, setActiveTab] = useState<'게시판' | '스터디 이력'>(
+        '게시판',
+    );
     const [conferencesWithMembers, setConferencesWithMembers] = useState([]);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const today = new Date();
-
-        //스터디 그룹 내,
-
         const fetchConferences = async () => {
             try {
-                const response = await fetchTodayConferenceList({
+                const response = await fetchConfereneList({
                     studyGroupId: groupId,
                 });
                 console.log('컨퍼런스 리스트 조회:', response.data);
@@ -107,10 +108,12 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
         switch (activeTab) {
             case '게시판':
                 return <ArticleListContent groupId={groupId} />;
-            case '채팅방':
-                return <div>채팅방 내용</div>;
             case '스터디 이력':
-                return <div>스터디 이력 내용</div>;
+                return (
+                    <ConferenceHistoryContent
+                        conferences={conferencesWithMembers}
+                    />
+                );
             default:
                 return null;
         }
@@ -153,7 +156,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                             {activeTab}
                         </div>
                         <div className="SWITCH-DESCRIPTION text-dr-body-3 pb-1">
-                            {'@@@수정요망타이틀'} 그룹의 게시글을 확인해보세요.
+                            {'스터디그룹 이름'} 그룹의 게시글을 확인해보세요.
                         </div>
                     </div>
                     <div className="SWITCH-BUTTON-GROUP flex flex-row gap-2">
@@ -168,17 +171,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                         >
                             게시판
                         </Button>
-                        <Button
-                            color="white"
-                            classNameStyles={`${
-                                activeTab === '채팅방'
-                                    ? '!text-dr-black font-bold border border-2 border-transparent'
-                                    : 'bg-transparent font-bold border border-2 border-white hover:bg-white hover:text-black'
-                            }`}
-                            onClick={() => setActiveTab('채팅방')}
-                        >
-                            채팅방
-                        </Button>
+
                         <Button
                             color="white"
                             classNameStyles={`${
