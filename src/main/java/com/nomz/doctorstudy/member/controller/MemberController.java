@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.request.MemberRegisterPostReq;
+import com.nomz.doctorstudy.member.request.UpdateMemberInfoRequest;
 import com.nomz.doctorstudy.member.response.MemberInfo;
 import com.nomz.doctorstudy.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -157,5 +158,36 @@ public class MemberController {
                 new SuccessResponse<>("조회되었습니다.", MemberInfo.of(member))
         );
     }
+
+    @PatchMapping()
+    @Operation(summary = "Member 업데이트", description = "로그인 된 Member의 정보를 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "변경되었습니다.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "변경에 실패했습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 입력입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "다시 로그인해주세요.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 유저입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+    })
+    public ResponseEntity<?> updateMemberInfo(@RequestBody UpdateMemberInfoRequest updateMemberInfoRequest, @Login Member member){
+        log.info("member = {}", member);
+
+        Member updatedMember = memberService.updateMemberInfo(updateMemberInfoRequest, member.getEmail());
+
+        log.info("controller updateMember = {}", updatedMember);
+        return ResponseEntity.ok(
+                new SuccessResponse<>("변경되었습니다.", null)
+        );
+    }
+
 
 }

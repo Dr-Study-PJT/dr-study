@@ -331,4 +331,27 @@ public class AuthController {
         );
     }
 
+    @PostMapping("/check-password")
+    @Operation(summary = "비밀번호 확인", description = "로그인된 회원의 패스워드를 검증해줍니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 일치", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "비밀번호 불일치", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "비밀번호가 일치하지 않습니다.",
+                        "errors": {}
+                    }
+                    """))),
+    })
+    public ResponseEntity<?> checkPassword(@RequestBody VerifyPasswordRequest verifyPasswordRequest, @Login Member member){
+        log.info("request password = {}", verifyPasswordRequest);
+        log.info("login Member = {}", member);
+
+        authService.verifyLoginMemberPassword(verifyPasswordRequest, member);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>("비밀번호가 일치합니다.", null)
+        );
+
+    }
+
 }
