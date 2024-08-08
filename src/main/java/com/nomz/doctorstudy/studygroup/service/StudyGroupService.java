@@ -38,7 +38,7 @@ public interface StudyGroupService {
     List<MemberStudyGroupApply> getApplicants(Member requester);
 
     // ID로 Study group 삭제 (소프트 삭제)
-    StudyGroup deleteStudyGroup(Long groupId);
+    StudyGroup deleteStudyGroup(Long groupId, Member requester);
 
     // 유저가 그룹 ID로 Study group 탈퇴 (소프트 탈퇴)
     MemberStudyGroup leaveStudyGroup(Long groupId, Member requester);
