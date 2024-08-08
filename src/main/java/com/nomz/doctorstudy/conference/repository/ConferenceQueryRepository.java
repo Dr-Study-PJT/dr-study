@@ -33,10 +33,10 @@ public class ConferenceQueryRepository {
                 .where(
                         eqStudyGroupMember(filter.getMemberId()),
                         eqStudyGroup(filter.getStudyGroupId()),
-                        notOpened(filter.getIsOpened()),
-                        notClosed(filter.getIsClosed()),
-                        notStarted(filter.getIsStarted()),
-                        notFinished(filter.getIsFinished())
+                        isOpened(filter.getIsOpened()),
+                        isClosed(filter.getIsClosed()),
+                        isStarted(filter.getIsStarted()),
+                        isFinished(filter.getIsFinished())
                                    )
                 .fetch();
     }
@@ -61,31 +61,31 @@ public class ConferenceQueryRepository {
         return null;
     }
 
-    private BooleanExpression notOpened(Boolean isOpened) {
+    private BooleanExpression isOpened(Boolean isOpened) {
         if (isOpened != null) {
             if (isOpened) {
-                return conference.startTime.isNotNull();
+                return conference.openTime.isNotNull();
             }
             else {
-                return conference.startTime.isNull();
+                return conference.openTime.isNull();
             }
         }
         return null;
     }
 
-    private BooleanExpression notClosed(Boolean isClosed) {
+    private BooleanExpression isClosed(Boolean isClosed) {
         if (isClosed != null) {
             if (isClosed) {
-                return conference.finishTime.isNotNull();
+                return conference.closeTime.isNotNull();
             }
             else {
-                return conference.finishTime.isNull();
+                return conference.closeTime.isNull();
             }
         }
         return null;
     }
 
-    private BooleanExpression notStarted(Boolean isStarted) {
+    private BooleanExpression isStarted(Boolean isStarted) {
         if (isStarted != null) {
             if (isStarted) {
                 return conference.startTime.isNotNull();
@@ -97,7 +97,7 @@ public class ConferenceQueryRepository {
         return null;
     }
 
-    private BooleanExpression notFinished(Boolean isFinished) {
+    private BooleanExpression isFinished(Boolean isFinished) {
         if (isFinished != null) {
             if (isFinished) {
                 return conference.finishTime.isNotNull();
