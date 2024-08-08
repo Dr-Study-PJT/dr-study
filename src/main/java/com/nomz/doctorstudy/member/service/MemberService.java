@@ -10,16 +10,20 @@ import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.exception.member.MemberException;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.member.request.MemberRegisterPostReq;
-import jakarta.transaction.Transactional;
+import com.nomz.doctorstudy.member.request.UpdateMemberInfoRequest;
+import com.nomz.doctorstudy.member.request.UpdatedMemberInfoRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *	유저 관련 비즈니스 로직 처리를 위한 서비스 구현 정의.
  */
 @Service("memberService")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -74,4 +78,31 @@ public class MemberService {
 		return memberRepository.findById(id)
 				.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
 	}
+
+	@Transactional
+	public Member updateMemberInfo(UpdateMemberInfoRequest updateMemberInfoRequest, String email){
+		Member member = memberRepository.findByEmail(email)
+				.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
+
+		String encoderPassword = updateMemberInfoRequest.getPassword() == null ?
+				member.getPassword() : passwordEncoder.encode(updateMemberInfoRequest.getPassword());
+
+		Image image = imageRepository.findById(updateMemberInfoRequest.getImageId())
+				.orElseThrow(() -> new FileException(FileErrorCode.IMAGE_NOT_FOUND));
+
+		UpdatedMemberInfoRequest updatedMemberInfoRequest = UpdatedMemberInfoRequest
+				.builder()
+				.image(image)
+				.nickname(updateMemberInfoRequest.getNickname())
+				.password(encoderPassword)
+				.build();
+
+		log.info("before member = {}", member);
+		member.updateMemberInfo(updatedMemberInfoRequest);
+		log.info("after member = {}", member);
+
+		return member;
+	}
+
+
 }
