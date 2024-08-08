@@ -4,7 +4,6 @@ import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.request.*;
 import com.nomz.doctorstudy.member.entity.Member;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface ConferenceService {
@@ -26,7 +25,7 @@ public interface ConferenceService {
 
     List<String> joinConference(Member requester, Long conferenceId, JoinConferenceRequest request);
 
-    void quitConference(Member requester, Long conferenceId, QuitConferenceRequest request);
+    void quitConference(Member requester, Long conferenceId);
 
     void inviteMemberConference(Member requester, Long conferenceId, InviteMemberConferenceRequest request);
 

@@ -59,6 +59,7 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .title(request.getTitle())
                 .subject(request.getSubject())
                 .memberCapacity(request.getMemberCapacity())
+                .scheduledTime(request.getScheduledTime())
                 .build();
         conferenceRepository.save(conference);
 
@@ -183,13 +184,6 @@ public class ConferenceServiceImpl implements ConferenceService {
                 !conference.getInvitees().stream().map(ConferenceMemberInvite::getMember)
                         .map(Member::getId).toList().contains(requester.getId()))
         {
-            log.debug("join requester id = {}", requester.getId());
-            StringBuilder sb = new StringBuilder();
-            sb.append("---------- INVITEE LIST ----------\n");
-            for (Long s : conference.getInvitees().stream().map(ConferenceMemberInvite::getMember).map(Member::getId).toList()) {
-                sb.append(s).append('\n');
-            }
-            log.debug(sb.toString());
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_INVITED);
         }
 
@@ -202,8 +196,8 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     @Transactional
-    public void quitConference(Member requester, Long conferenceId, QuitConferenceRequest request) {
-        roomService.quitRoom(requester, conferenceId, request.getPeerId());
+    public void quitConference(Member requester, Long conferenceId) {
+        roomService.quitRoom(requester, conferenceId);
     }
 
     @Override

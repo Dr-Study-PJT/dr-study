@@ -1,12 +1,14 @@
 package com.nomz.doctorstudy.conference.room.signal;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@AllArgsConstructor
 public class HeartStopSignal implements Signal {
-    private final Long id;
+    private String peerId;
 
     @Override
     public SignalType getSignalType() {
