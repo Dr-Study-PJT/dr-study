@@ -83,7 +83,7 @@ const SideBar = () => {
         <div className="SIDEBAR-BOX fixed z-10 left-0 pt-12 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-dr-indigo-300 border-r-[1px] border-dr-indigo-100">
             <div className="flex flex-col gap-3">
                 <div className="LIST-BUTTON-CONFERENCE flex flex-col gap-3">
-                    <div className="text-dr-body-4 text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
+                    <div className="text-dr-body-4 cursor-default text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
                         실시간
                     </div>
                     {conferences?.map((conference) => {
@@ -136,7 +136,7 @@ const SideBar = () => {
                 )}
 
                 <div className="LIST-BUTTON-GROUP flex flex-col gap-3">
-                    <div className="text-dr-body-4 text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
+                    <div className="text-dr-body-4 cursor-default text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
                         내 그룹
                     </div>
                     {groups?.map((group) => {

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { Logo } from '@/components/atoms/Logo/Logo';
 import Link from 'next/link';
 import { Button } from '@/components/atoms';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +13,7 @@ import {
     getSessionStorageItem,
     removeMemberData,
 } from '@/utils/sessionStorage';
-import { GET } from '@/app/api/routeModule';
+import { GET, POST } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Image from 'next/image';
@@ -23,6 +24,75 @@ import {
     ProfileDropDownProps,
 } from './Navigation.types';
 import Tooltip from '../SideBar/Tooltip';
+import { groupAPI, notificationAPI } from '@/app/api/axiosInstanceManager';
+
+// 알림 읽음 상태로 변경하는 함수
+const handleReadNotification = async (
+    notificationId: number,
+    fetchNotifications: () => void,
+) => {
+    try {
+        const response = await POST({
+            API: notificationAPI,
+            endPoint: `${notificationId}/read`,
+        });
+
+        if (response.status === 200) {
+            console.log('Notification 읽음 처리 성공:', response.data);
+            fetchNotifications(); // 알림 갱신
+        }
+    } catch (error) {
+        console.error('Notification 읽음 처리 실패:', error);
+    }
+};
+
+// 스터디 그룹 신청을 승인하는 함수
+const handleApproveApplication = async (
+    applicationId: number,
+    fetchNotifications: () => void,
+) => {
+    try {
+        const response = await POST({
+            API: groupAPI,
+            endPoint: `applications/${applicationId}/reply`,
+            body: {
+                applicationStatus: 'APPROVED',
+                replyMessage: '승인이 완료되었습니다.',
+            },
+        });
+
+        if (response.status === 200) {
+            console.log('Application 승인 처리 성공:', response.data);
+            fetchNotifications(); // 알림 갱신
+        }
+    } catch (error) {
+        console.error('Application 승인 처리 실패:', error);
+    }
+};
+
+// 스터디 그룹 신청을 거절하는 함수
+const handleRejectApplication = async (
+    applicationId: number,
+    fetchNotifications: () => void,
+) => {
+    try {
+        const response = await POST({
+            API: groupAPI,
+            endPoint: `applications/${applicationId}/reply`,
+            body: {
+                applicationStatus: 'DENIED',
+                replyMessage: '죄송합니다. 가입이 거절되었습니다.',
+            },
+        });
+
+        if (response.status === 200) {
+            console.log('Application 거절 처리 성공:', response.data);
+            fetchNotifications(); // 알림 갱신
+        }
+    } catch (error) {
+        console.error('Application 거절 처리 실패:', error);
+    }
+};
 
 const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const pathname = usePathname();
@@ -40,20 +110,20 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
     const queryClient = useQueryClient();
 
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                const response = await GET('v1/notifications', {
-                    isAuth: true,
-                    revalidateTime: 0,
-                });
-                console.log('GET 알림 데이터 : ', response.data.data);
-                setNotifications(response.data.notificaitonItem || []);
-            } catch (error) {
-                console.error('Failed to fetch notifications:', error);
-            }
-        };
+    const fetchNotifications = async () => {
+        try {
+            const response = await GET('v1/notifications', {
+                isAuth: true,
+                revalidateTime: 0,
+            });
+            console.log('GET 알림 데이터 : ', response.data);
+            setNotifications(response.data);
+        } catch (error) {
+            console.error('Failed to fetch notifications:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchNotifications();
         const intervalId = setInterval(fetchNotifications, 30000); // 30초마다 알림 데이터 가져오기
 
@@ -80,10 +150,6 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
         setIsNotificationOpen(false);
-
-        if (dropdownOpen) {
-            setDropdownOpen(false);
-        }
     };
 
     const toggleIsNotificationOpen = () => {
@@ -127,18 +193,6 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                     <div>
                         <div className="flex items-center content-center gap-[0.5rem]">
                             <div className="relative flex items-center">
-                                {/* <div
-                                    ref={profileImageBoxRef}
-                                    className="relative overflow-hidden w-[1.8rem] h-[1.8rem] rounded-full cursor-pointer"
-                                >
-                                    <Image
-                                        alt="avatar"
-                                        src={memberData?.imageUrl}
-                                        fill
-                                        onClick={toggleDropdown}
-                                        unoptimized
-                                    />
-                                </div> */}
                                 <Tooltip
                                     text={memberData?.nickname as string}
                                     direction="bottom"
@@ -149,7 +203,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                     >
                                         <Image
                                             onClick={toggleDropdown}
-                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-gray-100 transition-all duration-300"
+                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300"
                                             src={memberData?.imageUrl}
                                             alt="Group Image"
                                             layout="fill"
@@ -164,58 +218,221 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                         onClickSetLogout={onClickSetLogout}
                                         profileImageBoxRef={profileImageBoxRef}
                                     />
-                                ) : null}
+                                )}
                             </div>
-                            <div className="relative text-dr-white rounded-full cursor-pointer">
-                                <Tooltip text={'알림'} direction="top">
-                                    <div onClick={toggleIsNotificationOpen}>
+                            <div
+                                className={`relative text-dr-white rounded-full cursor-pointer`}
+                            >
+                                <div onClick={toggleIsNotificationOpen}>
+                                    <Tooltip text={'알림'} direction="bottom">
                                         <Icon
                                             icon="bell"
                                             size="sm"
                                             hover="gray"
                                             text="gray"
                                         />
-                                        {notifications.length > 0 && (
-                                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gray-300 text-black text-xs rounded-full flex items-center justify-center">
-                                                {notifications.length}
-                                            </div>
-                                        )}
-                                    </div>
-                                </Tooltip>
+                                        <div
+                                            className={`absolute top-1 right-0 w-3 h-3 ${
+                                                notifications?.length > 0
+                                                    ? 'bg-dr-red text-white'
+                                                    : 'bg-gray-300 text-black'
+                                            } border-transparent border-2 text-dr-body-5 rounded-full flex items-center justify-center`}
+                                        >
+                                            {notifications?.length}
+                                        </div>
+                                    </Tooltip>
+                                </div>
                             </div>
 
                             <div className="relative w-7 h-7">
                                 {isNotificationOpen && (
-                                    <div className="absolute right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 ">
-                                        <ul className="flex flex-col text-dr-body-3 ">
-                                            {notifications.map(
-                                                (notification, index) => (
-                                                    <li
-                                                        key={index}
-                                                        className="flex pr-[0.5rem] items-center cursor-pointer hover:bg-dr-dark-100"
-                                                    >
-                                                        <Link
-                                                            href={`/members/${memberData.id}`}
-                                                            className="block text-white  hover:bg-dr-dark-100"
+                                    <div className="absolute w-[15rem] right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200">
+                                        {notifications?.length > 0 ? (
+                                            <ul className="flex flex-col text-dr-body-3 w-full">
+                                                {notifications.map(
+                                                    (notification, index) => (
+                                                        <li
+                                                            key={index}
+                                                            className="flex w-full p-2 items-center cursor-pointer hover:bg-dr-dark-100 transition-colors duration-300"
                                                         >
-                                                            <Icon
-                                                                icon="bell"
-                                                                size="sm"
-                                                            />{' '}
-                                                            <p className="min-w-[10rem]">
-                                                                {
-                                                                    notification.notificationItemType
-                                                                }{' '}
-                                                                알림
-                                                            </p>
-                                                            <Button color="gray">
-                                                                입장하기
-                                                            </Button>
-                                                        </Link>
-                                                    </li>
-                                                ),
-                                            )}
-                                        </ul>
+                                                            <div className="text-white w-full h-max flex flex-row gap-2">
+                                                                <div className="relative w-[2rem] h-[2rem] animate-popIn">
+                                                                    <Image
+                                                                        className="rounded-[10rem] transition-all duration-300"
+                                                                        src={
+                                                                            notification?.imageUrl
+                                                                        }
+                                                                        alt="notification image"
+                                                                        layout="fill"
+                                                                        objectFit="cover"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    {notification?.itemType ===
+                                                                        'StudyGroupApplication' && (
+                                                                        <div className="NOTIFICATION-LEFT ">
+                                                                            <div className="text-dr-body-4">
+                                                                                <p className="text-dr-body-4 text-dr-gray-100">
+                                                                                    {`${notification?.itemInfo?.applicant?.nickname} `}
+                                                                                    <span className="text-dr-gray-300">
+                                                                                        님이
+                                                                                    </span>
+                                                                                </p>
+                                                                                <p className="text-dr-gray-300">
+                                                                                    <span className="text-dr-gray-100">{`${notification?.itemInfo?.groupName} 그룹 `}</span>
+                                                                                    가입
+                                                                                    신청
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                    {notification?.itemType ===
+                                                                        'ConferenceInvitation' && (
+                                                                        <div className="text-dr-body-4">
+                                                                            <p className="text-dr-gray-100">{`${notification?.itemInfo?.title}  `}</p>
+                                                                            <p className="text-dr-gray-300">
+                                                                                컨퍼런스에
+                                                                                초대됨
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+                                                                    {notification?.itemType ===
+                                                                        'StudyGroupApplicationReply' && (
+                                                                        <div className="text-dr-body-4">
+                                                                            <p className="text-dr-gray-100">
+                                                                                {notification
+                                                                                    ?.itemInfo
+                                                                                    ?.isApproved
+                                                                                    ? '승인되었습니다.'
+                                                                                    : '거절되었습니다.'}
+                                                                            </p>
+                                                                            <p className="text-dr-gray-300">
+                                                                                {
+                                                                                    notification
+                                                                                        ?.itemInfo
+                                                                                        ?.replyMessage
+                                                                                }
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex flex-row justify-end items-end pb-1 gap-1 h-auto">
+                                                                    {notification?.itemType ===
+                                                                        'StudyGroupApplication' && (
+                                                                        <>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                classNameStyles="py-[0.3rem]"
+                                                                                onClick={(
+                                                                                    e,
+                                                                                ) => {
+                                                                                    e.preventDefault();
+                                                                                    e.stopPropagation();
+                                                                                    handleApproveApplication(
+                                                                                        notification
+                                                                                            .itemInfo
+                                                                                            .applicationId,
+                                                                                        fetchNotifications,
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                승락
+                                                                            </Button>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                color="gray"
+                                                                                classNameStyles="py-[0.3rem]"
+                                                                                onClick={(
+                                                                                    e,
+                                                                                ) => {
+                                                                                    e.preventDefault();
+                                                                                    e.stopPropagation();
+                                                                                    handleRejectApplication(
+                                                                                        notification
+                                                                                            .itemInfo
+                                                                                            .applicationId,
+                                                                                        fetchNotifications,
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                거절
+                                                                            </Button>
+                                                                        </>
+                                                                    )}
+                                                                    {notification?.itemType ===
+                                                                        'ConferenceInvitation' && (
+                                                                        <>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                classNameStyles="py-[0.3rem]"
+                                                                                onClick={(
+                                                                                    e,
+                                                                                ) => {
+                                                                                    e.preventDefault();
+                                                                                    e.stopPropagation();
+                                                                                    handleReadNotification(
+                                                                                        notification?.id,
+                                                                                        fetchNotifications,
+                                                                                    );
+                                                                                    // 컨퍼런스 대기방 이동
+                                                                                    router.push(
+                                                                                        `/conferences/${notification?.itemInfo?.conferenceId}/waiting-room`,
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                승락
+                                                                            </Button>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                color="gray"
+                                                                                classNameStyles="py-[0.3rem]"
+                                                                                onClick={(
+                                                                                    e,
+                                                                                ) => {
+                                                                                    e.preventDefault();
+                                                                                    e.stopPropagation();
+                                                                                    handleReadNotification(
+                                                                                        notification?.id,
+                                                                                        fetchNotifications,
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                거절
+                                                                            </Button>
+                                                                        </>
+                                                                    )}
+                                                                    {notification?.itemType ===
+                                                                        'StudyGroupApplicationReply' && (
+                                                                        <>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                classNameStyles="py-[0.3rem]"
+                                                                                onClick={(
+                                                                                    e,
+                                                                                ) => {
+                                                                                    e.preventDefault();
+                                                                                    e.stopPropagation();
+                                                                                    handleReadNotification(
+                                                                                        notification?.id,
+                                                                                        fetchNotifications,
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                확인
+                                                                            </Button>
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        ) : (
+                                            <div className="p-4 text-center text-dr-body-4 text-dr-gray-300">
+                                                도착한 알림이 없습니다
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -294,15 +511,15 @@ const ProfileDropDown = ({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [toggleDropdown]);
 
     return (
         <div
             ref={dropdownRef}
-            className="absolute  overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
+            className="absolute overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
         >
             <div className="flex p-[1rem] gap-dr-10 border-b border-dr-gray-500">
-                <div className="relative  w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">
+                <div className="relative w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">
                     <Image
                         alt="avatar"
                         src={memberData?.imageUrl}
