@@ -144,7 +144,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         MemberStudyGroupApply apply = MemberStudyGroupApply.builder()
                 .member(member)
                 .studyGroup(studyGroup)
-                .message(createApplyRequest.getMessage())
+                .applyMessage(createApplyRequest.getApplyMessage())
                 .applicationStatus(ApplicationStatus.WAITING)
                 .createdAt(LocalDateTime.now())
                 .build();
