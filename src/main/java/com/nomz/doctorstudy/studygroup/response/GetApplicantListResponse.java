@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class GetWaiterListResponse {
+public class GetApplicantListResponse {
     @Schema(description = "신청 대기자")
     private final MemberInfo applicant;
 
@@ -24,15 +24,15 @@ public class GetWaiterListResponse {
     private LocalDateTime createdAt;
 
     @Schema(description = "그룹 가입 메시지", example = "가입 신청합니다.")
-    private String message;
+    private String applyMessage;
 
-    public static GetWaiterListResponse of(MemberStudyGroupApply memberStudyGroupApply) {
+    public static GetApplicantListResponse of(MemberStudyGroupApply memberStudyGroupApply) {
         return builder()
                 .applicant(MemberInfo.of(memberStudyGroupApply.getMember()))
                 .groupId(memberStudyGroupApply.getStudyGroup().getId())
                 .groupName(memberStudyGroupApply.getStudyGroup().getName())
                 .createdAt(memberStudyGroupApply.getCreatedAt())
-                .message(memberStudyGroupApply.getApplyMessage())
+                .applyMessage(memberStudyGroupApply.getApplyMessage())
                 .build();
     }
 }

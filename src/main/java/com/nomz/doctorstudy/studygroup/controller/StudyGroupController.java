@@ -176,7 +176,7 @@ public class StudyGroupController {
         );
     }
 
-    @PostMapping("/admission/apply")
+    @PostMapping("/apply")
     @Operation(summary = "Study Group 지원")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 리스트 지원 성공", useReturnTypeSchema = true),
@@ -289,13 +289,13 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetWaiterListResponse>>> getApplicants(
+    public ResponseEntity<SuccessResponse<List<GetApplicantListResponse>>> getApplicants(
             @Parameter(hidden = true) @Login Member requester
     ) {
         List<MemberStudyGroupApply> waiterList = studyGroupService.getApplicants(requester);
 
-        List<GetWaiterListResponse> responseList = waiterList.stream()
-                .map(GetWaiterListResponse::of)
+        List<GetApplicantListResponse> responseList = waiterList.stream()
+                .map(GetApplicantListResponse::of)
                 .toList();
 
         return ResponseEntity.ok(

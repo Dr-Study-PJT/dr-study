@@ -49,7 +49,7 @@ public class RoomService {
 
     public void closeRoom(Long roomId) {
         if (!joinLockMap.containsKey(roomId)) {
-            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_IN_PROCESS);
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         joinLockMap.remove(roomId);
         conferencePeerMap.remove(roomId);
@@ -76,7 +76,7 @@ public class RoomService {
     private List<String> addPeer(Long roomId, String peerId) {
         ReentrantLock lock = joinLockMap.get(roomId);
         if (lock == null) {
-            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_IN_PROCESS);
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         lock.lock();
         Set<String> peerSet = conferencePeerMap.get(roomId);
@@ -88,7 +88,7 @@ public class RoomService {
     private void removePeer(Long roomId, String peerId) {
         ReentrantLock lock = joinLockMap.get(roomId);
         if (lock == null) {
-            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_IN_PROCESS);
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         lock.lock();
         Set<String> peerSet = conferencePeerMap.get(roomId);
