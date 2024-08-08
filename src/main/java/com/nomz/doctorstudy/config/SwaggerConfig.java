@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.config;
 
+import com.nomz.doctorstudy.member.LoginToken;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -24,18 +25,18 @@ public class SwaggerConfig {
         SecurityScheme devMemberIdScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.APIKEY)
                 .in(SecurityScheme.In.HEADER)
-                .name("dev_member_id")
+                .name(LoginToken.DEV_LOGIN_TOKEN)
                 .scheme("bearer"); // API Key 스키마로 설정
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("dev_member_id");
+                .addList(LoginToken.DEV_LOGIN_TOKEN);
 
         Server server = new Server()
                 .url(servletContext.getContextPath());
 
         return new OpenAPI()
                 .info(info)
-                .components(new Components().addSecuritySchemes("dev_member_id", devMemberIdScheme))
+                .components(new Components().addSecuritySchemes(LoginToken.DEV_LOGIN_TOKEN, devMemberIdScheme))
                 .security(List.of(securityRequirement))
                 .servers(List.of(server));
     }
