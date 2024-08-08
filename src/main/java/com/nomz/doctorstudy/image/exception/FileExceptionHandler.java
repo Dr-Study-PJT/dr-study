@@ -19,8 +19,7 @@ import java.util.Map;
 public class FileExceptionHandler {
     @ExceptionHandler(FileException.class)
     public ResponseEntity<?> fileException1(FileException e){
-        log.info("File error");
-        log.info("fileException = {}", e);
+        log.error("FileException occurred", e);
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
@@ -28,7 +27,7 @@ public class FileExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<?> fileException2(MaxUploadSizeExceededException e){
-        log.info("파일크기가 너무 커요");
+        log.error("MaxUploadSizeExceededException occurred", e);
 
         Map<String, String> map = new HashMap<>();
         map.put("message", "파일 크기가 너무 큽니다.");

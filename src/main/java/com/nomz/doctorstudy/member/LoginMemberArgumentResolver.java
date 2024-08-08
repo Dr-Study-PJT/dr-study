@@ -44,16 +44,16 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         // bypass code for test in development environment
         //
         log.debug("Controller that requires authentication received request. But request doesn't have token header");
-        log.debug("Trying to find bypass header -> 'dev_member_id'");
+        log.debug("Trying to find bypass header -> '" + LoginToken.DEV_LOGIN_TOKEN + "'");
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String devMemberIdStr = request.getHeader("dev_member_id");
+        String devMemberIdStr = request.getHeader(LoginToken.DEV_LOGIN_TOKEN);
         if (devMemberIdStr == null) {
             throw new AuthException(AuthErrorCode.AUTH_INVALID_DEV_MEMBER_ID);
         }
         Long devMemberId = Long.parseLong(devMemberIdStr);
 
-        log.debug("Acquired memberId={} from 'dev_member_id' header", devMemberId);
+        log.debug("Acquired memberId={} from '" + LoginToken.DEV_LOGIN_TOKEN + "' header", devMemberId);
 
         return memberRepository.findById(devMemberId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_INVALID_ID_PASSWORD));

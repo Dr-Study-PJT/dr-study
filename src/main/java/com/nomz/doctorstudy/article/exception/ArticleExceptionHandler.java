@@ -17,7 +17,7 @@ public class ArticleExceptionHandler {
 
     @ExceptionHandler(ArticleException.class)
     public ResponseEntity<?> ArticleExceptionHandler(ArticleException e){
-        log.info("study group error");
+        log.error("ArticleException occurred", e);
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );

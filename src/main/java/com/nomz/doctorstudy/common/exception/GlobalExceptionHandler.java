@@ -19,7 +19,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<?> handleCustomException(BusinessException ex) {
-        log.error("Uncaught Exception: ", ex);
+        log.error("BusinessException occurred", ex);
 
         return new ResponseEntity<>(
                 new ErrorResponse<>(
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.error("Uncaught Exception: ", ex);
+        log.error("MethodArgumentNotValidException occurred", ex);
 
         Map<String, Object> errors = new LinkedHashMap<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
@@ -48,7 +48,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<?> handleException(Exception ex) {
-        log.error("Uncaught Exception: ", ex);
+        log.error("Exception occurred", ex);
+
         return ResponseEntity.internalServerError()
                 .body(new ErrorResponse<>(
                         "죄송합니다. 서버 내부에 오류가 발생했습니다.",
