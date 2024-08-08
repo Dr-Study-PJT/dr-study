@@ -56,9 +56,12 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
     const [todayConferences, setTodayConferences] = useState<IConference[]>([]);
 
     useEffect(() => {
-        const filteredConferences = conferences.filter(
+        console.log('conferences:', conferences);
+        const filteredConferences = conferences?.filter(
             (conference) => !conference.closeTime,
         );
+        console.log('filteredConferences:', filteredConferences);
+
         setTodayConferences(filteredConferences);
     }, [conferences]);
 

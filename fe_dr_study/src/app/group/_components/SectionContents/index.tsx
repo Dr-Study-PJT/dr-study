@@ -8,6 +8,7 @@ import ArticleListContent from './ArticleListContent';
 import ConferenceHistoryContent from './ConferenceHistoryContent';
 import { ConferenceWithMembersData } from '../../[group_id]/_types';
 import { IConference } from '../../[group_id]/dummy';
+import { GET } from '@/app/api/routeModule';
 
 interface SectionContentsProps {
     groupId: string;
@@ -15,7 +16,7 @@ interface SectionContentsProps {
     isMember: boolean;
 }
 
-export const fetchConfereneList = async ({
+export const fetchConferenceList = async ({
     memberId,
     studyGroupId,
     isOpened,
@@ -32,12 +33,11 @@ export const fetchConfereneList = async ({
     isStart?: boolean;
     isFinish?: boolean;
 }) => {
-    let url = `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?`;
+    let url = `v1/conferences?`;
 
-    if (studyGroupId) {
+    if (memberId) {
         url += `memberId=${memberId}&`;
     }
-
     if (studyGroupId) {
         url += `studyGroupId=${studyGroupId}&`;
     }
@@ -55,17 +55,11 @@ export const fetchConfereneList = async ({
     }
 
     try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        const response = await GET(url, {
+            isAuth: true,
+            revalidateTime: 0,
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch conferences');
-        }
-        return await response.json();
+        return await response.data;
     } catch (error) {
         console.error('Error fetching conferences:', error);
         throw error;
@@ -86,11 +80,11 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     useEffect(() => {
         const fetchConferences = async () => {
             try {
-                const response = await fetchConfereneList({
+                const response = await fetchConferenceList({
                     studyGroupId: groupId,
                 });
-                console.log('컨퍼런스 리스트 조회:', response.data);
-                setConferencesWithMembers(response.data);
+                console.log('컨퍼런스 리스트 조회!!!:', response);
+                setConferencesWithMembers(response);
             } catch (error) {
                 console.error('Failed to fetch conferences:', error);
             }

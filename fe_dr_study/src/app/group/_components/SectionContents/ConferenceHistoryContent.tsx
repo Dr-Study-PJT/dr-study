@@ -27,9 +27,12 @@ const ConferenceHistoryContent: React.FC<ConferenceHistoryContentProps> = ({
     const router = useRouter();
 
     useEffect(() => {
-        const filteredConferences = conferences.filter(
+        console.log('conferences:', conferences);
+        const filteredConferences = conferences?.filter(
             (conference) => !conference.closeTime,
         );
+
+        console.log('filteredConferences:', filteredConferences);
         setClosedConferences(filteredConferences);
     }, [conferences]);
 
