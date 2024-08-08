@@ -79,7 +79,9 @@ public class MemberController {
                     }
                     """))),
     })
-    public ResponseEntity<?> getLoginMemberInfo(/*Authentication authentication*/@Parameter(hidden = true)  @Login Member member) {
+    public ResponseEntity<?> getLoginMemberInfo(
+            /*Authentication authentication*/@Parameter(hidden = true)  @Login Member member
+    ) {
 /*
         if(authentication == null){
             throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);

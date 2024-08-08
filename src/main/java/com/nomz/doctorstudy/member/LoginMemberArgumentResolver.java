@@ -34,7 +34,10 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            return authentication.getPrincipal();
+            Object principal = authentication.getPrincipal();
+            if (!String.valueOf(principal).equals("anonymousUser")) {
+                return principal;
+            }
         }
 
         //
