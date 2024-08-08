@@ -75,9 +75,9 @@ export default async function HomePage({}: {}) {
                         <p className="text-dr-body-4 text-dr-white mb-1">
                             Dr. Study의 인기있는 AI 사회자를 만나보세요.
                         </p>
-                        <div className="text-dr-gray-300 flex-grow justify-end">
+                        <div className="text-dr-gray-200 flex-grow text-right text-dr-body-4">
                             <Link
-                                className="px-2 py-1 hover:text-dr-gray-200 transition-colors duration-200 cursor-pointer self-end"
+                                className="px-2 py-1 hover:text-dr-gray-100 transition-colors duration-200 cursor-pointer self-end"
                                 href={'/members/mypage'}
                             >
                                 <span className="">더보기</span>

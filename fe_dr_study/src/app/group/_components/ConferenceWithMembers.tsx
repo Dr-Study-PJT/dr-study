@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/atoms';
 import { IConference } from '../[group_id]/dummy';
+import { formatDate, getDateTimePart } from '@/utils/date';
 
 interface ListConferenceTodayProps {
     conferences: IConference[];
@@ -48,7 +49,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                         </div>
                         <div className="text-dr-gray-100 text-dr-body-4">
                             {conference.finishTime
-                                ? `${conference.startTime} ~ ${conference.finishTime} | 종료`
+                                ? `${getDateTimePart(formatDate(conference?.startTime), 'time')}} ~ ${conference.finishTime} | 종료`
                                 : `${conference.startTime} ~ 진행 중`}
                         </div>
                     </div>

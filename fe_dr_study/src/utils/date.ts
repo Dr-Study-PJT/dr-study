@@ -5,10 +5,10 @@
  */
 /**
  * Convert ISO 8601 date string to a readable format "YYYY-MM-DD HH:mm:ss"
- * @param {string | undefined} isoString - The ISO 8601 date string
+ * @param {string | undefined | null } isoString - The ISO 8601 date string
  * @returns {string} - Formatted date string
  */
-export function formatDate(isoString: string | undefined): string {
+export function formatDate(isoString: string | undefined | null): string {
     if (!isoString) return '';
     const date = new Date(isoString);
 

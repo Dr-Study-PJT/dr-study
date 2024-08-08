@@ -12,16 +12,42 @@ interface SectionContentsProps {
     isMember: boolean;
 }
 
-const fetchTodayConferenceList = async ({
+export const fetchTodayConferenceList = async ({
+    memberId,
     studyGroupId,
-    lowerBoundDate,
-    upperBoundDate,
+    isOpened,
+    isClose,
+    isStart,
+    isFinish,
+    // lowerBoundDate,
+    // upperBoundDate,
 }: {
-    studyGroupId: string;
-    lowerBoundDate: string;
-    upperBoundDate: string;
+    memberId?: string;
+    studyGroupId?: string;
+    isOpened?: boolean;
+    isClose?: boolean;
+    isStart?: boolean;
+    isFinish?: boolean;
 }) => {
-    const url = `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?studyGroupId=${studyGroupId}&lowerBoundDate=${lowerBoundDate}&upperBoundDate=${upperBoundDate}`;
+    // const url = `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?studyGroupId=${studyGroupId}&lowerBoundDate=${lowerBoundDate}&upperBoundDate=${upperBoundDate}`;
+
+    let url = `${process.env.NEXT_PUBLIC_HOST}/v1/conferences?`;
+
+    if (studyGroupId) {
+        url += `studyGroupId=${studyGroupId}&`;
+    }
+    if (isOpened !== null && isOpened !== undefined) {
+        url += `isOpened=${isOpened}&`;
+    }
+    if (isClose !== null && isClose !== undefined) {
+        url += `isClose=${isClose}&`;
+    }
+    if (isStart !== null && isStart !== undefined) {
+        url += `isStart=${isStart}&`;
+    }
+    if (isFinish !== null && isFinish !== undefined) {
+        url += `isFinish=${isFinish}&`;
+    }
 
     try {
         const response = await fetch(url, {
@@ -34,7 +60,6 @@ const fetchTodayConferenceList = async ({
         if (!response.ok) {
             throw new Error('Failed to fetch conferences');
         }
-
         return await response.json();
     } catch (error) {
         console.error('Error fetching conferences:', error);
@@ -55,20 +80,15 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
 
     useEffect(() => {
         const today = new Date();
-        const lowerBoundDate = new Date(today.setHours(0, 0, 0, 0))
-            .toISOString()
-            .slice(0, 19);
-        const upperBoundDate = new Date(today.setHours(23, 59, 59, 999))
-            .toISOString()
-            .slice(0, 19);
+
+        //스터디 그룹 내,
 
         const fetchConferences = async () => {
             try {
                 const response = await fetchTodayConferenceList({
                     studyGroupId: groupId,
-                    lowerBoundDate,
-                    upperBoundDate,
                 });
+                console.log('컨퍼런스 리스트 조회:', response.data);
                 setConferencesWithMembers(response.data);
             } catch (error) {
                 console.error('Failed to fetch conferences:', error);
