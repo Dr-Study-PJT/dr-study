@@ -3,6 +3,7 @@
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { GET, POST } from '@/app/api/routeModule';
 import { ConferenceData } from '@/app/group/[group_id]/_types';
+import NotExistConference from '@/components/organisms/NotExistConference/NotExistConference';
 import ConferenceInfoTemplate from '@/components/template/conference/ConferenceInfoTemplate';
 import { ConferenceMember } from '@/interfaces/conference';
 import { Moderator } from '@/interfaces/moderator';
@@ -21,13 +22,16 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
     const conferenceId = params.conference_id;
     const memberData = getSessionStorageItem('memberData');
 
-    const [conferenceData, setConferenceData] = useState<any>({}); // any 타입 수정 !필요!
+    const [conferenceData, setConferenceData] = useState<ConferenceData | null>(
+        null,
+    );
     const [studyMembers, setStudyMembers] = useState<ConferenceMember[]>([]); // 스터디 멤버 상태
     const [moderators, setModerators] = useState<Moderator[]>([]); // 사회자 여부
 
+    const [isFetchFailed, setIsFetchFailed] = useState<boolean>(false);
+
     useEffect(() => {
         handleGetConferenceInfo();
-        handleGetStudyMembers();
         handleGetModerators();
     }, []);
 
@@ -40,20 +44,26 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
                 revalidateTime: 10,
             });
 
-            console.log('컨퍼런스 조회 성공:', response);
+            // 컨퍼런스가 존재하지 않는 경우에는 NotExistConference 컴포넌트를 렌더링
+            if (Object.keys(response).includes('errors')) {
+                console.error('컨퍼런스 조회 실패');
+                setIsFetchFailed(true);
+            }
             const { data } = response;
 
             setConferenceData(data);
+            await handleGetStudyMembers(data.studyGroupId);
+            console.log('컨퍼런스 조회 성공:', response);
         } catch (error) {
             console.error('컨퍼런스 조회 실패:', error);
         }
     };
 
     // 스터디 멤버를 가져오는 함수
-    const handleGetStudyMembers = async () => {
+    const handleGetStudyMembers = async (studyGroupId: number) => {
         try {
             const response = await GET(`v1/groups`, {
-                params: `${1}/members`,
+                params: `${studyGroupId}/members`,
                 isAuth: true,
                 revalidateTime: 10,
             });
@@ -106,6 +116,10 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
             console.error('컨퍼런스 개최 실패(handleOpenConference):', error);
         }
     };
+
+    if (isFetchFailed) {
+        return <NotExistConference />;
+    }
 
     return (
         <ConferenceInfoTemplate

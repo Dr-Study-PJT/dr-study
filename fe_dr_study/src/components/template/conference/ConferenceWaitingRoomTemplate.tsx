@@ -37,9 +37,9 @@ const ConferenceWaitingRoomTemplate = ({
     }
 
     return (
-        <div className="flex items-center justify-center p-[6rem] bg-dr-indigo-200">
-            <div className="flex flex-col items-center justify-center p-[1rem] w-full h-full rounded-lg bg-dr-indigo-100 shadow-lg">
-                <div className="flex flex-col items-start justify-start w-full h-full p-6 text-white gap-dr-10">
+        <div className="flex items-center justify-center p-[4rem] bg-dr-indigo-200 text-dr-white">
+            <div className="flex flex-col items-center justify-center p-[1rem] w-full max-w-[50rem] h-full rounded-lg bg-dr-indigo-100 shadow-lg">
+                <div className="flex flex-col items-start justify-start w-full h-full p-6 gap-dr-10">
                     <h2 className="text-dr-header-3 font-bold">{title}</h2>
                     <div className="flex text-dr-body-3 text-dr-gray-300 gap-dr-10">
                         <p>
