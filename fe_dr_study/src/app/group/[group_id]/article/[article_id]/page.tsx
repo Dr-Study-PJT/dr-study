@@ -1,6 +1,6 @@
 // page.tsx
 import { fetchingArticle } from './_api/ssr';
-import ArticleDetail from './_component/\bArticleDetailSsr';
+import ArticleDetail from './_component/ArticleDetailSsr';
 import ArticleCommentsList from './_component/ArticleCommentsListSsr';
 import ArticleCommentsForm from './_component/ArticleCommentsFormCsr';
 
