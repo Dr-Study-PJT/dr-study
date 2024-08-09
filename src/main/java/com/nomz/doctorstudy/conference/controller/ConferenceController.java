@@ -21,6 +21,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -454,4 +457,33 @@ public class ConferenceController {
         );
     }
 
+    @GetMapping("/{memberId}/page")
+    @Operation(summary = "MemberId로 Conference 리스트 조회", description = "MemberId로 Conference 리스트를 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "MemberId로 Conference 리스트 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "MemberId로 Conference 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "MemberId로 Conference 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<Page<GetConferenceResponse>>> getConferenceList(
+            @PathVariable(name="memberId") Long memberId,
+            @RequestParam(name= "page", defaultValue = "1") int page,
+            @RequestParam(name= "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page -1, size);
+        Page<Conference> conferncePage = conferenceService.getConferenceListByMemberId(memberId, pageable);
+        Page<GetConferenceResponse> responsePage = conferncePage.map(GetConferenceResponse::of);
+
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "MemberId로 Conference 리스트 조회에 성공했습니다.",
+                        responsePage
+                )
+        );
+    }
 }

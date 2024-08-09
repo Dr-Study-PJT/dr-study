@@ -341,8 +341,7 @@ public class StudyGroupController {
                         }
                         """)))
     })
-    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable(name="groupId") Long groupId,
-                                                                               @Parameter(hidden = true) @Login Member requester) {
+    public ResponseEntity<SuccessResponse<LeaveGroupResponse>> leaveStudyGroup(@PathVariable(name="groupId") Long groupId, @Parameter(hidden = true) @Login Member requester) {
         MemberStudyGroup memberStudyGroup = studyGroupService.leaveStudyGroup(groupId, requester);
         LeaveGroupResponse response = new LeaveGroupResponse(memberStudyGroup.getStudyGroup().getId());
         return ResponseEntity.ok(
