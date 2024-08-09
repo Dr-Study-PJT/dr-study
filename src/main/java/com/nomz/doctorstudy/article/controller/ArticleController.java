@@ -151,6 +151,7 @@ public class ArticleController {
                 .collect(Collectors.toList());
 
         GetArticleResponse response = GetArticleResponse.builder()
+                .id(article.getId())
                 .title(article.getTitle())
                 .content(article.getContent())
                 .createdAt(article.getCreatedAt())
@@ -308,6 +309,5 @@ public class ArticleController {
         );
 
     }
-
 
 }

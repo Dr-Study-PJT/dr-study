@@ -2,7 +2,10 @@ package com.nomz.doctorstudy.conference.service;
 
 import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.request.*;
+import com.nomz.doctorstudy.conference.response.GetConferenceResponse;
 import com.nomz.doctorstudy.member.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -30,4 +33,6 @@ public interface ConferenceService {
     void inviteMemberConference(Member requester, Long conferenceId, InviteMemberConferenceRequest request);
 
     List<Member> getConferenceInvitees(Long conferenceId);
+
+    Page<Conference> getConferenceListByMemberId(Long memberId, Pageable pageable);
 }

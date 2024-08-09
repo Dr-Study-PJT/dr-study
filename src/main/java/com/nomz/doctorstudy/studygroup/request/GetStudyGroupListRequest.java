@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetStudyGroupListRequest {
+    private Long memberId;
     private String name;
     private Integer memberCapacity;
     private String tagName;

@@ -18,6 +18,7 @@ import java.util.List;
 import static com.nomz.doctorstudy.studygroup.entity.QStudyGroup.studyGroup;
 import static com.nomz.doctorstudy.studygroup.entity.QStudyGroupTag.studyGroupTag;
 import static com.nomz.doctorstudy.tag.QTag.tag;
+import static com.nomz.doctorstudy.studygroup.entity.QMemberStudyGroup.memberStudyGroup;
 
 @Repository
 public class StudyGroupQueryRepository {
@@ -42,6 +43,7 @@ public class StudyGroupQueryRepository {
         }
 
         JPAQuery<StudyGroup> pagedQuery = queryBuilder.where(
+                        equalMemberId(filter.getMemberId()),
                         likeName(filter.getName()),
                         equalMemberCapacity(filter.getMemberCapacity()),
                         likeTagName(filter.getTagName()),
@@ -54,6 +56,19 @@ public class StudyGroupQueryRepository {
 
         return new PageImpl<>(results, pageable, total);
 
+    }
+
+
+    private BooleanExpression equalMemberId(Long memberId){
+        if(memberId != null){
+            return studyGroup.id.in(
+                    JPAExpressions.select(memberStudyGroup.studyGroup.id)
+                            .from(memberStudyGroup)
+                            .where(memberStudyGroup.member.id.eq(memberId).and(memberStudyGroup.isLeaved.isFalse()))  // 탈퇴 여부를 체크
+            );
+        } else {
+            return null;
+        }
     }
 
     private BooleanExpression likeName(String name){

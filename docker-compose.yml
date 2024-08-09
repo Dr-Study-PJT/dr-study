@@ -9,6 +9,7 @@ services:
     volumes:
       - /home/ubuntu/data/db/mysql:/var/lib/mysql/
       - ./mysql-init:/docker-entrypoint-initdb.d
+      - /home/ubuntu/data/db/my.cnf:/etc/mysql/my.cnf
     container_name: mysql_container
     environment:
       - MYSQL_DATABASE=mzstop

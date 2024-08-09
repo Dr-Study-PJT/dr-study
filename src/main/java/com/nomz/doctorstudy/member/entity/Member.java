@@ -3,6 +3,8 @@ package com.nomz.doctorstudy.member.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nomz.doctorstudy.image.entity.Image;
+import com.nomz.doctorstudy.member.request.UpdateMemberInfoRequest;
+import com.nomz.doctorstudy.member.request.UpdatedMemberInfoRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(value = {AuditingEntityListener.class})
+@ToString
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,5 +77,12 @@ public class Member {
     public void update(String password){
         this.password = password;
     }
+
+    public void updateMemberInfo(UpdatedMemberInfoRequest updatedMemberInfoRequest){
+        this.password = updatedMemberInfoRequest.getPassword();
+        this.nickname = updatedMemberInfoRequest.getNickname();
+        this.image = updatedMemberInfoRequest.getImage();
+    }
+
 }
 

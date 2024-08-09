@@ -6,6 +6,7 @@ import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.request.MemberLoginPostReq;
+import com.nomz.doctorstudy.member.request.VerifyPasswordRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -64,4 +65,17 @@ public class AuthService {
         redisTemplate.delete(email);
     }
 
+    public void verifyLoginMemberPassword(VerifyPasswordRequest verifyPasswordRequest, Member member){
+        String inputPassword = verifyPasswordRequest.getPassword();
+        String password = member.getPassword();
+        log.info("password = {}", password);
+
+        if(!passwordEncoder.matches(inputPassword, password)){
+            log.info("비밀번호 일치 안하는데?");
+            throw new AuthException(AuthErrorCode.INVALID_PASSWORD_EXCEPTION);
+        }
+
+        log.info("비밀번호 일치합니다.");
+
+    }
 }

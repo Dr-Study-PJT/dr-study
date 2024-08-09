@@ -34,7 +34,8 @@ public class SecurityConfig  {
             "/api-docs/**", "/swagger-ui.html", "/v1/auth/login", "/v1/auth/email-code", "/v1/auth/find-password", "/v1/auth/reset-password",
             "/v1/no-auth/**", "/v1/email/**", "/v1/images/**", "/v1/images", "/v1/need-auth",
             "/v1/members/**", "/error", "/v1/conferences/**", "/room/**", "/v1/moderators/**",
-            "/v1/media/**", "v1/articles/test/**", "v1/articles/groups/**", "/v1/notifications/**", "/v1/groups/**", "v1/articles/**"
+            "/v1/media/**", "v1/articles/groups/**", "/v1/notifications/**", "/v1/groups/**", "v1/articles/**",
+            "v1/articles", "/v1/statistics/members/**", "/v1/groups",
     };
 
     @Bean
