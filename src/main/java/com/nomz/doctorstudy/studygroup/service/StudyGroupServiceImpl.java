@@ -247,7 +247,10 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public StudyGroup deleteStudyGroup(Long groupId, Member requester) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
-
+        //스터디 그룹이 이미 삭제되었는지 확인
+        if(studyGroup.getIsDeleted()){
+            throw new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR);
+        }
         // 스터디 그룹을 삭제하려는 사람이 그룹장인지 확인
         if(!Objects.equals(requester.getId(), studyGroup.getCaptain().getId())){
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
@@ -265,6 +268,15 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
         MemberStudyGroup memberStudyGroup = memberStudyGroupRepository.findById(memberStudyGroupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_STUDY_GROUP_NOT_FOUND));
+        // 멤버가 이미 탈퇴했는지 확인
+        if(memberStudyGroup.getIsLeaved()){
+            throw new BusinessException(StudyGroupErrorCode.MEMBER_NOT_IN_GROUP_ERROR);
+        }
+
+        // 삭제된 그룹인지 확인
+        if(memberStudyGroup.getStudyGroup().getIsDeleted()){
+            throw new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR);
+        }
 
         memberStudyGroup.setIsLeaved(Boolean.TRUE);
         memberStudyGroup.setLeavedDate(LocalDateTime.now());
