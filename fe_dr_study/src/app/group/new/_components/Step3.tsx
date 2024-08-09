@@ -15,7 +15,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
             <div className="w-full h-full flex flex-row justify-around gap-6 items-start mt-2">
                 <section className="LEFT-CONTENT w-1/2 h-auto">
                     <div className="w-48 flex flex-col justify-between gap-1 items-center h-auto">
-                        <div className="rounded-full relative overflow-hidden w-24 h-24">
+                        <div className="rounded-full relative overflow-hidden w-24 h-24 bg-dr-coral-50 hover:bg-blue-100 transition-colors duration-300 cursor-pointer">
                             <Image
                                 alt="avatar"
                                 src={data.imageUrl}

@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import React from 'react';
-import { FaUsers } from 'react-icons/fa';
 import { getGroupListBy } from './group/_api/ssr';
 import ButtonWithRouter from './group/_components/ButtonWithRouter';
 import Link from 'next/link';

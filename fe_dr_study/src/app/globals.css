@@ -44,7 +44,7 @@ body {
 
 .NAVIGATION-BOX {
     position: absolute;
-    z-index: 900; /* WINDOW-HEADER 아래에 위치 */
+    z-index: 50; /* WINDOW-HEADER 아래에 위치 */
     height: 2.5rem;
     margin-top: 1.4rem;
 }

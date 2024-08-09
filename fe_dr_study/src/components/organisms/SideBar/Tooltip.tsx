@@ -51,7 +51,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     return (
         <div
-            className="relative z-50"
+            className="relative z-[100]"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
