@@ -46,7 +46,7 @@ interface ResultStepProps {
     successMessage: string;
     failMessage: string;
     onHomeClick: () => void;
-    onSuccessConfirmClick: () => void;
+    onSuccessConfirmClick?: () => void;
     onFailureEditClick: () => void;
 }
 

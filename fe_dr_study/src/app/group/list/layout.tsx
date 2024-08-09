@@ -4,12 +4,15 @@ import { BiSearch } from 'react-icons/bi';
 import { FaUsers } from 'react-icons/fa';
 import LottieCommunity from '../_components/Lotties/Lottie_Community';
 import LottieTrending from '../_components/Lotties/Lottie_Trending';
+import { Button } from '@/components/atoms';
+import { useRouter } from 'next/navigation';
 
 const styleTransitionColor = `transition duration-300 ease-in-out`;
 
 export default function PLPLayout({ children }: { children: React.ReactNode }) {
+    const router = useRouter();
     return (
-        <div className="relative flex flex-row justify-center pr-24 gap-4 h-max mb-14">
+        <div className="relative flex flex-row justify-center pr-32 gap-4 h-max mb-14">
             <div className="flex flex-col justify-between gap-6 items-center w-10/12 md:w-4/6 mt-16 h-max">
                 <div className="filter-title relative flex items-center justify-start w-full h-16">
                     <div
@@ -33,27 +36,38 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
                 </div>
                 {children}
             </div>
-            <aside className="mt-32 absolute right-8 hidden lg:block w-48 xl:w-56">
+            <aside className="mt-40 absolute right-8 hidden lg:block w-48 xl:w-56">
                 <div className="flex flex-col justify-start gap-4 h-full">
+                    <div className="w-full flex flex-row gap-2">
+                        <Button
+                            onClick={(e) => {
+                                router.push('/group/new');
+                            }}
+                        >
+                            스터디 그룹 만들기
+                        </Button>
+                    </div>
                     <form
                         action="/posts"
                         className="flex flex-row gap-2 border-[1px] rounded-md border-primary outline-dr-gray-400 bg-[#121212]"
                     >
-                        <input
-                            className="relative h-11 w-full bg-inherit px-2 pl-3 py-1 font-normal text-xs text-left outline-none rounded-md"
-                            name="keyword"
-                            value=""
-                            autoFocus
-                            autoComplete="off"
-                            placeholder="관심있는 그룹명을 검색해요."
-                            onChange={() => {}}
-                        />
-                        <button
-                            className="absolute right-1 top-2.5  text-black  rounded min-w-fit"
-                            onClick={(e) => e.preventDefault()}
-                        >
-                            <BiSearch className="text-dr-gray-400 h-full mr-1" />{' '}
-                        </button>
+                        <div className="relative h-11 w-full">
+                            <input
+                                className="relative h-11 w-full bg-inherit px-2 pl-3 py-1 font-normal text-xs text-left outline-none rounded-md"
+                                name="keyword"
+                                value=""
+                                autoFocus
+                                autoComplete="off"
+                                placeholder="관심있는 그룹명을 검색해요."
+                                onChange={() => {}}
+                            ></input>
+                            <button
+                                className="absolute right-1 top-3  text-black  rounded min-w-fit"
+                                onClick={(e) => e.preventDefault()}
+                            >
+                                <BiSearch className="text-dr-gray-400 h-full mr-1" />{' '}
+                            </button>
+                        </div>
                     </form>
 
                     <div className="pb-4 bg-zinc-900 rounded-md">
@@ -88,7 +102,7 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
                             <LottieTrending />
                             <p className="px-3 py-2 !text-sm font-medium !text-right mr-4 text-white">
                                 현재{' '}
-                                <span className="text-dr-gray-400 font-bold">
+                                <span className="text-dr-coral-300 font-bold">
                                     핫한
                                 </span>{' '}
                                 스터디그룹

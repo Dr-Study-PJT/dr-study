@@ -1,26 +1,14 @@
 import React, { FormEvent } from 'react';
 import { Button } from '@/components/atoms';
 import { StepProps } from '../_types/type';
-import { createGroup } from '../../_api/csr';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { useRouter } from 'next/navigation';
 import FieldTagFactory from './FieldTagFactory';
 
-const Step3: React.FC<StepProps> = ({ onNext, onBack, data }) => {
+const Step3: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
     const router = useRouter();
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-
-        try {
-            const response = await createGroup(data);
-            console.log(response.data);
-            router.push(`/group/${response.data.data.groupId}`);
-        } catch (error) {
-            console.error('그룹생성 에러용;;; :' + error);
-        }
-    };
 
     return (
         <>
@@ -30,7 +18,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data }) => {
                         <div className="rounded-full relative overflow-hidden w-24 h-24">
                             <Image
                                 alt="avatar"
-                                src="/images/login_thumbnail.png"
+                                src={data.imageUrl}
                                 fill
                                 objectFit="cover"
                             />
@@ -78,7 +66,12 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data }) => {
                 <Button size="md" onClick={onBack} color="dark">
                     이전으로
                 </Button>
-                <Button size="md" onClick={handleSubmit}>
+                <Button
+                    size="md"
+                    onClick={(e) => {
+                        onSubmit(e, data);
+                    }}
+                >
                     그룹 만들기
                 </Button>
             </div>

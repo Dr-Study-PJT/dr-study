@@ -93,7 +93,7 @@ export default async function GroupListPage({
                                                         </div>
                                                         <div className="flex space-x-2 w-max">
                                                             {group.tags
-                                                                .slice(0, 3)
+                                                                ?.slice(0, 3)
                                                                 .map(
                                                                     (
                                                                         tagName,

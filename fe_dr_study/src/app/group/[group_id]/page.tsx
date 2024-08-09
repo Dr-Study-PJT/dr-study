@@ -225,18 +225,6 @@ export default function GroupDetailPage({
                                         </div>
                                     </>
                                 )}
-                                <div className="INFO-TAGS flex flex-wrap mt-3">
-                                    {groupWithMembers?.tags.map(
-                                        (tag, index) => (
-                                            <span
-                                                key={index}
-                                                className="px-3 py-[3px] bg-dr-gray-500 text-dr-body-4 rounded-full text-dr-coral-100 cursor-pointer hover:font-bold transition-all duration-200 mr-2 mb-2"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ),
-                                    )}
-                                </div>
                             </div>
                             <div className="TR-BUTTON">
                                 <div
@@ -343,7 +331,20 @@ export default function GroupDetailPage({
                                         </li>
                                     )}
                                 </ul>
+                                <div className="INFO-TAGS flex flex-wrap mt-3">
+                                    {groupWithMembers?.tags
+                                        ?.slice(0, 3)
+                                        .map((tag, index) => (
+                                            <span
+                                                key={index}
+                                                className="px-3 py-[3px] bg-dr-gray-500 text-dr-body-4 rounded-full text-dr-coral-100 cursor-pointer hover:font-bold transition-all duration-200 mr-2 mb-2"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                </div>
                             </div>
+
                             <div className="BR-BOTTONS flex flex-row justify-between gap-3">
                                 {isLeader && (
                                     <>
