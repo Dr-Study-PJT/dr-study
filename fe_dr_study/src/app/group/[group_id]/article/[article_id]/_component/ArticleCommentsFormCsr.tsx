@@ -1,7 +1,6 @@
-// ArticleCommentsForm.tsx
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     useForm,
     FieldErrors,
@@ -12,6 +11,7 @@ import { Box } from '@/components/atoms/Box/Box';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { handleCommentSubmit } from '../_handler';
+import { CommentData } from '../_types'; // CommentData 타입 추가
 
 interface CommentFormProps {
     articleId: string;
@@ -30,7 +30,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     errors,
     reset,
 }) => {
-    useEffect(() => {
+    React.useEffect(() => {
         setFocus('comment_content');
     }, [setFocus]);
 
@@ -65,10 +65,12 @@ const CommentForm: React.FC<CommentFormProps> = ({
 
 interface ArticleCommentsFormProps {
     articleId: string;
+    onCommentSubmitted: (comment: CommentData) => void;
 }
 
 const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
     articleId,
+    onCommentSubmitted,
 }) => {
     const {
         register,
@@ -80,8 +82,12 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
 
     const onSubmit = async (data: any) => {
         try {
-            await handleCommentSubmit(data, articleId.toString());
+            const newComment = await handleCommentSubmit(
+                data,
+                articleId?.toString(),
+            );
             alert('댓글이 성공적으로 작성되었습니다.');
+            onCommentSubmitted(newComment);
             reset();
         } catch (error) {
             console.error('댓글 작성 실패', error);

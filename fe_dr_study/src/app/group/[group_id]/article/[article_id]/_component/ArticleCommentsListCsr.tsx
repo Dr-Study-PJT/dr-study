@@ -1,16 +1,13 @@
 'use client';
-// ArticleCommentsList.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Button, Span } from '@/components/atoms';
 import { CommentData } from '../_types';
-import {
-    handleCommentSubmit,
-    handleArticleDelete,
-    handleCommentDelete,
-    handleCommentUpdate,
-    // ssr 파일에는 핸들러 달면 안된다고 함... -> 이거 새로 드롭다운 버튼 파서 import 해서 붙이는 식으로
-} from '../_handler/index';
+import { handleCommentDelete, handleCommentUpdate } from '../_handler/index';
+import { useSession } from 'next-auth/react'; // 로그인 세션 가져오기
+import { getSessionStorageItem } from '@/utils/sessionStorage';
+import { current } from '@reduxjs/toolkit';
+
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
         year: 'numeric',
@@ -28,12 +25,44 @@ interface ArticleCommentsListProps {
 const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     comments,
 }) => {
-    const [commentList, setCommentList] = useState([]);
+    const [commentList, setCommentList] = useState<CommentData[]>(comments);
+    //   const { data: session, status } = useSession(); // 세션 데이터 가져오기
+    const data = getSessionStorageItem('memberData');
+    console.log(data);
+
+    // useEffect(() => {
+    //     if (status === 'loading') return; // 세션이 로딩 중이면 아무 것도 하지 않음
+    //     if (!session) {
+    //         console.error('User not logged in');
+    //     }
+    // }, [status, session]);
+
+    // const currentUser = session?.user?.id; // 현재 로그인한 유저 ID
+
+    const updateCommentList = (updatedComment: CommentData) => {
+        setCommentList((prev) =>
+            prev.map((comment) =>
+                comment.id === updatedComment.id ? updatedComment : comment,
+            ),
+        );
+    };
+
+    const handleDelete = async (commentId: string) => {
+        await handleCommentDelete(commentId);
+        setCommentList((prev) =>
+            prev.filter((comment) => comment.id !== commentId),
+        );
+    };
+
+    const handleUpdate = async (commentId: string, content: string) => {
+        await handleCommentUpdate(commentId, content);
+        updateCommentList({ id: commentId, content } as CommentData);
+    };
 
     return (
         <Box variant="articleCommentsListContainer">
             <Box variant="commentPDP">
-                {comments.map((comment, index) => (
+                {commentList.map((comment, index) => (
                     <Box key={index} className="flex flex-row">
                         <div className="w-full flex flex-col">
                             <Box variant="commentPDPHeader">
@@ -60,27 +89,33 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                                     {String(comment.content)}
                                 </Span>
                             </Box>
-                            <div className="flex justify-end space-x-2 mt-2">
-                                <Button
-                                    color="red"
-                                    onClick={() =>
-                                        handleCommentDelete(String(comment.id))
-                                    }
-                                >
-                                    삭제
-                                </Button>
-                                <Button
-                                    type="button"
-                                    onClick={() =>
-                                        handleCommentUpdate(
-                                            String(comment.id),
-                                            String(comment.content),
-                                        )
-                                    }
-                                >
-                                    수정
-                                </Button>
-                            </div>
+                            {comment.memberInfo.id.toString() ===
+                                data.id?.toString() && (
+                                <div className="flex justify-end space-x-2 mt-2">
+                                    <Button
+                                        color="red"
+                                        onClick={() =>
+                                            handleDelete(String(comment.id))
+                                        }
+                                    >
+                                        삭제
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        onClick={() =>
+                                            handleUpdate(
+                                                String(comment.id),
+                                                prompt(
+                                                    '수정할 내용을 입력하세요',
+                                                    comment.content,
+                                                ) || comment.content,
+                                            )
+                                        }
+                                    >
+                                        수정
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </Box>
                 ))}
