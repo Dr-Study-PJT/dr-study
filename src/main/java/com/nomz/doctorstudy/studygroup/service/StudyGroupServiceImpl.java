@@ -103,6 +103,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     @Override
     public Page<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable) {
         StudyGroupSearchFilter filter = StudyGroupSearchFilter.builder()
+                .memberId(command.getMemberId())
                 .name(command.getName())
                 .memberCapacity(command.getMemberCapacity())
                 .tagName(command.getTagName())
