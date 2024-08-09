@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react';
 import './mod.css';
 
 interface ModeratorAvatarProps {
+    summaryMessages: string[];
     isAvatarSpeaking: boolean;
     timeForAvatarSpeaking: number;
     gptSummaryBySystem: string;
@@ -11,6 +12,7 @@ interface ModeratorAvatarProps {
 }
 
 const ModeratorAvatar = ({
+    summaryMessages,
     isAvatarSpeaking,
     timeForAvatarSpeaking,
     gptSummaryBySystem,
@@ -90,13 +92,23 @@ const ModeratorAvatar = ({
             <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
                 {gptSummaryBySystem}
             </div>
-            <audio
-                controls
-                src={`${audioUrl} || https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/audio\_avatar\_1.mp3`}
-                preload="auto"
-                id="audio_player"
-            ></audio>
             <button onClick={() => audio?.play()}>플레이</button>
+            {summaryMessages.map((message, index) => (
+                <div
+                    key={index}
+                    className="absolute top-0 left-0 translate-x-[-100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl"
+                >
+                    {message}
+                </div>
+            ))}
+            <div className="hidden">
+                <audio
+                    controls
+                    src={`${audioUrl} || https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/audio\_avatar\_1.mp3`}
+                    preload="auto"
+                    id="audio_player"
+                ></audio>
+            </div>
         </div>
     );
 };

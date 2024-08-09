@@ -44,6 +44,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         memberCapacity: 0, // 방의 최대 인원 수
     });
 
+    // 세션 스토리지에서 멤버 ID 가져오기
+    const memberData = getSessionStorageItem('memberData');
+
     // stompClient 상태
     const [stompClient, setStompClient] = useState<any>(null);
 
@@ -74,12 +77,8 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         useState<boolean>(false); // 오디오 스트림 시작 신호
     const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
 
-    // 세션 스토리지에서 멤버 ID 가져오기
-    const memberData = getSessionStorageItem('memberData');
-
-    // 피어와 로컬 스트림 참조
-    const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
-    const localStream = useRef<MediaStream | null>(null); // 로컬 미디어 스트림을 참조
+    // 요약 메시지
+    const [summaryMessages, setSummaryMessages] = useState<string[]>([]); // 요약 메시지
 
     // 오디오 주소
     const [audioUrl, setAudioUrl] = useState<string>('');
@@ -90,6 +89,10 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         peerId: '', // 클라이언트 피어 ID
         streamId: '', // 클라이언트 스트림 ID
     });
+
+    // 피어와 로컬 스트림 참조
+    const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
+    const localStream = useRef<MediaStream | null>(null); // 로컬 미디어 스트림을 참조
 
     // 구독 목록
     const subscriptionList = useRef<string[]>([]);
@@ -272,6 +275,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     </div>
 
                     <Signal
+                        setSummaryMessages={setSummaryMessages}
                         setAudioUrl={setAudioUrl}
                         isJoined={isJoined}
                         existingPeers={existingPeers}
@@ -306,6 +310,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     />
                     <div className="fixed bottom-[10%] left-[50%] w-[10%]">
                         <ModeratorAvatar
+                            summaryMessages={summaryMessages}
                             audioUrl={audioUrl}
                             isAvatarSpeaking={isAvatarSpeaking}
                             timeForAvatarSpeaking={timeForAvatarSpeaking}

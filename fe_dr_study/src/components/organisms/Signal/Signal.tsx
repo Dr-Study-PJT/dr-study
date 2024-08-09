@@ -22,6 +22,7 @@ interface SignalInterface {
 }
 
 interface SignalProps {
+    setSummaryMessages: Dispatch<SetStateAction<string[]>>;
     setAudioUrl: Dispatch<SetStateAction<string>>;
     isJoined: boolean;
     existingPeers: Record<string, MediaStream>;
@@ -42,6 +43,7 @@ interface SignalProps {
 }
 
 const Signal = ({
+    setSummaryMessages,
     setAudioUrl,
     isJoined,
     existingPeers,
@@ -194,6 +196,14 @@ const Signal = ({
     // GPT 요약 신호 처리
     const handleGPTSummarySignal = (newSignal: SignalInterface) => {
         setGPTSummaryBySystem(newSignal.content as string); // 요약 내용 설정
+
+        setSummaryMessages((prevMessages) =>
+            [
+                ...prevMessages,
+                newSignal.content || '[올바르지 않은 문자열]', // content가 undefined일 경우 빈 문자열로 대체
+            ].filter(Boolean),
+        ); // undefined 또는 빈 문자열 제거
+
         console.log(
             `handleGPTSummarySignal: 요약 메시지 전달 => \n ${newSignal.content}`,
         );
