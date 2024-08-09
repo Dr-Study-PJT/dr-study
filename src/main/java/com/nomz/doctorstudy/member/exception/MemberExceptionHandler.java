@@ -27,7 +27,7 @@ public class MemberExceptionHandler {
 
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<?> AuthExceptionHandler(AuthException e){
-        log.error("AuthException occurred", e);
+        log.error("AuthException occurred, message={}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );

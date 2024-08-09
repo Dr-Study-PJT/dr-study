@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberStudyGroupApplyRepository extends JpaRepository<MemberStudyGroupApply, Long> {
-    Optional<MemberStudyGroupApply> findByMemberIdAndStudyGroupId(Long memberId, Long studyGroupId);
+    Optional<MemberStudyGroupApply> findByApplicantIdAndStudyGroupId(Long memberId, Long studyGroupId);
     List<MemberStudyGroupApply> findByStudyGroupIdInAndApplicationStatus(List<Long> studyGroupIds, ApplicationStatus applicationStatus);
 
 }

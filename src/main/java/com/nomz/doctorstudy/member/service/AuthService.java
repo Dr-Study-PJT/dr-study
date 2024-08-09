@@ -32,7 +32,7 @@ public class AuthService {
     public String getAccessToken(String email, String refreshToken){
 
         if(!jwtUtil.correctRefreshToken(email, refreshToken)){
-            throw new AuthException(AuthErrorCode.AUTH_NOT_VALID_REFRESH_TOKEN);
+            throw new AuthException(AuthErrorCode.UNAUTHORIZED);
         }
 
         return jwtUtil.getAccessToken(email);

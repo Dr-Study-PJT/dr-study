@@ -49,7 +49,7 @@ public class Notification {
             notificationItemType = NotificationItemType.STUDY_GROUP_APPLICATION;
         }
         else {
-            recipient = application.getMember();
+            recipient = application.getApplicant();
             notificationItemType = NotificationItemType.STUDY_GROUP_APPLICATION_REPLY;
         }
 

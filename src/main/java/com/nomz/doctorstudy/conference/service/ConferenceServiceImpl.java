@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.conference.service;
 
+import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -197,7 +199,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     @Transactional
     public void quitConference(Member requester, Long conferenceId) {
-        roomService.quitRoom(requester, conferenceId);
+        roomService.quitRoom(requester.getId(), conferenceId);
     }
 
     @Override
@@ -217,7 +219,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         ConferenceMemberInvite conferenceMemberInvite = ConferenceMemberInvite.of(conference, member);
         conferenceMemberInviteRepository.save(conferenceMemberInvite);
 
-        notificationService.createNotification(conferenceMemberInvite);
+        notificationService.createInvitationNotification(conferenceMemberInvite);
     }
 
     @Override

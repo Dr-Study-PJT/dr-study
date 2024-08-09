@@ -4,6 +4,8 @@ import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
+import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
+import com.nomz.doctorstudy.member.exception.member.MemberException;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -51,14 +53,14 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String devMemberIdStr = request.getHeader(LoginToken.DEV_LOGIN_TOKEN);
         if (devMemberIdStr == null) {
-            throw new AuthException(AuthErrorCode.AUTH_INVALID_DEV_MEMBER_ID);
+            throw new AuthException(AuthErrorCode.UNAUTHORIZED);
         }
         Long devMemberId = Long.parseLong(devMemberIdStr);
 
         log.debug("Acquired memberId={} from '" + LoginToken.DEV_LOGIN_TOKEN + "' header", devMemberId);
 
         return memberRepository.findById(devMemberId)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_INVALID_ID_PASSWORD));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
         //
         //
         //

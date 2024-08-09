@@ -11,7 +11,8 @@ public enum BlockErrorCode implements ErrorCode {
     // Process
     PROCESS_ALREADY_SLEEP(HttpStatus.INTERNAL_SERVER_ERROR, "Process가 이미 Sleep 상태입니다"),
     PROCESS_ALREADY_AWAKE(HttpStatus.INTERNAL_SERVER_ERROR, "Process가 이미 Awake 상태입니다"),
-    PROCESS_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "Process가 wait 도중 Interrupt가 발생했습니다."),
+    PROCESS_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "Process가 Sleep 도중 Interrupt가 발생했습니다."),
+    PROCESS_NOT_READY(HttpStatus.BAD_REQUEST, "Process를 시작하려면 상태가 Ready여야 합니다."),
     PROCESS_ALREADY_EXISTS(HttpStatus.INTERNAL_SERVER_ERROR, "Process가 이미 존재합니다."),
     PROCESS_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Process를 찾을 수 없습니다."),
 
