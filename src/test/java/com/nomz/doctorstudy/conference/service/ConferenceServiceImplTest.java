@@ -2,7 +2,6 @@ package com.nomz.doctorstudy.conference.service;
 
 import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.entity.ConferenceMember;
-import com.nomz.doctorstudy.conference.entity.ConferenceMemberId;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @SpringBootTest

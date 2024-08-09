@@ -26,12 +26,20 @@ import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+<<<<<<< src/main/java/com/nomz/doctorstudy/conference/service/ConferenceServiceImpl.java
+import java.util.stream.Collectors;
+=======
 import java.util.Map;
+import java.util.stream.Collectors;
+>>>>>>> src/main/java/com/nomz/doctorstudy/conference/service/ConferenceServiceImpl.java
 
 @Slf4j
 @Service
@@ -231,5 +239,32 @@ public class ConferenceServiceImpl implements ConferenceService {
         return conference.getInvitees().stream()
                 .map(ConferenceMemberInvite::getMember)
                 .toList();
+    }
+
+    @Override
+    public Page<Conference> getConferenceListByMemberId(Long memberId, Pageable pageable) {
+        // 1. 멤버가 속한 ConferenceMember 조회
+        List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByMemberId(memberId);
+
+        if (conferenceMembers.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        // 2. Conference ID 리스트 추출
+        List<Long> conferenceIds = conferenceMembers.stream()
+                .map(cm -> cm.getConference().getId())
+                .collect(Collectors.toList());
+
+        // 3. Conference ID로 Conference 조회
+        List<Conference> conferences = conferenceRepository.findAllById(conferenceIds);
+
+        // 4. 페이지네이션 처리
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), conferences.size());
+        List<Conference> pagedConferences = conferences.subList(start, end);
+
+        return new PageImpl<>(pagedConferences, pageable, conferences.size());
+
+
     }
 }
