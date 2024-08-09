@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Moderator } from '@/interfaces/moderator';
 import { useState } from 'react';
 import { Button } from '@/components/atoms';
+import { useRouter } from 'next/navigation';
 
 const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
     const [selectedModerator, setSelectedModerator] =
@@ -25,9 +26,22 @@ const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
 };
 
 const ModeratorInformation = () => {
+    const router = useRouter();
     return (
         <div className="pt-[2rem] pb-[1rem]">
-            <h2 className="text-dr-header-2">AI 사회자 탐색</h2>
+            <div className="w-full flex flex-row justify-between mb-8">
+                <h2 className="text-dr-header-2 font-bold">AI 사회자 탐색</h2>
+                <Button
+                    classNameStyles="bg-dr-coral-100 py-0"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        router.push('/moderator/new');
+                    }}
+                >
+                    AI 사회자 만들기
+                </Button>
+            </div>
+
             <p className="text-dr-body-4 text-dr-gray-300">
                 - 사전 프롬프트로 학습한 내용을 바탕으로 스터디의 진행을
                 도와주며, 내용을 요약 정리하고, 개선 방안을 제안, 통계 및 수치와
