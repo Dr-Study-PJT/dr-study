@@ -17,6 +17,8 @@ import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
 import com.nomz.doctorstudy.studygroup.repository.*;
 import com.nomz.doctorstudy.studygroup.request.*;
+import com.nomz.doctorstudy.studygroup.response.GetStudyGroupListResponse;
+import com.nomz.doctorstudy.studygroup.response.GetStudyGroupPageResponse;
 import com.nomz.doctorstudy.tag.Tag;
 import com.nomz.doctorstudy.tag.TagRepository;
 import jakarta.transaction.Transactional;
@@ -101,14 +103,21 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public Page<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable) {
+    public Page<GetStudyGroupPageResponse> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable) {
         StudyGroupSearchFilter filter = StudyGroupSearchFilter.builder()
                 .memberId(command.getMemberId())
                 .name(command.getName())
                 .memberCapacity(command.getMemberCapacity())
                 .tagName(command.getTagName())
                 .build();
-        return studyGroupQueryRepository.getStudyGroupList(filter, pageable);
+
+        Page<StudyGroup> studyGroupPage = studyGroupQueryRepository.getStudyGroupList(filter, pageable);
+
+        return studyGroupPage.map(studyGroup -> {
+            Integer memberCount = memberStudyGroupRepository.countByStudyGroupAndIsLeavedFalse(studyGroup);
+            return GetStudyGroupPageResponse.of(studyGroup, memberCount);
+        });
+
     }
 
     @Override
@@ -265,7 +274,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Override
     public List<MemberStudyGroup> getStudyGroupListByMemberId(Member requester) {
-
         return memberStudyGroupRepository.findByMemberId(requester.getId());
     }
 }

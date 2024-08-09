@@ -130,14 +130,13 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<Page<GetStudyGroupListResponse>>> getStudyGroupList(
+    public ResponseEntity<SuccessResponse<Page<GetStudyGroupPageResponse>>> getStudyGroupList(
             @ParameterObject @ModelAttribute GetStudyGroupListRequest request,
             @RequestParam(name= "page", defaultValue = "1") int page,
             @RequestParam(name= "size", defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page -1, size);
-        Page<StudyGroup> studyGroupPage = studyGroupService.getStudyGroupList(request, pageable);
-        Page<GetStudyGroupListResponse> responsePage = studyGroupPage.map(GetStudyGroupListResponse::of);
+        Page<GetStudyGroupPageResponse> responsePage = studyGroupService.getStudyGroupList(request, pageable);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -378,4 +377,5 @@ public class StudyGroupController {
                 )
         );
     }
+
 }

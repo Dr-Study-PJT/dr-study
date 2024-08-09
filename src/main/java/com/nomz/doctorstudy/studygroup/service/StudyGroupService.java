@@ -4,6 +4,8 @@ import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.*;
+import com.nomz.doctorstudy.studygroup.response.GetStudyGroupListResponse;
+import com.nomz.doctorstudy.studygroup.response.GetStudyGroupPageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,7 +19,7 @@ public interface StudyGroupService {
     StudyGroup getStudyGroup(Long groupId);
 
     // 스터디 그룹 조건 검색
-    Page<StudyGroup> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable);
+    Page<GetStudyGroupPageResponse> getStudyGroupList(GetStudyGroupListRequest command, Pageable pageable);
 
     // 스터디 그룹 지원 요청 생성
     MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest, Member requester);
