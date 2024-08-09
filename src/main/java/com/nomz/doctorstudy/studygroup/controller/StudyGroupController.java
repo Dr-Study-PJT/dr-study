@@ -49,12 +49,11 @@ public class StudyGroupController {
                     {
                         "message": "유효하지 않은 입력입니다.",
                         "errors": {
-                            "title": "제목은 1자이상 64자 이하여야 합니다.",
-                            "thumbnailImageId": "썸네일 이미지 아이디는 반드시 포함되어야 합니다."
+                            "title": "제목은 1자이상 32자 이하여야 합니다.",
                         }
                     }
                     """))),
-            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+            @ApiResponse(responseCode = "400", description = "인증 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
                         "message": "인증에 실패했습니다.",
                         "errors": { }
