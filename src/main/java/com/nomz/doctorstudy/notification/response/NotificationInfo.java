@@ -34,17 +34,18 @@ public class NotificationInfo {
     public static NotificationInfo of(Notification notification, MemberStudyGroupApply application) {
         NotificationInfoBuilder builder = NotificationInfo.builder()
                 .id(notification.getId())
-                .createdAt(notification.getCreatedAt())
-                .imageUrl(application.getMember().getImage().getImageUrl());
+                .createdAt(notification.getCreatedAt());
 
         return switch (application.getApplicationStatus()) {
             case WAITING -> builder
                     .itemType(NotificationItemType.STUDY_GROUP_APPLICATION.getToken())
                     .itemInfo(ApplicationNotificationInfo.of(application))
+                    .imageUrl(application.getApplicant().getImage().getImageUrl())
                     .build();
             default -> builder
                     .itemType(NotificationItemType.STUDY_GROUP_APPLICATION_REPLY.getToken())
                     .itemInfo(ApplicationReplyNotificationInfo.of(application))
+                    .imageUrl(application.getStudyGroup().getImage().getImageUrl())
                     .build();
         };
     }

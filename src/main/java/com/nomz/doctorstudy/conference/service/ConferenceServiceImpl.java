@@ -47,7 +47,6 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     private final RoomService roomService;
     private final NotificationService notificationService;
-    private final BlockInterpreter blockInterpreter;
 
     @Override
     @Transactional
@@ -120,10 +119,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         conference.updateModerator(moderator);
         conference.updateOpenTime(LocalDateTime.now());
 
-        roomService.openRoom(conferenceId);
-
-        //TODO: 순환참조 풀기
-        blockInterpreter.init(conferenceId, moderator.getProcessor().getScript(), Map.of());
+        roomService.openRoom(conferenceId, moderator.getProcessor().getScript());
     }
 
     @Override
@@ -158,8 +154,6 @@ public class ConferenceServiceImpl implements ConferenceService {
         }
 
         conference.updateStartTime(LocalDateTime.now());
-
-        blockInterpreter.interpret(conferenceId);
 
         roomService.startRoom(conferenceId);
     }
@@ -205,7 +199,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     @Transactional
     public void quitConference(Member requester, Long conferenceId) {
-        roomService.quitRoom(requester, conferenceId);
+        roomService.quitRoom(requester.getId(), conferenceId);
     }
 
     @Override
@@ -225,7 +219,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         ConferenceMemberInvite conferenceMemberInvite = ConferenceMemberInvite.of(conference, member);
         conferenceMemberInviteRepository.save(conferenceMemberInvite);
 
-        notificationService.createNotification(conferenceMemberInvite);
+        notificationService.createInvitationNotification(conferenceMemberInvite);
     }
 
     @Override

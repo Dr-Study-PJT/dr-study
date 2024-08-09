@@ -19,8 +19,8 @@ public class MemberStudyGroupApply {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name="applicant_id", nullable = false)
+    private Member applicant;
 
     @ManyToOne
     @JoinColumn(name = "study_group_id", nullable = false)

@@ -51,7 +51,7 @@ VALUES (1, 1),
 ;
 
 --MEMBER STUDY GROUP APPLY--
-INSERT INTO member_study_group_apply (member_id, study_group_id, status, created_at, apply_message)
+INSERT INTO member_study_group_apply (applicant_id, study_group_id, status, created_at, apply_message)
 VALUES (1, 3, 'WAITING', DATE_ADD(NOW(), INTERVAL -10 MINUTE),  '스터디그룹 가입 신청 메시지 1'),
        (1, 2, 'WAITING', DATE_ADD(NOW(), INTERVAL -20 MINUTE),  '스터디그룹 가입 신청 메시지 2'),
        (3, 1, 'WAITING', DATE_ADD(NOW(), INTERVAL -40 MINUTE),  '스터디그룹 가입 신청 메시지 3'),
