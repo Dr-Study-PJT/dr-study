@@ -1,10 +1,16 @@
+'use client';
 // ArticleCommentsList.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Button, Span } from '@/components/atoms';
 import { CommentData } from '../_types';
-import { useHandlers } from '../_handler';
-
+import {
+    handleCommentSubmit,
+    handleArticleDelete,
+    handleCommentDelete,
+    handleCommentUpdate,
+    // ssr 파일에는 핸들러 달면 안된다고 함... -> 이거 새로 드롭다운 버튼 파서 import 해서 붙이는 식으로
+} from '../_handler/index';
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
         year: 'numeric',
@@ -22,7 +28,7 @@ interface ArticleCommentsListProps {
 const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     comments,
 }) => {
-    const { handleCommentDelete, handleCommentUpdate } = useHandlers();
+    const [commentList, setCommentList] = useState([]);
 
     return (
         <Box variant="articleCommentsListContainer">
@@ -84,4 +90,3 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
 };
 
 export default ArticleCommentsList;
-

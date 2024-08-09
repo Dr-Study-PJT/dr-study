@@ -7,11 +7,11 @@ import { GET } from '@/app/api/routeModule';
 export const fetchingArticle = async (articleId: string) => {
     'use server';
     console.log('페칭 시도');
-    const response = await GET('v1/articles/', {
+    const response = await GET('v1/articles', {
         params: articleId,
         isAuth: true,
     });
-    console.log(response.data); // 확인용
+    console.log(response); // 확인용
     return response.data;
 };
 
@@ -20,7 +20,7 @@ export const fetchingArticle = async (articleId: string) => {
 export const fetchingMemberData = async (articleId: number) => {
     'use server';
     console.log('페칭 시도');
-    const response = await GET('v1/articles/', {
+    const response = await GET('v1/articles', {
         params: articleId.toString(),
         isAuth: true,
     });
@@ -28,14 +28,13 @@ export const fetchingMemberData = async (articleId: number) => {
     return response.data.memberInfo;
 };
 
-
 // 댓글 가져옴
 // commentAPI로서 필요한것들임! -> 질문임! 이러면 as API를 쓸 수 없잖아...
 // 읽기 코멘트
 export const fetchingComment = async (articleId: number) => {
     'use server';
     console.log('댓글 읽기 시도'); // 확인용
-    const response = await GET('v1/articles/', {
+    const response = await GET('v1/articles', {
         params: articleId.toString(),
         isAuth: true,
     });

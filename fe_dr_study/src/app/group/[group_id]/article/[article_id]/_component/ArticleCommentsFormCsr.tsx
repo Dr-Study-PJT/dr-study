@@ -11,10 +11,10 @@ import {
 import { Box } from '@/components/atoms/Box/Box';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-import { useHandlers } from '../_handler';
+import { handleCommentSubmit } from '../_handler';
 
 interface CommentFormProps {
-    articleId: number | string;
+    articleId: string;
     setFocus: UseFormSetFocus<any>;
     handleSubmit: (event?: React.BaseSyntheticEvent) => Promise<void>;
     register: UseFormRegister<any>;
@@ -77,11 +77,10 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
         formState: { errors },
         reset,
     } = useForm();
-    const { handleCommentSubmit } = useHandlers();
 
     const onSubmit = async (data: any) => {
         try {
-            await handleCommentSubmit(data, articleId);
+            await handleCommentSubmit(data, articleId.toString());
             alert('댓글이 성공적으로 작성되었습니다.');
             reset();
         } catch (error) {

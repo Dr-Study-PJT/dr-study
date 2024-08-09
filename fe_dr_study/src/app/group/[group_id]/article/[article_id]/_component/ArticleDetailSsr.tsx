@@ -2,7 +2,7 @@
 import React from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Heading, Span } from '@/components/atoms';
-import { ArticleData } from '../_types';
+import { ArticleData , } from '../_types';
 
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {

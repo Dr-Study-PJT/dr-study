@@ -1,7 +1,6 @@
-// page.tsx
 import { fetchingArticle } from './_api/ssr';
 import ArticleDetail from './_component/ArticleDetailSsr';
-import ArticleCommentsList from './_component/ArticleCommentsListSsr';
+import ArticleCommentsList from './_component/ArticleCommentsListCsr';
 import ArticleCommentsForm from './_component/ArticleCommentsFormCsr';
 
 export default async function ArticleDetailPage({
@@ -11,45 +10,35 @@ export default async function ArticleDetailPage({
 }) {
     const groupId = params.group_id;
     const articleId = params.article_id;
-    const article = await fetchingArticle(articleId);
 
-    return (
-        <div>
-            {/* ArticleDetail은 ssr로 팜 */}
-            <ArticleDetail article={article} />
-            {/* article.comments가 존재할 때만 ArticleCommentsList 렌더링 */}
+    try {
+        const article = await fetchingArticle(articleId);
 
-            {/* ArticleCommentsList는 ssr로 팜 */}
-            {article.comments ? (
-                <ArticleCommentsList comments={article.comments} />
-            ) : (
-                <div>No comments available</div>
-            )}
-            {/* ArticleCommentsForm은 csr로 팜 */}
-            <ArticleCommentsForm articleId={articleId} />
-        </div>
-    );
+        if (!article) {
+            throw new Error('Article not found');
+        }
+
+        return (
+            <div>
+                {/* ArticleDetail은 ssr로 팜 */}
+                <ArticleDetail article={article} />
+                {/* ArticleCommentsForm은 csr로 팜 */}
+                <ArticleCommentsForm articleId={articleId} />
+                {/* article.comments가 존재할 때만 ArticleCommentsList 렌더링 */}
+                {article.comments && article.comments.length > 0 ? (
+                    <ArticleCommentsList comments={article.comments} />
+                ) : (
+                    <div>No comments available</div>
+                )}
+            </div>
+        );
+    } catch (error: any) {
+        console.error('Error fetching article:', error);
+
+        return (
+            <div>
+                <p>Error loading article: {error.message}</p>
+            </div>
+        );
+    }
 }
-
-// // page.tsx
-// import { fetchingArticle } from './_api/ssr';
-// import ArticleDetail from './_component/\bArticleDetailSsr';
-// import ArticleCommentsList from './_component/ArticleCommentsListSsr';
-// import ArticleCommentsForm from './_component/ArticleCommentsFormCsr';
-
-// export default async function ArticleDetailPage({
-//     params,
-// }: {
-//     params: { article_id: string };
-// }) {
-//     const articleId = Number(params.article_id);
-//     const article = await fetchingArticle(articleId);
-
-//     return (
-//         <div>
-//             <ArticleDetail article={article} />
-//             <ArticleCommentsList comments={article.comments} />
-//             <ArticleCommentsForm articleId={articleId} />
-//         </div>
-//     );
-// }
