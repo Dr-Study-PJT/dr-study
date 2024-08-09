@@ -1,12 +1,11 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Button } from '@/components/atoms';
 import { IConference } from '../[group_id]/dummy';
 import { formatDate, getDateTimePart } from '@/utils/date';
-import { FaUsers } from 'react-icons/fa';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
+import ConferenceMemberList from './ConferenceMemberList';
 
 interface ListConferenceTodayProps {
     conferences: IConference[];
@@ -66,12 +65,9 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
         setTodayConferences(filteredConferences);
     }, [conferences]);
 
-    console.log(conferences);
-
     const handleConferenceClick = (conference: IConference) => {
         const isStartedConference = conference.startTime;
 
-        // 컨퍼런스 시작 전이고, 호스트인 경우 컨퍼런스 정보 페이지로 이동
         if (!isStartedConference && memberData.id == conference.hostId) {
             router.push(`/conference/${conference.id}/info`);
             return;
@@ -100,47 +96,16 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                         <div className="text-white font-bold text-lg">
                             {conference.title}
                         </div>
-                        <div className="text-dr-gray-100 text-dr-body-4">
+                        <div className="text-dr-gray-200 text-dr-body-4">
                             {renderTimeInfo(conference)}
                         </div>
                     </div>
 
                     <div className="mt-4 w-full flex flex-row justify-between items-end">
-                        <div className="BL-INFO-MEMBER-LIST flex flex-col gap-1">
-                            <div className="flex flex-row gap-1 text-dr-gray-300">
-                                <FaUsers className="text-dr-gray-300 text-dr-body-3 self-center pb-0" />
-                                <div className="text-dr-body-4 text-dr-gray-300">
-                                    {`${conference.participants.length} / ${conference.memberCapacity}`}
-                                </div>
-                            </div>
-
-                            <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
-                                {conference.participants
-                                    ?.slice(0, 3)
-                                    .map((participant, i) => (
-                                        <li key={i}>
-                                            <div className="relative overflow-hidden w-10 h-10 rounded-xl">
-                                                <Image
-                                                    alt="avatar"
-                                                    src={participant.imageUrl}
-                                                    layout="fill"
-                                                />
-                                            </div>
-                                        </li>
-                                    ))}
-                                {conference.participants.length > 3 && (
-                                    <li key="extra">
-                                        <button className="relative overflow-hidden w-10 h-10 rounded-xl border-[1px] border-dr-coral-100 bg-dr-coral-200 hover:bg-dr-coral-100 transition-colors duration-200 flex items-center justify-center">
-                                            <span className="text-white font-semibold text-dr-body-3">
-                                                +
-                                                {conference.participants
-                                                    .length - 3}
-                                            </span>
-                                        </button>
-                                    </li>
-                                )}
-                            </ul>
-                        </div>
+                        <ConferenceMemberList
+                            participants={conference.participants}
+                            memberCapacity={conference.memberCapacity}
+                        />
                         {conference?.openTime &&
                             !conference?.startTime &&
                             !conference?.finishTime &&

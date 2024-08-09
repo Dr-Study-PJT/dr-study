@@ -1,32 +1,24 @@
+// fe_dr_study/src/app/moderator/new/_components/Step4.tsx
 import React, { FormEvent } from 'react';
-import { Button, Label } from '@/components/atoms';
+import { Button } from '@/components/atoms';
 import { StepProps } from './type';
-import { createModerator } from '../../_api/csr';
-import { useRouter } from 'next/navigation';
 
-const Step4: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
-    const router = useRouter();
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-
-        try {
-            const response = await createModerator(data);
-            router.push('/group/1');
-        } catch {
-            console.error('실패 에반데;;');
-        }
-    };
-
+const Step4: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
     return (
         <>
             <div className="w-full h-max flex flex-row justify-around gap-6 items-center">
-                제출 페이지
+                작성하신 내용을 확인하고 제출해주세요.
             </div>
             <div className="w-full h-max flex flex-row justify-end gap-2">
                 <Button size="md" onClick={onBack} color="dark">
                     이전으로
                 </Button>
-                <Button size="md" onClick={handleSubmit}>
+                <Button
+                    size="md"
+                    onClick={(e) => {
+                        onSubmit(e, data);
+                    }}
+                >
                     제출하기
                 </Button>
             </div>

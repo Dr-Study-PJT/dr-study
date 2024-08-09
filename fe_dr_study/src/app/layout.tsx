@@ -155,7 +155,7 @@ export default function RootLayout({
                                 </div>
 
                                 {/* 앱 네비게이션 */}
-                                <div className="APP-HEADER relative z-50">
+                                <div className="APP-HEADER relative z-90">
                                     <Navigation
                                         scrollPosition={scrollPosition}
                                     />

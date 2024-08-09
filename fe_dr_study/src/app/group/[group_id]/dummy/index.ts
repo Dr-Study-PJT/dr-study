@@ -1,6 +1,3 @@
-import { IGroup, IGroupListResponse } from '../../_api/ssr';
-import { GroupData, ArticleData, ConferenceData, Member } from '../_types';
-
 interface Participant {
     id: number;
     email: string;
@@ -22,7 +19,6 @@ export interface IConference {
     finishTime: string | null | undefined;
     openTime: string | null | undefined;
     closeTime: string | null | undefined;
-
     memberCapacity: number;
     participants: Participant[];
 }
