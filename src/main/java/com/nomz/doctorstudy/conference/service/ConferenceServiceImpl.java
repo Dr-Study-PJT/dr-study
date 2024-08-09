@@ -34,12 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-<<<<<<< src/main/java/com/nomz/doctorstudy/conference/service/ConferenceServiceImpl.java
 import java.util.stream.Collectors;
-=======
 import java.util.Map;
-import java.util.stream.Collectors;
->>>>>>> src/main/java/com/nomz/doctorstudy/conference/service/ConferenceServiceImpl.java
+
 
 @Slf4j
 @Service
