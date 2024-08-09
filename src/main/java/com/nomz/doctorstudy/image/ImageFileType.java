@@ -7,21 +7,19 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @RequiredArgsConstructor
 @Slf4j
-public enum ImageType {
-    MEMBERS("members"), CONFERENCES("conferences"),
-    MODERATORS("moderators"), GROUPS("groups")
+public enum ImageFileType {
+    JPG("jpg"), PNG("png"), JPEG("jpeg"),
     ;
 
-    private final String domain;
+    private final String extension;
 
     public static boolean contains(String type){
-        for(ImageType element : ImageType.values()){
-            if(element.getDomain().equalsIgnoreCase(type)){
+        for(ImageFileType element : ImageFileType.values()){
+            if(element.getExtension().equalsIgnoreCase(type)){
                 return true;
             }
         }
 
         return false;
     }
-
 }
