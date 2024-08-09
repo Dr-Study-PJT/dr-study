@@ -56,6 +56,7 @@ public class StudyGroupQueryRepository {
 
     }
 
+
     private BooleanExpression likeName(String name){
         if (StringUtils.hasText(name)){
             return studyGroup.name.like("%" + name + "%");
