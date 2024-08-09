@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SaveS3MediaRequest {
+public class ImageUploadRequest {
     private MultipartFile file;
-    private String filePath;
+    private String domain;
 }
