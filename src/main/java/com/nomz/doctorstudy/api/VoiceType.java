@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum VoiceType {
     // 목소리 Types
-    ROBOT("Alloy"),
-    MEN_MIDDLE("Echo"),
-    MEN_HIGH("Fable"),
-    MEN_LOW("Onyx"),
-    WOMEN_HIGH("Nova"),
-    WOMEN_LOW("Shimmer")
+    ROBOT("alloy"),
+    MEN_MIDDLE("echo"),
+    MEN_HIGH("fable"),
+    MEN_LOW("onyx"),
+    WOMEN_HIGH("nova"),
+    WOMEN_LOW("shimmer")
     ;
 
     private final String token;

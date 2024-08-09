@@ -15,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FastApiCallService implements ExternalApiCallService{
 
-    @Value("${fast-api.url}")
-    private String baseUrl;
+  //  @Value("${fast-api.url}")
+    private String baseUrl = "http://192.168.100.149:8000";
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private RestTemplate restTemplate;
@@ -62,11 +62,12 @@ public class FastApiCallService implements ExternalApiCallService{
     }
 
     @Override
-    public byte[] tts(String s) {
+    public byte[] tts(String s, VoiceType type) {
         String url = baseUrl + "/tts/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Voice-Type", type.getToken());
 
         String requestJson = "{\"text\":\"" + s + "\"}";
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
@@ -83,12 +84,11 @@ public class FastApiCallService implements ExternalApiCallService{
     }
 
     @Override
-    public String stt(byte[] audio, VoiceType type) {
+    public String stt(byte[] audio) {
         String url = baseUrl + "/stt/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.set("Voice-Type", type.name());
 
         HttpEntity<byte[]> entity = new HttpEntity<>(audio, headers);
 
