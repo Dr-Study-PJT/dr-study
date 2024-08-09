@@ -203,7 +203,10 @@ export default async function HomePage({}: {}) {
                                                             </div>
                                                             <div className="flex space-x-2">
                                                                 {group.tags
-                                                                    .slice(0, 3)
+                                                                    ?.slice(
+                                                                        0,
+                                                                        3,
+                                                                    )
                                                                     .map(
                                                                         (
                                                                             tagName,
@@ -282,7 +285,7 @@ export default async function HomePage({}: {}) {
                                                         </div>
                                                         <div className="flex space-x-2">
                                                             {group.tags
-                                                                .slice(0, 3)
+                                                                ?.slice(0, 3)
                                                                 .map(
                                                                     (
                                                                         tagName,

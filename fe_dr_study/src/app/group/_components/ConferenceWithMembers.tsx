@@ -116,7 +116,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
 
                             <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
                                 {conference.participants
-                                    .slice(0, 3)
+                                    ?.slice(0, 3)
                                     .map((participant, i) => (
                                         <li key={i}>
                                             <div className="relative overflow-hidden w-10 h-10 rounded-xl">

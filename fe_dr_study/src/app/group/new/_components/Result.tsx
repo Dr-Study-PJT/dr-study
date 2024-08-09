@@ -6,6 +6,7 @@ import successAnimation from '@/app/assets/lotties/success.json';
 import warningAnimation from '@/app/assets/lotties/warning.json';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { Button } from '@/components/atoms';
+import { useRouter } from 'next/navigation';
 
 export const LoadingLottie = () => {
     return (
@@ -62,6 +63,8 @@ const ResultStep = ({
 }: ResultStepProps) => {
     const [displayLoading, setDisplayLoading] = useState(true);
     const [dots, setDots] = useState('');
+
+    const router = useRouter();
 
     useEffect(() => {
         if (loading) {
@@ -120,12 +123,12 @@ const ResultStep = ({
                         </Button>
                         <Button
                             rounded
-                            onClick={() => {
-                                `/group/${result.id}`;
+                            onClick={(e) => {
+                                router.push(`/group/${result.id}`);
                             }}
                             fullWidth
                         >
-                            로그인
+                            그룹 보러가기
                         </Button>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ import { ICreateModeratorReq } from '../../_types';
 export interface StepProps {
     onNext: () => void;
     onBack: () => void;
+    onSubmit: (e: FormEvent, data: any) => void;
     data: ICreateModeratorReq;
     setData: (data: ICreateModeratorReq) => void;
 }

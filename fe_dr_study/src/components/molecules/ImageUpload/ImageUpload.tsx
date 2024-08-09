@@ -1,5 +1,11 @@
 import Image from 'next/image';
-import React, { Dispatch, SetStateAction, useState, useCallback } from 'react';
+import React, {
+    Dispatch,
+    SetStateAction,
+    useState,
+    useCallback,
+    useEffect,
+} from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
 import { tv } from 'tailwind-variants';
@@ -23,9 +29,10 @@ interface ImageUploadProps {
     bodyData?: any;
     setBodyData?: Dispatch<SetStateAction<any>>;
     setImageDisplay?: Dispatch<SetStateAction<any>>;
-    setData?: Dispatch<SetStateAction<any>>; // 추가된 prop
+    setData?: Dispatch<SetStateAction<any>>;
     shape?: 'square' | 'rounded-square' | 'circle';
     type?: 'members' | 'conferences' | 'groups';
+    initialImage?: string; // 추가된 prop
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -35,9 +42,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     setData,
     shape = 'circle',
     type = 'members',
+    initialImage,
 }) => {
     const { control } = useForm();
-    const [image, setImage] = useState<string | null>(null);
+    const [image, setImage] = useState<string | null>(initialImage || null); // 초기 이미지 설정
 
     const handleImageUpload = async (file: File) => {
         try {
@@ -56,14 +64,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             );
 
             const imageId = response.data.data.imageId;
+            const imageUrl = URL.createObjectURL(file);
 
             setImageDisplay && setImageDisplay(imageId);
-            setImage(URL.createObjectURL(file));
+            setImage(imageUrl);
 
             if (setData) {
                 setData((prevData: any) => ({
                     ...prevData,
                     imageId,
+                    imageUrl, // 이미지 URL도 상태로 관리
                 }));
             }
 
