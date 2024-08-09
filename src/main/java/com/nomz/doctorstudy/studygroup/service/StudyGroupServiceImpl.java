@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.member.service.MemberService;
+import com.nomz.doctorstudy.notification.NotificationService;
 import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import com.nomz.doctorstudy.studygroup.StudyGroupRole;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
@@ -44,6 +45,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final MemberStudyGroupRepository memberStudyGroupRepository;
     private final MemberService memberService;
     private final ImageRepository imageRepository;
+    private final NotificationService notificationService;
 
     @Override
     public StudyGroup createStudyGroup(CreateStudyGroupRequest request, Member requester) {
@@ -128,8 +130,11 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .build();
 
         // Save
-        return memberStudyGroupApplyRepository.save(apply);
+        memberStudyGroupApplyRepository.save(apply);
 
+        notificationService.createNotification(apply);
+
+        return apply;
     }
 
     @Override
@@ -151,6 +156,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         }
         // 3. status 변경
         apply.setApplicationStatus(createReplyRequest.getApplicationStatus());
+        apply.setReplyMessage(createReplyRequest.getReplyMessage());
 
         if (createReplyRequest.getApplicationStatus() == ApplicationStatus.APPROVED) {
             // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
@@ -165,6 +171,9 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                     .build();
             memberStudyGroupRepository.save(memberStudyGroup);
         }
+
+        notificationService.createNotification(apply);
+
         return apply;
     }
 

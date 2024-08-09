@@ -13,7 +13,7 @@ import java.util.Map;
 public class StudyGroupExceptionHandler {
 
     @ExceptionHandler(StudyGroupException.class)
-    public ResponseEntity<?> StudyGroupExceptionHandler(StudyGroupException e){
+    public ResponseEntity<?> handleStudyGroupException(StudyGroupException e){
         log.error("StudyGroupException occurred", e);
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()

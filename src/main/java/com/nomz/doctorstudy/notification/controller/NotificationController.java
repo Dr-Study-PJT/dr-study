@@ -43,6 +43,7 @@ public class NotificationController {
     private final MemberStudyGroupApplyRepository memberStudyGroupApplyRepository;
     private final ConferenceMemberInviteQueryRepository conferenceMemberInviteQueryRepository;
 
+    
     @GetMapping
     @Operation(summary = "Notification 리스트 조회", description = "Notification 리스트를 검색합니다.")
     @ApiResponses(value = {
@@ -68,25 +69,10 @@ public class NotificationController {
         List<Notification> notifications = notificationService.getUnreadNotifications(requester);
 
         for (Notification notification : notifications) {
-            if (notification.getItemType() == NotificationItemType.STUDY_GROUP_APPLICATION) {
-                MemberStudyGroupApply application = memberStudyGroupApplyRepository.findById(notification.getId())
-                        .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
-
-                responses.add(NotificationInfo.of(application));
-                // TODO: 지원 상태 체크, 알림 requester는 가입신청인이 아님, 컨퍼런스 초대 아이디 넣는것 고려해보기
-            }
-            if (notification.getItemType() == NotificationItemType.CONFERENCE_INVITATION) {
-                List<ConferenceMemberInvite> invitations = conferenceMemberInviteQueryRepository.getConferenceMemberInviteList(
-                        ConferenceMemberInviteSearchFilter.builder().
-                                inviteeId(requester.getId()).
-                                conferenceId(notification.getId()).
-                                build()
-                );
-                if (invitations.size() != 1) {
-                    throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "컨퍼런스 초대 알림 조회 중, 알 수 없는 오류가 발생했습니다.");
-                }
-                responses.add(NotificationInfo.of(invitations.get(0)));
-            }
+            responses.add(switch (notification.getItemType()) {
+                case STUDY_GROUP_APPLICATION, STUDY_GROUP_APPLICATION_REPLY -> getApplicationNotificationInfo(notification);
+                case CONFERENCE_INVITATION ->  getInvitationNotificationInfo(notification);
+            });
         }
 
         return ResponseEntity.ok(new SuccessResponse<>(
@@ -97,12 +83,12 @@ public class NotificationController {
 
 
     @PostMapping("/{notificationId}/read")
-    @Operation(summary = "Notification 리스트 조회", description = "Notification 리스트를 검색합니다.")
+    @Operation(summary = "Notification 읽음 처리", description = "Notification를 읽음 상태로 변경합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Notification 리스트 검색 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "Notification 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+            @ApiResponse(responseCode = "200", description = "Notification 읽음 처리 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Notification 읽음 처리 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
                     {
-                        "message": "Notification 조회에 실패했습니다.",
+                        "message": "Notification 읽음 처리에 실패했습니다.",
                         "errors": {
                         }
                     }
@@ -127,9 +113,30 @@ public class NotificationController {
         notificationService.readNotification(requester, notificationId);
 
         return ResponseEntity.ok(new SuccessResponse<>(
-                    "알림 읽기에 성공했습니다.",
-                null
+                        "알림 읽음 처리에 성공했습니다.",
+                        null
                 )
         );
     }
+
+
+    private NotificationInfo getApplicationNotificationInfo(Notification notification) {
+        MemberStudyGroupApply application = memberStudyGroupApplyRepository.findById(notification.getItemId())
+                .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
+        return NotificationInfo.of(notification, application);
+    }
+
+    private NotificationInfo getInvitationNotificationInfo(Notification notification) {
+        List<ConferenceMemberInvite> invitations = conferenceMemberInviteQueryRepository.getConferenceMemberInviteList(
+                ConferenceMemberInviteSearchFilter.builder().
+                        inviteeId(notification.getRecipient().getId()).
+                        conferenceId(notification.getItemId()).
+                        build()
+        );
+        if (invitations.size() != 1) {
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "컨퍼런스 초대 알림 조회 중, 알 수 없는 오류가 발생했습니다.");
+        }
+        return NotificationInfo.of(notification, invitations.get(0));
+    }
+
 }

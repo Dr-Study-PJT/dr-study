@@ -5,6 +5,7 @@ import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.common.jwt.JwtUtil;
 import com.nomz.doctorstudy.common.redis.RedisUtil;
+import com.nomz.doctorstudy.member.Login;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.request.*;
 import com.nomz.doctorstudy.member.response.MemberAndTokensResponse;
@@ -127,11 +128,13 @@ public class AuthController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<String>> logout(Authentication authentication, HttpServletResponse response){
-        MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
-        String email = userDetails.getUsername();
+    public ResponseEntity<SuccessResponse<String>> logout(Authentication authentication, @Login Member loginMember, HttpServletResponse response){
+//        MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
+//        String email = userDetails.getUsername();
 
-        authService.logout(email);
+        log.info("member Login = {}", loginMember.getEmail());
+
+        authService.logout(loginMember.getEmail());
 
         ResponseCookie accessCookie = ResponseCookie.from("access_token", null)
                 .httpOnly(true)
@@ -326,6 +329,29 @@ public class AuthController {
         return ResponseEntity.ok(
                 new SuccessResponse<>("비밀번호 변경 성공", null)
         );
+    }
+
+    @PostMapping("/check-password")
+    @Operation(summary = "비밀번호 확인", description = "로그인된 회원의 패스워드를 검증해줍니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "비밀번호 일치", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "비밀번호 불일치", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "비밀번호가 일치하지 않습니다.",
+                        "errors": {}
+                    }
+                    """))),
+    })
+    public ResponseEntity<?> checkPassword(@RequestBody VerifyPasswordRequest verifyPasswordRequest, @Login Member member){
+        log.info("request password = {}", verifyPasswordRequest);
+        log.info("login Member = {}", member);
+
+        authService.verifyLoginMemberPassword(verifyPasswordRequest, member);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>("비밀번호가 일치합니다.", null)
+        );
+
     }
 
 }

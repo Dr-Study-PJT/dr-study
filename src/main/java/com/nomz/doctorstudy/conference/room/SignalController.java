@@ -25,6 +25,7 @@ public class SignalController {
     private final BlockInterpreter blockInterpreter;
     private final ExternalApiCallService externalApiCallService;
     private final ProcessManager processManager;
+    private final RoomService roomService;
 
     @MessageMapping("/chat/{conferenceId}")
     @SendTo("/topic/chat/{conferenceId}")
@@ -55,7 +56,9 @@ public class SignalController {
 
     @MessageMapping("/signal/{conferenceId}/heartbeat")
     public void handleHeartBeatSignal(@DestinationVariable("conferenceId") Long conferenceId, HeartBeatSignal signal) {
-        log.debug("{} send heartbeat signal from conference: {}", signal.getId(), conferenceId);
+        log.debug("[member:{}] send heartbeat signal from conference: {}", signal.getId(), conferenceId);
+
+        roomService.updateHeartbeat(conferenceId, signal.getId());
     }
 
     //
@@ -93,7 +96,7 @@ public class SignalController {
     }
 
     @PostMapping("/v1/conferences/{conferenceId}/run-block-script")
-    public ResponseEntity<?> blockMuteUnmute(
+    public ResponseEntity<?> runBlockScript(
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody String script
     ) {
@@ -101,5 +104,16 @@ public class SignalController {
         blockInterpreter.interpret(conferenceId);
 
         return ResponseEntity.ok("OK\n" + script);
+    }
+
+    @PostMapping("/v1/conferences/{conferenceId}/send-heartstop-signal")
+    public ResponseEntity<?> sendHeartstopSignal(
+            @PathVariable("conferenceId") Long conferenceId,
+            @RequestBody HeartStopSignal heartStopSignal
+    ) {
+        log.debug("trying to send Heartstop to conference:{}", conferenceId);
+        signalTransMitter.transmitSignal(conferenceId, heartStopSignal);
+
+        return ResponseEntity.ok("OK");
     }
 }
