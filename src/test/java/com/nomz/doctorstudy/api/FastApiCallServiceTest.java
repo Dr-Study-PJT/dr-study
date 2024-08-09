@@ -32,7 +32,7 @@ public class FastApiCallServiceTest {
         String inputText = "안녕하세요. 오늘 저는 데이터베이스에 대해 이야기할 것입니다. " +
                 "데이터베이스는 다양한 정보를 체계적으로 저장하고 효율적으로 관리할 수 있는 시스템을 말합니다. " +
                 "대량의 데이터를 정확하게 저장하고 분석할 수 있도록 도와줍니다.";
-        byte[] actualResponse = fastApiCallService.tts(inputText);
+        byte[] actualResponse = fastApiCallService.tts(inputText, VoiceType.MEN_LOW);
         System.out.println("Actual Response: " + Arrays.toString(actualResponse));
 
     }
@@ -44,7 +44,7 @@ public class FastApiCallServiceTest {
                 "데이터 베이스는 대량의 데이터를 효율적으로 소장 전세X정 숙제할 수 있도록 구워줍니다.";
 
         // 텍스트를 음성 파일로 변환
-        byte[] audioData = fastApiCallService.tts(inputText);
+        byte[] audioData = fastApiCallService.tts(inputText, VoiceType.MEN_LOW);
 
         // 음성 데이터가 null이 아니고 길이가 0보다 큰지 확인
         assertNotNull(audioData, "Audio data should not be null");

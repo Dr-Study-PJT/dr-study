@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.command;
 
 import com.nomz.doctorstudy.api.ExternalApiCallService;
+import com.nomz.doctorstudy.api.VoiceType;
 import com.nomz.doctorstudy.blockinterpreter.BlockErrorCode;
 import com.nomz.doctorstudy.blockinterpreter.BlockException;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
@@ -43,7 +44,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
         log.debug("let avatar speak: {}", speechContent);
 
-        byte[] speechAudio = externalApiCallService.tts(speechContent);
+        byte[] speechAudio = externalApiCallService.tts(speechContent, VoiceType.MEN_LOW);
 
         long processId = threadProcessContext.getProcessId();
 
