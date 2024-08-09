@@ -25,7 +25,7 @@ export interface Member {
 }
 
 export interface CommentData {
-    id: number;
+    id: number | string;
     content: string;
     createdAt: string;
     memberInfo: Member;

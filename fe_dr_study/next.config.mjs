@@ -5,6 +5,7 @@ const nextConfig = {
             'mz-stop.s3.ap-northeast-2.amazonaws.com',
             'via.placeholder.com',
             'example.com',
+            's3.ap-northeast-2.amazonaws.com',
         ],
     },
 };

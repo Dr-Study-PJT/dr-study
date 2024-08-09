@@ -11,7 +11,7 @@ import {
 export const useHandlers = () => {
     const router = useRouter();
 
-    const handleCommentSubmit = async (data: any, articleId: number) => {
+    const handleCommentSubmit = async (data: any, articleId: string) => {
         try {
             await postingComment(articleId, {
                 content: data.comment_content,
@@ -23,7 +23,7 @@ export const useHandlers = () => {
         }
     };
 
-    const handleCommentUpdate = async (commentId: number, content: string) => {
+    const handleCommentUpdate = async (commentId: string, content: string) => {
         try {
             await updatingComment(commentId, { content });
             alert('댓글이 성공적으로 수정되었습니다.');
@@ -32,7 +32,7 @@ export const useHandlers = () => {
         }
     };
 
-    const handleCommentDelete = async (commentId: number) => {
+    const handleCommentDelete = async (commentId: string) => {
         try {
             await deletingComment(commentId);
             alert('댓글이 성공적으로 삭제되었습니다.');
@@ -41,7 +41,7 @@ export const useHandlers = () => {
         }
     };
 
-    const handleArticleDelete = async (articleId: number) => {
+    const handleArticleDelete = async (articleId: string) => {
         try {
             await deletingArticle(articleId);
             alert('게시글이 성공적으로 삭제되었습니다.');

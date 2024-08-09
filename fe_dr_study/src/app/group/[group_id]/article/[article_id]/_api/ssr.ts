@@ -4,11 +4,11 @@ import { GET } from '@/app/api/routeModule';
 
 // 기사 가져옴
 // articleAPI로서 필요한것들임! -> 질문임!
-export const fetchingArticle = async (articleId: number) => {
+export const fetchingArticle = async (articleId: string) => {
     'use server';
     console.log('페칭 시도');
     const response = await GET('v1/articles/', {
-        params: articleId.toString(),
+        params: articleId,
         isAuth: true,
     });
     console.log(response.data); // 확인용

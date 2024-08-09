@@ -22,7 +22,7 @@ interface ArticleCommentsListProps {
 const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     comments,
 }) => {
-        const { handleCommentDelete, handleCommentUpdate } = useHandlers();
+    const { handleCommentDelete, handleCommentUpdate } = useHandlers();
 
     return (
         <Box variant="articleCommentsListContainer">
@@ -58,7 +58,7 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                                 <Button
                                     color="red"
                                     onClick={() =>
-                                        handleCommentDelete(comment.id)
+                                        handleCommentDelete(String(comment.id))
                                     }
                                 >
                                     삭제
@@ -67,7 +67,7 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                                     type="button"
                                     onClick={() =>
                                         handleCommentUpdate(
-                                            comment.id,
+                                            String(comment.id),
                                             String(comment.content),
                                         )
                                     }
@@ -84,3 +84,4 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
 };
 
 export default ArticleCommentsList;
+

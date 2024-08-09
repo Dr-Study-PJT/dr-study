@@ -14,7 +14,7 @@ import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAnd
 import { useHandlers } from '../_handler';
 
 interface CommentFormProps {
-    articleId: number;
+    articleId: number | string;
     setFocus: UseFormSetFocus<any>;
     handleSubmit: (event?: React.BaseSyntheticEvent) => Promise<void>;
     register: UseFormRegister<any>;
@@ -64,7 +64,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
 };
 
 interface ArticleCommentsFormProps {
-    articleId: number;
+    articleId: string;
 }
 
 const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({

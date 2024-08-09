@@ -7,25 +7,25 @@ import ArticleCommentsForm from './_component/ArticleCommentsFormCsr';
 export default async function ArticleDetailPage({
     params,
 }: {
-    params: { article_id: string };
+    params: { group_id: string; article_id: string };
 }) {
-    const articleId = Number(params.article_id);
+    const groupId = params.group_id;
+    const articleId = params.article_id;
     const article = await fetchingArticle(articleId);
-
-    // Article 객체가 없을 때 예외 처리
-    if (!article) {
-        return <div>Article not found</div>;
-    }
 
     return (
         <div>
+            {/* ArticleDetail은 ssr로 팜 */}
             <ArticleDetail article={article} />
             {/* article.comments가 존재할 때만 ArticleCommentsList 렌더링 */}
+
+            {/* ArticleCommentsList는 ssr로 팜 */}
             {article.comments ? (
                 <ArticleCommentsList comments={article.comments} />
             ) : (
                 <div>No comments available</div>
             )}
+            {/* ArticleCommentsForm은 csr로 팜 */}
             <ArticleCommentsForm articleId={articleId} />
         </div>
     );
