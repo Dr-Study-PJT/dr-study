@@ -20,8 +20,14 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
             <div>
                 <div className="text-dr-header-2">{member.nickname}</div>
                 <div className="text-dr-gray-300">
-                    <div>Email : {member.email}</div>
-                    <div>가입일 : {member.regDate}</div>
+                    <p>
+                        <span className="text-dr-white">Email</span> :
+                        {member.email}
+                    </p>
+                    <p>
+                        <span className="text-dr-white">가입일</span> :
+                        {member.regDate}
+                    </p>
                 </div>
             </div>
         </div>

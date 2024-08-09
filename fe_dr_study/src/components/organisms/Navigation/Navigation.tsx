@@ -103,6 +103,8 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const memberData = useSelector((state: RootState) => state.member);
 
     const profileImageBoxRef = useRef<HTMLDivElement>(null);
+    const notificationBellRef = useRef<HTMLDivElement>(null);
+    const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -168,6 +170,24 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
         transition: 'background-color 0.3s, backdrop-filter 0.3s',
     };
 
+    // useEffect(() => {
+    //     const handleClickOutside = (event: MouseEvent) => {
+    //         if (
+    //             notificationBellRef.current &&
+    //             notificationDropdownRef.current &&
+    //             !notificationBellRef.current.contains(event.target as Node) &&
+    //             !notificationDropdownRef.current.contains(event.target as Node)
+    //         ) {
+    //             toggleIsNotificationOpen(); // 드롭다운 닫기
+    //         }
+    //     };
+
+    //     document.addEventListener('mousedown', handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener('mousedown', handleClickOutside);
+    //     };
+    // }, [toggleDropdown]);
+
     return (
         <div
             className={`NAVIGATION-BOX  w-full fixed flex flex-row justify-between top-0 h-[3rem] items-center px-3 border-b-[1px] border-dr-indigo-100`}
@@ -223,7 +243,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                             <div
                                 className={`relative text-dr-white rounded-full cursor-pointer`}
                             >
-                                <div onClick={toggleIsNotificationOpen}>
+                                <div
+                                    onClick={toggleIsNotificationOpen}
+                                    ref={notificationBellRef}
+                                >
                                     <Tooltip text={'알림'} direction="bottom">
                                         <Icon
                                             icon="bell"

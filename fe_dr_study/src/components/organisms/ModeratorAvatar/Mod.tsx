@@ -1,20 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import './mod.css';
 
 interface ModeratorAvatarProps {
     isAvatarSpeaking: boolean;
     timeForAvatarSpeaking: number;
     gptSummaryBySystem: string;
+    audioUrl: string;
 }
 
 const ModeratorAvatar = ({
     isAvatarSpeaking,
     timeForAvatarSpeaking,
     gptSummaryBySystem,
+    audioUrl,
 }: ModeratorAvatarProps) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
+    const [audio, setAudio] = useState<HTMLAudioElement | null>(
+        new Audio(
+            'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/audio_avatar_1.mp3',
+        ),
+    );
 
     useEffect(() => {
         if (isAvatarSpeaking) {
@@ -23,12 +30,14 @@ const ModeratorAvatar = ({
                 isAvatarSpeaking,
             );
             setIsHovered(true);
+            // audio.play();
         } else {
             console.log(
                 'isAvatarSpeaking else (false) line => ',
                 isAvatarSpeaking,
             );
             setIsHovered(false);
+            // audio.pause(); // 오디오 일시 정지
         }
     }, [isAvatarSpeaking, timeForAvatarSpeaking]);
 
@@ -41,6 +50,10 @@ const ModeratorAvatar = ({
             timeForAvatarSpeaking,
         );
     }, [setIsHovered]);
+
+    useEffect(() => {
+        audioUrl && console.log('오디오 파일 경로 => audioUrl: ', audioUrl);
+    }, [audioUrl]);
 
     return (
         <div
@@ -77,6 +90,13 @@ const ModeratorAvatar = ({
             <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
                 {gptSummaryBySystem}
             </div>
+            <audio
+                controls
+                src={`${audioUrl} || https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/audio\_avatar\_1.mp3`}
+                preload="auto"
+                id="audio_player"
+            ></audio>
+            <button onClick={() => audio?.play()}>플레이</button>
         </div>
     );
 };

@@ -18,9 +18,11 @@ interface SignalInterface {
     time?: number; // 발화 시간 또는 아바타 움직임 시간
     content?: string; // GPT 요약
     peerId?: string; // 방송 종료 시 peerId
+    filePath?: string; // 오디오 파일 경로
 }
 
 interface SignalProps {
+    setAudioUrl: Dispatch<SetStateAction<string>>;
     isJoined: boolean;
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
@@ -40,6 +42,7 @@ interface SignalProps {
 }
 
 const Signal = ({
+    setAudioUrl,
     isJoined,
     existingPeers,
     setExistingPeers,
@@ -72,26 +75,30 @@ const Signal = ({
         // 소켓 연결
         const connectSocket = () => {
             console.log('memberId before connect SockJS', memberData.id);
-            stompClient?.connect({ memberId: 'abc' }, () => {
-                if (stompClient?.connected) {
-                    subscribeToMessages();
-                    subscribeToSignals();
+            stompClient?.connect(
+                { memberId: memberData.id, roomId: conferenceId },
+                () => {
+                    if (stompClient?.connected) {
+                        subscribeToMessages();
+                        subscribeToSignals();
 
-                    heartbeatInterval = setInterval(() => {
-                        sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
-                    }, 10000); // 10초
-                }
-            });
+                        // 10초마다 생존 신고 전송
+                        // heartbeatInterval = setInterval(() => {
+                        //     sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
+                        // }, 10000); // 10초
+                    }
+                },
+            );
         };
         if (isJoined) {
             connectSocket();
         }
         // 컴포넌트 언마운트 시 interval 클리어
-        if (!!stompClient && !stompClient.connected) {
-            return () => {
-                clearInterval(heartbeatInterval);
-            };
-        }
+        // if (!!stompClient && !stompClient.connected) {
+        //     return () => {
+        //         clearInterval(heartbeatInterval);
+        //     };
+        // }
     }, [isJoined]);
 
     // URL 생성 함수
@@ -172,15 +179,13 @@ const Signal = ({
         console.log('setTimeOut 시작 전');
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
         setTimeForAvatarSpeaking(newSignal.time as number);
+        setAudioUrl(newSignal.filePath as string); // 오디오 URL 설정
         // 아바타 발화는 해당 시간 동안만 수행
-        setTimeout(
-            () => {
-                console.log('setTimeOut 시작 됨');
-                setIsAvatarSpeaking(false);
-                setTimeForAvatarSpeaking(0);
-            },
-            (newSignal.time as number) * 1000,
-        );
+        setTimeout(() => {
+            console.log('setTimeOut 시작 됨');
+            setIsAvatarSpeaking(false);
+            setTimeForAvatarSpeaking(0);
+        }, newSignal.time as number);
         console.log(
             `handleAvatarSpeakSignal: 사회자 아바타 => 발화 상태로 ${newSignal.time}초 동안 전환 + Audio 실행 (S3 기능 구현 대기중)`,
         );
@@ -240,23 +245,23 @@ const Signal = ({
         }
     };
 
-    // 10초마다 생존 신고
-    const sendHeartbeat = (id: number) => {
-        if (stompClient) {
-            // Stomp 클라이언트가 존재할 때
-            stompClient?.send(
-                `/pub/signal/${conferenceId}/heartbeat`, // 메시지를 보낼 경로
-                {},
-                JSON.stringify({
-                    id: id, // 송신자 ID
-                }),
-            );
-            setMessage(''); // 메시지 입력 필드 초기화
-        }
-    };
+    // // 10초마다 생존 신고
+    // const sendHeartbeat = (id: number) => {
+    //     if (stompClient) {
+    //         // Stomp 클라이언트가 존재할 때
+    //         stompClient?.send(
+    //             `/pub/signal/${conferenceId}/heartbeat`, // 메시지를 보낼 경로
+    //             {},
+    //             JSON.stringify({
+    //                 id: id, // 송신자 ID
+    //             }),
+    //         );
+    //         setMessage(''); // 메시지 입력 필드 초기화
+    //     }
+    // };
 
     return (
-        <div className="flex flex-col h-full bg-dr-dark-300 p-[0.5rem]">
+        <div className="flex flex-col w-1/5 h-full bg-dr-dark-300 p-[0.5rem]">
             <div
                 ref={messagesEndRef}
                 className="flex h-full w-full overflow-y-scroll"

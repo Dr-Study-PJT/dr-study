@@ -91,7 +91,7 @@ const ConferenceControlBar = ({
                 isAuth: true,
             });
             console.log('컨퍼런스 나가기 성공:', response);
-            router.push(`/conference/${conferenceId}/info`);
+            router.push(`/`);
         } catch (error) {
             console.error('컨퍼런스 나가기 실패:', error);
         }

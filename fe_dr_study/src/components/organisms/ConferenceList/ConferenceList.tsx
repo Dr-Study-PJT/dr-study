@@ -15,23 +15,31 @@ const ConferenceList = ({ conferences }: ConferenceListProps) => {
     }
 
     const formatDateTime = (dateString: any) => {
-        const options = {
-            year: '2-digit',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false, // 24시간 형식
+        const options: {
+            year: 'numeric' | '2-digit';
+            month: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
+            day: 'numeric' | '2-digit';
+            hour: 'numeric' | '2-digit';
+            minute: 'numeric' | '2-digit';
+            hour12: boolean;
+        } = {
+            year: 'numeric', // '2-digit' 또는 'numeric' 중 하나로 설정
+            month: '2-digit', // '2-digit', 'numeric', 'long', 'short', 'narrow' 중 하나로 설정
+            day: '2-digit', // '2-digit' 또는 'numeric' 중 하나로 설정
+            hour: '2-digit', // '2-digit' 또는 'numeric' 중 하나로 설정
+            minute: '2-digit', // '2-digit' 또는 'numeric' 중 하나로 설정
+            hour12: false, // true 또는 false
         };
+
         return new Date(dateString).toLocaleString('ko-KR', options);
     };
 
     return (
-        <div className="flex flex-col w-full p-[2rem] text-dr-white rounded-lg gap-dr-30 overflow-hidden">
+        <div className="flex flex-col w-full p-[2rem] text-dr-white rounded-lg gap-dr-30">
             <p className="text-center text-dr-header-2">종료된 컨퍼런스</p>
-            <div className="flex gap-dr-30 overflow-x-scroll">
+            <div className="flex pb-[1.5rem] gap-dr-30 overflow-x-scroll">
                 {conferences.map((conference) => (
-                    <div className="shadow-2xl hover:bg-dr-indigo-0 rounded-lg duration-200">
+                    <div className="min-w-[15rem] shadow-2xl hover:bg-dr-indigo-0 rounded-lg duration-200">
                         <div
                             key={conference.id}
                             className=" relative flex flex-col items-center w-full h-[7rem] bg-dr-indigo-500 rounded-tr-lg rounded-tl-lg "
