@@ -83,11 +83,12 @@ public class FastApiCallService implements ExternalApiCallService{
     }
 
     @Override
-    public String stt(byte[] audio) {
+    public String stt(byte[] audio, VoiceType type) {
         String url = baseUrl + "/stt/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.set("Voice-Type", type.name());
 
         HttpEntity<byte[]> entity = new HttpEntity<>(audio, headers);
 
