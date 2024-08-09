@@ -535,7 +535,7 @@ const ProfileDropDown = ({
             <ul className="flex flex-col text-dr-body-3">
                 <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
                     <Link
-                        href={`/members/${memberData.id}`}
+                        href={`/member/${memberData.id}`}
                         className="flex items-center text-white  hover:bg-dr-dark-100"
                     >
                         <Icon icon="person" size="sm" />
