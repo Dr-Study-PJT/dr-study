@@ -178,7 +178,7 @@ public class MemberController {
                     }
                     """))),
     })
-    public ResponseEntity<?> updateMemberInfo(@RequestBody UpdateMemberInfoRequest updateMemberInfoRequest, @Login Member member){
+    public ResponseEntity<?> updateMemberInfo(@RequestBody UpdateMemberInfoRequest updateMemberInfoRequest, @Parameter(hidden = true) @Login Member member){
         log.info("member = {}", member);
 
         Member updatedMember = memberService.updateMemberInfo(updateMemberInfoRequest, member.getEmail());
