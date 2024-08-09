@@ -5,7 +5,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class MemberException extends RuntimeException  {
     private final ErrorCode errorCode;
+    private final String message;
+
+    public MemberException(ErrorCode errorCode) {
+        this(errorCode, errorCode.getDefaultMessage());
+    }
+
+    public MemberException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+        this.message = message;
+    }
 }
