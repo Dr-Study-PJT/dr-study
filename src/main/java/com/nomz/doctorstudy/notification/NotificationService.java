@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -38,13 +37,23 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createNotification(MemberStudyGroupApply application) {
+    public void createApplicationNotification(MemberStudyGroupApply application) {
         Notification notification = Notification.of(application);
         notificationRepository.save(notification);
     }
 
     @Transactional
-    public void createNotification(ConferenceMemberInvite invitation) {
+    public void removeApplicationNotificationFromCaptain(MemberStudyGroupApply application) {
+        notificationRepository.findByItemTypeAndItemId(NotificationItemType.STUDY_GROUP_APPLICATION, application.getId())
+                .ifPresent(notification -> {
+                    if (notification.getRecipient() == application.getStudyGroup().getCaptain()) {
+                        notification.readThis();
+                    }
+                });
+    }
+
+    @Transactional
+    public void createInvitationNotification(ConferenceMemberInvite invitation) {
         Notification notification = Notification.of(invitation);
         notificationRepository.save(notification);
     }

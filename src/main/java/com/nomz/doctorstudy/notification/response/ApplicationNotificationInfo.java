@@ -28,7 +28,7 @@ public class ApplicationNotificationInfo {
     public static ApplicationNotificationInfo of(MemberStudyGroupApply application) {
         return builder()
                 .applicationId(application.getId())
-                .applicant(MemberInfo.of(application.getMember()))
+                .applicant(MemberInfo.of(application.getApplicant()))
                 .applyMessage(application.getApplyMessage())
                 .groupId(application.getStudyGroup().getId())
                 .groupName(application.getStudyGroup().getName())

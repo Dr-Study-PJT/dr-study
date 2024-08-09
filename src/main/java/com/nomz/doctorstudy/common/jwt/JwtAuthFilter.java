@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nomz.doctorstudy.common.auth.MemberDetailService;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
-import com.nomz.doctorstudy.member.exception.auth.AuthException;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.jar.JarException;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -54,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilte
                 }
             } else{
                 log.info("----------------- jwt error -------------------");
-                jwtExceptionHandler(response, AuthErrorCode.AUTH_NOT_VALID_ACCESS_TOKEN);
+                jwtExceptionHandler(response, AuthErrorCode.AUTH_INVALID_ACCESS_TOKEN);
                 return;
             }
         }

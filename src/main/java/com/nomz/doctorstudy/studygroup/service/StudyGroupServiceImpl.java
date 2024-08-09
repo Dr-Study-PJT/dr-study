@@ -117,13 +117,14 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         StudyGroup studyGroup = studyGroupRepository.findById(createApplyRequest.getGroupId())
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
 
-        if (memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(requester.getId(), createApplyRequest.getGroupId()).isPresent()) {
-            throw new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_ALREADY_JOINED_ERROR);
-        }
+        memberStudyGroupApplyRepository.findByApplicantIdAndStudyGroupId(requester.getId(), createApplyRequest.getGroupId())
+                .ifPresent((n) -> {
+                    throw new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_ALREADY_JOINED_ERROR);
+                });
 
         // 새로운 멤버-그룹-지원 엔티티 생성
         MemberStudyGroupApply apply = MemberStudyGroupApply.builder()
-                .member(requester)
+                .applicant(requester)
                 .studyGroup(studyGroup)
                 .applyMessage(createApplyRequest.getApplyMessage())
                 .applicationStatus(ApplicationStatus.WAITING)
@@ -133,14 +134,14 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         // Save
         memberStudyGroupApplyRepository.save(apply);
 
-        notificationService.createNotification(apply);
+        notificationService.createApplicationNotification(apply);
 
         return apply;
     }
 
     @Override
     public MemberStudyGroupApply getApply(Long userId, Long groupId) {
-        return memberStudyGroupApplyRepository.findByMemberIdAndStudyGroupId(userId, groupId)
+        return memberStudyGroupApplyRepository.findByApplicantIdAndStudyGroupId(userId, groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
     }
 
@@ -161,10 +162,10 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
         if (createReplyRequest.getApplicationStatus() == ApplicationStatus.APPROVED) {
             // 4. 사용자 - 스터디 그룹 테이블에 데이터 저장
-            MemberStudyGroupId memberStudyGroupIdObject = new MemberStudyGroupId(apply.getMember().getId(), apply.getStudyGroup().getId());
+            MemberStudyGroupId memberStudyGroupIdObject = new MemberStudyGroupId(apply.getApplicant().getId(), apply.getStudyGroup().getId());
             MemberStudyGroup memberStudyGroup = MemberStudyGroup.builder()
                     .memberStudyGroupId(memberStudyGroupIdObject)
-                    .member(apply.getMember())
+                    .member(apply.getApplicant())
                     .studyGroup(apply.getStudyGroup())
                     .role(StudyGroupRole.MEMBER) // 기본 역할 설정
                     .joinDate(LocalDateTime.now())
@@ -173,7 +174,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
             memberStudyGroupRepository.save(memberStudyGroup);
         }
 
-        notificationService.createNotification(apply);
+        notificationService.removeApplicationNotificationFromCaptain(apply);
+        notificationService.createApplicationNotification(apply);
 
         return apply;
     }

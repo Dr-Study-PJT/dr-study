@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.config;
 
-import com.nomz.doctorstudy.notification.CustomChannelInterceptor;
-import org.springframework.context.annotation.Bean;
+import com.nomz.doctorstudy.conference.room.RoomChannelInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -9,11 +9,12 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
-import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final RoomChannelInterceptor roomChannelInterceptor;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -30,17 +31,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new CustomChannelInterceptor());
+        registration.interceptors(roomChannelInterceptor);
     }
-
-    // 최대 버퍼 크기 지정
-//    @Bean
-//    public ServletServerContainerFactoryBean createWebSocketContainer() {
-//        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-//        container.setMaxTextMessageBufferSize(1024 * 1024 * 50); // 50MB
-//        container.setMaxBinaryMessageBufferSize(1024 * 1024 * 50); // 50MB
-//        return container;
-//    }
 
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registry) {

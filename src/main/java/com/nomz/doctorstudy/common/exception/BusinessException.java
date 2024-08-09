@@ -11,17 +11,17 @@ public class BusinessException extends RuntimeException {
     private final String message;
 
     public BusinessException(ErrorCode errorCode) {
-        this.errorCode = errorCode;
-        message = errorCode.getDefaultMessage();
+        this(errorCode, errorCode.getDefaultMessage());
     }
 
     public BusinessException(ErrorCode errorCode, String message) {
+        super(message);
         this.errorCode = errorCode;
         this.message = message;
     }
 
     public BusinessException(ErrorCode errorCode, String message, Throwable cause) {
-        super(cause);
+        super(message, cause);
         this.errorCode = errorCode;
         this.message = message;
     }

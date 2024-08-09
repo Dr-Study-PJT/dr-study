@@ -28,7 +28,7 @@ public class GetApplicantListResponse {
 
     public static GetApplicantListResponse of(MemberStudyGroupApply memberStudyGroupApply) {
         return builder()
-                .applicant(MemberInfo.of(memberStudyGroupApply.getMember()))
+                .applicant(MemberInfo.of(memberStudyGroupApply.getApplicant()))
                 .groupId(memberStudyGroupApply.getStudyGroup().getId())
                 .groupName(memberStudyGroupApply.getStudyGroup().getName())
                 .createdAt(memberStudyGroupApply.getCreatedAt())
