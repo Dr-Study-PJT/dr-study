@@ -14,6 +14,7 @@ import com.nomz.doctorstudy.member.service.AuthService;
 import com.nomz.doctorstudy.member.service.EmailService;
 import com.nomz.doctorstudy.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -128,10 +129,7 @@ public class AuthController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<String>> logout(Authentication authentication, @Login Member loginMember, HttpServletResponse response){
-//        MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
-//        String email = userDetails.getUsername();
-
+    public ResponseEntity<SuccessResponse<String>> logout(@Parameter (hidden = true) @Login Member loginMember, HttpServletResponse response){
         log.info("member Login = {}", loginMember.getEmail());
 
         authService.logout(loginMember.getEmail());
