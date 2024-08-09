@@ -113,11 +113,18 @@ VALUES (1, 1, 1, '1번 사회자', NOW()),
 ;
 
 --CONFERENCE--
-INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, scheduled_time, ai_review)
-VALUES (1, 1, 1, 1, '컨퍼런스 1 제목', '컨퍼런스 1 주제', 10, null, "컨퍼런스 1 리뷰!"),
-       (1, 1, 2, 1, '컨퍼런스 2 제목', '컨퍼런스 2 주제', 10, null, "컨퍼런스 2 리뷰!"),
-       (2, 2, 1, 1, '컨퍼런스 3 제목', '컨퍼런스 3 주제', 10, null, "컨퍼런스 3 리뷰!"),
-       (2, 2, 2, 1, '컨퍼런스 4 제목', '컨퍼런스 4 주제', 10, null, "컨퍼런스 4 리뷰!")
+INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, start_time, finish_time, ai_review)
+VALUES (1, 1, 1, 1, '컨퍼런스 1 제목', '컨퍼런스 1 주제', 10, null, null, "컨퍼런스 1 리뷰!"),
+       (1, 1, 2, 1, '컨퍼런스 2 제목', '컨퍼런스 2 주제', 10, null, null, "컨퍼런스 2 리뷰!"),
+       (2, 2, 1, 1, '컨퍼런스 3 제목', '컨퍼런스 3 주제', 10, null, null, "컨퍼런스 3 리뷰!"),
+       (2, 2, 2, 1, '컨퍼런스 4 제목', '컨퍼런스 4 주제', 10, null, null, "컨퍼런스 4 리뷰!"),
+       (1, 1, 2, 1, '컨퍼런스 5 제목', '컨퍼런스 5 주제', 10, DATE_ADD(NOW(), INTERVAL -3 HOUR), DATE_ADD(NOW(), INTERVAL -1 HOUR), "컨퍼런스 4 리뷰!")
+;
+
+--CONFERENCE_MEMBER--
+INSERT INTO conference_member (conference_id, member_id)
+VALUES (5, 1),
+       (5, 5)
 ;
 
 --CONFERENCE_MEMBER_INVITE--
@@ -127,6 +134,7 @@ VALUES (2, 1, DATE_ADD(NOW(), INTERVAL -2 HOUR)),
        (1, 2, DATE_ADD(NOW(), INTERVAL -40 MINUTE)),
        (1, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE))
 ;
+
 
 --ARTICLES--
 INSERT INTO article (id, title, content, created_at, is_deleted, view_count, member_id, study_group_id)

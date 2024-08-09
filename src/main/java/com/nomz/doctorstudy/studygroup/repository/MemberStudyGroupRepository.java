@@ -10,4 +10,5 @@ public interface MemberStudyGroupRepository extends JpaRepository<MemberStudyGro
     List<MemberStudyGroup> findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(Long studyGroupId);
     List<MemberStudyGroup> findByMemberId(Long memberId);
     boolean existsByMemberStudyGroupIdMemberIdAndMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(Long memberId, Long studyGroupId);
+
 }
