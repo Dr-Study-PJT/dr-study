@@ -61,11 +61,13 @@ public class RoomChannelInterceptor implements ChannelInterceptor {
                 );
 
                 log.debug("New web socket connection from memberId: {}", memberId);
+                break;
 
             case DISCONNECT:
                 webSocketSessionManager.removeSession(sessionId);
 
                 log.debug("Disconnected web socket session id: {}", sessionId);
+                break;
         }
 
         return message;

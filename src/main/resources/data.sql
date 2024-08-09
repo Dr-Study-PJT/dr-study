@@ -96,8 +96,9 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
        (3, "아바타 말하기 스크립트", "3번 사전 프롬프트",
         "
                 phase(1) {
-                    loop(3) {
-                        let_avatar_speak('안녕하세요, 3번 프로세서 스크립트 실행 중입니다. 이 음성은 STT 기술을 이용해 만들어졌습니다. 안녕히계세요.');
+                    loop(2) {
+                        let_avatar_speak(gpt_query(''반갑워 GPT야. 너는 내가 얼마나 반가운지 약 30자 정도로 대답해봐''));
+                        wait(10);
                     }
                 }
 ",
@@ -108,7 +109,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
 VALUES (1, 1, 1, '1번 사회자', NOW()),
        (1, 2, 2, '2번 사회자', NOW()),
-       (2, 3, 1, '3번 사회자', NOW()),
+       (2, 3, 3, '3번 사회자', NOW()),
        (3, 4, 2, '4번 사회자', NOW())
 ;
 

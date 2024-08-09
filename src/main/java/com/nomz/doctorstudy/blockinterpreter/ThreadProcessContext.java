@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.blockinterpreter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ThreadProcessContext {
@@ -82,7 +83,7 @@ public class ThreadProcessContext {
         threadProcessContext.get().addProgrammeInfo(info);
     }
 
-    public List<String> getProgramme() {
+    public Map<Integer, Map<Integer, String>> getProgramme() {
         return threadProcessContext.get().getProgramme();
     }
 }

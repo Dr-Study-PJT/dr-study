@@ -1,7 +1,6 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
-import com.nomz.doctorstudy.member.entity.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,8 +10,9 @@ import java.util.*;
 public class ProcessContext {
     @Getter
     private final long id;
-    @Getter @Setter
+    @Getter
     private int cursor;
+    private int commandExecutionCount;
     @Getter @Setter
     private int phase;
     @Getter @Setter
@@ -26,7 +26,7 @@ public class ProcessContext {
     private final List<Transcript> transcripts = new ArrayList<>();
 
     @Getter
-    private final List<String> programme = new ArrayList<>();
+    private final Map<Integer, Map<Integer, String>> programme = new HashMap<>();
     private final List<Long> participantMemberIdList = new ArrayList<>();
 
     public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap) {
@@ -54,15 +54,21 @@ public class ProcessContext {
         setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), 0);
     }
 
-    public void addParticipant(Member member) {
-        participantMemberIdList.add(member.getId());
-        int participantId = participantMemberIdList.size() - 1;
+    public void setCursor(int cursor) {
+        commandExecutionCount++;
+        this.cursor = cursor;
+    }
 
-        String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + participantId;
-        declareVariable(variableName);
-        setVariable(variableName, member.getNickname());
+    public void setParticipantVariables(List<Long> memberIds) {
+        for (int i=0; i < memberIds.size(); i++) {
+            Long memberId = memberIds.get(i);
+            participantMemberIdList.add(memberId);
 
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), (int) getVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken()) + 1);
+            String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + i;
+            declareVariable(variableName);
+            setVariable(variableName, "member" + memberId + "'s nickname");
+        }
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), memberIds.size());
     }
 
     public void increaseScopeDepth() {
@@ -136,7 +142,10 @@ public class ProcessContext {
     }
 
     public void addProgrammeInfo(String info) {
-        programme.add(info);
+        if (programme.containsKey(phase)) {
+            programme.put(phase, new HashMap<>());
+        }
+        programme.get(phase).put(commandExecutionCount, info);
     }
 
 

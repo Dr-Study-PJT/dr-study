@@ -55,7 +55,7 @@ public class BlockInterpreter {
                     Object result = null;
 
                     if (value.startsWith("'") && value.endsWith("'")) {
-                        result = processEscape(value);
+                        result = getEscapeProcessedString(value);
                     }
                     if (StringUtils.isNumeric(value)) {
                         result = Integer.parseInt(value);
@@ -111,7 +111,7 @@ public class BlockInterpreter {
         log.info("processId={} ended to run", processId);
     }
 
-    private String processEscape(String value) {
+    private String getEscapeProcessedString(String value) {
         StringBuilder sb = new StringBuilder();
         String strVal = value.substring(1, value.length() - 1);
         boolean escapeFlag = false;

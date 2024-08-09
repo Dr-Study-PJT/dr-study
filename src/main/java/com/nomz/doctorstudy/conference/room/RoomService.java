@@ -33,11 +33,9 @@ public class RoomService {
         });
     }
 
-    public void openRoom(Long roomId, String script) {
-        existingPeerMap.put(roomId, new HashMap<>());
+    public void openRoom(Long roomId) {
+        existingPeerMap.put(roomId, new LinkedHashMap<>());
         joinLockMap.put(roomId, new ReentrantLock());
-
-        blockInterpreter.init(roomId, script, Map.of());
     }
 
     public void closeRoom(Long roomId) {
@@ -47,20 +45,35 @@ public class RoomService {
         processManager.removeProcess(roomId);
     }
 
-    public void startRoom(Long roomId) {
-        if (processManager.getProcessContext(roomId).getStatus() != ProcessStatus.READY) {
+    public void startRoom(Long roomId, String script) {
+        blockInterpreter.init(roomId, script, Map.of());
+        ProcessContext processContext = processManager.getProcessContext(roomId);
+
+        /* TODO: PROGRAMME 모드 추가할 것
+        TODO: @Async말고 콜백 받을 수 있는 방법 사용할 것, Programme모드 끝날고 일반실행, 일반실행 끝나고 finishRoom 호출
+        if (processContext.getStatus() != ProcessStatus.READY) {
             throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
         }
+
+        blockInterpreter.init(roomId, script, Map.of());
+        processContext.setParticipantVariables(existingPeerMap.keySet().stream().toList());
+        blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
+        ProcessLockManager.awaken(roomId);
+        */
+
+        if (processContext.getStatus() != ProcessStatus.READY) {
+            throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
+        }
+
+        processContext.setParticipantVariables(existingPeerMap.keySet().stream().toList());
         blockInterpreter.interpret(roomId);
     }
 
     public void finishRoom(Long roomId) {
-
+        log.debug("컨퍼런스{}번 진행 종료", roomId);
     }
 
     public List<String> joinRoom(Member member, Long roomId, String peerId) {
-        addParticipantIdVariable(roomId, member);
-
         List<String> existingPeerIds = addPeer(roomId, member.getId(), peerId);
 
         log.debug("member:{} joined room", member.getId());
@@ -73,11 +86,6 @@ public class RoomService {
 
         String peerId = removePeer(roomId, memberId);
         signalTransmitter.transmitSignal(roomId, new HeartStopSignal(peerId));
-    }
-
-    private void addParticipantIdVariable(Long roomId, Member member) {
-        ProcessContext processContext = processManager.getProcessContext(roomId);
-        processContext.addParticipant(member);
     }
 
     private List<String> addPeer(Long roomId, Long memberId, String peerId) {

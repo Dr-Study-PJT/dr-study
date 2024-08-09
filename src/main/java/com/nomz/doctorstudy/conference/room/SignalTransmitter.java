@@ -14,7 +14,7 @@ public class SignalTransmitter {
 
     public void transmitSignal(Long roomId, Signal signal) {
         String destination = String.format("/topic/signal/%s/%d", signal.getSignalType().getToken(), roomId);
-        log.debug("\ntransmitted signal:{} to room:{}, destination:{}", signal.getClass().getName(), roomId, destination);
+        log.debug("Transmitted signal:{} to room:{}, destination:{}", signal.getClass().getSimpleName(), roomId, destination);
         template.convertAndSend(destination, signal);
     }
 }

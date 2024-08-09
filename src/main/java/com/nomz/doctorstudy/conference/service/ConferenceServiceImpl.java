@@ -119,7 +119,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         conference.updateModerator(moderator);
         conference.updateOpenTime(LocalDateTime.now());
 
-        roomService.openRoom(conferenceId, moderator.getProcessor().getScript());
+        roomService.openRoom(conferenceId);
     }
 
     @Override
@@ -150,12 +150,13 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         if (conference.getStartTime() != null) {
-            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
+            log.warn("시작된 적이 있는 Conference 입니다.");
+            //throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
         }
 
-        conference.updateStartTime(LocalDateTime.now());
+        roomService.startRoom(conferenceId, conference.getModerator().getProcessor().getScript());
 
-        roomService.startRoom(conferenceId);
+        conference.updateStartTime(LocalDateTime.now());
     }
 
     @Override
