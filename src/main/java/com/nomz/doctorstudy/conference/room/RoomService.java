@@ -1,12 +1,11 @@
 package com.nomz.doctorstudy.conference.room;
 
-import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
-import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
-import com.nomz.doctorstudy.blockinterpreter.ProcessManager;
+import com.nomz.doctorstudy.blockinterpreter.*;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.room.signal.HeartStopSignal;
 import com.nomz.doctorstudy.member.entity.Member;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,18 +20,27 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RoomService {
     private final Map<Long, Map<Long, String>> existingPeerMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
-    private final Map<String, Long> webSocketSessionMemberMap = new ConcurrentHashMap<>();
+    private final WebSocketSessionManager webSocketSessionManager;
 
     private final ProcessManager processManager;
     private final SignalTransmitter signalTransmitter;
+    private final BlockInterpreter blockInterpreter;
 
-    public void openRoom(Long roomId) {
+    @PostConstruct
+    public void setWebsocketDisconnectCallback() {
+        webSocketSessionManager.setDisconnectCallback(sessionData -> {
+            quitRoom(sessionData.getMemberId(), sessionData.getRoomId());
+        });
+    }
+
+    public void openRoom(Long roomId, String script) {
         existingPeerMap.put(roomId, new HashMap<>());
         joinLockMap.put(roomId, new ReentrantLock());
+
+        blockInterpreter.init(roomId, script, Map.of());
     }
 
     public void closeRoom(Long roomId) {
-        webSocketSessionMemberMap.remove(roomId);
         joinLockMap.remove(roomId);
         existingPeerMap.remove(roomId);
 
@@ -40,6 +48,10 @@ public class RoomService {
     }
 
     public void startRoom(Long roomId) {
+        if (processManager.getProcessContext(roomId).getStatus() != ProcessStatus.READY) {
+            throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
+        }
+        blockInterpreter.interpret(roomId);
     }
 
     public void finishRoom(Long roomId) {
@@ -56,21 +68,11 @@ public class RoomService {
         return existingPeerIds;
     }
 
-    public void quitRoom(Member member, Long roomId) {
-        log.debug("occurred heartstop from member {}, because of quit", member.getId());
+    public void quitRoom(Long memberId, Long roomId) {
+        log.debug("occurred heartstop from member {}, because of quit", memberId);
 
-        String peerId = removePeer(roomId, member.getId());
+        String peerId = removePeer(roomId, memberId);
         signalTransmitter.transmitSignal(roomId, new HeartStopSignal(peerId));
-    }
-
-    public void addWebSocketSession(String session, Long memberId) {
-        webSocketSessionMemberMap.put(session, memberId);
-    }
-
-    public void removeWebSocketSession(String session) {
-        webSocketSessionMemberMap.remove(session);
-        
-        // TODO: heartstop signal 보내기
     }
 
     private void addParticipantIdVariable(Long roomId, Member member) {

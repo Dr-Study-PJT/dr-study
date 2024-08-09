@@ -34,15 +34,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(roomChannelInterceptor);
     }
 
-    // 최대 버퍼 크기 지정
-//    @Bean
-//    public ServletServerContainerFactoryBean createWebSocketContainer() {
-//        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-//        container.setMaxTextMessageBufferSize(1024 * 1024 * 50); // 50MB
-//        container.setMaxBinaryMessageBufferSize(1024 * 1024 * 50); // 50MB
-//        return container;
-//    }
-
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
         registry.setMessageSizeLimit(10_000_000); // default : 64 * 1024

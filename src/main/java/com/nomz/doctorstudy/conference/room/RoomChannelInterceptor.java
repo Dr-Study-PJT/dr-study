@@ -19,7 +19,7 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class RoomChannelInterceptor implements ChannelInterceptor {
-    private final RoomService roomService;
+    private final WebSocketSessionManager webSocketSessionManager;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -56,13 +56,14 @@ public class RoomChannelInterceptor implements ChannelInterceptor {
                     return message;
                 }
 
-                roomService.addWebSocketSession(sessionId, Long.parseLong(memberId));
-                // TODO:
+                webSocketSessionManager.addSession(sessionId,
+                        new WebSocketSessionData(Long.parseLong(roomId), Long.parseLong(memberId))
+                );
 
                 log.debug("New web socket connection from memberId: {}", memberId);
 
             case DISCONNECT:
-                roomService.removeWebSocketSession(sessionId);
+                webSocketSessionManager.removeSession(sessionId);
 
                 log.debug("Disconnected web socket session id: {}", sessionId);
         }
