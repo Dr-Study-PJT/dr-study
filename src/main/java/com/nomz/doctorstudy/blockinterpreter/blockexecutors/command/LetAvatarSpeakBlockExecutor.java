@@ -82,6 +82,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         }
 
         String summary = externalApiCallService.gpt("다음 문장을 맘껏 요약해서 말해봐 => " + speechContent);
+        log.debug("summary text={}", summary);
         signalTransMitter.transmitSignal(processId, new GptSummarySignal(summary));
 
         return null;

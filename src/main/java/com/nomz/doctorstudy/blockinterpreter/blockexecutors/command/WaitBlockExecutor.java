@@ -20,7 +20,7 @@ public class WaitBlockExecutor extends BlockExecutor {
 
         log.debug("WaitBlock: start sleep {} sec", (double) time / 1000.0);
         try {
-            Thread.sleep(time * 1000);
+            Thread.sleep(time);
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted during sleep", e);
         }

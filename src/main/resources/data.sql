@@ -98,7 +98,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 phase(1) {
                     loop(2) {
                         let_avatar_speak(gpt_query(''반갑워 GPT야. 너는 내가 얼마나 반가운지 약 30자 정도로 대답해봐''));
-                        wait(10);
+                        wait(3000);
                     }
                 }
 ",
@@ -119,7 +119,8 @@ VALUES (1, 1, 1, 1, '컨퍼런스 1 제목', '컨퍼런스 1 주제', 10, null, 
        (1, 1, 2, 1, '컨퍼런스 2 제목', '컨퍼런스 2 주제', 10, null, null, "컨퍼런스 2 리뷰!"),
        (2, 2, 1, 1, '컨퍼런스 3 제목', '컨퍼런스 3 주제', 10, null, null, "컨퍼런스 3 리뷰!"),
        (2, 2, 2, 1, '컨퍼런스 4 제목', '컨퍼런스 4 주제', 10, null, null, "컨퍼런스 4 리뷰!"),
-       (1, 1, 2, 1, '컨퍼런스 5 제목', '컨퍼런스 5 주제', 10, DATE_ADD(NOW(), INTERVAL -3 HOUR), DATE_ADD(NOW(), INTERVAL -1 HOUR), "컨퍼런스 4 리뷰!")
+       (1, 1, 2, 1, '컨퍼런스 5 제목', '컨퍼런스 5 주제', 10, DATE_ADD(NOW(), INTERVAL -3 HOUR), DATE_ADD(NOW(), INTERVAL -1 HOUR), "컨퍼런스 5 리뷰!"),
+       (1, 1, 3, 1, '컨퍼런스 6 제목', '컨퍼런스 6 주제', 10, null, null, "컨퍼런스 6 리뷰!")
 ;
 
 --CONFERENCE_MEMBER--
@@ -133,7 +134,12 @@ INSERT INTO conference_member_invite (conference_id, member_id, created_at)
 VALUES (2, 1, DATE_ADD(NOW(), INTERVAL -2 HOUR)),
        (3, 1, DATE_ADD(NOW(), INTERVAL -50 MINUTE)),
        (1, 2, DATE_ADD(NOW(), INTERVAL -40 MINUTE)),
-       (1, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE))
+       (1, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+
+       (6, 2, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+       (6, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+       (6, 4, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+       (6, 5, DATE_ADD(NOW(), INTERVAL -30 MINUTE))
 ;
 
 
