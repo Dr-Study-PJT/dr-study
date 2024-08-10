@@ -1,5 +1,6 @@
 import { IConference } from '@/app/group/[group_id]/dummy';
-import { ConferenceParticipantList } from '@/app/group/_components/ListConferenceTodays';
+import ListConferenceHistoryContent from '@/app/group/_components/SectionContents/ListConfereceHistoryContent';
+// import { ConferenceParticipantList } from '@/app/group/_components/ListConferenceTodays';
 import Image from 'next/image';
 import React from 'react';
 
@@ -38,7 +39,7 @@ const ConferenceList = ({ conferences }: ConferenceListProps) => {
         <div className="flex flex-col w-full p-[2rem] text-dr-white rounded-lg gap-dr-30">
             <p className="text-center text-dr-header-2">종료된 컨퍼런스</p>
             <div className="flex pb-[1.5rem] gap-dr-30 overflow-x-scroll">
-                {conferences.map((conference) => (
+                {/* {conferences.map((conference) => (
                     <div className="min-w-[15rem] shadow-2xl hover:bg-dr-indigo-0 rounded-lg duration-200">
                         <div
                             key={conference.id}
@@ -79,7 +80,8 @@ const ConferenceList = ({ conferences }: ConferenceListProps) => {
                             </div>
                         </div>
                     </div>
-                ))}
+                ))} */}
+                <ListConferenceHistoryContent conferences={conferences} />
             </div>
         </div>
     );
