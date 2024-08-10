@@ -35,11 +35,7 @@ const ArticleComments = ({ article }: ArticleCommentsProps) => {
                 initialContent=""
                 imageUrl={article.memberInfo.imageUrl} // 추가
             />
-            {comments.length > 0 ? (
-                <ArticleCommentsList comments={comments} />
-            ) : (
-                <div>No comments available</div>
-            )}
+            {comments.length > 0 && <ArticleCommentsList comments={comments} />}
         </div>
     );
 };
