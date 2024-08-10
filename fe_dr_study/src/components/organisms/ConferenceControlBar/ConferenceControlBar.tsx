@@ -103,19 +103,19 @@ const ConferenceControlBar = ({
                 {videoEnabled ? (
                     <Icon
                         cursor="pointer"
-                        size="sm"
-                        hover="gray"
-                        bg="gray"
-                        text="blue"
+                        size="md"
+                        hover="blue"
+                        bg="blue"
+                        text="white"
                         icon="videoOn"
                     />
                 ) : (
                     <Icon
                         cursor="pointer"
-                        size="sm"
-                        hover="gray"
-                        bg="gray"
-                        text="blue"
+                        size="md"
+                        hover="blue"
+                        bg="blue"
+                        text="white"
                         icon="videoOff"
                     />
                 )}
@@ -123,32 +123,32 @@ const ConferenceControlBar = ({
             <button onClick={toggleAudio} className="relative group">
                 {audioEnabled ? (
                     <>
-                        <ToolTip
+                        {/* <ToolTip
                             isVisible={isMutedBySystem}
                             content="시스템에 의해 제어할 수 없는 상태입니다."
-                        />
-                        {/* {isMutedBySystem && (
+                        /> */}
+                        {isMutedBySystem && (
                             <span className="tooltip-text absolute hidden group-hover:block bg-black text-white text-xs rounded py-1 px-3 -mt-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
                                 시스템에 의해 제어할 수 없는 상태입니다.
                             </span>
-                        )} */}
+                        )}
                         <Icon
                             cursor="pointer"
                             disabled={isMutedBySystem}
-                            size="sm"
-                            hover="gray"
-                            bg="gray"
-                            text="blue"
+                            size="md"
+                            hover="blue"
+                            bg="blue"
+                            text="white"
                             icon={isMutedBySystem ? 'micOff' : 'micOn'}
                         />
                     </>
                 ) : (
                     <Icon
                         cursor="pointer"
-                        size="sm"
-                        hover="gray"
-                        bg="gray"
-                        text="blue"
+                        size="md"
+                        hover="blue"
+                        bg="blue"
+                        text="white"
                         icon="micOff"
                     />
                 )}
@@ -160,7 +160,7 @@ const ConferenceControlBar = ({
                     icon="phoneCall"
                     text="white"
                     bg="red"
-                    size="sm"
+                    size="md"
                 />
             </button>
         </div>

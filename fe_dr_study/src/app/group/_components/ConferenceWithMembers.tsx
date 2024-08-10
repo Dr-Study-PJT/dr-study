@@ -7,6 +7,7 @@ import { formatDate, getDateTimePart } from '@/utils/date';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import Link from 'next/link';
 import ConferenceMemberList from './ConferenceMemberList';
+import Image from 'next/image';
 
 interface ListConferenceTodayProps {
     conferences: IConference[];
@@ -67,22 +68,15 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
     }, [conferences]);
 
     const handleConferenceClick = (conference: IConference) => {
-        const isStartedConference = conference.startTime;
+        const isSOpenedConference = conference.openTime;
 
-        if (!isStartedConference && memberData.id == conference.hostId) {
+        if (isSOpenedConference) {
+            router.push(`/conference/${conference.id}/waiting-room`);
+        } else if (!isSOpenedConference && memberData.id == conference.hostId) {
             router.push(`/conference/${conference.id}/info`);
-            return;
+        } else {
+            router.push(`/conference/${conference.id}/waiting-room`);
         }
-
-        router.push(`/conference/${conference.id}/waiting-room`);
-    };
-
-    const handleJoinConferenceClick = (
-        e: React.MouseEvent<HTMLElement>,
-        conferenceId: number,
-    ) => {
-        e.stopPropagation();
-        router.push(`/conference/${conferenceId}/waiting-room`);
     };
 
     return (
@@ -111,15 +105,7 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                             !conference?.startTime &&
                             !conference?.finishTime &&
                             isMember && (
-                                <Button
-                                    classNameStyles="!h-8 bg-dr-coral-100"
-                                    onClick={(e) =>
-                                        handleJoinConferenceClick(
-                                            e,
-                                            conference.id,
-                                        )
-                                    }
-                                >
+                                <Button classNameStyles="!h-8 bg-dr-coral-100">
                                     스터디 참여
                                 </Button>
                             )}

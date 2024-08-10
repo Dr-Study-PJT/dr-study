@@ -103,8 +103,9 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     const memberData = useSelector((state: RootState) => state.member);
 
     const profileImageBoxRef = useRef<HTMLDivElement>(null);
-    const notificationBellRef = useRef<HTMLDivElement>(null);
-    const notificationDropdownRef = useRef<HTMLDivElement>(null);
+
+    const bellRef = useRef<HTMLDivElement>(null);
+    const notificationRef = useRef<HTMLDivElement>(null);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -142,10 +143,30 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
         }
     }, [dispatch]);
 
+    // notification 외부 클릭 시 닫기
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                notificationRef.current &&
+                bellRef.current &&
+                !notificationRef.current.contains(event.target as Node) &&
+                !bellRef.current.contains(event.target as Node)
+            ) {
+                setIsNotificationOpen(false); // 알림창 닫기
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const onClickSetLogout = async () => {
         removeMemberData();
         dispatch(clearMemberState());
         dispatch(setIsSigned(TIsSigned.F));
+        setDropdownOpen(false);
         queryClient.removeQueries({ queryKey: ['memberData'] });
     };
 
@@ -169,24 +190,6 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
             scrollPosition === 'top' ? '#181b27' : 'rgba(38, 38, 39, 0.5)',
         transition: 'background-color 0.3s, backdrop-filter 0.3s',
     };
-
-    // useEffect(() => {
-    //     const handleClickOutside = (event: MouseEvent) => {
-    //         if (
-    //             notificationBellRef.current &&
-    //             notificationDropdownRef.current &&
-    //             !notificationBellRef.current.contains(event.target as Node) &&
-    //             !notificationDropdownRef.current.contains(event.target as Node)
-    //         ) {
-    //             toggleIsNotificationOpen(); // 드롭다운 닫기
-    //         }
-    //     };
-
-    //     document.addEventListener('mousedown', handleClickOutside);
-    //     return () => {
-    //         document.removeEventListener('mousedown', handleClickOutside);
-    //     };
-    // }, [toggleDropdown]);
 
     return (
         <div
@@ -244,8 +247,8 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                 className={`relative text-dr-white rounded-full cursor-pointer`}
                             >
                                 <div
+                                    ref={bellRef}
                                     onClick={toggleIsNotificationOpen}
-                                    ref={notificationBellRef}
                                 >
                                     <Tooltip text={'알림'} direction="bottom">
                                         <Icon
@@ -269,7 +272,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
                             <div className="relative w-7 h-7">
                                 {isNotificationOpen && (
-                                    <div className="absolute w-[15rem] right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200">
+                                    <div
+                                        ref={notificationRef}
+                                        className="absolute w-[15rem] right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
+                                    >
                                         {notifications?.length > 0 ? (
                                             <ul className="flex flex-col text-dr-body-3 w-full">
                                                 {notifications.map(
@@ -518,6 +524,7 @@ const ProfileDropDown = ({
 }: ProfileDropDownProps) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    // 드롭다운 외부 클릭 시 닫기
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (

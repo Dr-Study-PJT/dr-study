@@ -1,12 +1,19 @@
 import { Button } from '@/components/atoms';
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+    useState,
+    useRef,
+    useEffect,
+    Dispatch,
+    SetStateAction,
+} from 'react';
 
 interface RecorderProps {
-    memberId: number;
     conferenceId: number;
+    memberId: number;
     stompClient: any;
     timeForAudioRecord: number;
-    setTimeForAudioRecord: React.Dispatch<React.SetStateAction<number>>;
+    setFocusingMemberId: Dispatch<SetStateAction<number>>;
+    setTimeForAudioRecord: Dispatch<React.SetStateAction<number>>;
     isStartRecordingAudio: boolean;
 }
 
@@ -30,7 +37,7 @@ function Recorder({
             // 설정한 시간 후에 오디오 녹음 중지
             const timeout = setTimeout(() => {
                 stopAudioStream();
-            }, timeForAudioRecord * 1000);
+            }, timeForAudioRecord);
 
             return () => {
                 clearTimeout(timeout);
@@ -80,6 +87,7 @@ function Recorder({
                             ),
                         );
                         // STOMP를 통해 오디오 전송
+                        console.log('before send audio:');
                         if (stompClient) {
                             stompClient.send(
                                 `/pub/signal/${conferenceId}/participant-audio`, // 적절한 STOMP 경로 설정
@@ -90,6 +98,7 @@ function Recorder({
                                 }),
                             );
                         }
+                        console.log('after send audio:');
                     };
                     reader.readAsArrayBuffer(blob); // ArrayBuffer로 변환
                 }
@@ -111,6 +120,7 @@ function Recorder({
             mediaRecorderRef.current.stop();
             console.log('Audio recording stopped');
             setIsRecording(false);
+            setTimeForAudioRecord(0);
         }
 
         if (audioStream) {
@@ -122,11 +132,19 @@ function Recorder({
     return (
         <div className="flex flex-col gap-dr-5">
             <h1>Audio Recorder</h1>
-            <Button onClick={startAudioStream} disabled={isRecording}>
+            <Button
+                onClick={startAudioStream}
+                disabled={isRecording}
+                color={isRecording ? 'gray' : 'coral'}
+            >
                 Start Audio Stream
             </Button>
 
-            <Button onClick={stopAudioStream} disabled={!isRecording}>
+            <Button
+                onClick={stopAudioStream}
+                disabled={!isRecording}
+                color={isRecording ? 'coral' : 'gray'}
+            >
                 Stop Audio Stream
             </Button>
         </div>

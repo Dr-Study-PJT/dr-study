@@ -46,6 +46,7 @@ const ConferenceWaitingRoomTemplate = ({
         // 스터디 멤버가 아니거나 컨퍼런스 초대자가 아닌 경우 홈으로 이동
         if (
             conferenceInfo?.hostId !== memberData?.id &&
+            conferenceInvitees.length &&
             !conferenceInvitees.some((invitee) => invitee.id === memberData?.id)
         ) {
             console.log('스터디 멤버가 아닙니다.');
