@@ -1,10 +1,8 @@
 // src/app/group/new/_components/MemberList.tsx
 import React from 'react';
-import Image from 'next/image';
+import { FaUsers, FaCrown } from 'react-icons/fa';
 import { GroupMember } from '../_api/ssr';
-import Tooltip from '@/components/organisms/SideBar/Tooltip';
-import { FaUsers } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
+import MemberAvatar from '@/components/molecules/MemberAvatar';
 
 interface MemberListProps {
     members: GroupMember[];
@@ -12,8 +10,6 @@ interface MemberListProps {
 }
 
 const MemberList: React.FC<MemberListProps> = ({ members, memberCapacity }) => {
-    const router = useRouter();
-
     return (
         <div className="BL-INFO-MEMBER-LIST flex flex-col gap-1">
             <div className="flex flex-row gap-2">
@@ -29,42 +25,17 @@ const MemberList: React.FC<MemberListProps> = ({ members, memberCapacity }) => {
             </div>
             <ul className="LIST-MEMBER-IMAGES flex flex-row gap-2">
                 {members.slice(0, 3).map((member, i) => (
-                    <li key={i}>
-                        <div
-                            className="relative overflow-hidden w-[2.3rem] h-[2.3rem] rounded-xl cursor-pointer"
-                            onClick={() =>
-                                router.push(
-                                    `/members/${member?.memberInfo?.id}`,
-                                )
-                            }
-                        >
-                            {member.memberInfo.imageUrl ? (
-                                <Tooltip
-                                    text={member.memberInfo.nickname}
-                                    direction="top"
-                                >
-                                    <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
-                                        <Image
-                                            id={member.memberInfo.id.toString()}
-                                            alt="avatar"
-                                            src={member.memberInfo.imageUrl}
-                                            unoptimized
-                                            fill
-                                            style={{ objectFit: 'cover' }}
-                                        />
-                                    </div>
-                                </Tooltip>
-                            ) : (
-                                <Image
-                                    id={member.memberInfo.id.toString()}
-                                    alt="avatar"
-                                    src="/path/to/fallback-image.png"
-                                    unoptimized
-                                    fill
-                                    style={{ objectFit: 'cover' }}
-                                />
-                            )}
-                        </div>
+                    <li key={i} className="relative">
+                        {member.role === 'CAPTAIN' && (
+                            <FaCrown className="absolute top-[-0.5rem] right-0.5rem text-yellow-400 text-lg z-20" />
+                        )}
+                        <MemberAvatar
+                            member={{
+                                id: member.memberInfo.id,
+                                nickname: member.memberInfo.nickname,
+                                imageUrl: member.memberInfo.imageUrl,
+                            }}
+                        />
                     </li>
                 ))}
                 {members.length > 3 && (

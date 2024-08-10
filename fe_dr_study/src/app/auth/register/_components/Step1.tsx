@@ -72,7 +72,10 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
             <div className="w-full min-h-48 h-max flex flex-row justify-around gap-6 items-center">
                 <section className="CONTENT w-full h-full flex flex-col gap-5">
                     <div className="w-full h-full flex flex-col justify-between gap-3 items-center">
-                        <ImageUpload setData={setData} />
+                        <ImageUpload
+                            setData={setData}
+                            initialImage={data.imageUrl}
+                        />
                     </div>
 
                     <div className="flex flex-col gap-4">

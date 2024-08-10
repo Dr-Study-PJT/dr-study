@@ -1,14 +1,20 @@
-import React from 'react';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
 
 import { StepProps } from '../_types';
+import { useRouter } from 'next/navigation';
+import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { getBackgroundColorRandomPastel } from '@/utils/colors';
 
-const Step2: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
-    // 이미지 URL이 없을 경우 기본 이미지 경로를 설정
-    const imageUrl = data.imageUrl || '/images/placeholder.png';
+const Step2: React.FC<StepProps> = ({
+    onNext,
+    onBack,
+    onSubmit,
+    data,
+    setData,
+}) => {
+    const router = useRouter();
 
     return (
         <section className="w-2/3 self-center">
@@ -17,23 +23,36 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
                     <div
                         className={`rounded-full relative overflow-hidden w-24 h-24 ${getBackgroundColorRandomPastel()} transition-colors duration-300`}
                     >
-                        <Image alt="" src={imageUrl} fill objectFit="cover" />
+                        <Image
+                            alt=""
+                            src={data.imageUrl}
+                            fill
+                            objectFit="cover"
+                        />
                     </div>
                     <div className="flex flex-col gap-4 w-full">
                         <InputWithLabelAndError
-                            id="email"
-                            label="이메일"
+                            id="title"
+                            label="컨퍼런스 제목"
                             inputSize="md"
-                            name="email"
-                            value={data.email}
+                            name="title"
+                            value={data.title}
                             disabled
                         />
                         <InputWithLabelAndError
-                            id="nickname"
-                            label="닉네임"
+                            id="memberCapacity"
+                            label="컨퍼런스 최대 참여 인원"
                             inputSize="md"
-                            name="nickname"
-                            value={data.nickname}
+                            name="memberCapacity"
+                            value={data.memberCapacity}
+                            disabled
+                        />
+                        <TextareaWithLabel
+                            id="subject"
+                            label="컨퍼런스 주제"
+                            textareaSize="md"
+                            name="subject"
+                            value={data.subject}
                             disabled
                         />
                     </div>
@@ -49,7 +68,7 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
                         onSubmit(e, data);
                     }}
                 >
-                    가입하기
+                    생성하기
                 </Button>
             </div>
         </section>

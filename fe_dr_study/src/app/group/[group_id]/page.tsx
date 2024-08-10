@@ -89,11 +89,6 @@ export default function GroupDetailPage({
 
     const handleSaveClick = async () => {
         try {
-            // await updateGroupData(groupId, editedGroup);
-            // setGroupWithMembers((prev) => ({
-            //     ...prev,
-            //     ...editedGroup,
-            // }));
             setIsEditing(false);
         } catch (error) {
             console.error('Error updating group:', error);
@@ -102,7 +97,6 @@ export default function GroupDetailPage({
 
     const handleDeleteClick = async () => {
         try {
-            // await deleteGroup(groupId);
             router.push('/groups'); // 삭제 후 그룹 목록 페이지로 이동
         } catch (error) {
             console.error('Error deleting group:', error);
@@ -112,7 +106,7 @@ export default function GroupDetailPage({
     return (
         <div className="w-full bg-dr-indigo-200 flex flex-col h-max">
             <div className="SECTION-THUMBNAIL w-full h-max flex flex-row bg-dr-indigo-400 rounded-l-xl">
-                <div className="LEFT-IMAGE-THUMBNAIL w-1/3 h-[50vh] rounded-l-xl bg-red-200 relative overflow-hidden">
+                <div className="LEFT-IMAGE-THUMBNAIL w-1/3 h-[50vh] rounded-l-xl bg-gradient-to-r from-dr-coral-200 to-dr-indigo-400 relative overflow-hidden">
                     {groupWithMembers?.imageUrl ? (
                         <Image
                             alt="avatar"

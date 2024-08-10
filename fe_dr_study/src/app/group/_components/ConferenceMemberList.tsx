@@ -1,8 +1,7 @@
 import React from 'react';
-import Image from 'next/image';
 import { FaUsers } from 'react-icons/fa';
-import Tooltip from '@/components/organisms/SideBar/Tooltip';
 import { useRouter } from 'next/navigation';
+import MemberAvatar from '@/components/molecules/MemberAvatar';
 
 interface Participant {
     id: number;
@@ -23,7 +22,6 @@ const ConferenceMemberList: React.FC<ConferenceMemberListProps> = ({
     participants,
     memberCapacity,
 }) => {
-    const router = useRouter();
     return (
         <div className="BL-INFO-MEMBER-LIST flex flex-col gap-1">
             <div className="flex flex-row gap-1 text-dr-gray-300 ml-1">
@@ -36,21 +34,13 @@ const ConferenceMemberList: React.FC<ConferenceMemberListProps> = ({
             <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
                 {participants.slice(0, 3).map((participant, i) => (
                     <li key={i}>
-                        <Tooltip text={participant.nickname} direction="top">
-                            <div
-                                className="relative overflow-hidden w-10 h-10 rounded-xl"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    router.push(`/members/${participant.id}`);
-                                }}
-                            >
-                                <Image
-                                    alt="avatar"
-                                    src={participant.imageUrl}
-                                    layout="fill"
-                                />
-                            </div>
-                        </Tooltip>
+                        <MemberAvatar
+                            member={{
+                                id: participant.id,
+                                nickname: participant.nickname,
+                                imageUrl: participant.imageUrl,
+                            }}
+                        />
                     </li>
                 ))}
                 {participants.length > 3 && (

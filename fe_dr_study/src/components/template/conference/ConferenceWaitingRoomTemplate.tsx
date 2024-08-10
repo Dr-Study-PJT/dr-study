@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import MemberAvatar from '@/components/molecules/MemberAvatar';
+import { FaCrown } from 'react-icons/fa';
 
 interface ConferenceWaitingRoomTemplateProps {
     memberData: IMemberData | null;
@@ -102,15 +104,18 @@ const ConferenceWaitingRoomTemplate = ({
                         {conferenceInvitees.map((invitee) => (
                             <div
                                 key={invitee.id}
-                                className="flex items-center mt-2 gap-dr-5"
+                                className="flex items-center mt-2 gap-dr-5 relative"
                             >
-                                <div className="relative w-10 h-10 rounded-md overflow-hidden">
-                                    <Image
-                                        src={invitee.imageUrl}
-                                        alt={invitee.nickname}
-                                        fill
-                                    />
-                                </div>
+                                {invitee.id === hostId && (
+                                    <FaCrown className="absolute top-[-0.5rem] right-0.5rem text-yellow-400 text-lg z-20" />
+                                )}
+                                <MemberAvatar
+                                    member={{
+                                        id: invitee.id,
+                                        nickname: invitee.nickname,
+                                        imageUrl: invitee.imageUrl,
+                                    }}
+                                />
                                 <div className="text-sm">
                                     <p>
                                         {invitee.nickname}{' '}

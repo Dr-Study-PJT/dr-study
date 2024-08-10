@@ -222,11 +222,11 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                 >
                                     <div
                                         ref={profileImageBoxRef}
-                                        className="relative hover:w-[2.1rem] hover:h-[2.1rem] transition-all duration-300 w-[2rem] h-[2rem] animate-popIn overflow-hidden cursor-pointer"
+                                        className="relative transition-all duration-300 w-[2rem] h-[2rem] animate-popIn overflow-hidden cursor-pointer"
                                     >
                                         <Image
                                             onClick={toggleDropdown}
-                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300"
+                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100"
                                             src={memberData?.imageUrl}
                                             alt="Group Image"
                                             layout="fill"
@@ -274,7 +274,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                 {isNotificationOpen && (
                                     <div
                                         ref={notificationRef}
-                                        className="absolute w-[15rem] right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
+                                        className="absolute animate-popIn w-[15rem] right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
                                     >
                                         {notifications?.length > 0 ? (
                                             <ul className="flex flex-col text-dr-body-3 w-full">
@@ -546,7 +546,7 @@ const ProfileDropDown = ({
     return (
         <div
             ref={dropdownRef}
-            className="absolute overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
+            className="absolute overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 animate-popIn"
         >
             <div className="flex p-[1rem] gap-dr-10 border-b border-dr-gray-500">
                 <div className="relative w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">

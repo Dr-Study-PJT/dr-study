@@ -17,7 +17,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     const handleMouseEnter = (event: React.MouseEvent) => {
         const rect = (event.target as HTMLElement).getBoundingClientRect();
-        const tooltipHeight = 40; // 툴팁 높이
+        const tooltipHeight = 30; // 툴팁 높이
         const tooltipWidth = 100; // 툴팁 너비
         let top = rect.top + window.scrollY;
         let left = rect.left + window.scrollX;
@@ -37,7 +37,6 @@ const Tooltip: React.FC<TooltipProps> = ({
                 break;
             case 'left':
                 top += rect.height / 2 - tooltipHeight / 2;
-
                 break;
         }
 
@@ -51,7 +50,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     return (
         <div
-            className="relative z-[100]"
+            className="relative z-10"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >

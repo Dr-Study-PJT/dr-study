@@ -15,7 +15,12 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
     return (
         <div className="flex flex-col items-center justify-center text-center text-dr-white gap-dr-5">
             <div className="relative w-[10rem] h-[10rem] rounded-full overflow-hidden">
-                <Image src={member.imageUrl} alt="프로필 이미지" fill />
+                <Image
+                    src={member.imageUrl}
+                    alt="프로필 이미지"
+                    fill
+                    className="bg-dr-coral-50 hover:dr-coral-100"
+                />
             </div>
             <div>
                 <div className="text-dr-header-2">{member.nickname}</div>
