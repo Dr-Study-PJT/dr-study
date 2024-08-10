@@ -14,7 +14,7 @@ import { handleCommentSubmit } from '../_handler';
 import { CommentData } from '../_types';
 
 interface CommentFormProps {
-    articleId: string;
+    articleId: number;
     setFocus: UseFormSetFocus<any>;
     handleSubmit: (event?: React.BaseSyntheticEvent) => Promise<void>;
     register: UseFormRegister<any>;
@@ -74,7 +74,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
 };
 
 interface ArticleCommentsFormProps {
-    articleId: string;
+    articleId: number;
     onCommentSubmitted: (comment: CommentData) => void;
     initialContent: string;
     imageUrl: string; // 추가
@@ -98,9 +98,10 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
         try {
             const newComment = await handleCommentSubmit(
                 data,
-                articleId?.toString(),
+                articleId,
             );
             onCommentSubmitted(newComment);
+            console.log('CommentForm에서 확인용', newComment)
             reset();
         } catch (error) {
             console.error('댓글 작성 실패', error);

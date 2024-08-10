@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { handleCommentUpdate, handleArticleDelete } from '../_handler';
+import React, { useEffect, useRef, useState } from 'react';
 
 const CommentDropdownButton: React.FC<{
     onEdit: () => void;
@@ -19,6 +18,16 @@ const CommentDropdownButton: React.FC<{
         ) {
             setIsOpen(false);
         }
+    };
+
+    const handleEdit = () => {
+        onEdit();
+        setIsOpen(false); // 드롭다운 닫기
+    };
+
+    const handleDelete = () => {
+        onDelete();
+        setIsOpen(false); // 드롭다운 닫기
     };
 
     useEffect(() => {
@@ -44,13 +53,13 @@ const CommentDropdownButton: React.FC<{
                 >
                     <div className="py-1">
                         <button
-                            onClick={onEdit}
+                            onClick={handleEdit}
                             className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                         >
                             수정
                         </button>
                         <button
-                            onClick={onDelete}
+                            onClick={handleDelete}
                             className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                         >
                             삭제
@@ -62,24 +71,4 @@ const CommentDropdownButton: React.FC<{
     );
 };
 
-// 사용 예시 컴포넌트
-const CommentDropdownButtonComponent: React.FC<{ articleId: number }> = ({ articleId }) => {
-    const handleEdit = () => {
-        // 예제 핸들러 - 실제 수정 기능 구현
-        handleCommentUpdate(articleId, '새로운 내용'); // 수정 필요!
-    };
-
-    const handleDelete = () => {
-        // 예제 핸들러 - 실제 삭제 기능 구현
-        handleArticleDelete(articleId);
-    };
-
-    return (
-        <CommentDropdownButton
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-        />
-    );
-};
-
-export default CommentDropdownButtonComponent; // 수정됨!
+export default CommentDropdownButton;

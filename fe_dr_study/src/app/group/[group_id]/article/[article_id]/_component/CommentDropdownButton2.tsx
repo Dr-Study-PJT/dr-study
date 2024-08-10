@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { handleCommentUpdate, handleArticleDelete } from '../_handler';
 
-const ArticleDropdownButton: React.FC<{
+const CommentDropdownButton1: React.FC<{
     onEdit: () => void;
     onDelete: () => void;
 }> = ({ onEdit, onDelete }) => {
@@ -18,16 +19,6 @@ const ArticleDropdownButton: React.FC<{
         ) {
             setIsOpen(false);
         }
-    };
-
-    const handleEdit = () => {
-        onEdit();
-        setIsOpen(false); // 드롭다운 닫기
-    };
-
-    const handleDelete = () => {
-        onDelete();
-        setIsOpen(false); // 드롭다운 닫기
     };
 
     useEffect(() => {
@@ -53,13 +44,13 @@ const ArticleDropdownButton: React.FC<{
                 >
                     <div className="py-1">
                         <button
-                            onClick={handleEdit}
+                            onClick={onEdit}
                             className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                         >
                             수정
                         </button>
                         <button
-                            onClick={handleDelete}
+                            onClick={onDelete}
                             className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                         >
                             삭제
@@ -71,4 +62,24 @@ const ArticleDropdownButton: React.FC<{
     );
 };
 
-export default ArticleDropdownButton;
+// 사용 예시 컴포넌트
+const CommentDropdownButtonComponent1: React.FC<{ articleId: number }> = ({ articleId }) => {
+    const handleEdit = () => {
+        // 예제 핸들러 - 실제 수정 기능 구현
+        handleCommentUpdate(articleId, '새로운 내용'); // 수정 필요!
+    };
+
+    const handleDelete = () => {
+        // 예제 핸들러 - 실제 삭제 기능 구현
+        handleArticleDelete(articleId);
+    };
+
+    return (
+        <CommentDropdownButton
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+        />
+    );
+};
+
+export default CommentDropdownButtonComponent1; // 수정됨!

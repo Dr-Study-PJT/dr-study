@@ -3,7 +3,7 @@ import { articleAPI } from '@/app/api/axiosInstanceManager';
 import { CreateCommentContent, UpdateCommentReq } from '../_types/index';
 
 export const postingComment = async (
-    articleId: string,
+    articleId: number,
     createCommentBody: CreateCommentContent,
 ) => {
     try {
@@ -13,6 +13,7 @@ export const postingComment = async (
             body: createCommentBody,
             isAuth: true,
         });
+        console.log('postingComment에서 확인용: ', response);
         return response;
     } catch (error) {
         console.error('댓글 생성 실패함 ㅠㅠ ', error);
@@ -21,7 +22,7 @@ export const postingComment = async (
 };
 
 export const updatingComment = async (
-    commentId: string,
+    commentId: number,
     updateCommentBody: UpdateCommentReq,
 ) => {
     try {
@@ -29,7 +30,7 @@ export const updatingComment = async (
             API: articleAPI,
             endPoint: `/comments`,
             body: updateCommentBody,
-            params: commentId,
+            params: commentId.toString(),
             isAuth: true,
         });
         return response;
@@ -39,12 +40,12 @@ export const updatingComment = async (
     }
 };
 
-export const deletingComment = async (commentId: string) => {
+export const deletingComment = async (commentId: number) => {
     try {
         const response = await DELETE({
             API: articleAPI,
             endPoint: `/comments`,
-            params: commentId,
+            params: commentId.toString(),
             isAuth: true,
         });
         return response;
@@ -54,13 +55,13 @@ export const deletingComment = async (commentId: string) => {
     }
 };
 
-export const deletingArticle = async (articleId: string) => {
+export const deletingArticle = async (articleId: number) => {
     try {
         const response = await DELETE({
             API: articleAPI,
             endPoint: `/`,
             isAuth: true,
-            params: articleId,
+            params: articleId.toString(),
         });
         return response;
     } catch (error) {

@@ -9,14 +9,13 @@ interface ArticleCommentsProps {
     article: ArticleData;
 }
 
-const ArticleComments = ({ article }: ArticleCommentsProps) => {
+export const ArticleComments = ({ article }: ArticleCommentsProps) => {
     const [comments, setComments] = useState<CommentData[]>(
         article.comments || [],
     );
 
     const handleCommentSubmitted = (comment: CommentData) => {
-        console.log(comment); // 콘솔에 comment 출력하여 확인
-        if (comment && comment.id) {
+        if (comment?.data?.commentId) {
             setComments((prevComments) => [...prevComments, comment]);
         } else {
             console.error('Invalid comment:', comment);
@@ -30,14 +29,12 @@ const ArticleComments = ({ article }: ArticleCommentsProps) => {
     return (
         <div className="w-full">
             <ArticleCommentsForm
-                articleId={article.id.toString()}
+                articleId={article.id}
                 onCommentSubmitted={handleCommentSubmitted}
                 initialContent=""
-                imageUrl={article.memberInfo.imageUrl} // 추가
+                imageUrl={article.memberInfo.imageUrl}
             />
             {comments.length > 0 && <ArticleCommentsList comments={comments} />}
         </div>
     );
 };
-
-export default ArticleComments;

@@ -1,14 +1,15 @@
 import { fetchingArticle } from './_api/ssr';
 import ArticleDetail from './_component/ArticleDetailSsr';
-import ArticleComments from './_component/ArticleCommentsMerged';
+import {ArticleComments }from './_component/ArticleCommentsMerged';
 
 export default async function ArticleDetailPage({
     params,
 }: {
-    params: { group_id: string; article_id: string };
+    params: { group_id: number; article_id: number };
 }) {
     const groupId = params.group_id;
     const articleId = params.article_id;
+    console.log('article 가져오는 내용 확인해봐');
 
     const article = await fetchingArticle(articleId);
     console.log('article', article);

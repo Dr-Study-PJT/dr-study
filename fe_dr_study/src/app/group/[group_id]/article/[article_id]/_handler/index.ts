@@ -6,11 +6,13 @@ import {
     deletingArticle,
 } from '../_api/csr';
 
-export const handleCommentSubmit = async (data: any, articleId: string) => {
+export const handleCommentSubmit = async (data: any, articleId: number) => {
     try {
         const response = await postingComment(articleId, {
             content: data.comment_content,
         });
+        console.log('handleCommentSubmit에서 확인용', response);
+
         return response.data;
     } catch (error) {
         console.error('댓글 작성 실패', error);
@@ -19,7 +21,7 @@ export const handleCommentSubmit = async (data: any, articleId: string) => {
 };
 
 export const handleCommentUpdate = async (
-    commentId: string,
+    commentId: number,
     content: string,
 ) => {
     try {
@@ -29,7 +31,7 @@ export const handleCommentUpdate = async (
     }
 };
 
-export const handleCommentDelete = async (commentId: string) => {
+export const handleCommentDelete = async (commentId: number) => {
     try {
         await deletingComment(commentId);
     } catch (error) {
@@ -37,7 +39,7 @@ export const handleCommentDelete = async (commentId: string) => {
     }
 };
 
-export const handleArticleDelete = async (articleId: string) => {
+export const handleArticleDelete = async (articleId: number) => {
     try {
         await deletingArticle(articleId);
         const group_id = 'your_group_id'; // Replace 'your_group_id' with the actual group ID

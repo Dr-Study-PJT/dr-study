@@ -1,10 +1,10 @@
 import { GET } from '@/app/api/routeModule';
 
-export const fetchingArticle = async (articleId: string) => {
+export const fetchingArticle = async (articleId: number) => {
     'use server';
     console.log('페칭 시도');
     const response = await GET('v1/articles', {
-        params: articleId,
+        params: articleId.toString(),
         isAuth: true,
     });
     console.log(response); // 확인용

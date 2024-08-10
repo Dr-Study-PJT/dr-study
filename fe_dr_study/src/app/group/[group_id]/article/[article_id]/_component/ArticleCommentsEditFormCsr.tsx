@@ -14,7 +14,7 @@ import { handleCommentUpdate } from '../_handler';
 import { CommentData } from '../_types';
 
 interface CommentEditFormProps {
-    commentId: string;
+    commentId: number;
     setFocus: UseFormSetFocus<any>;
     handleSubmit: (event?: React.BaseSyntheticEvent) => Promise<void>;
     register: UseFormRegister<any>;
@@ -72,7 +72,7 @@ const CommentEditForm: React.FC<CommentEditFormProps> = ({
 };
 
 interface ArticleCommentsEditFormProps {
-    commentId: string;
+    commentId: number;
     onCommentUpdated: (comment: CommentData) => void;
     initialContent: string;
     onCancel: () => void; // 추가

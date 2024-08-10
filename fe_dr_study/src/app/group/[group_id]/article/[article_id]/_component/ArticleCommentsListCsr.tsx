@@ -6,7 +6,7 @@ import { Span } from '@/components/atoms';
 import { CommentData } from '../_types';
 import { handleCommentDelete } from '../_handler/index';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
-import ArticleDropdownButtonComponent from './ArticleDropdownButton';
+import CommentDropdownButton from './CommentDropdownButton';
 import ArticleCommentsEditForm from './ArticleCommentsEditFormCsr';
 
 const formatDate = (dateString: string | number | Date) => {
@@ -27,7 +27,7 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     comments,
 }) => {
     const [commentList, setCommentList] = useState<CommentData[]>(comments);
-    const [editCommentId, setEditCommentId] = useState<string | null>(null);
+    const [editCommentId, setEditCommentId] = useState<number | null>(null);
     const [editContent, setEditContent] = useState<string>('');
     const data = getSessionStorageItem('memberData') || {};
 
@@ -39,14 +39,14 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
         );
     };
 
-    const handleDelete = async (commentId: string) => {
+    const handleDelete = async (commentId: number) => {
         await handleCommentDelete(commentId);
         setCommentList((prev) =>
             prev.filter((comment) => comment.id !== commentId),
         );
     };
 
-    const handleEditClick = (commentId: string, content: string) => {
+    const handleEditClick = (commentId: number, content: string) => {
         setEditCommentId(commentId);
         setEditContent(content);
     };
@@ -69,50 +69,45 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                             <Box variant="commentPDPHeader">
                                 <Box variant="commentProfileLeft">
                                     <img
-                                        src={comment.memberInfo.imageUrl ?? ''}
+                                        src={comment.memberInfo.imageUrl}
                                         alt="author"
                                         className="flex flex-row justify-center rounded-full w-[60px] h-[60px] mr-2 object-cover"
                                     />
                                     <Box variant="commentProfileWithNickAndTime">
                                         <Span color="white">
-                                            {String(
-                                                comment.memberInfo.nickname,
-                                            )}
+                                            {comment.memberInfo.nickname}
                                         </Span>
                                         <Span color="white">
                                             {formatDate(comment.createdAt)}
                                         </Span>
                                     </Box>
                                 </Box>
-                                {comment.memberInfo.id.toString() ===
-                                    data.id?.toString() && (
+                                {comment.memberInfo.id === data.id && (
                                     <div className="flex justify-end space-x-2 mt-2">
-                                        <ArticleDropdownButtonComponent
+                                        <CommentDropdownButton
                                             onEdit={() =>
                                                 handleEditClick(
-                                                    String(comment.id),
+                                                    comment.id,
                                                     comment.content,
                                                 )
                                             }
                                             onDelete={() =>
-                                                handleDelete(String(comment.id))
+                                                handleDelete(comment.id)
                                             }
                                         />
                                     </div>
                                 )}
                             </Box>
                             <Box variant="commentText" className="w-full">
-                                {editCommentId === String(comment.id) ? (
+                                {editCommentId === comment.id ? (
                                     <ArticleCommentsEditForm
-                                        commentId={String(comment.id)}
+                                        commentId={comment.id}
                                         onCommentUpdated={handleCommentUpdated}
                                         initialContent={editContent}
                                         onCancel={handleCancelEdit} // 취소 핸들러 추가
                                     />
                                 ) : (
-                                    <Span color="white">
-                                        {String(comment.content)}
-                                    </Span>
+                                    <Span color="white">{comment.content}</Span>
                                 )}
                             </Box>
                         </div>

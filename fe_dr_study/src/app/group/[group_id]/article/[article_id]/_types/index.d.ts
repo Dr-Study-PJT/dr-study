@@ -25,10 +25,21 @@ export interface Member {
 }
 
 export interface CommentData {
-    id: number | string;
+    id: number;
     content: string;
     createdAt: string;
-    memberInfo: Member;
+    memberInfo: {
+        id: number;
+        email: string;
+        nickname: string;
+        imageUrl: string;
+        regDate: string;
+        leavedDate: string | null;
+        leaved: boolean;
+    };
+    data: {
+        commentId: number;
+    };
 }
 
 export interface ArticleData {
@@ -43,7 +54,7 @@ export interface ArticleData {
     tags: string[];
 }
 
-// 생성 요청에 대한 것들임! => 
+// 생성 요청에 대한 것들임! =>
 export interface ICreateArticleReq
     extends Pick<ArticleData, 'title' | 'content' | 'studyGroupId' | 'tags'> {}
 
@@ -59,4 +70,36 @@ export interface UpdateArticleReq {
 
 export interface UpdateCommentReq {
     content: string;
+}
+
+// 게시글은 삭제에 대해서만....
+
+// 댓글은 POST, PATCH, DELETE(삭제는 commentId만..! params로 받으면 끝..!)
+
+// - case 1) req
+export interface CommentPostReq {
+    commentId?: number;
+    content: string;
+}
+
+export interface CommentUpdateReq {
+    commentId?: number;
+    content: string;
+}
+
+
+// - case 2) res
+
+export interface CommentPostRes {
+    message: string;
+    data: {
+        commentId?: number
+    }
+}
+
+export interface CommentUpdateRes {
+    message: string;
+    data: {
+        commentId?: number;
+    }
 }
