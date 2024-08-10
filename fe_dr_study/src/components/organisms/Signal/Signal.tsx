@@ -24,6 +24,7 @@ interface SignalInterface {
     peerId?: string; // 방송 종료 시 peerId
     audioUrl?: string; // 오디오 파일 경로
     next?: number; // 다음 발화자
+    programme?: any;
 }
 
 interface SignalProps {
@@ -133,6 +134,7 @@ const Signal = ({
         subscribeToSignal('gpt-summary', handleGPTSummarySignal);
         subscribeToSignal('next-step', handleNextStepSignal);
         subscribeToSignal('heartstop', handleHeartstop);
+        subscribeToSignal('programme', handleProgramme);
     };
 
     // 신호 수신을 위한 구독 함수
@@ -229,6 +231,14 @@ const Signal = ({
     // 다음 발화자 신호 처리
     const handleNextStepSignal = (newSignal: SignalInterface) => {
         console.log(`handleNextStepSignal: 다음 스텝 표시`, newSignal.next);
+    };
+
+    // 신호 단계 신호 처리
+    const handleProgramme = (newSignal: SignalInterface) => {
+        console.log('newSignal.programme:', newSignal.programme);
+        JSON.parse(newSignal.programme as string);
+
+        console.log(`handleProgramme: 다음 스텝 표시`, newSignal.next);
     };
 
     // 방송 종료 신호 처리
