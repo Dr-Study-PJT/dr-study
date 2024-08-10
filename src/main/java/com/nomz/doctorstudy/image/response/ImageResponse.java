@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ImageResponse implements FileResponse{
+public class ImageResponse{
     private Long imageId;
     private String imageUrl;
 }

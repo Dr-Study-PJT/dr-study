@@ -1,17 +1,16 @@
 package com.nomz.doctorstudy.image.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.nomz.doctorstudy.image.ImageType;
-import com.nomz.doctorstudy.image.MediaType;
+import com.nomz.doctorstudy.image.ImageDomainType;
+
+import com.nomz.doctorstudy.image.ImageFileType;
 import com.nomz.doctorstudy.image.entity.Image;
 import com.nomz.doctorstudy.image.exception.FileErrorCode;
 import com.nomz.doctorstudy.image.exception.FileException;
 import com.nomz.doctorstudy.image.repository.ImageRepository;
-import com.nomz.doctorstudy.image.request.MediaUploadRequest;
+import com.nomz.doctorstudy.image.request.ImageUploadRequest;
 import com.nomz.doctorstudy.image.request.SaveS3MediaRequest;
-import com.nomz.doctorstudy.image.response.FileResponse;
 import com.nomz.doctorstudy.image.response.ImageResponse;
-import com.nomz.doctorstudy.image.response.MediaResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,98 +27,35 @@ import java.util.Objects;
 public class MediaService {
     private final ImageRepository imageRepository;
     private final S3Service s3Service;
-    private final AmazonS3 amazonS3;
     private final String serviceName = "dr-study";
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @Transactional
-    public FileResponse save(MediaUploadRequest mediaUploadRequest){
-        MultipartFile file = mediaUploadRequest.getFile();
+    public ImageResponse saveImg(ImageUploadRequest imageUploadRequest){
+        MultipartFile file = imageUploadRequest.getFile();
 //        String domain = mediaUploadRequest.getDomain();
 
-        MediaType fileType = validateFileType(file);
+        validateImageFile(file);
 
-
-//        String type;
-        return switch (fileType) {
-            case JPG, PNG, JPEG -> saveImage(mediaUploadRequest);
-            case MP3 -> saveMedia(mediaUploadRequest, "audio");
-            case MP4 -> saveMedia(mediaUploadRequest, "video");
-            default -> {
-                log.info("지원하지 않는 파일인데 여기 까지 뚫었네");
-                throw new FileException(FileErrorCode.NO_ACCESS_FILE_EXTENSION);
-            }
-        };
-
-
-    }
-
-    private MediaType validateFileType(MultipartFile file){
-        if(file.isEmpty() || Objects.isNull(file.getOriginalFilename())){
-            log.info("파일이 없습니다.");
-            throw new FileException(FileErrorCode.FILE_NOT_FOUND);
-        }
-
-        return validateFileExtension(file.getOriginalFilename());
-
-    }
-
-    private MediaType validateFileExtension(String fileName){
-        int lastDotIndex = fileName.lastIndexOf(".");
-
-        if(lastDotIndex == -1){
-            log.info("파일에 확장자가 없는데요?");
-            throw new FileException(FileErrorCode.NO_ACCESS_FILE_EXTENSION);
-        }
-
-        String extension = fileName.substring(lastDotIndex + 1).toLowerCase();
-
-
-        return MediaType.fromExtension(extension);
-
-    }
-
-    private String filePath(String type, String type2){
-//        if(domain == null || domain.isEmpty()){
-//            return bucket + "/" + serviceName + "/" + type;
-//        }
-//
-//        return bucket + "/" + serviceName + "/" + type + "/" + domain;
-
-        if(!ImageType.contains(type2)){
-            return bucket + "/" + serviceName + "/" + type;
-        }
-
-        return bucket + "/" + serviceName + "/" + type + "/" + type2;
-
-    }
-
-    private FileResponse saveImage(MediaUploadRequest mediaUploadRequest){
-
-        if(mediaUploadRequest.getDomain() == null){
+        if(imageUploadRequest.getDomain() == null){
             throw new FileException(FileErrorCode.DOMAIN_NOT_EXIST);
         }
 
-        if(!ImageType.contains(mediaUploadRequest.getDomain())){
+        if(!ImageDomainType.contains(imageUploadRequest.getDomain())){
             throw new FileException(FileErrorCode.NO_VALID_DOMAIN);
         }
 
-        if(mediaUploadRequest.getConferenceId() != null){
-            throw new FileException(FileErrorCode.CONFERENCE_ID_EXIST);
-        }
-
         try{
-            String filePath = filePath("images", mediaUploadRequest.getDomain());
+            String filePath = bucket + "/" + serviceName + "/" + "images" + "/" + imageUploadRequest.getDomain();
             SaveS3MediaRequest saveS3MediaRequest = SaveS3MediaRequest
                     .builder()
-                    .file(mediaUploadRequest.getFile())
+                    .file(imageUploadRequest.getFile())
                     .filePath(filePath)
-                    .conferenceId(mediaUploadRequest.getConferenceId())
                     .build();
 
-            String saveS3Url = s3Service.save(saveS3MediaRequest, filePath);
+            String saveS3Url = s3Service.save(saveS3MediaRequest);
 
             Image image = Image.builder()
                     .imageUrl(saveS3Url)
@@ -132,42 +68,37 @@ public class MediaService {
                     .imageId(saveImage.getId())
                     .imageUrl(saveImage.getImageUrl())
                     .build();
+
         } catch(Exception e){
             log.error("이미지 저장 실패: {}", e.getMessage());
             throw new FileException(FileErrorCode.IMAGE_UPLOAD_FAIL);
         }
 
+
+
     }
 
-    private FileResponse saveMedia(MediaUploadRequest mediaUploadRequest, String type){
-        log.info("mediaUploadRequest = {}", mediaUploadRequest.getDomain());
+    @Transactional
+    public String saveAudio(MultipartFile file){
+        validateAudioFile(file);
 
-        if(mediaUploadRequest.getDomain() != null){
-            throw new FileException(FileErrorCode.DOMAIN_EXIST);
-        }
-
-        if(mediaUploadRequest.getConferenceId() == null || mediaUploadRequest.getConferenceId().isEmpty()){
-            throw new FileException(FileErrorCode.CONFERENCE_ID_NOT_EXIST);
-        }
+        log.info("save Audio fileName = {}", file.getOriginalFilename());
 
         try{
-            String filePath = filePath(type, mediaUploadRequest.getConferenceId());
+            String filePath = bucket + "/" + serviceName + "/" + "audio";
 
             SaveS3MediaRequest saveS3MediaRequest = SaveS3MediaRequest
                     .builder()
-                    .file(mediaUploadRequest.getFile())
+                    .file(file)
                     .filePath(filePath)
-                    .conferenceId(mediaUploadRequest.getConferenceId())
                     .build();
 
-            String url = s3Service.save(saveS3MediaRequest, filePath);
+            String url = s3Service.save(saveS3MediaRequest);
+            log.info("s3serviceSave url = {}", url);
+            return url;
 
-            return MediaResponse
-                    .builder()
-                    .mediaUrl(url)
-                    .build();
         } catch(Exception e){
-            log.error("{} 저장 실패: {}", type, e.getMessage());
+            log.error("audio 저장 실패: {}", e.getMessage());
             throw new FileException(FileErrorCode.MEDIA_UPLOAD_FAIL);
         }
 
@@ -175,5 +106,41 @@ public class MediaService {
 
 
 
+    private String validateFile(MultipartFile file){
+        if(file.isEmpty() || Objects.isNull(file.getOriginalFilename())){
+            log.info("파일이 없습니다.");
+            throw new FileException(FileErrorCode.FILE_NOT_FOUND);
+        }
+
+        String fileName = file.getOriginalFilename();
+        int lastDotIndex = fileName.lastIndexOf(".");
+
+        if(lastDotIndex == -1){
+            log.info("파일에 확장자가 없는데요?");
+            throw new FileException(FileErrorCode.NO_ACCESS_FILE_EXTENSION);
+        }
+
+        return fileName.substring(lastDotIndex + 1).toLowerCase();
+
+    }
+
+    private void validateImageFile(MultipartFile file){
+        String extension = validateFile(file);
+        log.info("validateImageFile, extension = {}", extension);
+
+        if(!ImageFileType.contains(extension)){
+            throw new FileException(FileErrorCode.NO_ACCESS_FILE_EXTENSION);
+        }
+
+    }
+
+    private void validateAudioFile(MultipartFile file){
+        String extension = validateFile(file);
+        log.info("validateAudioFile = {}", extension);
+
+        if(!extension.equalsIgnoreCase("mp3")){
+            throw new FileException(FileErrorCode.NO_ACCESS_FILE_EXTENSION);
+        }
+    }
 
 }
