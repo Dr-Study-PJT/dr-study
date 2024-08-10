@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.File;
 import java.util.Objects;
 
 @Service
@@ -79,21 +80,21 @@ public class MediaService {
     }
 
     @Transactional
-    public String saveAudio(MultipartFile file){
-        validateAudioFile(file);
+    public String saveAudio(File file){
+//        validateAudioFile(file);
 
-        log.info("save Audio fileName = {}", file.getOriginalFilename());
+        log.info("save Audio fileName = {}", file.getName());
 
         try{
             String filePath = bucket + "/" + serviceName + "/" + "audio";
 
-            SaveS3MediaRequest saveS3MediaRequest = SaveS3MediaRequest
-                    .builder()
-                    .file(file)
-                    .filePath(filePath)
-                    .build();
+//            SaveS3MediaRequest saveS3MediaRequest = SaveS3MediaRequest
+//                    .builder()
+//                    .file(file)
+//                    .filePath(filePath)
+//                    .build();
 
-            String url = s3Service.save(saveS3MediaRequest);
+            String url = s3Service.save(file, filePath);
             log.info("s3serviceSave url = {}", url);
             return url;
 
