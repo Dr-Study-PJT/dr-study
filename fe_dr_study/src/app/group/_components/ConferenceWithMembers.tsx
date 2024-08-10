@@ -5,6 +5,7 @@ import { Button } from '@/components/atoms';
 import { IConference } from '../[group_id]/dummy';
 import { formatDate, getDateTimePart } from '@/utils/date';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
+import Link from 'next/link';
 import ConferenceMemberList from './ConferenceMemberList';
 
 interface ListConferenceTodayProps {
@@ -126,6 +127,41 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
                 </div>
             ))}
         </div>
+    );
+};
+
+export const ConferenceParticipantList = ({
+    conference,
+    isNameVisible = false,
+}: {
+    conference: IConference;
+    isNameVisible?: boolean;
+}) => {
+    return (
+        <ul className="LIST-MEMBER-IMAGES flex flex-row gap-1">
+            {conference.participants.slice(0, 3).map((participant, i) => (
+                <li key={i}>
+                    <Link href={`/member/${participant.id}`}>
+                        <div className="relative overflow-hidden w-10 h-10 rounded-xl">
+                            <Image
+                                alt="avatar"
+                                src={participant.imageUrl}
+                                layout="fill"
+                            />
+                        </div>
+                    </Link>
+                </li>
+            ))}
+            {conference.participants.length > 3 && (
+                <li key="extra">
+                    <button className="relative overflow-hidden w-10 h-10 rounded-xl border-[1px] border-dr-coral-100 bg-dr-coral-200 hover:bg-dr-coral-100 transition-colors duration-200 flex items-center justify-center">
+                        <span className="text-white font-semibold text-dr-body-3">
+                            +{conference.participants.length - 3}
+                        </span>
+                    </button>
+                </li>
+            )}
+        </ul>
     );
 };
 

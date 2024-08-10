@@ -39,7 +39,6 @@ export default async function GroupListPage({
     const groupListResponse: void | IGroupListResponse =
         await getGroupListBy(propsGetGroupListBy);
     const groupList_content = groupListResponse?.content;
-
     // 페이징용 게시물 수와 페이지 수
     const totalCount = groupListResponse?.totalElements;
     const totalPage = groupListResponse?.totalPages;
