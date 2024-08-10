@@ -18,8 +18,8 @@ public class ProcessManager {
     }
 
     public void createProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
-        log.warn("디버깅을 위해 다시 시작할 수 있도록 되어있습니다. 문제가 해결되면 재시작 불가능하도록 수정해주세요.");
         if (processContextMap.get(processId) != null) {
+            log.warn("디버깅을 위해 다시 시작할 수 있도록 되어있습니다. 문제가 해결되면 재시작 불가능하도록 수정해주세요.");
             processContextMap.remove(processId);
         }
 

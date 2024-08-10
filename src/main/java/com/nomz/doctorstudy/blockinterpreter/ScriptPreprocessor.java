@@ -82,7 +82,7 @@ public class ScriptPreprocessor {
             int braceEndIdx = findBracketPairIndex(script, List.of('{', '}'), braceStartIdx);
 
             phaseMap.put(phaseNum, script.substring(braceStartIdx + 1, braceEndIdx));
-            cursor = script.indexOf(BlockType.PHASE.getToken(), cursor);
+            cursor = script.indexOf(BlockType.PHASE.getToken(), cursor + 1);
         }
 
         StringBuilder sb = new StringBuilder();

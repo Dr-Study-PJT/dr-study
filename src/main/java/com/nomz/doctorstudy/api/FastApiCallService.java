@@ -15,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FastApiCallService implements ExternalApiCallService{
 
-  //  @Value("${fast-api.url}")
-    private String baseUrl = "http://192.168.100.149:8000";
+    //@Value("${fast-api.url}")
+    private String baseUrl = "http://localhost:8000";
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private RestTemplate restTemplate;
@@ -96,8 +96,12 @@ public class FastApiCallService implements ExternalApiCallService{
             log.debug("sent stt request to FastAPI server, url={}", url);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             log.debug("received stt response from FastAPI server, response={}", response);
+            String responseBody = response.getBody();
+            if (responseBody.charAt(0) == '\"' && responseBody.charAt(responseBody.length() - 1) == '\"') {
+                responseBody = responseBody.substring(1, responseBody.length() - 1);
+            }
 
-            return response.getBody();
+            return responseBody;
         }catch(ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;

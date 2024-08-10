@@ -2,6 +2,8 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.*;
 import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.conference.room.SignalTransmitter;
+import com.nomz.doctorstudy.conference.room.signal.ProgrammeSignal;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ public class BlockInterpreter {
     private final ThreadProcessContext threadProcessContext;
     private final BlockExecutorMapper blockExecutorMapper;
     private final ScriptPreprocessor scriptPreprocessor;
+    private final SignalTransmitter signalTransmitter;
 
     public void init(Long processId, String script, Map<String, Object> varMap) {
         List<Block> blocks = scriptPreprocessor.preprocessScript(script);
@@ -26,12 +29,10 @@ public class BlockInterpreter {
         processManager.createProcess(processId, blocks, varMap, labelMap);
     }
 
-    @Async
     public void interpret(Long processId) {
         interpret(processId, ProcessMode.RUN);
     }
 
-    @Async
     public void interpret(Long processId, ProcessMode processMode) {
         log.info("processId={} started to run", processId);
 
@@ -41,8 +42,8 @@ public class BlockInterpreter {
 
         while (!threadProcessContext.isEndOfBlock()) {
             Block commandBlock = threadProcessContext.currentBlock();
-            Stack<BlockInterpretContext> stack = new Stack<>();
-            stack.push(new BlockInterpretContext(commandBlock, new ArrayList<>(), 0));
+            Stack<InterpreterContext> stack = new Stack<>();
+            stack.push(new InterpreterContext(commandBlock, new ArrayList<>(), 0));
             String methodForDebug = commandBlock.getMethod();
             log.debug("cursor={}, block={}", processContext.getCursor(), commandBlock.getMethod());
 
@@ -78,7 +79,7 @@ public class BlockInterpreter {
 
                 if (stack.peek().argCursor < stack.peek().block.getArgBlocks().size()) {
                     Block argBlock = stack.peek().block.getArgBlocks().get(stack.peek().argCursor);
-                    stack.push(new BlockInterpretContext(argBlock, new ArrayList<>(), 0));
+                    stack.push(new InterpreterContext(argBlock, new ArrayList<>(), 0));
                     continue;
                 }
 
@@ -103,6 +104,7 @@ public class BlockInterpreter {
 
         if (processMode == ProcessMode.PROGRAMME) {
             log.info("Block Script Programme\n{}", threadProcessContext.getProgramme());
+            signalTransmitter.transmitSignal(processId, new ProgrammeSignal(threadProcessContext.getProgramme()));
         }
 
         threadProcessContext.setProcessStatus(ProcessStatus.FINISH);
@@ -159,7 +161,7 @@ public class BlockInterpreter {
     }
 
     @AllArgsConstructor
-    private static class BlockInterpretContext {
+    private static class InterpreterContext {
         private final Block block;
         private final List<Object> args;
         public int argCursor;

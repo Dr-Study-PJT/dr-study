@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -49,24 +50,35 @@ public class RoomService {
         blockInterpreter.init(roomId, script, Map.of());
         ProcessContext processContext = processManager.getProcessContext(roomId);
 
-        /* TODO: PROGRAMME 모드 추가할 것
-        TODO: @Async말고 콜백 받을 수 있는 방법 사용할 것, Programme모드 끝날고 일반실행, 일반실행 끝나고 finishRoom 호출
+        //TODO: PROGRAMME 모드 추가할 것
+        //TODO: @Async말고 콜백 받을 수 있는 방법 사용할 것, Programme모드 끝날고 일반실행, 일반실행 끝나고 finishRoom 호출
+
+
         if (processContext.getStatus() != ProcessStatus.READY) {
             throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
         }
 
-        blockInterpreter.init(roomId, script, Map.of());
-        processContext.setParticipantVariables(existingPeerMap.keySet().stream().toList());
+            //blockInterpreter.init(roomId, script, Map.of());
+        processContext.setParticipantInfo(
+                existingPeerMap.keySet().stream().toList(),
+                existingPeerMap.keySet().stream().map(id -> "member" + id + "'s nickname").toList()
+        );
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
-        ProcessLockManager.awaken(roomId);
-        */
 
-        if (processContext.getStatus() != ProcessStatus.READY) {
+
+/*        if (processContext.getStatus() != ProcessStatus.READY) {
             throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
         }
 
-        processContext.setParticipantVariables(existingPeerMap.keySet().stream().toList());
-        blockInterpreter.interpret(roomId);
+        processContext.setParticipantInfo(
+                existingPeerMap.keySet().stream().toList(),
+                existingPeerMap.keySet().stream().map(id -> "member" + id + "'s nickname").toList()
+        );
+
+        CompletableFuture.runAsync(() -> {
+            blockInterpreter.interpret(roomId);
+        });
+        */
     }
 
     public void finishRoom(Long roomId) {

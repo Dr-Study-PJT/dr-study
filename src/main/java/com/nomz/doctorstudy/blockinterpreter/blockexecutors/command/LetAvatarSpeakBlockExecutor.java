@@ -13,6 +13,7 @@ import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import com.nomz.doctorstudy.conference.room.signal.GptSummarySignal;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
 import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
+import com.nomz.doctorstudy.image.request.SaveS3MediaRequest;
 import com.nomz.doctorstudy.image.service.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,7 +76,9 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
             signalTransMitter.transmitSignal(processId, new MuteSignal((long) i));
         }
 
-        signalTransMitter.transmitSignal(processId, new AvatarSpeakSignal(audioDurationMills));
+        // s3Service.save(new SaveS3MediaRequest(file, file.getParent()));
+
+        signalTransMitter.transmitSignal(processId, new AvatarSpeakSignal(audioDurationMills, "https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/speech.mp3"));
 
         for (int i=1; i<=numOfParticipant; i++) {
             signalTransMitter.transmitSignal(processId, new UnmuteSignal((long) i));

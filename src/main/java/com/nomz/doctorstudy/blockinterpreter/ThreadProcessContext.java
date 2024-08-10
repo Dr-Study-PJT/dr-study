@@ -3,7 +3,6 @@ package com.nomz.doctorstudy.blockinterpreter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class ThreadProcessContext {
@@ -71,6 +70,18 @@ public class ThreadProcessContext {
         threadProcessContext.get().setVariable(key, val);
     }
 
+    public Integer getNumOfParticipant() {
+        return threadProcessContext.get().getNumOfParticipant();
+    }
+
+    public String getParticipantName(int numOfParticipant) {
+        return threadProcessContext.get().getParticipantName(numOfParticipant);
+    }
+
+    public Long getParticipantMemberId(int numOfParticipant) {
+        return threadProcessContext.get().getParticipantMemberId(numOfParticipant);
+    }
+
     public boolean isEndOfBlock() {
         return threadProcessContext.get().isEndOfBlock();
     }
@@ -83,7 +94,7 @@ public class ThreadProcessContext {
         threadProcessContext.get().addProgrammeInfo(info);
     }
 
-    public Map<Integer, Map<Integer, String>> getProgramme() {
+    public List<ProgrammeItem> getProgramme() {
         return threadProcessContext.get().getProgramme();
     }
 }

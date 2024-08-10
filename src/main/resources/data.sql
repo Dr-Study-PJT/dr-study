@@ -25,6 +25,7 @@ VALUES (1, 1, "스터디그룹1", "스터디그룹1 설명", "스터디그룹1 �
 INSERT INTO member_study_group (member_id, study_group_id, role, join_date, is_leaved)
 VALUES (1, 1, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (2, 2, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
+       (2, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (3, 3, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (5, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL -1 HOUR), false)
 ;
@@ -96,11 +97,33 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
        (3, "아바타 말하기 스크립트", "3번 사전 프롬프트",
         "
                 phase(1) {
-                    loop(2) {
+                    loop(1) {
                         let_avatar_speak(gpt_query(''반갑워 GPT야. 너는 내가 얼마나 반가운지 약 30자 정도로 대답해봐''));
-                        wait(3000);
+                        wait(1000);
                     }
                 }
+",
+        NOW()),
+       (1, "사용자 말하기 스크립트", "4번 사전 프롬프트",
+        "
+phase(1) {
+    loop (1) {
+        let_participant_speak(1, 1000);
+        let_avatar_speak(''반가워'');
+    }
+}
+phase(2) {
+    loop (2) {
+        let_participant_speak(1, 1000);
+        let_avatar_speak(''반가워'');
+    }
+}
+phase(3) {
+    loop (3) {
+        let_participant_speak(1, 1000);
+        let_avatar_speak(''반가워'');
+    }
+}
 ",
         NOW())
 ;
@@ -110,7 +133,7 @@ INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
 VALUES (1, 1, 1, '1번 사회자', NOW()),
        (1, 2, 2, '2번 사회자', NOW()),
        (2, 3, 3, '3번 사회자', NOW()),
-       (3, 4, 2, '4번 사회자', NOW())
+       (3, 3, 4, '4번 사회자', NOW())
 ;
 
 --CONFERENCE--
@@ -158,7 +181,8 @@ VALUES ('댓글 내용 1', DATE_ADD(NOW(), INTERVAL -1 MINUTE), 1, 1, FALSE),
        ('댓글 내용 2', DATE_ADD(NOW(), INTERVAL -2 MINUTE), 1, 2, FALSE),
        ('댓글 내용 3', DATE_ADD(NOW(), INTERVAL -3 MINUTE), 2, 3, FALSE),
        ('댓글 내용 4', DATE_ADD(NOW(), INTERVAL -4 MINUTE), 3, 4, FALSE),
-       ('댓글 내용 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5, FALSE);
+       ('댓글 내용 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5, FALSE)
+;
 
 --ARTICLE_TAGS--
 INSERT INTO article_tag (article_id, tag_id)
@@ -167,4 +191,5 @@ VALUES (1, 1),
        (2, 1),
        (3, 3),
        (4, 4),
-       (5, 5);
+       (5, 5)
+;

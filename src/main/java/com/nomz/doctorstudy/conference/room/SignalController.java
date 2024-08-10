@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.conference.room.signal.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -26,7 +27,11 @@ public class SignalController {
     private final BlockInterpreter blockInterpreter;
     private final ExternalApiCallService externalApiCallService;
     private final ProcessManager processManager;
-    private final RoomService roomService;
+
+    @Value("${audio-utils.upper-path}")
+    private String audioUpperPath;
+    private static final String AUDIO_FILE_NAME = "participant_audio_";
+    private static final String AUDIO_EXT = ".webm";
 
     @MessageMapping("/chat/{conferenceId}")
     @SendTo("/topic/chat/{conferenceId}")
@@ -39,20 +44,23 @@ public class SignalController {
     public void handleParticipantAudioSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
         log.debug("signal: {} from conference: {}", signal, conferenceId);
 
+        ProcessLockManager.awaken(conferenceId);
+
         byte[] rawAudioData = Base64.getDecoder().decode(signal.getRawAudio());
+
+        String audioPath = audioUpperPath + AUDIO_FILE_NAME + conferenceId + AUDIO_EXT;
+        AudioUtils.saveFile(rawAudioData, audioPath);
+
         String transcript = externalApiCallService.stt(rawAudioData);
 
         ProcessContext processContext = processManager.getProcessContext(conferenceId);
         processContext.addTranscript(transcript);
 
         //
-        String testSrcAudio = "audio/participant_audio";
-        AudioUtils.saveFile(rawAudioData, testSrcAudio);
         //AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");
         //AudioUtils.playAudio(testSrcAudio + ".wav");
         //
 
-        ProcessLockManager.awaken(conferenceId);
     }
 
     @MessageMapping("/signal/{conferenceId}/heartbeat")

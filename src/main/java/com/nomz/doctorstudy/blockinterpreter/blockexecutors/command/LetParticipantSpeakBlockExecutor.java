@@ -1,8 +1,11 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.command;
 
+import com.nomz.doctorstudy.blockinterpreter.ProcessLockManager;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
+import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
+import com.nomz.doctorstudy.conference.room.signal.ParticipantSpeakSignal;
 import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,18 +16,41 @@ import java.util.List;
 @Component
 public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
     private final ThreadProcessContext threadProcessContext;
-    private final SignalTransmitter signalTransMitter;
+    private final SignalTransmitter signalTransmitter;
 
-    public LetParticipantSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransMitter) {
+    public LetParticipantSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransmitter) {
         super(void.class, List.of(Integer.class, Integer.class));
         this.threadProcessContext = threadProcessContext;
-        this.signalTransMitter = signalTransMitter;
+        this.signalTransmitter = signalTransmitter;
     }
 
     @Override
     protected Object executeAction(List<Object> args) {
-        log.debug("let participant speak!");
-        signalTransMitter.transmitSignal(1L, new UnmuteSignal(1L));
+        int participantNum = (int) args.get(0);
+        int speakTimeLimit = (int) args.get(1);
+
+        long processId = threadProcessContext.getProcessId();
+        String participantName = threadProcessContext.getParticipantName(participantNum);
+        Long memberId = threadProcessContext.getParticipantMemberId(participantNum);
+        Integer numOfParticipant = threadProcessContext.getNumOfParticipant();
+
+        for (int i=1; i<=numOfParticipant; i++) {
+            if (i == memberId) continue;
+            signalTransmitter.transmitSignal(processId, new MuteSignal(memberId));
+        }
+
+        log.debug("Participant[id={}, name={}] started to speak. time limit={}", memberId, participantName, speakTimeLimit);
+        signalTransmitter.transmitSignal(processId, new ParticipantSpeakSignal(memberId, speakTimeLimit));
+
+
+        for (int i=1; i<=numOfParticipant; i++) {
+            if (i == memberId) continue;
+            signalTransmitter.transmitSignal(processId, new UnmuteSignal(memberId));
+        }
+
+        ProcessLockManager.sleep(processId);
+
+
 
         return null;
     }

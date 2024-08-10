@@ -53,6 +53,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String devMemberIdStr = request.getHeader(LoginToken.DEV_LOGIN_TOKEN);
         if (devMemberIdStr == null) {
+            log.debug("Failed to authenticate, Request={}", request.getRequestURI());
             throw new AuthException(AuthErrorCode.UNAUTHORIZED);
         }
         Long devMemberId = Long.parseLong(devMemberIdStr);

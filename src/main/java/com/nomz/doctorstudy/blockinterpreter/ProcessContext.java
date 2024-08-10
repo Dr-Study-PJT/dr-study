@@ -4,17 +4,17 @@ import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+@Slf4j
 public class ProcessContext {
     @Getter
     private final long id;
     @Getter
     private int cursor;
     private int commandExecutionCount;
-    @Getter @Setter
-    private int phase;
     @Getter @Setter
     private ProcessStatus status;
     private int scopeDepth;
@@ -26,8 +26,9 @@ public class ProcessContext {
     private final List<Transcript> transcripts = new ArrayList<>();
 
     @Getter
-    private final Map<Integer, Map<Integer, String>> programme = new HashMap<>();
-    private final List<Long> participantMemberIdList = new ArrayList<>();
+    private final List<ProgrammeItem> programme = new ArrayList<>();
+
+    private final List<ParticipantInfo> participantInfoList = new ArrayList<>();
 
     public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap) {
         this.id = id;
@@ -47,8 +48,8 @@ public class ProcessContext {
         this.transcripts.clear();
         this.programme.clear();
 
-        this.participantMemberIdList.clear();
-        this.participantMemberIdList.add(0L);
+        this.participantInfoList.clear();
+        this.participantInfoList.add(new ParticipantInfo(0L, "paddingMember"));
 
         declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
         setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), 0);
@@ -59,16 +60,30 @@ public class ProcessContext {
         this.cursor = cursor;
     }
 
-    public void setParticipantVariables(List<Long> memberIds) {
-        for (int i=0; i < memberIds.size(); i++) {
+    public void setParticipantInfo(List<Long> memberIds, List<String> names) {
+        for (int i = 0; i < memberIds.size(); i++) {
             Long memberId = memberIds.get(i);
-            participantMemberIdList.add(memberId);
+            String name = names.get(0);
+
+            participantInfoList.add(new ParticipantInfo(memberId, name));
 
             String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + i;
             declareVariable(variableName);
-            setVariable(variableName, "member" + memberId + "'s nickname");
+            setVariable(variableName, names.get(i));
         }
         setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), memberIds.size());
+    }
+
+    public Integer getNumOfParticipant() {
+        return participantInfoList.size() - 1;
+    }
+
+    public String getParticipantName(int numOfParticipant) {
+        return participantInfoList.get(numOfParticipant).getName();
+    }
+
+    public Long getParticipantMemberId(int numOfParticipant) {
+        return participantInfoList.get(numOfParticipant).getMemberId();
     }
 
     public void increaseScopeDepth() {
@@ -82,11 +97,13 @@ public class ProcessContext {
 
     public void declareVariable(String key) {
         if (variableMapStack.get(scopeDepth).containsKey(key)) {
-            throw new BlockException(BlockErrorCode.VARIABLE_ALREADY_DECLARED);
+            log.warn("This variable:{} has already been declared once", key);
+            return;
+            //throw new BlockException(BlockErrorCode.VARIABLE_ALREADY_DECLARED);
         }
         variableMapStack.get(scopeDepth).put(key, null);
     }
-    
+
     public Object getVariable(String key) {
         for (int i = scopeDepth; i>=0; i--) {
             Object val = variableMapStack.get(i).get(key);
@@ -108,7 +125,8 @@ public class ProcessContext {
     }
 
     public void addTranscript(String content) {
-        transcripts.add(new Transcript(phase, content));
+        int currentPhase = (int) getVariable("current_phase");
+        transcripts.add(new Transcript(currentPhase, content));
     }
 
     public String getRecentTranscript(int n) {
@@ -141,11 +159,9 @@ public class ProcessContext {
         return commandBlocks.get(cursor);
     }
 
-    public void addProgrammeInfo(String info) {
-        if (programme.containsKey(phase)) {
-            programme.put(phase, new HashMap<>());
-        }
-        programme.get(phase).put(commandExecutionCount, info);
+    public void addProgrammeInfo(String content) {
+        int currentPhase = (int) getVariable("current_phase");
+        programme.add(new ProgrammeItem(currentPhase, content));
     }
 
 
@@ -154,5 +170,12 @@ public class ProcessContext {
     private static class Transcript {
         private final int phase;
         private final String content;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private static class ParticipantInfo {
+        private final long memberId;
+        private final String name;
     }
 }

@@ -15,11 +15,11 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-@Order(999)
+@Order(10)
 public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<?> handleCustomException(BusinessException ex) {
-        log.error("BusinessException occurred", ex);
+        log.error("BusinessException occurred, message={}", ex.getMessage());
 
         return new ResponseEntity<>(
                 new ErrorResponse<>(

@@ -21,6 +21,7 @@ public class ProcessLockManager {
             try {
                 log.debug("Process:{} started to sleep", processId);
                 lock.wait();
+                // TODO: callback 추가?
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new BlockException(BlockErrorCode.PROCESS_INTERRUPTED, e);
@@ -30,11 +31,11 @@ public class ProcessLockManager {
 
     public static void awaken(Long processId) {
         Object lock = lockMap.get(processId);
+        if (lock == null) {
+            throw new BlockException(BlockErrorCode.PROCESS_ALREADY_AWAKE);
+        }
 
         synchronized (lock) {
-            if (!lockMap.containsKey(processId)) {
-                throw new BlockException(BlockErrorCode.PROCESS_ALREADY_AWAKE);
-            }
             log.debug("Process:{} is awoken", processId);
             lock.notify();
             lockMap.remove(processId);

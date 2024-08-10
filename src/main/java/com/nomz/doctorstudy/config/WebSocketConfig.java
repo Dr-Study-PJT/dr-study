@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.config;
 
 import com.nomz.doctorstudy.conference.room.RoomChannelInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -9,6 +10,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -34,10 +36,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(roomChannelInterceptor);
     }
 
+    @Bean
+    public ServletServerContainerFactoryBean createWebSocketContainer() {
+        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+        container.setMaxTextMessageBufferSize(1024 * 1024 * 50); // 50MB
+        container.setMaxBinaryMessageBufferSize(1024 * 1024 * 50); // 50MB
+        return container;
+    }
+
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
-        registry.setMessageSizeLimit(10_000_000); // default : 64 * 1024
-        registry.setSendTimeLimit(10_000_000); // default : 10 * 10000
-        registry.setSendBufferSizeLimit(10_000_000); // default : 512 * 1024
+        registry.setMessageSizeLimit(1_000_000_000); // default : 64 * 1024
+        registry.setSendTimeLimit(1_000_000_000); // default : 10 * 10000
+        registry.setSendBufferSizeLimit(1_000_000_000); // default : 512 * 1024
     }
 }

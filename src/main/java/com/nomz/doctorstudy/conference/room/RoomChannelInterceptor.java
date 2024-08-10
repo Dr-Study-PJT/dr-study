@@ -32,7 +32,7 @@ public class RoomChannelInterceptor implements ChannelInterceptor {
         String sessionId = accessor.getSessionId();
 
         StompCommand command = accessor.getCommand();
-        log.debug("StompCommand={}", command);
+        log.debug("STOMP Command={}", command);
 
         if (command == null) {
             return message;
