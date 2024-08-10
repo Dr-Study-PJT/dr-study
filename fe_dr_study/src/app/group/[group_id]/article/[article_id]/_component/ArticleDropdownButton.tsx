@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { handleArticleDelete } from '../_handler';
 
 const ArticleDropdownButton: React.FC<{
     onEdit: () => void;
@@ -62,24 +61,4 @@ const ArticleDropdownButton: React.FC<{
     );
 };
 
-// 사용 예시 컴포넌트
-const ArticleDropdownButtonComponent: React.FC<{ articleId: number }> = ({ articleId }) => {
-    const handleEdit = () => {
-        // 예제 핸들러 - 실제 수정 기능 구현
-        // handleCommentUpdate(articleId, '새로운 내용'); // 수정 필요!
-    };
-
-    const handleDelete = () => {
-        // 예제 핸들러 - 실제 삭제 기능 구현
-        handleArticleDelete(articleId);
-    };
-
-    return (
-        <ArticleDropdownButton
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-        />
-    );
-};
-
-export default ArticleDropdownButtonComponent; // 수정됨!
+export default ArticleDropdownButton;
