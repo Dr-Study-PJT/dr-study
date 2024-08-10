@@ -1,36 +1,21 @@
+// src/app/group/new/GroupDetailPage.tsx
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Button, Label, Input } from '@/components/atoms';
+import { Button, Label } from '@/components/atoms';
 import { Textarea } from '@/components/atoms/Textarea';
 import { SectionContents } from '../_components/SectionContents';
 import GroupApplyButton from '../_components/GroupApplyButton';
-import {
-    fetchGroupWithMembersData,
-    getGroupMembers,
-    // updateGroupData,
-    // deleteGroup,
-} from './_api/ssr';
+import { fetchGroupWithMembersData, getGroupMembers } from './_api/ssr';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { RootState } from '@/store';
 import { GroupWithMembersData } from './_types';
 import { GroupMember } from './_api/ssr';
 import { formatDate, getDateTimePart } from '@/utils/date';
-import Tooltip from '@/components/organisms/SideBar/Tooltip';
-import { FaUsers } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-
-interface IMemberInfo {
-    id: number;
-    email: string;
-    nickname: string;
-    regDate: string;
-    isLeaved: boolean;
-    leavedDate: string;
-    imageUrl: string;
-}
+import MemberList from './_components/MemberList';
 
 export default function GroupDetailPage({
     params,
@@ -44,7 +29,7 @@ export default function GroupDetailPage({
     const [membersInThisGroup, setMembersInThisGroup] =
         useState<GroupMember[]>();
     const [isLoading, setIsLoading] = useState(true);
-    const [memberData, setMemberData] = useState<IMemberInfo | null>(
+    const [memberData, setMemberData] = useState(
         getSessionStorageItem('memberData'),
     );
     const [isEditing, setIsEditing] = useState(false);
@@ -56,7 +41,6 @@ export default function GroupDetailPage({
 
     useEffect(() => {
         async function fetchData() {
-            console.log('groupId: ', groupId);
             try {
                 const groupData = await fetchGroupWithMembersData(groupId);
                 const membersData = await getGroupMembers(groupId);
@@ -73,11 +57,6 @@ export default function GroupDetailPage({
     }, [groupId]);
 
     useEffect(() => {
-        console.log('groupWithMembers: ', groupWithMembers);
-        console.log('membersInThisGroup: ', membersInThisGroup);
-    }, [groupWithMembers, membersInThisGroup]);
-
-    useEffect(() => {
         setMemberData(getSessionStorageItem('memberData'));
     }, [memberRedux]);
 
@@ -89,10 +68,6 @@ export default function GroupDetailPage({
 
     const isLeader = myMemberData?.role === 'CAPTAIN' ?? false;
     const isMember = !!myMemberData;
-
-    console.log('memberData => ', memberData);
-    console.log('isMember => ', isMember);
-    console.log('isLeader => ', isLeader);
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -160,16 +135,6 @@ export default function GroupDetailPage({
                             <div className="TL-LIST-INFO-BASE flex flex-col gap-1 w-max h-full max-w-[33%]">
                                 {isEditing ? (
                                     <>
-                                        {/* <Input
-                                            value={editedGroup.name || ''}
-                                            onChange={(e) =>
-                                                setEditedGroup({
-                                                    ...editedGroup,
-                                                    name: e.target.value,
-                                                })
-                                            }
-                                            className="text-dr-header-3 text-dr-white font-bold"
-                                        /> */}
                                         <Textarea
                                             value={
                                                 editedGroup.description || ''
@@ -182,22 +147,6 @@ export default function GroupDetailPage({
                                             }
                                             className="text-dr-body-4 text-dr-gray-300 mt-3"
                                         />
-                                        {/* <Input
-                                            type="number"
-                                            value={
-                                                editedGroup.memberCapacity || ''
-                                            }
-                                            onChange={(e) =>
-                                                setEditedGroup({
-                                                    ...editedGroup,
-                                                    memberCapacity: parseInt(
-                                                        e.target.value,
-                                                        10,
-                                                    ),
-                                                })
-                                            }
-                                            className="text-dr-body-4 text-dr-gray-300 mt-3"
-                                        /> */}
                                     </>
                                 ) : (
                                     <>
@@ -225,18 +174,6 @@ export default function GroupDetailPage({
                                         </div>
                                     </>
                                 )}
-                                <div className="INFO-TAGS flex flex-wrap mt-3">
-                                    {groupWithMembers?.tags.map(
-                                        (tag, index) => (
-                                            <span
-                                                key={index}
-                                                className="px-3 py-[3px] bg-dr-gray-500 text-dr-body-4 rounded-full text-dr-coral-100 cursor-pointer hover:font-bold transition-all duration-200 mr-2 mb-2"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ),
-                                    )}
-                                </div>
                             </div>
                             <div className="TR-BUTTON">
                                 <div
@@ -249,101 +186,12 @@ export default function GroupDetailPage({
                             </div>
                         </div>
                         <div className="BOTTOM-INFO-GROUP w-full h-max flex flex-row justify-between items-end">
-                            <div className="BL-INFO-MEMBER-LIST flex flex-col gap-1">
-                                <div className="flex flex-row gap-2">
-                                    <Label
-                                        htmlFor=""
-                                        className="font-semibold !text-dr-body-3 !text-dr-gray-100"
-                                    >
-                                        스터디원 목록
-                                    </Label>
-                                    <div className="flex flex-row gap-1">
-                                        <FaUsers className="text-dr-gray-400 text-dr-body-3 self-center pb-0" />
-                                        <div className="text-dr-body-4 text-dr-gray-300 flex flex-row gap-1 items-center">
-                                            {groupWithMembers?.members.length &&
-                                                groupWithMembers?.members
-                                                    .length + ' /'}
-                                            {' ' +
-                                                groupWithMembers?.memberCapacity}
-                                        </div>
-                                    </div>
-                                </div>
-                                <ul className="LIST-MEMBER-IMAGES flex flex-row gap-2">
-                                    {membersInThisGroup
-                                        ?.slice(0, 3)
-                                        .map(
-                                            (
-                                                member: GroupMember,
-                                                i: number,
-                                            ) => (
-                                                <li key={i}>
-                                                    <div
-                                                        className="relative overflow-hidden w-[2.3rem] h-[2.3rem] rounded-xl cursor-pointer"
-                                                        onClick={(e) => {
-                                                            router.push(
-                                                                `/members/${member?.memberInfo?.id}`,
-                                                            );
-                                                        }}
-                                                    >
-                                                        {member.memberInfo
-                                                            .imageUrl ? (
-                                                            <Tooltip
-                                                                text={
-                                                                    member
-                                                                        .memberInfo
-                                                                        .nickname
-                                                                }
-                                                                direction="top"
-                                                            >
-                                                                <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
-                                                                    <Image
-                                                                        id={member.memberInfo.id.toString()}
-                                                                        alt="avatar"
-                                                                        src={
-                                                                            member
-                                                                                .memberInfo
-                                                                                .imageUrl
-                                                                        }
-                                                                        unoptimized
-                                                                        fill
-                                                                        style={{
-                                                                            objectFit:
-                                                                                'cover',
-                                                                        }}
-                                                                    />
-                                                                </div>
-                                                            </Tooltip>
-                                                        ) : (
-                                                            <Image
-                                                                id={member.memberInfo.id.toString()}
-                                                                alt="avatar"
-                                                                src="/path/to/fallback-image.png"
-                                                                unoptimized
-                                                                fill
-                                                                style={{
-                                                                    objectFit:
-                                                                        'cover',
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </li>
-                                            ),
-                                        )}
-                                    {(groupWithMembers?.members
-                                        .length as number) > 3 && (
-                                        <li key="extra">
-                                            <button className="relative overflow-hidden w-10 h-10 rounded-xl border-[1px] border-dr-coral-100 bg-dr-coral-200 hover:bg-dr-coral-100 transition-colors duration-200 flex items-center justify-center">
-                                                <span className="text-white font-semibold text-dr-body-3">
-                                                    +
-                                                    {(groupWithMembers?.members
-                                                        .length as number) - 3}
-                                                </span>
-                                            </button>
-                                        </li>
-                                    )}
-                                </ul>
-                            </div>
+                            <MemberList
+                                members={membersInThisGroup ?? []}
+                                memberCapacity={
+                                    groupWithMembers?.memberCapacity ?? 0
+                                }
+                            />
                             <div className="BR-BOTTONS flex flex-row justify-between gap-3">
                                 {isLeader && (
                                     <>

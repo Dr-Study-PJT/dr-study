@@ -1,36 +1,24 @@
 import React, { FormEvent } from 'react';
 import { Button } from '@/components/atoms';
 import { StepProps } from '../_types/type';
-import { createGroup } from '../../_api/csr';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import Image from 'next/image';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { useRouter } from 'next/navigation';
 import FieldTagFactory from './FieldTagFactory';
 
-const Step3: React.FC<StepProps> = ({ onNext, onBack, data }) => {
+const Step3: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
     const router = useRouter();
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-
-        try {
-            const response = await createGroup(data);
-            console.log(response.data);
-            router.push(`/group/${response.data.data.groupId}`);
-        } catch (error) {
-            console.error('그룹생성 에러용;;; :' + error);
-        }
-    };
 
     return (
         <>
             <div className="w-full h-full flex flex-row justify-around gap-6 items-start mt-2">
                 <section className="LEFT-CONTENT w-1/2 h-auto">
                     <div className="w-48 flex flex-col justify-between gap-1 items-center h-auto">
-                        <div className="rounded-full relative overflow-hidden w-24 h-24">
+                        <div className="rounded-full relative overflow-hidden w-24 h-24 bg-dr-coral-50 hover:bg-blue-100 transition-colors duration-300 cursor-pointer">
                             <Image
                                 alt="avatar"
-                                src="/images/login_thumbnail.png"
+                                src={data.imageUrl}
                                 fill
                                 objectFit="cover"
                             />
@@ -78,7 +66,12 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data }) => {
                 <Button size="md" onClick={onBack} color="dark">
                     이전으로
                 </Button>
-                <Button size="md" onClick={handleSubmit}>
+                <Button
+                    size="md"
+                    onClick={(e) => {
+                        onSubmit(e, data);
+                    }}
+                >
                     그룹 만들기
                 </Button>
             </div>

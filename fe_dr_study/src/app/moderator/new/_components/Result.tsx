@@ -6,40 +6,36 @@ import successAnimation from '@/app/assets/lotties/success.json';
 import warningAnimation from '@/app/assets/lotties/warning.json';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { Button } from '@/components/atoms';
+import { useRouter } from 'next/navigation';
 
-export const LoadingLottie = () => {
-    return (
-        <Lottie
-            style={{ width: '100%', height: '12rem' }}
-            animationData={loadingAnimation}
-            loop={true}
-        />
-    );
-};
+export const LoadingLottie = () => (
+    <Lottie
+        style={{ width: '100%', height: '12rem' }}
+        animationData={loadingAnimation}
+        loop={true}
+    />
+);
 
-export const SuccessLottie = () => {
-    return (
-        <Lottie
-            style={{ width: '100%', height: '12rem' }}
-            animationData={successAnimation}
-            loop={false}
-        />
-    );
-};
+export const SuccessLottie = () => (
+    <Lottie
+        style={{ width: '100%', height: '12rem' }}
+        animationData={successAnimation}
+        loop={false}
+    />
+);
 
-export const FailLottie = () => {
-    return (
-        <Lottie
-            style={{ width: '100%', height: '12rem' }}
-            animationData={warningAnimation}
-            loop={false}
-        />
-    );
-};
+export const FailLottie = () => (
+    <Lottie
+        style={{ width: '100%', height: '12rem' }}
+        animationData={warningAnimation}
+        loop={false}
+    />
+);
 
 interface ResultStepProps {
     loading: boolean;
     result?: {
+        id: number | null;
         success: boolean | null;
         description: string;
     };
@@ -52,7 +48,7 @@ interface ResultStepProps {
 
 const ResultStep = ({
     loading,
-    result = { success: null, description: '' },
+    result = { id: null, success: null, description: '' },
     successMessage,
     failMessage,
     onHomeClick,
@@ -61,6 +57,8 @@ const ResultStep = ({
 }: ResultStepProps) => {
     const [displayLoading, setDisplayLoading] = useState(true);
     const [dots, setDots] = useState('');
+
+    const router = useRouter();
 
     useEffect(() => {
         if (loading) {
@@ -117,12 +115,15 @@ const ResultStep = ({
                         >
                             홈으로
                         </Button>
+
                         <Button
                             rounded
-                            onClick={onSuccessConfirmClick}
+                            onClick={() =>
+                                router.push(`/moderator/${result.id}`)
+                            }
                             fullWidth
                         >
-                            로그인
+                            사회자 보기
                         </Button>
                     </div>
                 </div>

@@ -113,15 +113,17 @@ const RegisterPage = () => {
                             currentStep={currentStep}
                         />
                     )}
-                    <section className="CONTENTS-SECTION-STEP1 animate-fadeIn w-max min-w-[75%] h-max min-h-[50%] flex flex-col gap-2 transition-all duration-200">
-                        <StepComponent
-                            onNext={handleNext}
-                            onBack={handleBack}
-                            onSubmit={handleSubmit}
-                            data={formData}
-                            setData={setFormData}
-                        />
-                    </section>
+                    {!isResultPage && (
+                        <section className="CONTENTS-SECTION-STEP1 animate-fadeIn w-max min-w-[75%] h-max min-h-[50%] flex flex-col gap-2 transition-all duration-200">
+                            <StepComponent
+                                onNext={handleNext}
+                                onBack={handleBack}
+                                onSubmit={handleSubmit}
+                                data={formData}
+                                setData={setFormData}
+                            />
+                        </section>
+                    )}
                     {isResultPage && (
                         <ResultStep
                             loading={loading}

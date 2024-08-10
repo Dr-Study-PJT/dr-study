@@ -154,7 +154,6 @@ const CreateConferenceProgress = () => {
                     {isResultPage && (
                         <ResultStep
                             loading={loading}
-                            result={result}
                             successMessage="컨퍼런스 생성이 완료되었습니다!"
                             failMessage="컨퍼런스 생성에 실패했습니다."
                             onHomeClick={() => router.push('/')}
