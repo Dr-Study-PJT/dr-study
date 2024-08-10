@@ -1,5 +1,5 @@
 import { IConference } from '@/app/group/[group_id]/dummy';
-import { ConferenceParticipantList } from '@/app/group/_components/ConferenceWithMembers';
+import { ConferenceParticipantList } from '@/app/group/_components/ListConferenceTodays';
 import Image from 'next/image';
 import React from 'react';
 

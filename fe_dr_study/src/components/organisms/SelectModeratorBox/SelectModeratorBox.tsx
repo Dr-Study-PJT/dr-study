@@ -79,7 +79,7 @@ const SelectedModerator = ({
     return (
         <>
             {selectedModerator && (
-                <div className="mt-4 border border-dr-coral-100 rounded p-4">
+                <div className="mt-4 border border-dr-coral-100 rounded p-4 animate-popIn">
                     <h3 className="text-dr-body-2 font-semibold pb-2">
                         선택된 AI 사회자 정보
                     </h3>

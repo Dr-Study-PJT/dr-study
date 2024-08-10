@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/atoms';
 import { useDispatch } from 'react-redux';
 import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
-import ListConferenceToday from '../ConferenceWithMembers';
+import ListConferenceToday from '../ListConferenceTodays';
 import ArticleListContent from './ArticleListContent';
-import ConferenceHistoryContent from './ConferenceHistoryContent';
 import { ConferenceWithMembersData } from '../../[group_id]/_types';
 import { IConference } from '../../[group_id]/dummy';
 import { GET } from '@/app/api/routeModule';
 import { useRouter } from 'next/navigation';
+import ListConferenceHistoryContent from './ListConfereceHistoryContent';
 
 interface SectionContentsProps {
     groupId: string;
@@ -108,7 +108,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                 return <ArticleListContent groupId={groupId} />;
             case '스터디 이력':
                 return (
-                    <ConferenceHistoryContent
+                    <ListConferenceHistoryContent
                         conferences={conferencesWithMembers}
                     />
                 );

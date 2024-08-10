@@ -100,7 +100,10 @@ const ConferenceWaitingRoomTemplate = ({
                         <h3 className="mt-6 text-xl font-semibold">
                             참여자 목록
                         </h3>
-                        <p>호스트 ID: {hostId}</p>
+                        <p>
+                            호스트는 당연히 자동참여해야하는데 초대 손봐주세용:{' '}
+                            {hostId}
+                        </p>
                         {conferenceInvitees.map((invitee) => (
                             <div
                                 key={invitee.id}

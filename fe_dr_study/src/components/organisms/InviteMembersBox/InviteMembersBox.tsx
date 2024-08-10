@@ -113,7 +113,7 @@ const InviteMembersBox = ({
                 <div className="flex flex-wrap gap-2">
                     {members?.map((member) => (
                         <div
-                            className={`bg-dr-indigo-100 p-[1rem] w-[7rem] h-[7rem] duration-200 hover:bg-dr-gray-500 cursor-pointer flex flex-col items-center gap-1 rounded-md ${
+                            className={`bg-dr-indigo-100 p-[1rem] w-[7rem] h-[7rem] duration-200 hover:bg-dr-indigo-0 cursor-pointer flex flex-col items-center gap-1 rounded-md ${
                                 selectedMembers.some(
                                     (currentMember) =>
                                         currentMember.memberInfo.id ===
@@ -127,7 +127,7 @@ const InviteMembersBox = ({
                         >
                             <div className="relative w-[4rem] h-[4rem]">
                                 <Image
-                                    src={memberData?.imageUrl?.toString()}
+                                    src={memberData?.imageUrl}
                                     alt="profile-image"
                                     fill
                                     className="rounded-md"
@@ -162,7 +162,7 @@ const InviteMembersBox = ({
                                 key={member.memberInfo?.id}
                                 onClick={() => handleRemoveMember(member)} // 멤버 클릭 시 초대 핸들러 호출
                             >
-                                <div className="relative w-[4rem] h-[4rem]">
+                                <div className="relative w-[4rem] h-[4rem] animate-popIn">
                                     <Image
                                         src={member.memberInfo?.imageUrl}
                                         alt="profile-image"
