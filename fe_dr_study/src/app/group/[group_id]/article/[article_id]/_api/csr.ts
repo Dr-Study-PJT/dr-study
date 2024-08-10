@@ -2,7 +2,10 @@ import { POST, PATCH, DELETE } from '@/app/api/routeModule';
 import { articleAPI } from '@/app/api/axiosInstanceManager';
 import { CreateCommentContent, UpdateCommentReq } from '../_types/index';
 
-export const postingComment = async (articleId: string, createCommentBody: CreateCommentContent) => {
+export const postingComment = async (
+    articleId: string,
+    createCommentBody: CreateCommentContent,
+) => {
     try {
         const response = await POST({
             API: articleAPI,
@@ -17,7 +20,10 @@ export const postingComment = async (articleId: string, createCommentBody: Creat
     }
 };
 
-export const updatingComment = async (commentId: string, updateCommentBody: UpdateCommentReq) => {
+export const updatingComment = async (
+    commentId: string,
+    updateCommentBody: UpdateCommentReq,
+) => {
     try {
         const response = await PATCH({
             API: articleAPI,
@@ -52,7 +58,7 @@ export const deletingArticle = async (articleId: string) => {
     try {
         const response = await DELETE({
             API: articleAPI,
-            endPoint: ``,
+            endPoint: `/`,
             isAuth: true,
             params: articleId,
         });

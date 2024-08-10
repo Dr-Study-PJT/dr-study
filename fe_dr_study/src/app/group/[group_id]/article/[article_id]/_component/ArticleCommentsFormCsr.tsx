@@ -100,7 +100,6 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
                 data,
                 articleId?.toString(),
             );
-            alert('댓글이 성공적으로 작성되었습니다.');
             onCommentSubmitted(newComment);
             reset();
         } catch (error) {

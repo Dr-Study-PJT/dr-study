@@ -14,12 +14,12 @@ const ArticleComments = ({ article }: ArticleCommentsProps) => {
         article.comments || [],
     );
 
-    const handleCommentSubmitted = (newComment: CommentData) => {
-        console.log(newComment); // 콘솔에 newComment 출력하여 확인
-        if (newComment && newComment.id) {
-            setComments((prevComments) => [...prevComments, newComment]);
+    const handleCommentSubmitted = (comment: CommentData) => {
+        console.log(comment); // 콘솔에 comment 출력하여 확인
+        if (comment && comment.id) {
+            setComments((prevComments) => [...prevComments, comment]);
         } else {
-            console.error('Invalid comment:', newComment);
+            console.error('Invalid comment:', comment);
         }
     };
 

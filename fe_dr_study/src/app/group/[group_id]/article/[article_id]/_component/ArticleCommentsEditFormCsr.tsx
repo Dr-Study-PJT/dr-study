@@ -99,7 +99,6 @@ const ArticleCommentsEditForm: React.FC<ArticleCommentsEditFormProps> = ({
                 id: commentId,
                 content: data.comment_content,
             } as CommentData;
-            alert('댓글이 성공적으로 수정되었습니다.');
             onCommentUpdated(updatedComment);
             reset();
         } catch (error) {
