@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const ArticleDropdownButton: React.FC<{
     onEdit: () => void;
@@ -18,6 +18,16 @@ const ArticleDropdownButton: React.FC<{
         ) {
             setIsOpen(false);
         }
+    };
+
+    const handleEdit = () => {
+        onEdit();
+        setIsOpen(false); // 드롭다운 닫기
+    };
+
+    const handleDelete = () => {
+        onDelete();
+        setIsOpen(false); // 드롭다운 닫기
     };
 
     useEffect(() => {
@@ -43,13 +53,13 @@ const ArticleDropdownButton: React.FC<{
                 >
                     <div className="py-1">
                         <button
-                            onClick={onEdit}
+                            onClick={handleEdit}
                             className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                         >
                             수정
                         </button>
                         <button
-                            onClick={onDelete}
+                            onClick={handleDelete}
                             className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                         >
                             삭제

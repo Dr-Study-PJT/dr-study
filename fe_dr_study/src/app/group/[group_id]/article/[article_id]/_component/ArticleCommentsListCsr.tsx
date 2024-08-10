@@ -1,11 +1,13 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Span } from '@/components/atoms';
 import { CommentData } from '../_types';
-import { handleCommentDelete, handleCommentUpdate } from '../_handler/index';
+import { handleCommentDelete } from '../_handler/index';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import ArticleDropdownButtonComponent from './ArticleDropdownButton';
+import ArticleCommentsEditForm from './ArticleCommentsEditFormCsr';
 
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
@@ -25,8 +27,9 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     comments,
 }) => {
     const [commentList, setCommentList] = useState<CommentData[]>(comments);
-    const data = getSessionStorageItem('memberData');
-    console.log(data);
+    const [editCommentId, setEditCommentId] = useState<string | null>(null);
+    const [editContent, setEditContent] = useState<string>('');
+    const data = getSessionStorageItem('memberData') || {};
 
     const updateCommentList = (updatedComment: CommentData) => {
         setCommentList((prev) =>
@@ -43,9 +46,18 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
         );
     };
 
-    const handleUpdate = async (commentId: string, content: string) => {
-        await handleCommentUpdate(commentId, content);
-        updateCommentList({ id: commentId, content } as CommentData);
+    const handleEditClick = (commentId: string, content: string) => {
+        setEditCommentId(commentId);
+        setEditContent(content);
+    };
+
+    const handleCancelEdit = () => {
+        setEditCommentId(null);
+    };
+
+    const handleCommentUpdated = (updatedComment: CommentData) => {
+        updateCommentList(updatedComment);
+        setEditCommentId(null);
     };
 
     return (
@@ -77,12 +89,9 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                                     <div className="flex justify-end space-x-2 mt-2">
                                         <ArticleDropdownButtonComponent
                                             onEdit={() =>
-                                                handleUpdate(
+                                                handleEditClick(
                                                     String(comment.id),
-                                                    prompt(
-                                                        '수정할 내용을 입력하세요',
-                                                        comment.content,
-                                                    ) || comment.content,
+                                                    comment.content,
                                                 )
                                             }
                                             onDelete={() =>
@@ -93,9 +102,18 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                                 )}
                             </Box>
                             <Box variant="commentText" className="w-full">
-                                <Span color="white">
-                                    {String(comment.content)}
-                                </Span>
+                                {editCommentId === String(comment.id) ? (
+                                    <ArticleCommentsEditForm
+                                        commentId={String(comment.id)}
+                                        onCommentUpdated={handleCommentUpdated}
+                                        initialContent={editContent}
+                                        onCancel={handleCancelEdit} // 취소 핸들러 추가
+                                    />
+                                ) : (
+                                    <Span color="white">
+                                        {String(comment.content)}
+                                    </Span>
+                                )}
                             </Box>
                         </div>
                     </Box>

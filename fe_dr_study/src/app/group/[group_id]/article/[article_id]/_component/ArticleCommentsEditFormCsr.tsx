@@ -10,47 +10,42 @@ import {
 import { Box } from '@/components/atoms/Box/Box';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
-import { handleCommentSubmit } from '../_handler';
+import { handleCommentUpdate } from '../_handler';
 import { CommentData } from '../_types';
 
-interface CommentFormProps {
-    articleId: string;
+interface CommentEditFormProps {
+    commentId: string;
     setFocus: UseFormSetFocus<any>;
     handleSubmit: (event?: React.BaseSyntheticEvent) => Promise<void>;
     register: UseFormRegister<any>;
     errors: FieldErrors<any>;
     reset: () => void;
     initialContent: string;
-    imageUrl: string; // 추가
+    onCancel: () => void; // 추가
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({
-    articleId,
+const CommentEditForm: React.FC<CommentEditFormProps> = ({
+    commentId,
     setFocus,
     handleSubmit,
     register,
     errors,
     reset,
     initialContent,
-    imageUrl,
+    onCancel, // 추가
 }) => {
     React.useEffect(() => {
         setFocus('comment_content');
     }, [setFocus]);
 
     return (
-        <Box variant="commentCreateContainer" className="flex items-center">
-            <img
-                src={imageUrl}
-                alt="author"
-                className="flex flex-row justify-center rounded-full w-[60px] h-[60px] mr-4 object-cover"
-            />
+        <Box variant="commentCreateContainer">
             <form onSubmit={handleSubmit} className="w-full flex items-center">
                 <div className="flex flex-col w-full">
                     <InputWithLabelAndError
                         label={''}
                         id="comment_content"
-                        placeholder="댓글을 입력해주세요."
+                        placeholder="댓글을 수정해주세요."
                         defaultValue={initialContent}
                         {...register('comment_content', {
                             required: '댓글 내용을 입력해주세요.',
@@ -61,11 +56,14 @@ const CommentForm: React.FC<CommentFormProps> = ({
                         <Button
                             color="red"
                             type="button"
-                            onClick={() => reset()}
+                            onClick={() => {
+                                reset();
+                                onCancel(); // 추가
+                            }}
                         >
                             취소
                         </Button>
-                        <Button type="submit">댓글 작성</Button>
+                        <Button type="submit">댓글 수정</Button>
                     </div>
                 </div>
             </form>
@@ -73,18 +71,18 @@ const CommentForm: React.FC<CommentFormProps> = ({
     );
 };
 
-interface ArticleCommentsFormProps {
-    articleId: string;
-    onCommentSubmitted: (comment: CommentData) => void;
+interface ArticleCommentsEditFormProps {
+    commentId: string;
+    onCommentUpdated: (comment: CommentData) => void;
     initialContent: string;
-    imageUrl: string; // 추가
+    onCancel: () => void; // 추가
 }
 
-const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
-    articleId,
-    onCommentSubmitted,
+const ArticleCommentsEditForm: React.FC<ArticleCommentsEditFormProps> = ({
+    commentId,
+    onCommentUpdated,
     initialContent,
-    imageUrl,
+    onCancel, // 추가
 }) => {
     const {
         register,
@@ -96,30 +94,31 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
 
     const onSubmit = async (data: any) => {
         try {
-            const newComment = await handleCommentSubmit(
-                data,
-                articleId?.toString(),
-            );
-            alert('댓글이 성공적으로 작성되었습니다.');
-            onCommentSubmitted(newComment);
+            await handleCommentUpdate(commentId, data.comment_content);
+            const updatedComment = {
+                id: commentId,
+                content: data.comment_content,
+            } as CommentData;
+            alert('댓글이 성공적으로 수정되었습니다.');
+            onCommentUpdated(updatedComment);
             reset();
         } catch (error) {
-            console.error('댓글 작성 실패', error);
+            console.error('댓글 수정 실패', error);
         }
     };
 
     return (
-        <CommentForm
-            articleId={articleId}
+        <CommentEditForm
+            commentId={commentId}
             setFocus={setFocus}
             handleSubmit={handleSubmit(onSubmit)}
             register={register}
             errors={errors}
             reset={reset}
             initialContent={initialContent}
-            imageUrl={imageUrl} // 추가
+            onCancel={onCancel} // 추가
         />
     );
 };
 
-export default ArticleCommentsForm;
+export default ArticleCommentsEditForm;

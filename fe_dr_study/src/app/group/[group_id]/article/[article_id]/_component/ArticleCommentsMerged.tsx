@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import ArticleCommentsList from './ArticleCommentsListCsr';
 import ArticleCommentsForm from './ArticleCommentsFormCsr';
 import { CommentData, ArticleData } from '../_types';
-import { cn } from '../../../../../../lib/utils';
 
 interface ArticleCommentsProps {
     article: ArticleData;
@@ -24,16 +23,17 @@ const ArticleComments = ({ article }: ArticleCommentsProps) => {
         }
     };
 
-
     if (!article) {
         return <p>Loading...</p>;
     }
 
     return (
-        <div className=' w-full'>
+        <div className="w-full">
             <ArticleCommentsForm
-                articleId={article?.id?.toString()}
+                articleId={article.id.toString()}
                 onCommentSubmitted={handleCommentSubmitted}
+                initialContent=""
+                imageUrl={article.memberInfo.imageUrl} // 추가
             />
             {comments.length > 0 ? (
                 <ArticleCommentsList comments={comments} />

@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Heading, Span } from '@/components/atoms';
 import { ArticleData } from '../_types';
+import ArticleCommentsForm from './ArticleCommentsFormCsr'; // 추가
 
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
@@ -19,7 +22,7 @@ interface ArticleDetailProps {
 
 const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
     return (
-        <Box className='w-full' variant="articleDetail">
+        <Box className="w-full" variant="articleDetail">
             <Heading
                 variant="h2"
                 color="white"
@@ -44,6 +47,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                     {article.content}
                 </Span>
             </Box>
+
         </Box>
     );
 };
