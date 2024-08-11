@@ -11,4 +11,5 @@ export interface TextareaWithLabelProps extends TextareaProps {
     labelClassName?: string;
     textareaSize?: TextareaSize;
     fullWidth?: boolean;
+    fullHeight?: boolean;
 }

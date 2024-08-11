@@ -5,7 +5,14 @@ import { TextareaProps } from './Textarea.types';
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     (
-        { id, textareaSize = 'md', fullWidth = true, className = '', ...props },
+        {
+            id,
+            textareaSize = 'md',
+            fullWidth = true,
+            fullHeight = false,
+            className = '',
+            ...props
+        },
         ref,
     ) => {
         return (
@@ -13,8 +20,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                 id={id}
                 ref={ref}
                 style={{ color: '#D2D2D2' }}
-                className={`${textareaStyles({ textareaSize, fullWidth })} ${className}`}
                 {...props}
+                className={`${textareaStyles({ textareaSize, fullWidth, fullHeight })} ${className} ${fullHeight ? '!h-[100%]' : ''}`}
             />
         );
     },

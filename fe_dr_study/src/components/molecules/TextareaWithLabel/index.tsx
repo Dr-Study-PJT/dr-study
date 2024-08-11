@@ -18,18 +18,25 @@ export const TextareaWithLabel = React.forwardRef<
             labelClassName,
             textareaSize = 'md',
             fullWidth = true,
+            fullHeight = false,
             ...props
         },
         ref,
     ) => {
         const errorMessage = typeof error === 'string' ? error : error?.message;
         return (
-            <div className={fullWidth ? 'w-full' : 'w-max'}>
-                <div className="flex flex-col gap-1">
+            <div
+                className={`${fullWidth ? 'w-full' : 'w-max'} ${fullHeight ? 'h-full' : ''}`}
+            >
+                <div
+                    className={`flex flex-col gap-1 ${fullHeight ? 'h-full' : ''}`}
+                >
                     <Label htmlFor={id as string} className={labelClassName}>
                         {label}
                     </Label>
-                    <div className="flex flex-col">
+                    <div
+                        className={`flex flex-col ${fullHeight ? 'h-full' : ''}`}
+                    >
                         <Textarea
                             id={id}
                             ref={ref}
