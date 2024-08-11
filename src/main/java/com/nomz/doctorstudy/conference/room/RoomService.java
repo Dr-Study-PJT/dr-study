@@ -4,10 +4,16 @@ import com.nomz.doctorstudy.blockinterpreter.*;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
+import com.nomz.doctorstudy.conference.QuitMemberInfo;
 import com.nomz.doctorstudy.conference.room.signal.HeartStopSignal;
+import com.nomz.doctorstudy.conference.room.signal.JoiningSignal;
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
+import com.nomz.doctorstudy.member.exception.member.MemberException;
+import com.nomz.doctorstudy.member.repository.MemberRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 @Slf4j
 @Service
@@ -27,6 +34,22 @@ public class RoomService {
     private final ProcessManager processManager;
     private final SignalTransmitter signalTransmitter;
     private final BlockInterpreter blockInterpreter;
+    private final MemberRepository memberRepository;
+
+    @Setter
+    private Consumer<QuitMemberInfo> quitMemberCallback;
+
+    @PostConstruct
+    public void setWebsocketConnectCallback() {
+        webSocketSessionManager.setConnectCallback(sessionData -> {
+            Member member = memberRepository.findById(sessionData.getMemberId())
+                    .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
+            signalTransmitter.transmitSignal(
+                    sessionData.getRoomId(),
+                    new JoiningSignal(member.getId(), member.getNickname(), member.getImage().getImageUrl())
+            );
+        });
+    }
 
     @PostConstruct
     public void setWebsocketDisconnectCallback() {
@@ -45,20 +68,26 @@ public class RoomService {
         existingParticipantMap.remove(roomId);
     }
 
-    public void startRoom(Long roomId, String subject, String script, Runnable finishCallback) {
-        ProcessContext processContext;
-
+    public void startRoom(Long roomId, String subject, String script, String prePrompt, Runnable finishCallback) {
         log.info("========== STARTING WITH PROGRAMME MODE ==========");
-        blockInterpreter.init(roomId, script, Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject));
-        processContext = processManager.getProcessContext(roomId);
-        processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
+        blockInterpreter.init(
+                roomId,
+                script,
+                Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
+                existingParticipantMap.get(roomId).values().stream().toList(),
+                prePrompt
+        );
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
         log.info("========== FINISHED PROGRAMME MODE ==========");
 
         log.info("========== STARTING WITH NORMAL MODE ==========");
-        blockInterpreter.init(roomId, script, Map.of());
-        processContext = processManager.getProcessContext(roomId);
-        processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
+        blockInterpreter.init(
+                roomId,
+                script,
+                Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
+                existingParticipantMap.get(roomId).values().stream().toList(),
+                prePrompt
+        );
         CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
         }).thenRun(() -> {
@@ -75,9 +104,13 @@ public class RoomService {
     }
 
     public List<String> joinRoom(Member member, Long roomId, String peerId) {
-        List<String> existingPeerIds = addPeer(roomId, member, peerId);
+        log.debug("New Participant[memberId={}, name={}, peerId={}] is trying to join. Current participant list={}", member.getId(), member.getNickname(), peerId, existingParticipantMap.get(roomId).values());
 
-        log.debug("member:{} joined room", member.getId());
+        if (existingParticipantMap.get(roomId).containsKey(member.getId())) {
+            throw new BusinessException(RoomErrorCode.PARTICIPANT_ALREADY_JOINED);
+        }
+
+        List<String> existingPeerIds = addPeer(roomId, member, peerId);
 
         return existingPeerIds;
     }
@@ -86,7 +119,9 @@ public class RoomService {
         log.debug("occurred heartstop from member {}, because of quit", memberId);
 
         String peerId = removePeer(roomId, memberId);
-        signalTransmitter.transmitSignal(roomId, new HeartStopSignal(peerId));
+        signalTransmitter.transmitSignal(roomId, new HeartStopSignal(memberId, peerId));
+
+        quitMemberCallback.accept(new QuitMemberInfo(roomId, memberId));
     }
 
     private List<String> addPeer(Long roomId, Member member, String peerId) {
@@ -98,8 +133,6 @@ public class RoomService {
 
         List<String> existingPeerIds = existingParticipantMap.get(roomId).values().stream().map(RoomParticipantInfo::getPeerId).toList();
         existingParticipantMap.get(roomId).put(member.getId(), new RoomParticipantInfo(member.getId(), member.getNickname(), peerId));
-
-        log.debug("joined new peer, current existingPeerIds = {}", existingParticipantMap.get(roomId));
 
         lock.unlock();
 

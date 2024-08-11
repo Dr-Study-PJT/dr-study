@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ public class ProcessManager {
         return findProcessContext(processId).orElseThrow(() -> new BlockException(BlockErrorCode.PROCESS_NOT_FOUND));
     }
 
-    public void createProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
+    public void createProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
         ProcessContext processContext = processContextMap.get(processId);
 
         if (processContext != null && processContext.getStatus() == ProcessStatus.RUNNING) {
@@ -29,7 +30,7 @@ public class ProcessManager {
             processContextMap.remove(processId);
         }
 
-        processContext = new ProcessContext(processId, blockList, varMap, labelMap);
+        processContext = new ProcessContext(processId, blockList, varMap, labelMap, participantInfoList, prePrompt);
         processContext.initialize();
         processContextMap.put(processId, processContext);
     }

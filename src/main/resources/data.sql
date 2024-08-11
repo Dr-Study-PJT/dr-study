@@ -98,32 +98,30 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
         "
                 phase(1) {
                     loop(1) {
-                        let_avatar_speak(gpt_query(''반갑워 GPT야. 너는 내가 얼마나 반가운지 약 30자 정도로 대답해봐''));
+                        let_avatar_speak(gpt_query('반갑워 GPT야. 너는 내가 얼마나 반가운지 약 30자 정도로 대답해봐'));
                         wait(1000);
                     }
                 }
 ",
         NOW()),
-       (1, "사용자 말하기 스크립트", "4번 사전 프롬프트",
+       (1, "아바타 말하기 스크립트", "4번 사전 프롬프트",
         "
-phase(1) {
-    loop (1) {
-        let_participant_speak(1, 1000);
-        let_avatar_speak(''반가워'');
-    }
-}
-phase(2) {
-    loop (2) {
-        let_participant_speak(1, 1000);
-        let_avatar_speak(''반가워'');
-    }
-}
-phase(3) {
-    loop (3) {
-        let_participant_speak(1, 1000);
-        let_avatar_speak(''반가워'');
-    }
-}
+                phase(1) {
+                    loop (1) {
+                        let_avatar_speak('반갑습니다. 저는 현재 유영한과 신재민이 참여한 컨퍼런스의 사회자입니다. 제 목소리가 잘 들리십니까?');
+                    }
+                }
+",
+        NOW()),
+       (1, "사용자 말하기 스크립트", "5번 사전 프롬프트",
+        "
+                phase(1) {
+                    loop (1) {
+                        let_participant_speak(1, 5000);
+                        log(get_recent_participant_speak(1));
+                        let_avatar_speak(get_recent_participant_speak(1));
+                    }
+                }
 ",
         NOW())
 ;
@@ -131,9 +129,10 @@ phase(3) {
 --MODERATOR--
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
 VALUES (1, 1, 1, '1번 사회자', NOW()),
-       (1, 2, 2, '2번 사회자', NOW()),
-       (2, 3, 3, '3번 사회자', NOW()),
-       (3, 3, 4, '4번 사회자', NOW())
+       (2, 2, 2, '2번 사회자', NOW()),
+       (1, 3, 3, '3번 사회자', NOW()),
+       (2, 3, 4, '4번 사회자', NOW()),
+       (1, 3, 5, '5번 사회자', NOW())
 ;
 
 --CONFERENCE--

@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.*;
 import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import com.nomz.doctorstudy.conference.room.signal.ProgrammeSignal;
 import lombok.AllArgsConstructor;
@@ -22,10 +23,10 @@ public class BlockInterpreter {
     private final ScriptPreprocessor scriptPreprocessor;
     private final SignalTransmitter signalTransmitter;
 
-    public void init(Long processId, String script, Map<String, Object> varMap) {
+    public void init(Long processId, String script, Map<String, Object> varMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
         List<Block> blocks = scriptPreprocessor.preprocessScript(script);
         Map<String, Integer> labelMap = parseLabels(blocks);
-        processManager.createProcess(processId, blocks, varMap, labelMap);
+        processManager.createProcess(processId, blocks, varMap, labelMap, participantInfoList, prePrompt);
     }
 
     public void interpret(Long processId) {

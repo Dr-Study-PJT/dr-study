@@ -19,7 +19,13 @@ public class GetRecordsInPhaseBlockExecutor extends BlockExecutor {
 
     @Override
     protected Object executeAction(List<Object> args) {
-        return null;
+        int phase = (int) args.get(0);
+
+        List<String> phaseTranscript = threadProcessContext.get().getPhaseTranscript(phase);
+
+        log.debug("Phase {} transcript={}", phase, phaseTranscript.toString());
+
+        return phaseTranscript;
     }
 
     @Override

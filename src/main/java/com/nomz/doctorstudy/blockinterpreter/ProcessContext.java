@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -24,7 +25,9 @@ public class ProcessContext {
     private final Map<String, Integer> labelMap;
     private final List<Map<String, Object>> variableMapStack = new ArrayList<>();
     private final List<Transcript> transcripts = new ArrayList<>();
-    private final GptContext gptContext = new GptContext();
+
+    @Getter
+    private final GptContext gptContext;
 
     @Getter
     private final List<ProgrammeItem> programme = new ArrayList<>();
@@ -32,11 +35,15 @@ public class ProcessContext {
     @Getter
     private final List<RoomParticipantInfo> participantInfoList = new ArrayList<>();
 
-    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap) {
+    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
         this.id = id;
         this.commandBlocks = commandBlocks;
         this.initVariableMap = new HashMap<>(initVarMap);
         this.labelMap = new HashMap<>(labelMap);
+        this.gptContext = new GptContext(prePrompt);
+
+        this.participantInfoList.add(new RoomParticipantInfo(0L, "paddingMember", "Padding Member PeerId"));
+        this.participantInfoList.addAll(participantInfoList);
     }
 
     public void initialize() {
@@ -50,14 +57,13 @@ public class ProcessContext {
         this.transcripts.clear();
         this.programme.clear();
 
-        this.participantInfoList.clear();
-        this.participantInfoList.add(new RoomParticipantInfo(0L, "paddingMember", "Padding Member PeerId"));
-
         declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
         setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size() - 1);
+
+        initParticipantInfo();
     }
 
-    public void setParticipantInfo(List<RoomParticipantInfo> participantInfoList) {
+    private void initParticipantInfo() {
         int seq = 1;
         for (RoomParticipantInfo participantInfo : participantInfoList) {
             String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + seq++;
@@ -165,11 +171,6 @@ public class ProcessContext {
         gptContext.addHistory(query, answer);
     }
 
-    public String getGptHistory() {
-        return gptContext.getHistory();
-    }
-
-
     @Getter
     @RequiredArgsConstructor
     private static class Transcript {
@@ -177,8 +178,14 @@ public class ProcessContext {
         private final String content;
     }
 
-    private static class GptContext {
+    public static class GptContext {
         private final StringBuilder history = new StringBuilder();
+        @Getter
+        private final String prePrompt;
+
+        private GptContext(String prePrompt) {
+            this.prePrompt = prePrompt;
+        }
 
         public void addHistory(String query, String answer) {
             history.append("My Query=[").append(query).append("], Gpt Answer=[").append(answer).append("]");

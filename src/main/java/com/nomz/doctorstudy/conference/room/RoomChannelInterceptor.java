@@ -32,7 +32,6 @@ public class RoomChannelInterceptor implements ChannelInterceptor {
         String sessionId = accessor.getSessionId();
 
         StompCommand command = accessor.getCommand();
-        log.debug("STOMP Command={}", command);
 
         if (command == null) {
             return message;
@@ -41,7 +40,6 @@ public class RoomChannelInterceptor implements ChannelInterceptor {
         switch (command) {
             case CONNECT:
                 MessageHeaders headers = message.getHeaders();
-                log.debug("MessageHeaders={}", headers);
 
                 Map<String, List<String>> nativeHeaders = (Map<String, List<String>>) headers.get("nativeHeaders");
 
@@ -60,7 +58,7 @@ public class RoomChannelInterceptor implements ChannelInterceptor {
                         new WebSocketSessionData(Long.parseLong(roomId), Long.parseLong(memberId))
                 );
 
-                log.debug("New web socket connection from memberId: {}", memberId);
+                log.debug("New WebSocket connection from memberId: {}", memberId);
                 break;
 
             case DISCONNECT:

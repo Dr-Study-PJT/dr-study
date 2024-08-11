@@ -19,7 +19,12 @@ public class GetRecentParticipantSpeakBlockExecutor extends BlockExecutor {
 
     @Override
     protected Object executeAction(List<Object> args) {
-        return null;
+        int n = (int) args.get(0);
+
+        String recentTranscript = threadProcessContext.get().getRecentTranscript(n);
+        log.debug("Recent [{}] Transcript={}", n, recentTranscript);
+
+        return recentTranscript;
     }
 
     @Override

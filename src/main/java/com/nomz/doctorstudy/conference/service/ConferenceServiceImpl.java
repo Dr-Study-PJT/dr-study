@@ -6,23 +6,27 @@ import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
 import com.nomz.doctorstudy.conference.entity.ConferenceMember;
+import com.nomz.doctorstudy.conference.entity.ConferenceMemberId;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.conference.request.*;
+import com.nomz.doctorstudy.conference.room.RoomErrorCode;
 import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
+import com.nomz.doctorstudy.moderator.entity.Processor;
 import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
 import com.nomz.doctorstudy.notification.NotificationService;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -50,6 +54,13 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     private final RoomService roomService;
     private final NotificationService notificationService;
+
+    @PostConstruct
+    public void setQuitCallback() {
+        roomService.setQuitMemberCallback(quitMemberInfo -> {
+            removeConferenceMemberData(quitMemberInfo.getConferenceId(), quitMemberInfo.getMemberId());
+        });
+    }
 
     @Override
     @Transactional
@@ -157,7 +168,8 @@ public class ConferenceServiceImpl implements ConferenceService {
             //throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
         }
 
-        roomService.startRoom(conferenceId, conference.getSubject(), conference.getModerator().getProcessor().getScript(), () -> finishConference(conferenceId));
+        Processor processor = conference.getModerator().getProcessor();
+        roomService.startRoom(conferenceId, conference.getSubject(), processor.getScript(), processor.getPrePrompt(), () -> finishConference(conferenceId));
 
         conference.updateStartTime(LocalDateTime.now());
     }
@@ -186,10 +198,14 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         if (!(requester.getId().equals(conference.getHost().getId())) &&
                 !conference.getInvitees().stream().map(ConferenceMemberInvite::getMember)
-                        .map(Member::getId).toList().contains(requester.getId()))
-        {
+                        .map(Member::getId).toList().contains(requester.getId())) {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_INVITED);
         }
+
+        conferenceMemberRepository.findById(new ConferenceMemberId(conferenceId, requester.getId()))
+                        .ifPresent(id -> {
+                            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_JOINED);
+                        });
 
         conferenceMemberRepository.save(ConferenceMember.of(conference, requester));
 
@@ -202,6 +218,12 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Transactional
     public void quitConference(Member requester, Long conferenceId) {
         roomService.quitRoom(requester.getId(), conferenceId);
+    }
+
+    private void removeConferenceMemberData(Long conferenceId, Long memberId) {
+        conferenceMemberRepository.findById(new ConferenceMemberId(conferenceId, memberId))
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_JOINED));
+        conferenceMemberRepository.deleteById(new ConferenceMemberId(conferenceId, memberId));
     }
 
     @Override

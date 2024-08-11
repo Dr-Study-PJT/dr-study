@@ -14,18 +14,24 @@ public class WebSocketSessionManager {
     private final Map<String, WebSocketSessionData> sessionRoomMap = new ConcurrentHashMap<>();
 
     @Setter
+    private Consumer<WebSocketSessionData> connectCallback;
+    @Setter
     private Consumer<WebSocketSessionData> disconnectCallback;
 
     public void addSession(String session, WebSocketSessionData webSocketSessionData) {
-        log.debug("Added WebSocketSession [sessionId={}, roomId={}, memberId={}", session, webSocketSessionData.getRoomId(), webSocketSessionData.getMemberId());
+        log.debug("Added WebSocketSession sessionId={}, roomId={}, memberId={}", session, webSocketSessionData.getRoomId(), webSocketSessionData.getMemberId());
+
         sessionRoomMap.put(session, webSocketSessionData);
+
+        connectCallback.accept(webSocketSessionData);
     }
 
     public void removeSession(String session) {
         WebSocketSessionData webSocketSessionData = sessionRoomMap.get(session);
+        log.debug("Removed WebSocketSession sessionId={}, roomId={}, memberId={}", session, webSocketSessionData.getRoomId(), webSocketSessionData.getMemberId());
 
-        disconnectCallback.accept(webSocketSessionData);
         sessionRoomMap.remove(session);
 
+        disconnectCallback.accept(webSocketSessionData);
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -36,7 +37,7 @@ public class SignalController {
     @MessageMapping("/chat/{conferenceId}")
     @SendTo("/topic/chat/{conferenceId}")
     public ChatMessage handleChatMessage(@DestinationVariable("conferenceId") Long conferenceId, ChatMessage chatMessage) {
-        log.debug("sender:{} sent chat message:{} from conference:{}", chatMessage.getId(), chatMessage, conferenceId);
+        log.debug("[Conference{} Chat] {}: {}", conferenceId, chatMessage.getNickname(), chatMessage);
         return chatMessage;
     }
 
@@ -108,7 +109,7 @@ public class SignalController {
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody String script
     ) {
-        blockInterpreter.init(conferenceId, script, Map.of());
+        blockInterpreter.init(conferenceId, script, Map.of(), List.of(), "");
         blockInterpreter.interpret(conferenceId);
 
         return ResponseEntity.ok("OK\n" + script);

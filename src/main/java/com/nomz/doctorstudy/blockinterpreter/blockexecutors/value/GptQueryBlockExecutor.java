@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.value;
 
 import com.nomz.doctorstudy.api.ExternalApiCallService;
+import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +25,17 @@ public class GptQueryBlockExecutor extends BlockExecutor {
     protected Object executeAction(List<Object> args) {
         String query = (String) args.get(0);
 
-        String answer = externalApiCallService.gpt(query);
+        String gptHistory = threadProcessContext.get().getGptContext().getHistory();
+        String prePrompt = threadProcessContext.get().getGptContext().getPrePrompt();
 
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("==History Start==").append(gptHistory).append("==History End==");
+        queryBuilder.append("==PrePrompt Start==").append(prePrompt).append("==PrePrompt End==");
+
+        String answer = externalApiCallService.gpt(queryBuilder.toString());
         threadProcessContext.get().addGptHistory(query, answer);
 
-        log.debug("\n[GPT]\nquery={}\nanswer={}", query, answer);
+        log.debug("\n[GPT]\nquery={}\nanswer={}", queryBuilder.toString(), answer);
 
         return answer;
     }
