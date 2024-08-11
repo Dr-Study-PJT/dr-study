@@ -104,7 +104,8 @@ const SideBar = () => {
         const fetchData = async () => {
             const myGroups = await getMyGroups();
             console.log('내 그룹:', myGroups);
-            setGroups(myGroups);
+
+            setGroups(myGroups?.filter((group: Group) => !group.isDeleted));
 
             if (memberData.id) {
                 const fetchedConferences = await fetchConferenceList({
