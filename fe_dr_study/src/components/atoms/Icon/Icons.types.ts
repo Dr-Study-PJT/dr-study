@@ -19,6 +19,7 @@ export type IconKeyValue = {
     logout: ReactNode;
     bell: ReactNode;
     dots: ReactNode;
+    pen: ReactNode;
     // 아이콘 이름 추가 해주셔야 오타 방지 할 수 있습니다.
 };
 

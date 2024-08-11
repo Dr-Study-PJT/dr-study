@@ -16,6 +16,8 @@ import {
     BsBoxArrowInRight,
     BsBellFill,
     BsChatDots,
+    BsPen,
+    BsPenFill,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -38,6 +40,7 @@ const iconName: IconKeyValue = {
     logout: <BsBoxArrowInRight />,
     bell: <BsBellFill />,
     dots: <BsChatDots />,
+    pen: <BsPenFill />,
 };
 
 // Icon 컴포넌트
