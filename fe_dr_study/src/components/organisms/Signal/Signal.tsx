@@ -12,6 +12,18 @@ import { ConferenceData } from '@/interfaces/conference';
 import Chats from './Chats';
 import MemberAvatar from '@/components/molecules/MemberAvatar';
 import ConferenceParticipants from './ConferenceParticipants';
+import { Member } from '@/app/group/[group_id]/_types';
+import { useDispatch } from 'react-redux';
+import {
+    setFullPhase,
+    setNextStep,
+} from '@/store/slices/conferenceProgressSlice';
+
+export interface JoiningMember {
+    id: number;
+    nickname: string;
+    imageUrl: string | null;
+}
 
 interface Message {
     id: number;
@@ -29,9 +41,14 @@ interface SignalInterface {
     audioUrl?: string; // 오디오 파일 경로
     next?: number; // 다음 발화자
     programme?: any;
+    imageUrl?: string;
+    nickname?: string;
+    phase?: number;
 }
 
 interface SignalProps {
+    currentMembers: Member[];
+    setCurrentMembers: Dispatch<SetStateAction<Member[]>>;
     conferenceInfo: ConferenceData | null;
     setFocusingPeerId: Dispatch<SetStateAction<string>>;
     client: ClientInterface;
@@ -45,7 +62,6 @@ interface SignalProps {
     memberData?: any;
     conferenceId: number;
     setIsMutedBySystem: Dispatch<SetStateAction<boolean>>;
-    setFocusingMemberId: Dispatch<SetStateAction<number>>;
     setIsAvatarSpeaking: Dispatch<SetStateAction<boolean>>;
     setTimeForAvatarSpeaking: Dispatch<SetStateAction<number>>;
     setGPTSummaryBySystem: Dispatch<SetStateAction<string>>;
@@ -56,6 +72,8 @@ interface SignalProps {
 }
 
 const Signal = ({
+    currentMembers,
+    setCurrentMembers,
     conferenceInfo,
     setFocusingPeerId,
     client,
@@ -69,7 +87,6 @@ const Signal = ({
     conferenceId,
     memberData,
     setIsMutedBySystem,
-    setFocusingMemberId,
     setIsAvatarSpeaking,
     setTimeForAvatarSpeaking,
     setGPTSummaryBySystem,
@@ -78,6 +95,8 @@ const Signal = ({
     isStartRecordingAudio,
     setIsStartRecordingAudio,
 }: SignalProps) => {
+    const dispatch = useDispatch();
+
     const CHANNEL = 'topic'; // 채널 이름
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
@@ -96,11 +115,7 @@ const Signal = ({
                     if (stompClient?.connected) {
                         subscribeToMessages();
                         subscribeToSignals();
-
-                        // 10초마다 생존 신고 전송
-                        // heartbeatInterval = setInterval(() => {
-                        //     sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
-                        // }, 10000); // 10초
+                        // sendJoining();
                     }
                 },
             );
@@ -108,12 +123,6 @@ const Signal = ({
         if (isJoined) {
             connectSocket();
         }
-        // 컴포넌트 언마운트 시 interval 클리어
-        // if (!!stompClient && !stompClient.connected) {
-        //     return () => {
-        //         clearInterval(heartbeatInterval);
-        //     };
-        // }
     }, [isJoined]);
 
     // URL 생성 함수
@@ -135,6 +144,7 @@ const Signal = ({
 
     // 다양한 신호 수신을 위한 구독 설정
     const subscribeToSignals = () => {
+        subscribeToSignal('joining', handleJoining);
         subscribeToSignal('mute', handleMuteSignal);
         subscribeToSignal('unmute', handleUnmuteSignal);
         subscribeToSignal('participant-speak', handleParticipantSpeakSignal);
@@ -187,12 +197,11 @@ const Signal = ({
     // 발화 신호 처리
     const handleParticipantSpeakSignal = (newSignal: SignalInterface) => {
         // newSignal.id 라는 멤버 아이디를 가진 사람의 피어 아이디를 focusingPeerId
-        console.log(client.memberId, newSignal.id?.toString());
-        if (client.memberId === newSignal.id?.toString()) {
+
+        console.log('포커싱 수행 =>', client.memberId, newSignal.id);
+        if (client.memberId.toString() === newSignal.id?.toString()) {
+            console.log('포커싱 피어 아이디', client.peerId);
             setFocusingPeerId(client.peerId);
-        }
-        if (parseInt(client.memberId) === newSignal.id) {
-            setFocusingMemberId(newSignal.id as number); // 발화자 id로 포커싱
             setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 타이머
             setIsStartRecordingAudio(true); // 오디오 녹음 시작
             console.log(
@@ -238,13 +247,37 @@ const Signal = ({
 
     // 다음 발화자 신호 처리
     const handleNextStepSignal = (newSignal: SignalInterface) => {
-        console.log(`handleNextStepSignal: 다음 스텝 표시`, newSignal.next);
+        console.log(`handleNextStepSignal: 다음 스텝 표시`, newSignal);
+        // dispatch(
+        //     setNextStep({
+        //         phase: newSignal.phase || 0,
+        //         content: newSignal.content as string,
+        //     }),
+        // );
     };
 
     // 신호 단계 신호 처리
     const handleProgramme = (newSignal: SignalInterface) => {
-        console.log('newSignal.programme:', newSignal.programme);
-        console.log(`handleProgramme: 다음 스텝 표시`, newSignal.next);
+        console.log(`handleProgramme: 다음 스텝 표시`, newSignal);
+        dispatch(setFullPhase(newSignal.programme));
+    };
+
+    // joining 단계 신호 처리
+    const handleJoining = (newSignal: SignalInterface) => {
+        console.log('joining 시그널 수행 => newSignal:', newSignal);
+        // currentMembersRef.current.push({
+        //     id: newSignal.id as number,
+        //     imageUrl: newSignal.imageUrl as string,
+        //     nickname: newSignal.nickname as string,
+        // });
+        setCurrentMembers((prevMembers): any => [
+            ...prevMembers,
+            {
+                id: newSignal.id, // 이제 id는 number임이 보장됨
+                imageUrl: newSignal.imageUrl || null, // imageUrl이 undefined일 경우 null로 설정
+                nickname: newSignal.nickname || '', // nickname이 undefined일 경우 빈 문자열로 설정
+            },
+        ]);
     };
 
     // 방송 종료 신호 처리
@@ -258,11 +291,12 @@ const Signal = ({
             delete newPeers[newSignal.peerId as string];
             return newPeers;
         });
-        console.log(
-            `signal Heartstop => handleHeartstop  => `,
-            newSignal.peerId,
-        );
+
         console.log('after existingPeers :', existingPeers);
+        console.log('currentMembers=>', currentMembers);
+        setCurrentMembers((currentMembers) =>
+            currentMembers.filter((member) => member.id !== newSignal.id),
+        );
     };
 
     // 메시지 전송 함수
@@ -291,7 +325,7 @@ const Signal = ({
     return (
         <div className="flex flex-col w-1/5 h-full bg-dr-dark-300 p-[0.5rem]">
             <div className="relative w-full h-full text-dr-white">
-                <ConferenceParticipants conferenceInfo={conferenceInfo} />
+                <ConferenceParticipants currentMembers={currentMembers} />
                 <div
                     ref={messagesEndRef}
                     className="flex flex-col h-full w-full overflow-y-scroll"
@@ -339,8 +373,8 @@ const Signal = ({
                     stompClient={stompClient}
                     timeForAudioRecord={timeForAudioRecord}
                     setTimeForAudioRecord={setTimeForAudioRecord}
-                    setFocusingMemberId={setFocusingMemberId}
                     isStartRecordingAudio={isStartRecordingAudio}
+                    setFocusingPeerId={setFocusingPeerId}
                 />
             </div>
         </div>

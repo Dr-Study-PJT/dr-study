@@ -3,6 +3,7 @@ import memberReducer from './slices/memberSlice';
 import authReducer from './slices/authSlice';
 import modalReducer from './slices/modalSlice';
 import notificationReducer from './slices/notificationSlice';
+import conferenceProgressReducer from './slices/conferenceProgressSlice';
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         auth: authReducer,
         modal: modalReducer,
         notification: notificationReducer,
+        conferenceProgress: conferenceProgressReducer,
     },
 });
 
