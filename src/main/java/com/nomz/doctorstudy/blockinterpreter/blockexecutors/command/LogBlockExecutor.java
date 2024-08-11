@@ -15,7 +15,7 @@ public class LogBlockExecutor extends BlockExecutor {
 
     @Override
     protected Object executeAction(List<Object> args) {
-        log.info("=====[Block-Log] {}=====", args.get(0));
+        log.info("[Block-Log] {}", args.get(0));
         return null;
     }
 }

@@ -32,4 +32,9 @@ public class WaitBlockExecutor extends BlockExecutor {
 
         return null;
     }
+
+    @Override
+    public Object executeGetProgramme(List<Object> args) {
+        return null;
+    }
 }

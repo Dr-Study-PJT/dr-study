@@ -54,7 +54,7 @@ public class ProcessContext {
         this.participantInfoList.add(new RoomParticipantInfo(0L, "paddingMember", "Padding Member PeerId"));
 
         declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), 0);
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size() - 1);
     }
 
     public void setParticipantInfo(List<RoomParticipantInfo> participantInfoList) {

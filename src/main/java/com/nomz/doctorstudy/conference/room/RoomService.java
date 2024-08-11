@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.conference.room;
 
 import com.nomz.doctorstudy.blockinterpreter.*;
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.room.signal.HeartStopSignal;
@@ -44,23 +45,17 @@ public class RoomService {
         existingParticipantMap.remove(roomId);
     }
 
-    public void startRoom(Long roomId, String script, Runnable finishCallback) {
+    public void startRoom(Long roomId, String subject, String script, Runnable finishCallback) {
         ProcessContext processContext;
 
-        blockInterpreter.init(roomId, script, Map.of());
+        blockInterpreter.init(roomId, script, Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject));
         processContext = processManager.getProcessContext(roomId);
         processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
 
-        if (processContext.getStatus() != ProcessStatus.READY) {
-            throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
-        }
-
         blockInterpreter.init(roomId, script, Map.of());
         processContext = processManager.getProcessContext(roomId);
         processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
-        blockInterpreter.interpret(roomId);
-
         CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
         }).thenRun(() -> {

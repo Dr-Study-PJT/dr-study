@@ -36,6 +36,7 @@ public enum BlockType {
 
     GET_PARTICIPANT_NAME("get_participant_name"),
     GET_NUM_OF_PARTICIPANT("get_num_of_participant"),
+    GET_NUM_OF_ITERATION("get_num_of_iteration"),
 
     GPT_QUERY("gpt_query")
     ;

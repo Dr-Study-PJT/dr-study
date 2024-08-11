@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -313,6 +314,38 @@ phase(1) {  let_avatar_speak( gpt_query( string_concat( '입력
                 """
                 phase(1) {
                     log(string_concat('hel\\nlo ', 'w\\'orld! ', '반갑\\,습니다 ', '여러\t분들!'));
+                }
+                """;
+
+        long id = getProcessContextIdSequence();
+
+        blockInterpreter.init(id, script, Map.of());
+        blockInterpreter.interpret(id);
+    }
+    
+    @Test
+    @DisplayName("스터디 주제 테스트")
+    public void studySubjectTest() {
+        String script =
+                """
+                phase(1) {
+                    log(get_string_variable('study_subject'));
+                }
+                """;
+
+        long id = getProcessContextIdSequence();
+
+        blockInterpreter.init(id, script, Map.of(BlockVariable.STUDY_SUBJECT.getToken(), "스터디 주제!!!"));
+        blockInterpreter.interpret(id);
+    }
+
+    @Test
+    @DisplayName("참여자 인원 테스트")
+    public void numOfParticipantTest() {
+        String script =
+                """
+                phase(1) {
+                    log(string_concat('참여자 인원 수 = ', int_to_string(get_num_of_participant())));
                 }
                 """;
 

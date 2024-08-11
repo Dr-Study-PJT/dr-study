@@ -157,9 +157,7 @@ public class ConferenceServiceImpl implements ConferenceService {
             //throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
         }
 
-        // TODO: Finish Callback
-
-        roomService.startRoom(conferenceId, conference.getModerator().getProcessor().getScript(), () -> finishConference(conferenceId));
+        roomService.startRoom(conferenceId, conference.getSubject(), conference.getModerator().getProcessor().getScript(), () -> finishConference(conferenceId));
 
         conference.updateStartTime(LocalDateTime.now());
     }

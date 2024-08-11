@@ -44,6 +44,7 @@ public class BlockInterpreter {
             Stack<InterpreterContext> stack = new Stack<>();
             stack.push(new InterpreterContext(commandBlock, new ArrayList<>(), 0));
             String methodForDebug = commandBlock.getMethod();
+            log.debug("method={}", commandBlock.getMethod());
             log.debug("cursor={}, block={}", processContext.getCursor(), commandBlock.getMethod());
 
             while (!stack.empty()) {
@@ -77,9 +78,11 @@ public class BlockInterpreter {
                 }
 
                 if (stack.peek().argCursor < stack.peek().block.getArgBlocks().size()) {
-                    Block argBlock = stack.peek().block.getArgBlocks().get(stack.peek().argCursor);
-                    stack.push(new InterpreterContext(argBlock, new ArrayList<>(), 0));
-                    continue;
+                    if (!(stack.peek().argCursor == 0 && stack.peek().block.getArgBlocks().get(0).getMethod().isEmpty())) {
+                        Block argBlock = stack.peek().block.getArgBlocks().get(stack.peek().argCursor);
+                        stack.push(new InterpreterContext(argBlock, new ArrayList<>(), 0));
+                        continue;
+                    }
                 }
 
                 Object result = blockExecutor.execute(stack.peek().args, processMode);
