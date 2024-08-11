@@ -196,6 +196,10 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        if (conference.getOpenTime() == null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
+        }
+
         if (!(requester.getId().equals(conference.getHost().getId())) &&
                 !conference.getInvitees().stream().map(ConferenceMemberInvite::getMember)
                         .map(Member::getId).toList().contains(requester.getId())) {

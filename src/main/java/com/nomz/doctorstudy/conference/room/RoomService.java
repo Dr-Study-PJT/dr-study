@@ -116,7 +116,7 @@ public class RoomService {
     }
 
     public void quitRoom(Long memberId, Long roomId) {
-        log.debug("occurred heartstop from member {}, because of quit", memberId);
+        log.debug("Member:{} quit from room:{}", memberId, roomId);
 
         String peerId = removePeer(roomId, memberId);
         signalTransmitter.transmitSignal(roomId, new HeartStopSignal(memberId, peerId));

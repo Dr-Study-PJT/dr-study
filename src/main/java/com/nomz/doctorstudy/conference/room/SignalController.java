@@ -45,7 +45,6 @@ public class SignalController {
     public void handleParticipantAudioSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
         log.debug("signal: {} from conference: {}", signal, conferenceId);
 
-        ProcessLockManager.awaken(conferenceId);
 
         byte[] rawAudioData = Base64.getDecoder().decode(signal.getRawAudio());
 
@@ -63,6 +62,7 @@ public class SignalController {
         //AudioUtils.playAudio(testSrcAudio + ".wav");
         //
 
+        ProcessLockManager.awaken(conferenceId);
     }
 
     @MessageMapping("/signal/{conferenceId}/heartbeat")

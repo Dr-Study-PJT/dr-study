@@ -49,15 +49,13 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
         log.debug("Participant[id={}, name={}] started to speak. time limit={}", speakMemberId, participantName, speakTimeLimit);
         signalTransmitter.transmitSignal(processId, new ParticipantSpeakSignal(speakMemberId, speakTimeLimit));
 
+        ProcessLockManager.sleep(processId);
+
         signalUtils.sendUnmuteSignals(processId, processContext.getParticipantInfoList().stream()
                 .map(RoomParticipantInfo::getMemberId)
                 .filter(id -> !id.equals(speakMemberId))
                 .toList()
         );
-
-        ProcessLockManager.sleep(processId);
-
-
 
         return null;
     }
@@ -73,10 +71,10 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
 
         threadProcessContext.get().addProgrammeInfo(
                 String.format(
-                        "[MemberId=%d, Name=%s] 참여자 %d초 동안 발화",
+                        "[MemberId=%d, Name=%s] 참여자 %f초 동안 발화",
                         memberId,
                         participantName,
-                        speakTimeLimit
+                        speakTimeLimit / 1000.0
                 )
         );
 
