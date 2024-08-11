@@ -12,9 +12,8 @@ import java.util.*;
 public class ProcessContext {
     @Getter
     private final long id;
-    @Getter
+    @Getter @Setter
     private int cursor;
-    private int commandExecutionCount;
     @Getter @Setter
     private ProcessStatus status;
     private int scopeDepth;
@@ -24,6 +23,7 @@ public class ProcessContext {
     private final Map<String, Integer> labelMap;
     private final List<Map<String, Object>> variableMapStack = new ArrayList<>();
     private final List<Transcript> transcripts = new ArrayList<>();
+    private final GptContext gptContext = new GptContext();
 
     @Getter
     private final List<ProgrammeItem> programme = new ArrayList<>();
@@ -55,11 +55,6 @@ public class ProcessContext {
         setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), 0);
     }
 
-    public void setCursor(int cursor) {
-        commandExecutionCount++;
-        this.cursor = cursor;
-    }
-
     public void setParticipantInfo(List<Long> memberIds, List<String> names) {
         for (int i = 0; i < memberIds.size(); i++) {
             Long memberId = memberIds.get(i);
@@ -84,6 +79,10 @@ public class ProcessContext {
 
     public Long getParticipantMemberId(int numOfParticipant) {
         return participantInfoList.get(numOfParticipant).getMemberId();
+    }
+
+    public void increaseCursor() {
+        cursor++;
     }
 
     public void increaseScopeDepth() {
@@ -164,6 +163,14 @@ public class ProcessContext {
         programme.add(new ProgrammeItem(currentPhase, content));
     }
 
+    public void addGptHistory(String query, String answer) {
+        gptContext.addHistory(query, answer);
+    }
+
+    public String getGptHistory() {
+        return gptContext.getHistory();
+    }
+
 
     @Getter
     @RequiredArgsConstructor
@@ -177,5 +184,17 @@ public class ProcessContext {
     private static class ParticipantInfo {
         private final long memberId;
         private final String name;
+    }
+
+    private static class GptContext {
+        private final StringBuilder history = new StringBuilder();
+
+        public void addHistory(String query, String answer) {
+            history.append("My Query=[").append(query).append("], Gpt Answer=[").append(answer).append("]");
+        }
+
+        public String getHistory() {
+            return history.toString();
+        }
     }
 }
