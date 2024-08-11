@@ -68,6 +68,16 @@ const DroppableBlock: React.FC<{
                         ],
                     };
                     onDrop(loopBlock, block);
+                } else if (
+                    block.type === 'block_flow_loop' &&
+                    item.type === 'block_int_variable_num_of_participants'
+                ) {
+                    onLoopInput(block, '현재 총 참여인원 수');
+                } else if (
+                    block.type === 'block_command_letParticipant_speak' &&
+                    item.type === 'block_iteration_index'
+                ) {
+                    onParticipantInput(block, '반복회차 i');
                 } else if (validChildBlocks[block.type].includes(item.type)) {
                     onDrop({ ...item, id: uuidv4() }, block);
                 } else {
@@ -86,7 +96,11 @@ const DroppableBlock: React.FC<{
         canDrop: (item: Block) =>
             validChildBlocks[block.type].includes(item.type) ||
             (item.type === 'block_convenience_full_study_speak' &&
-                block.type.startsWith('block_flow_phase')),
+                block.type.startsWith('block_flow_phase')) ||
+            (block.type === 'block_flow_loop' &&
+                item.type === 'block_int_variable_num_of_participants') ||
+            (block.type === 'block_command_letParticipant_speak' &&
+                item.type === 'block_iteration_index'),
     });
 
     const dropRef = useRef<HTMLDivElement>(null);
