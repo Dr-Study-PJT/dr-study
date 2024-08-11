@@ -1,5 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    safelist: [
+        'bg-red-500',
+        'bg-red-600',
+        'bg-red-400',
+        'bg-red-300',
+        'bg-red-200',
+        'bg-red-800',
+        'bg-violet-500',
+        'bg-violet-600',
+        'bg-violet-300',
+        'bg-black',
+        'bg-gray-900',
+        'bg-green-500',
+        'bg-green-600',
+        'bg-orange-500',
+        'bg-orange-600',
+        'bg-coral-500',
+        'bg-coral-600',
+    ],
     content: [
         './app/**/*.{js,ts,jsx,tsx,mdx}',
         './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,6 +28,7 @@ module.exports = {
         // `src` directory를 사용한다면
         './src/**/*.{js,ts,jsx,tsx,mdx}',
     ],
+
     theme: {
         extend: {
             fontFamily: {
