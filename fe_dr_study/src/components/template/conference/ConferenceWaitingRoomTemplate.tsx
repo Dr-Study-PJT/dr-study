@@ -9,6 +9,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import MemberAvatar from '@/components/molecules/MemberAvatar';
 import { FaCrown } from 'react-icons/fa';
+import { LoadingLottie } from '@/app/_components/Lottie/Loading/LoadingLottie';
+import { ToastContainer } from 'react-toastify';
+import { showToast } from '@/utils/toastUtil';
 
 interface ConferenceWaitingRoomTemplateProps {
     memberData: IMemberData | null;
@@ -37,13 +40,8 @@ const ConferenceWaitingRoomTemplate = ({
         studyGroupId,
     } = conferenceInfo || {};
 
-    if (!conferenceInfo) {
-        return (
-            <div className="text-white">컨퍼런스 정보를 불러오는 중입니다.</div>
-        );
-    }
-
     const router = useRouter();
+
     useEffect(() => {
         // 스터디 멤버가 아니거나 컨퍼런스 초대자가 아닌 경우 홈으로 이동
         if (
@@ -51,59 +49,57 @@ const ConferenceWaitingRoomTemplate = ({
             conferenceInvitees.length &&
             !conferenceInvitees.some((invitee) => invitee.id === memberData?.id)
         ) {
-            console.log('스터디 멤버가 아닙니다.');
-            router.push('/');
+            // 직전 페이지로 이동
+            router.push(`/group/${studyGroupId}?error=not-invited`);
         }
     }, [conferenceInvitees, memberData]);
+
+    if (!conferenceInfo) {
+        return <LoadingLottie />;
+    }
 
     return (
         <div className="flex items-center justify-center p-[4rem] bg-dr-indigo-200 text-dr-white">
             <div className="flex flex-col items-center justify-center p-[1rem] w-full max-w-[50rem] h-full rounded-lg bg-dr-indigo-100 shadow-lg">
                 <div className="flex flex-col items-start justify-start w-full h-full p-6 gap-dr-10">
-                    <h2 className="text-dr-header-3 font-bold">{title}</h2>
-                    <div className="flex text-dr-body-3 text-dr-gray-300 gap-dr-10">
-                        <p>
-                            입장 가능 시간{' '}
-                            {/* {openTime?.toLocaleTimeString() || '00:00'} -{' '}
-                            {startTime?.toLocaleTimeString() || '00:00'} */}
-                        </p>{' '}
-                        <p>|</p>
-                        <p>
-                            스터디 진행 시간{' '}
-                            {/* {startTime?.toLocaleTimeString() || '00:00'} -{' '}
-                            {closeTime?.toLocaleTimeString() || '00:00'} */}
-                        </p>
-                        <p>|</p>
-                        <p>컨퍼런스 정원: {memberCapacity}명</p>
+                    <h2 className="text-dr-header-3 font-bold">
+                        {title}
+                        {closeTime && (
+                            <span className="ml-3 text-dr-body-3 text-dr-gray-300">
+                                (종료된 컨퍼런스)
+                            </span>
+                        )}
+                    </h2>
+                    <div className="relative flex items-center justify-center w-full h-[20rem] rounded-lg overflow-hidden">
+                        <Image
+                            src={imageUrl || '/images/conference-default.jpg'}
+                            alt="conference-image"
+                            layout="fill"
+                            objectFit="cover"
+                        />
                     </div>
-                    <HrLine />
                     <div className="flex gap-dr-10">
-                        <Link href={`/conference/${id}`}>
-                            <Button size="lg">컨퍼런스 입장하기</Button>
-                        </Link>
-                        <Button size="lg" color="gray">
-                            <Link href={`/group/${studyGroupId}`}>
-                                스터디 그룹 정보
+                        {closeTime ? null : (
+                            <Link href={`/conference/${id}`}>
+                                <Button size="lg">컨퍼런스 입장하기</Button>
                             </Link>
-                        </Button>
+                        )}
                     </div>
-                    <HrLine />
                     <div>
                         <h3 className="text-dr-header-2">컨퍼런스 주제</h3>
                         <p className="text-dr-body-2">{subject}</p>
                     </div>
                     <div></div>
                     <HrLine />
-                    <MeetingIdBox>{`/conference/${id}`}</MeetingIdBox>
+                    <MeetingIdBox>{`${process.env.NEXT_PUBLIC_HOST}/conference/${id}`}</MeetingIdBox>
                     <HrLine />
                     <div>
-                        <h3 className="mt-6 text-xl font-semibold">
-                            참여자 목록
-                        </h3>
-                        <p>
-                            호스트는 당연히 자동참여해야하는데 초대 손봐주세용:{' '}
-                            {hostId}
-                        </p>
+                        <div className="flex justify-center items-center content-center">
+                            <p className="mt-6 text-xl font-semibold">
+                                참여자 목록
+                            </p>
+                        </div>
+
                         {conferenceInvitees.map((invitee) => (
                             <div
                                 key={invitee.id}
@@ -137,6 +133,11 @@ const ConferenceWaitingRoomTemplate = ({
                             </div>
                         ))}
                     </div>
+                    <Button size="lg" color="gray">
+                        <Link href={`/group/${studyGroupId}`}>
+                            스터디 그룹 정보
+                        </Link>
+                    </Button>
                 </div>
             </div>
         </div>

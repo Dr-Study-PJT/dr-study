@@ -26,8 +26,10 @@ import { showToast } from '@/utils/toastUtil';
 
 export default function GroupDetailPage({
     params,
+    searchParams,
 }: {
     params: { group_id: string };
+    searchParams: { error: string };
 }) {
     const groupId = params.group_id;
 
@@ -68,6 +70,16 @@ export default function GroupDetailPage({
     useEffect(() => {
         setMemberData(getSessionStorageItem('memberData'));
     }, [memberRedux]);
+
+    useEffect(() => {
+        if (searchParams.error === 'not-invited') {
+            const timeout = setTimeout(() => {
+                showToast('error', '초대되지 않은 멤버입니다.');
+            }, 1000);
+
+            return () => clearTimeout(timeout);
+        }
+    }, []);
 
     const myMemberData = membersInThisGroup?.find(
         (member: GroupMember) => member.memberInfo.id === memberData?.id,
@@ -312,39 +324,53 @@ export default function GroupDetailPage({
                                     <GroupApplyButton groupId={groupId} />
                                 </div>
                             </div>
-                        </div>
-                        <div className="BOTTOM-INFO-GROUP w-full h-max flex flex-row justify-between items-end">
-                            <MemberList
-                                members={membersInThisGroup ?? []}
-                                memberCapacity={
-                                    groupWithMembers?.memberCapacity ?? 0
-                                }
-                            />
-                            <div className="BR-BOTTONS flex flex-row justify-between gap-3">
-                                {isLeader && (
-                                    <>
-                                        {isEditing ? (
-                                            <>
-                                                <Button
-                                                    classNameStyles="animate-popIn"
-                                                    color="coral"
-                                                    onClick={handleSaveClick}
-                                                >
-                                                    수정
-                                                </Button>
-                                                <Button
-                                                    classNameStyles="animate-popIn"
-                                                    color="red"
-                                                    onClick={handleDeleteClick}
-                                                >
-                                                    삭제
-                                                </Button>
+                            <div className="BOTTOM-INFO-GROUP w-full h-max flex flex-row justify-between items-end">
+                                <MemberList
+                                    members={membersInThisGroup ?? []}
+                                    memberCapacity={
+                                        groupWithMembers?.memberCapacity ?? 0
+                                    }
+                                />
+                                <div className="BR-BOTTONS flex flex-row justify-between gap-3">
+                                    {isLeader && (
+                                        <>
+                                            {isEditing ? (
+                                                <>
+                                                    <Button
+                                                        classNameStyles="animate-popIn"
+                                                        color="coral"
+                                                        onClick={
+                                                            handleSaveClick
+                                                        }
+                                                    >
+                                                        수정
+                                                    </Button>
+                                                    <Button
+                                                        classNameStyles="animate-popIn"
+                                                        color="red"
+                                                        onClick={
+                                                            handleDeleteClick
+                                                        }
+                                                    >
+                                                        삭제
+                                                    </Button>
+                                                    <Button
+                                                        classNameStyles="animate-popIn"
+                                                        color="dark"
+                                                        onClick={
+                                                            handleCancelClick
+                                                        }
+                                                    >
+                                                        취소
+                                                    </Button>
+                                                </>
+                                            ) : (
                                                 <Button
                                                     classNameStyles="animate-popIn"
                                                     color="dark"
-                                                    onClick={handleCancelClick}
+                                                    onClick={handleEditClick}
                                                 >
-                                                    취소
+                                                    그룹 관리
                                                 </Button>
                                             </>
                                         ) : (
@@ -371,12 +397,12 @@ export default function GroupDetailPage({
                         </div>
                     </div>
                 </div>
+                <SectionContents
+                    groupId={groupId}
+                    isLeader={isLeader}
+                    isMember={isMember}
+                />
             </div>
-            <SectionContents
-                groupId={groupId}
-                isLeader={isLeader}
-                isMember={isMember}
-            />
-        </div>
+        </>
     );
 }

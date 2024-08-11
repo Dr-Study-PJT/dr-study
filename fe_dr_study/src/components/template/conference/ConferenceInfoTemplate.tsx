@@ -29,7 +29,6 @@ const ConferenceInfoTemplate = ({
     studyMembers,
     handleOpenConference,
 }: ConferenceInfoProps) => {
-    console.log(conferenceData);
     const [isMemberInvited, setIsMemberInvited] = useState<boolean>(false); // 멤버 초대 여부
     // const [isClosedConference, setIsClosedConference] = useState<boolean>(
     //     (!conferenceData && true) || false,
@@ -100,8 +99,10 @@ const ConferenceInfoTemplate = ({
                     memberData={memberData}
                     members={studyMembers}
                     conferenceId={conferenceId}
+                    isMemberInvited={isMemberInvited}
                     setIsMemberInvited={setIsMemberInvited}
                     capacity={conferenceData?.memberCapacity}
+                    conferenceData={conferenceData}
                 />
                 <HrLine />
                 <div className="py-[1rem]">

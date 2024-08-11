@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import Tooltip from './Tooltip';
 import { fetchConferenceList } from '@/app/group/_components/SectionContents';
+import { ToastContainer } from 'react-toastify';
+import { showToast } from '@/utils/toastUtil';
 
 interface Group {
     id: number;

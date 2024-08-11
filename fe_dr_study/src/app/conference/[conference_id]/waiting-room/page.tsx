@@ -4,10 +4,13 @@ import ConferenceWaitingRoomTemplate from '@/components/template/conference/Conf
 import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
 import useConferenceInvitees from '@/hooks/conference/useConferenceInvitees';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 const Page = () => {
+    const router = useRouter();
+    const pathname = usePathname();
+
     const { conferenceInfo, error: conferenceInfoFetchError } =
         useConferenceInfo();
     const { conferenceInvitees, error: inviteesFetchError } =
@@ -15,16 +18,14 @@ const Page = () => {
 
     const memberData = getSessionStorageItem('memberData');
 
-    if (conferenceInfoFetchError) {
-        return <div>{conferenceInfoFetchError}</div>; // 오류 메시지 표시
-    }
-    if (inviteesFetchError) {
-        return <div>{inviteesFetchError}</div>; // 오류 메시지 표시
-    }
-
     useEffect(() => {
         console.log('conferenceInvitees 26번 라인 =>', conferenceInvitees);
     }, [conferenceInvitees]);
+
+    if (conferenceInfoFetchError || inviteesFetchError) {
+        router.push(pathname + '/not-found');
+        return null;
+    }
 
     return (
         <ConferenceWaitingRoomTemplate

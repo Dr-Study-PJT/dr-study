@@ -11,7 +11,7 @@ const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
         useState<Moderator | null>(null);
 
     return (
-        <div className="relative flex py-[3rem] px-[10rem] text-dr-white gap-dr-30">
+        <div className="relative flex py-[3rem] px-[20%] text-dr-white gap-dr-30 ">
             <div className="w-3/5 h-full">
                 <ModeratorInformation />
                 <ModeratorList
@@ -68,7 +68,7 @@ const ModeratorList = ({
     selectedModerator: Moderator | null;
 }) => {
     return (
-        <div className="flex flex-wrap justify-center ">
+        <div className="flex flex-wrap justify-center bg-dr-indigo-200 p-[1rem] rounded-lg">
             {moderators?.map((moderator) => (
                 <div
                     key={moderator?.id}
@@ -81,7 +81,12 @@ const ModeratorList = ({
                 >
                     <div className="relative w-full h-[6rem]">
                         <Image
-                            src={moderator?.thumbnailUrl}
+                            src={
+                                moderator?.thumbnailUrl ||
+                                '/images/robots/robot' +
+                                    ((moderator?.id % 5) + 1) +
+                                    '.png'
+                            }
                             alt={moderator?.name}
                             fill
                             className="rounded-md mb-2"
@@ -98,7 +103,7 @@ const ModeratorList = ({
 
 const ModeratorDetail = ({ moderator }: { moderator: Moderator | null }) => {
     return (
-        <div className="w-2/5 sticky top-1 flex flex-col gap-dr-20 items-center justify-center py-[2rem] h-full">
+        <div className="w-2/5 sticky top-1 flex flex-col gap-dr-20 items-center justify-center py-[2rem] h-full ">
             <div className="flex flex-col text-center items-center w-[100%] ">
                 <div className="relative w-[100%] h-[20rem]">
                     <Image
@@ -143,7 +148,7 @@ const ModeratorDetail = ({ moderator }: { moderator: Moderator | null }) => {
                     </div>
                 </div>
             </div>
-            <Button>AI 사회자 저장하기</Button>
+            {/* <Button>AI 사회자 저장하기</Button> */}
         </div>
     );
 };
