@@ -253,7 +253,7 @@ class BlockInterpreterTest {
     
     @Test
     @DisplayName("아바타 말하기 테스트")
-    public void letAvatarSpeakTest() throws InterruptedException {
+    public void letAvatarSpeakTest() {
         String script =
                 """
                 phase(1) {
@@ -263,13 +263,11 @@ class BlockInterpreterTest {
         long id = getProcessContextIdSequence();
         blockInterpreter.init(id, script, Map.of());
         blockInterpreter.interpret(id);
-
-        Thread.sleep(3000L);
     }
 
     @Test
     @DisplayName("GPT 테스트")
-    public void gptTest() throws InterruptedException {
+    public void gptTest() {
         String script =
                 """
                 phase(1) {
@@ -279,13 +277,11 @@ class BlockInterpreterTest {
         long id = getProcessContextIdSequence();
         blockInterpreter.init(id, script, Map.of());
         blockInterpreter.interpret(id);
-
-        Thread.sleep(3000L);
     }
     
     @Test
     @DisplayName("아바타 GPT 동시 테스트")
-    public void avatarGptTest() throws InterruptedException {
+    public void avatarGptTest() {
         String script =
                 """
                 phase(1) {
@@ -295,9 +291,6 @@ class BlockInterpreterTest {
         long id = getProcessContextIdSequence();
         blockInterpreter.init(id, script, Map.of());
         blockInterpreter.interpret(id);
-
-
-        Thread.sleep(20000L);
     }
 
     @Test

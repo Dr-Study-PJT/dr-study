@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 @RequiredArgsConstructor
 public class RoomService {
-    private final Map<Long, Map<Long, ParticipantInfo>> existingParticipantMap = new ConcurrentHashMap<>();
+    private final Map<Long, Map<Long, RoomParticipantInfo>> existingParticipantMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
     private final WebSocketSessionManager webSocketSessionManager;
 
@@ -42,8 +42,6 @@ public class RoomService {
     public void closeRoom(Long roomId) {
         joinLockMap.remove(roomId);
         existingParticipantMap.remove(roomId);
-
-        processManager.removeProcess(roomId);
     }
 
     public void startRoom(Long roomId, String script, Runnable finishCallback) {
@@ -51,12 +49,8 @@ public class RoomService {
 
         blockInterpreter.init(roomId, script, Map.of());
         processContext = processManager.getProcessContext(roomId);
-        processContext.setParticipantInfo(
-                existingParticipantMap.keySet().stream().toList(),
-                existingParticipantMap.keySet().stream().map(id -> "member" + id + "'s nickname").toList()
-        );
+        processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
-
 
         if (processContext.getStatus() != ProcessStatus.READY) {
             throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
@@ -64,19 +58,21 @@ public class RoomService {
 
         blockInterpreter.init(roomId, script, Map.of());
         processContext = processManager.getProcessContext(roomId);
-        processContext.setParticipantInfo(
-                existingParticipantMap.keySet().stream().toList(),
-                existingParticipantMap.keySet().stream().map(id -> "member" + id + "'s nickname").toList()
-        );
+        processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
+        blockInterpreter.interpret(roomId);
 
         CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
-        }).thenRun(finishCallback);
+        }).thenRun(() -> {
+            finishRoom(roomId);
+            finishCallback.run();
+        });
     }
 
-    public void setFinishCallback(Long roomId) {
+    public void finishRoom(Long roomId) {
+        processManager.removeProcess(roomId);
         // TODO: Finish Callback
-        log.debug("컨퍼런스{}번 진행 종료", roomId);
+        log.debug("Room:{} finished", roomId);
     }
 
     public List<String> joinRoom(Member member, Long roomId, String peerId) {
@@ -101,8 +97,8 @@ public class RoomService {
         }
         lock.lock();
 
-        List<String> existingPeerIds = existingParticipantMap.get(roomId).values().stream().map(ParticipantInfo::getPeerId).toList();
-        existingParticipantMap.get(roomId).put(member.getId(), new ParticipantInfo(member.getNickname(), peerId));
+        List<String> existingPeerIds = existingParticipantMap.get(roomId).values().stream().map(RoomParticipantInfo::getPeerId).toList();
+        existingParticipantMap.get(roomId).put(member.getId(), new RoomParticipantInfo(member.getId(), member.getNickname(), peerId));
 
         log.debug("joined new peer, current existingPeerIds = {}", existingParticipantMap.get(roomId));
 

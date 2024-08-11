@@ -178,8 +178,6 @@ public class ConferenceServiceImpl implements ConferenceService {
         }
 
         conference.updateFinishTime(LocalDateTime.now());
-
-        roomService.setFinishCallback(conferenceId);
     }
 
     @Override

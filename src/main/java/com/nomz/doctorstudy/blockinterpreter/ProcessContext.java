@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -28,7 +29,8 @@ public class ProcessContext {
     @Getter
     private final List<ProgrammeItem> programme = new ArrayList<>();
 
-    private final List<ParticipantInfo> participantInfoList = new ArrayList<>();
+    @Getter
+    private final List<RoomParticipantInfo> participantInfoList = new ArrayList<>();
 
     public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap) {
         this.id = id;
@@ -49,24 +51,20 @@ public class ProcessContext {
         this.programme.clear();
 
         this.participantInfoList.clear();
-        this.participantInfoList.add(new ParticipantInfo(0L, "paddingMember"));
+        this.participantInfoList.add(new RoomParticipantInfo(0L, "paddingMember", "Padding Member PeerId"));
 
         declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
         setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), 0);
     }
 
-    public void setParticipantInfo(List<Long> memberIds, List<String> names) {
-        for (int i = 0; i < memberIds.size(); i++) {
-            Long memberId = memberIds.get(i);
-            String name = names.get(0);
-
-            participantInfoList.add(new ParticipantInfo(memberId, name));
-
-            String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + i;
+    public void setParticipantInfo(List<RoomParticipantInfo> participantInfoList) {
+        int seq = 1;
+        for (RoomParticipantInfo participantInfo : participantInfoList) {
+            String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + seq++;
             declareVariable(variableName);
-            setVariable(variableName, names.get(i));
+            setVariable(variableName, participantInfo.getName());
         }
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), memberIds.size());
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size());
     }
 
     public Integer getNumOfParticipant() {
@@ -177,13 +175,6 @@ public class ProcessContext {
     private static class Transcript {
         private final int phase;
         private final String content;
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    private static class ParticipantInfo {
-        private final long memberId;
-        private final String name;
     }
 
     private static class GptContext {
