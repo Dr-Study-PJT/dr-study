@@ -1,22 +1,35 @@
 spring:
   application:
     name: doctor-study
+  profiles:
+    include: secret
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
+        show_sql: false
+        format_sql: false
+        use_sql_comments: false
+    defer-datasource-initialization: true
+  mail:
+    host: smtp.naver.com
+    port: 465
+    protocol: smtps
 
   data:
     redis:
       host: redis
       port: 6379
+  sql:
+    init:
+      mode: always
+
+
 
 springdoc:
   swagger-ui:
@@ -38,5 +51,11 @@ spring:
       on-profile: local
     import: application-secret.yml
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 fast-api:
   url: http://192.168.100.149:8000
+

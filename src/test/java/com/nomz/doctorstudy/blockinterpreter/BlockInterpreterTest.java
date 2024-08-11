@@ -36,7 +36,9 @@ class BlockInterpreterTest {
                 """
                 phase(1) {
                     log(string_concat('hello ', 'world! ', '반갑습니다 ', '여러분들!'));
+                    wait(3000);
                     log('hi');
+                    wait(3000);
                     log(int_to_string(get_int_variable('current_phase')));
                 }
                 """;

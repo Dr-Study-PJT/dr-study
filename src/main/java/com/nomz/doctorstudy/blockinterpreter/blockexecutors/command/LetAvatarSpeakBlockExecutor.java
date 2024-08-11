@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.api.ExternalApiCallService;
 import com.nomz.doctorstudy.api.VoiceType;
 import com.nomz.doctorstudy.blockinterpreter.BlockErrorCode;
 import com.nomz.doctorstudy.blockinterpreter.BlockException;
+import com.nomz.doctorstudy.blockinterpreter.ProcessLockManager;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
@@ -51,7 +52,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
         byte[] speechAudio = externalApiCallService.tts(speechContent, VoiceType.MEN_LOW);
 
-        long processId = threadProcessContext.getProcessId();
+        log.debug("let avatar speak: {}", speechContent);
 
         String audioPath = audioUpperPath + AUDIO_FILE_NAME + processId + AUDIO_EXT;
         AudioUtils.saveFile(speechAudio, audioPath);
@@ -61,11 +62,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         log.debug("tts audio duration={}", audioDurationMills);
 
         log.debug("thread:{} started to sleep", processId);
-        try {
-            Thread.sleep(audioDurationMills);
-        } catch (InterruptedException e) {
-            throw new BlockException(BlockErrorCode.PROCESS_INTERRUPTED, e);
-        }
+        ProcessLockManager.sleep(processId, audioDurationMills);
         log.debug("thread:{} is being awaken", processId);
 
         Object numOfParticipantObj = threadProcessContext.getVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());

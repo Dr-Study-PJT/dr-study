@@ -3,7 +3,9 @@ package com.nomz.doctorstudy.blockinterpreter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ProcessLockManager {
@@ -40,5 +42,13 @@ public class ProcessLockManager {
             lock.notify();
             lockMap.remove(processId);
         }
+    }
+
+    public static void sleep(Long processId, int millisTime) {
+        CompletableFuture.runAsync(() -> {
+            ProcessLockManager.awaken(processId);
+        }, CompletableFuture.delayedExecutor(millisTime, TimeUnit.MILLISECONDS));
+        log.debug("WaitBlock: start sleep {} sec", (double) millisTime / 1000.0);
+        ProcessLockManager.sleep(processId);
     }
 }
