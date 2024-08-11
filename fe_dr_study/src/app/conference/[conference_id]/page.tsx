@@ -23,7 +23,9 @@ const ConferencePage: React.FC<ConferencePageProps> = ({ params }) => {
         }
     }, [conferenceInfo]);
 
-    return <ConferenceTemplate conferenceId={params.conference_id} />;
+    return conferenceInfo ? (
+        <ConferenceTemplate conferenceInfo={conferenceInfo} />
+    ) : null;
 };
 
 export default ConferencePage;

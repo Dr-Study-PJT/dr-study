@@ -16,9 +16,10 @@ import { Stomp } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';
 import TotalSummary from '@/components/organisms/ModeratorAvatar/TotalSummary';
 import OpenTotalSummaryButton from '@/components/organisms/ModeratorAvatar/OpenTotalSummaryButton';
+import { ConferenceData } from '@/interfaces/conference';
 
 interface ConferenceTemplateProps {
-    conferenceId: number;
+    conferenceInfo: ConferenceData | null;
 }
 
 interface RoomInfoInterface {
@@ -37,12 +38,14 @@ export interface SummaryMessageInterface {
     time: string;
 }
 
-const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
-    const route = useRouter();
+const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
+    const router = useRouter();
+
+    console.log('conferenceInfo => ', conferenceInfo);
 
     // 로그인 여부 확인
     useEffect(() => {
-        if (!memberData) route.push('/auth/login');
+        if (!memberData) router.push('/auth/login');
     }, []);
 
     // 방 정보 상태
@@ -218,7 +221,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         try {
             const response = await POST({
                 API: API,
-                endPoint: `${conferenceId}/join`,
+                endPoint: `${conferenceInfo?.id}/join`,
                 body: { peerId },
                 isAuth: true,
             });
@@ -240,6 +243,10 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                 ...data.data.existingPeerIds,
             ]); // 방에 존재하는 peerIds 저장
         } catch (error) {
+            if (!conferenceInfo?.openTime) {
+                router.push(`/conference/${conferenceInfo?.id}/waiting-room`);
+            }
+
             console.error('Error fetching room list:', error);
         }
     };
@@ -249,7 +256,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         try {
             const response = await POST({
                 API: API, // as API 로 작성
-                endPoint: `${conferenceId}/start`, //  v1/conferences 뒤에 있으면 '/' 붙고 아니면 안 붙음
+                endPoint: `${conferenceInfo?.id}/start`, //  v1/conferences 뒤에 있으면 '/' 붙고 아니면 안 붙음
                 body: '', // body는 body
                 isAuth: true, // 항상 true로
             });
@@ -285,6 +292,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     </div>
 
                     <Signal
+                        conferenceInfo={conferenceInfo}
                         setFocusingPeerId={setFocusingPeerId}
                         client={client.current}
                         setSummaryMessages={setSummaryMessages}
@@ -295,7 +303,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                         subscriptionList={subscriptionList.current}
                         stompClient={stompClient}
                         memberData={memberData}
-                        conferenceId={conferenceId}
+                        conferenceId={conferenceInfo?.id || 0}
                         setIsMutedBySystem={setIsMutedBySystem}
                         setFocusingMemberId={setFocusingMemberId}
                         setIsAvatarSpeaking={setIsAvatarSpeaking}
@@ -314,7 +322,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                         subscriptionList={subscriptionList.current}
                         client={client.current}
                         stompClient={stompClient}
-                        conferenceId={conferenceId}
+                        conferenceId={conferenceInfo?.id || 0}
                         localStream={localStream.current}
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}

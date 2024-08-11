@@ -50,8 +50,13 @@ const ModeratorAvatar = ({
     }, [setIsHovered]);
 
     useEffect(() => {
+        console.log('오디오 바로 실행 전');
+
         if (audioUrl) {
             console.log('audioUrl: ', audioUrl);
+
+            new Audio(audioUrl).play(); // 바로 실행
+            console.log('오디오 바로 실행 후');
             setAudio(new Audio(audioUrl));
         }
     }, [audioUrl]);

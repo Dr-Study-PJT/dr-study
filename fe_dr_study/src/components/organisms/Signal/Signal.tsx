@@ -8,6 +8,10 @@ import {
     ClientInterface,
     SummaryMessageInterface,
 } from '@/components/template/conference/ConferenceTemplate';
+import { ConferenceData } from '@/interfaces/conference';
+import Chats from './Chats';
+import MemberAvatar from '@/components/molecules/MemberAvatar';
+import ConferenceParticipants from './ConferenceParticipants';
 
 interface Message {
     id: number;
@@ -28,6 +32,7 @@ interface SignalInterface {
 }
 
 interface SignalProps {
+    conferenceInfo: ConferenceData | null;
     setFocusingPeerId: Dispatch<SetStateAction<string>>;
     client: ClientInterface;
     setSummaryMessages: Dispatch<SetStateAction<SummaryMessageInterface[]>>;
@@ -51,6 +56,7 @@ interface SignalProps {
 }
 
 const Signal = ({
+    conferenceInfo,
     setFocusingPeerId,
     client,
     setSummaryMessages,
@@ -75,12 +81,9 @@ const Signal = ({
     const CHANNEL = 'topic'; // 채널 이름
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
-    const messagesEndRef = useRef(null); // 메시지 목록 끝에 대한 참조
+    const messagesEndRef = useRef<HTMLDivElement>(null); // 메시지 목록 끝에 대한 참조
 
     const [signals, setSignals] = useState<SignalInterface[]>([]); // 수신된 신호 목록을 저장하는 상태
-
-    // 소켓 연결 및 메시지 수신
-    let heartbeatInterval: NodeJS.Timeout;
 
     useEffect(() => {
         // 10초마다 생존 신고 전송
@@ -122,6 +125,11 @@ const Signal = ({
             const newMessage: Message = JSON.parse(message.body); // 수신된 메시지 파싱
             subscriptionList.push(newMessage.message); // 수신된 메시지를 구독 목록에 추가
             setMessages((prevMessages) => [...prevMessages, newMessage]); // 수신된 메시지를 메시지 목록에 추가
+
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollTop =
+                    messagesEndRef.current.scrollHeight;
+            }
         });
     };
 
@@ -236,8 +244,6 @@ const Signal = ({
     // 신호 단계 신호 처리
     const handleProgramme = (newSignal: SignalInterface) => {
         console.log('newSignal.programme:', newSignal.programme);
-        JSON.parse(newSignal.programme as string);
-
         console.log(`handleProgramme: 다음 스텝 표시`, newSignal.next);
     };
 
@@ -284,42 +290,13 @@ const Signal = ({
 
     return (
         <div className="flex flex-col w-1/5 h-full bg-dr-dark-300 p-[0.5rem]">
-            <div
-                ref={messagesEndRef}
-                className="flex h-full w-full overflow-y-scroll"
-            >
-                <div className="flex gap-dr-10 flex-col  h-full w-full ">
-                    {messages.map((msg, index) => (
-                        <div
-                            key={index}
-                            className="flex items-start p-2 rounded-lg"
-                        >
-                            <div className="relative mr-2 min-w-[2rem] min-h-[2rem] rounded-full overflow-hidden">
-                                <Image
-                                    src={`${msg?.imageUrl || '/images/speaking.png'}`}
-                                    alt="Profile"
-                                    fill
-                                />
-                            </div>
-                            <div className="flex flex-col">
-                                <div className="flex items-center">
-                                    <span className="font-semibold text-white">
-                                        {msg?.nickname}
-                                    </span>
-                                    <span className="text-gray-400 text-sm ml-2">
-                                        {msg?.time &&
-                                            new Date(
-                                                msg?.time,
-                                            ).toLocaleDateString()}
-                                    </span>{' '}
-                                    {/* 시간 표시 추가 */}
-                                </div>
-                                <div className="text-gray-200">
-                                    {msg.message}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+            <div className="relative w-full h-full text-dr-white">
+                <ConferenceParticipants conferenceInfo={conferenceInfo} />
+                <div
+                    ref={messagesEndRef}
+                    className="flex flex-col h-full w-full overflow-y-scroll"
+                >
+                    <Chats messages={messages} />
                 </div>
             </div>
 

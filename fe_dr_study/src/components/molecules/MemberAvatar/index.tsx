@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getBackgroundColorRandomPastel } from '@/utils/colors';
 
 interface MemberAvatarProps {
+    urlDisabled?: boolean;
     member: {
         id: number;
         nickname: string;
@@ -12,13 +13,20 @@ interface MemberAvatarProps {
     };
 }
 
-const MemberAvatar: React.FC<MemberAvatarProps> = ({ member }) => {
+const MemberAvatar = ({ member, urlDisabled }: MemberAvatarProps) => {
     const router = useRouter();
+
+    const handleRouteHandler = () => {
+        if (urlDisabled) {
+            return;
+        }
+        router.push(`/members/${member.id}`);
+    };
 
     return (
         <div
-            className="relative overflow-hidden w-[2.3rem] h-[2.3rem] rounded-xl cursor-pointer"
-            onClick={() => router.push(`/members/${member.id}`)}
+            className={`relative overflow-hidden w-[2.3rem] h-[2.3rem] rounded-xl ${!urlDisabled && 'cursor-pointer'} `}
+            onClick={handleRouteHandler}
         >
             {member.imageUrl ? (
                 <Tooltip text={member.nickname} direction="top">
