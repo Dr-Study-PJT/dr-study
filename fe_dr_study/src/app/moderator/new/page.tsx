@@ -10,8 +10,8 @@ import { ICreateModeratorReq } from '../_types';
 import { createModerator } from '../_api/csr';
 import { useRouter } from 'next/navigation';
 
-const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full min-h-full h-max bg-dr-indigo-300 py-12`;
-const containerStyles = `CONTAINER-FORM min-w-[60%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
+const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full min-h-full h-max bg-dr-indigo-200 py-12`;
+const containerStyles = `CONTAINER-FORM min-w-[60%] w-max h-max flex bg-dr-indigo-300 text-dr-white rounded-lg shadow-dr-rb-2 overflow-hidden border-[1px] border-dr-indigo-100 p-4`;
 
 const steps = [
     { guide: '마음에 드는 사회자의 모습을 선택해보세요.', component: Step1 },
