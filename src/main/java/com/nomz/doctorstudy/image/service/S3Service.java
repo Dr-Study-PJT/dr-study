@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -60,6 +62,34 @@ public class S3Service {
         }
 
         return amazonS3.getUrl(filePath, s3FileName).toString();
+    }
+
+    public String save(File file, String filePath) throws IOException {
+//        File file = saveS3MediaRequest.getFile();
+//        String filePath = saveS3MediaRequest.getFilePath();
+
+        String originalFilename = file.getName(); //원본 파일 명
+        log.info("originalFileName = {}", originalFilename);
+
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1); //확장자 명
+        log.info("extension = {}", extension);
+
+
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.length());
+        objectMetadata.setContentType("audio/mpeg");
+
+
+        try(InputStream inputStream = new FileInputStream(file)){
+            amazonS3.putObject(
+                    new PutObjectRequest(filePath, originalFilename, inputStream, objectMetadata)
+            );
+
+        }catch (IOException e){
+            throw new FileException(FileErrorCode.IMAGE_UPLOAD_FAIL);
+        }
+
+        return amazonS3.getUrl(filePath, originalFilename).toString();
     }
 
 }
