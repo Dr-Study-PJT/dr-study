@@ -12,6 +12,7 @@ import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { handleCommentSubmit } from '../_handler';
 import { CommentData } from '../_types';
+import Image from 'next/image';
 
 interface CommentFormProps {
     articleId: number;
@@ -21,7 +22,7 @@ interface CommentFormProps {
     errors: FieldErrors<any>;
     reset: () => void;
     initialContent: string;
-    imageUrl: string; // 추가
+    imageUrl: string;
 }
 
 const CommentForm: React.FC<CommentFormProps> = ({
@@ -40,11 +41,19 @@ const CommentForm: React.FC<CommentFormProps> = ({
 
     return (
         <Box variant="commentCreateContainer" className="flex items-center">
-            <img
-                src={imageUrl}
-                alt="author"
-                className="flex flex-row justify-center rounded-full w-[60px] h-[60px] mr-4 object-cover"
-            />
+            {imageUrl && (
+                <Image
+                    src={imageUrl}
+                    alt="author"
+                    width={60}
+                    height={60}
+                    style={{
+                        borderRadius: '50%',
+                        marginRight: '16px',
+                        objectFit: 'cover',
+                    }}
+                />
+            )}
             <form onSubmit={handleSubmit} className="w-full flex items-center">
                 <div className="flex flex-col w-full">
                     <InputWithLabelAndError
@@ -77,7 +86,7 @@ interface ArticleCommentsFormProps {
     articleId: number;
     onCommentSubmitted: (comment: CommentData) => void;
     initialContent: string;
-    imageUrl: string; // 추가
+    imageUrl: string;
 }
 
 const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
@@ -96,12 +105,8 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
 
     const onSubmit = async (data: any) => {
         try {
-            const newComment = await handleCommentSubmit(
-                data,
-                articleId,
-            );
+            const newComment = await handleCommentSubmit(data, articleId);
             onCommentSubmitted(newComment);
-            console.log('CommentForm에서 확인용', newComment)
             reset();
         } catch (error) {
             console.error('댓글 작성 실패', error);
@@ -117,7 +122,7 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
             errors={errors}
             reset={reset}
             initialContent={initialContent}
-            imageUrl={imageUrl} // 추가
+            imageUrl={imageUrl}
         />
     );
 };

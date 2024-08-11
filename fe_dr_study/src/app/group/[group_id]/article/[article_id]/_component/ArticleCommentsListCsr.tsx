@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState } from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Span } from '@/components/atoms';
@@ -8,6 +6,7 @@ import { handleCommentDelete } from '../_handler/index';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import CommentDropdownButton from './CommentDropdownButton';
 import ArticleCommentsEditForm from './ArticleCommentsEditFormCsr';
+import Image from 'next/image';
 
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
@@ -34,7 +33,9 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     const updateCommentList = (updatedComment: CommentData) => {
         setCommentList((prev) =>
             prev.map((comment) =>
-                comment.id === updatedComment.id ? updatedComment : comment,
+                comment.id === updatedComment.id
+                    ? { ...comment, content: updatedComment.content }
+                    : comment,
             ),
         );
     };
@@ -68,11 +69,19 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                         <div className="w-full flex flex-col">
                             <Box variant="commentPDPHeader">
                                 <Box variant="commentProfileLeft">
-                                    <img
-                                        src={comment.memberInfo.imageUrl}
-                                        alt="author"
-                                        className="flex flex-row justify-center rounded-full w-[60px] h-[60px] mr-2 object-cover"
-                                    />
+                                    {comment.memberInfo.imageUrl && (
+                                        <Image
+                                            src={comment.memberInfo.imageUrl}
+                                            alt="author"
+                                            width={60}
+                                            height={60}
+                                            style={{
+                                                borderRadius: '50%',
+                                                marginRight: '16px',
+                                                objectFit: 'cover',
+                                            }}
+                                        />
+                                    )}
                                     <Box variant="commentProfileWithNickAndTime">
                                         <Span color="white">
                                             {comment.memberInfo.nickname}
@@ -104,7 +113,7 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                                         commentId={comment.id}
                                         onCommentUpdated={handleCommentUpdated}
                                         initialContent={editContent}
-                                        onCancel={handleCancelEdit} // 취소 핸들러 추가
+                                        onCancel={handleCancelEdit}
                                     />
                                 ) : (
                                     <Span color="white">{comment.content}</Span>
