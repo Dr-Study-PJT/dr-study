@@ -48,17 +48,21 @@ public class RoomService {
     public void startRoom(Long roomId, String subject, String script, Runnable finishCallback) {
         ProcessContext processContext;
 
+        log.info("========== STARTING WITH PROGRAMME MODE ==========");
         blockInterpreter.init(roomId, script, Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject));
         processContext = processManager.getProcessContext(roomId);
         processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
+        log.info("========== FINISHED PROGRAMME MODE ==========");
 
+        log.info("========== STARTING WITH NORMAL MODE ==========");
         blockInterpreter.init(roomId, script, Map.of());
         processContext = processManager.getProcessContext(roomId);
         processContext.setParticipantInfo(existingParticipantMap.get(roomId).values().stream().toList());
         CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
         }).thenRun(() -> {
+            log.info("========== FINISHED NORMAL MODE ==========");
             finishRoom(roomId);
             finishCallback.run();
         });

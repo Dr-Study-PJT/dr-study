@@ -18,15 +18,18 @@ public class ProcessManager {
     }
 
     public void createProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
-        if (processContextMap.get(processId) != null) {
+        ProcessContext processContext = processContextMap.get(processId);
+
+        if (processContext != null && processContext.getStatus() == ProcessStatus.RUNNING) {
+            throw new BlockException(BlockErrorCode.PROCESS_ALREADY_RUNNING);
+        }
+
+        if (processContext != null && processContext.getStatus() == ProcessStatus.NORMAL_RUN_FINISH) {
             log.warn("디버깅을 위해 다시 시작할 수 있도록 되어있습니다. 문제가 해결되면 재시작 불가능하도록 수정해주세요.");
             processContextMap.remove(processId);
         }
 
-        if (processContextMap.containsKey(processId)) {
-            throw new BlockException(BlockErrorCode.PROCESS_ALREADY_EXISTS);
-        }
-        ProcessContext processContext = new ProcessContext(processId, blockList, varMap, labelMap);
+        processContext = new ProcessContext(processId, blockList, varMap, labelMap);
         processContext.initialize();
         processContextMap.put(processId, processContext);
     }

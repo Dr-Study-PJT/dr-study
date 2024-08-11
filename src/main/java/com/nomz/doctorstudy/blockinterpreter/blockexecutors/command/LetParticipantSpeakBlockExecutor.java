@@ -4,7 +4,9 @@ import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.ProcessLockManager;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
+import com.nomz.doctorstudy.conference.room.SignalUtils;
 import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
 import com.nomz.doctorstudy.conference.room.signal.ParticipantSpeakSignal;
 import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
@@ -18,11 +20,13 @@ import java.util.List;
 public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
     private final ThreadProcessContext threadProcessContext;
     private final SignalTransmitter signalTransmitter;
+    private final SignalUtils signalUtils;
 
-    public LetParticipantSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransmitter) {
+    public LetParticipantSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransmitter, SignalUtils signalUtils) {
         super(void.class, List.of(Integer.class, Integer.class));
         this.threadProcessContext = threadProcessContext;
         this.signalTransmitter = signalTransmitter;
+        this.signalUtils = signalUtils;
     }
 
     @Override
@@ -34,22 +38,22 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
 
         long processId = processContext.getId();
         String participantName = processContext.getParticipantName(participantNum);
-        Long memberId = processContext.getParticipantMemberId(participantNum);
-        Integer numOfParticipant = processContext.getNumOfParticipant();
+        Long speakMemberId = processContext.getParticipantMemberId(participantNum);
 
-        for (int i=1; i<=numOfParticipant; i++) {
-            if (i == memberId) continue;
-            signalTransmitter.transmitSignal(processId, new MuteSignal(memberId));
-        }
+        signalUtils.sendMuteSignals(processId, processContext.getParticipantInfoList().stream()
+                .map(RoomParticipantInfo::getMemberId)
+                .filter(id -> !id.equals(speakMemberId))
+                .toList()
+        );
 
-        log.debug("Participant[id={}, name={}] started to speak. time limit={}", memberId, participantName, speakTimeLimit);
-        signalTransmitter.transmitSignal(processId, new ParticipantSpeakSignal(memberId, speakTimeLimit));
+        log.debug("Participant[id={}, name={}] started to speak. time limit={}", speakMemberId, participantName, speakTimeLimit);
+        signalTransmitter.transmitSignal(processId, new ParticipantSpeakSignal(speakMemberId, speakTimeLimit));
 
-
-        for (int i=1; i<=numOfParticipant; i++) {
-            if (i == memberId) continue;
-            signalTransmitter.transmitSignal(processId, new UnmuteSignal(memberId));
-        }
+        signalUtils.sendUnmuteSignals(processId, processContext.getParticipantInfoList().stream()
+                .map(RoomParticipantInfo::getMemberId)
+                .filter(id -> !id.equals(speakMemberId))
+                .toList()
+        );
 
         ProcessLockManager.sleep(processId);
 
@@ -60,7 +64,21 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
 
     @Override
     public Object executeGetProgramme(List<Object> args) {
-        threadProcessContext.get().addProgrammeInfo("참여자 말하기");
+        int participantNum = (int) args.get(0);
+        int speakTimeLimit = (int) args.get(1);
+
+        ProcessContext processContext = threadProcessContext.get();
+        String participantName = processContext.getParticipantName(participantNum);
+        Long memberId = processContext.getParticipantMemberId(participantNum);
+
+        threadProcessContext.get().addProgrammeInfo(
+                String.format(
+                        "[MemberId=%d, Name=%s] 참여자 %d초 동안 발화",
+                        memberId,
+                        participantName,
+                        speakTimeLimit
+                )
+        );
 
         return null;
     }

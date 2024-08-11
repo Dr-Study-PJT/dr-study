@@ -1,6 +1,8 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors;
 
+import com.nomz.doctorstudy.blockinterpreter.BlockErrorCode;
 import com.nomz.doctorstudy.blockinterpreter.ProcessMode;
+import com.nomz.doctorstudy.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,13 +28,11 @@ public abstract class BlockExecutor {
 
     public final Object execute(List<Object> args, ProcessMode processMode) {
         if (!validateArgs(args)) {
-            log.error("[{}] Argument type doesn't match parameter type", this.getClass());
-            // TODO: 비즈니스 예외로 변경
-            throw new RuntimeException("Argument type doesn't match parameter type");
+            throw new BusinessException(BlockErrorCode.ARGUMENT_TYPE_MISMATCH);
         }
 
         return switch (processMode) {
-            case RUN, DEBUG -> executeAction(args);
+            case NORMAL, DEBUG -> executeAction(args);
             case PROGRAMME -> executeGetProgramme(args);
         };
     }

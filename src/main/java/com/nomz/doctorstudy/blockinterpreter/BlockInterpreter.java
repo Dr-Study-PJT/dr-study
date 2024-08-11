@@ -29,7 +29,7 @@ public class BlockInterpreter {
     }
 
     public void interpret(Long processId) {
-        interpret(processId, ProcessMode.RUN);
+        interpret(processId, ProcessMode.NORMAL);
     }
 
     public void interpret(Long processId, ProcessMode processMode) {
@@ -107,9 +107,12 @@ public class BlockInterpreter {
         if (processMode == ProcessMode.PROGRAMME) {
             log.info("Block Script Programme\n{}", processContext.getProgramme());
             signalTransmitter.transmitSignal(processId, new ProgrammeSignal(processContext.getProgramme()));
+            processContext.setStatus(ProcessStatus.PROGRAMME_RUN_FINISH);
+        }
+        else {
+            processContext.setStatus(ProcessStatus.NORMAL_RUN_FINISH);
         }
 
-        processContext.setStatus(ProcessStatus.FINISH);
         threadProcessContext.removeProcessContext();
 
         log.info("processId={} ended to run", processId);

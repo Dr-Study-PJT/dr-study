@@ -55,6 +55,7 @@ public class SignalController {
 
         ProcessContext processContext = processManager.getProcessContext(conferenceId);
         processContext.addTranscript(transcript);
+        // TODO: 발화 블록
 
         //
         //AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");

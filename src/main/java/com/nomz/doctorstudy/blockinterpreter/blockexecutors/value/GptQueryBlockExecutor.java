@@ -32,4 +32,9 @@ public class GptQueryBlockExecutor extends BlockExecutor {
 
         return answer;
     }
+
+    @Override
+    public Object executeGetProgramme(List<Object> args) {
+        return "GPT PROGRAMME";
+    }
 }
