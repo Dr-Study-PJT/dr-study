@@ -12,8 +12,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { generateScript } from './ScriptGenerator';
 import Tutorial from './Tutorial';
 
-const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
-    const [droppedBlocks, setDroppedBlocks] = useState<Block[]>([]);
+const Step3: React.FC<StepProps & { initialBlocks?: Block[] }> = ({
+    onNext,
+    onBack,
+    data,
+    setData,
+    initialBlocks = [],
+}) => {
+    const [droppedBlocks, setDroppedBlocks] = useState<Block[]>(initialBlocks);
     const [fbScript, setFbScript] = useState<string>('');
     const [blockFilter, setBlockFilter] = useState<string>('전체');
     const leftBlockContainerRef = useRef<HTMLDivElement>(null);
@@ -30,6 +36,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
             content: '여기에 블록을 드롭하여 스크립트를 생성할 수 있습니다.',
         },
     ];
+
     const handleTutorialClose = () => {
         setShowTutorial(false);
     };
