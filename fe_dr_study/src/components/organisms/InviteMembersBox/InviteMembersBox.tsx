@@ -127,7 +127,7 @@ const InviteMembersBox = ({
                         >
                             <div className="relative w-[4rem] h-[4rem]">
                                 <Image
-                                    src={memberData?.imageUrl}
+                                    src={member?.memberInfo.imageUrl}
                                     alt="profile-image"
                                     fill
                                     className="rounded-md"
