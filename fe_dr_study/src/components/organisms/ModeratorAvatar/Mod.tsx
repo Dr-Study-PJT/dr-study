@@ -50,13 +50,10 @@ const ModeratorAvatar = ({
     }, [setIsHovered]);
 
     useEffect(() => {
-        console.log('오디오 바로 실행 전');
-
         if (audioUrl) {
             console.log('audioUrl: ', audioUrl);
 
             new Audio(audioUrl).play(); // 바로 실행
-            console.log('오디오 바로 실행 후');
             setAudio(new Audio(audioUrl));
         }
     }, [audioUrl]);
@@ -104,7 +101,6 @@ const ModeratorAvatar = ({
             <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
                 {gptSummaryBySystem}
             </div>
-            <Button onClick={() => audio?.play()}>오디오 플레이</Button>
         </div>
     );
 };

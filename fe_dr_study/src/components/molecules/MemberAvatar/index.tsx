@@ -32,7 +32,7 @@ const MemberAvatar = ({ member, urlDisabled }: MemberAvatarProps) => {
                 <Tooltip text={member.nickname} direction="top">
                     <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
                         <Image
-                            id={member.id.toString()}
+                            id={member.id?.toString()}
                             alt="avatar"
                             src={member.imageUrl}
                             unoptimized
@@ -44,7 +44,7 @@ const MemberAvatar = ({ member, urlDisabled }: MemberAvatarProps) => {
                 </Tooltip>
             ) : (
                 <Image
-                    id={member.id.toString()}
+                    id={member.id?.toString()}
                     alt="avatar"
                     src="/path/to/fallback-image.png"
                     unoptimized
