@@ -7,14 +7,19 @@ export const textareaStyles = tv({
             sm: 'text-dr-body-5 py-1 h-12',
             md: 'text-dr-body-5 py-2 h-24',
             lg: 'text-dr-body-4 py-3 h-32',
+            fullHeight: 'text-dr-body-4 py-3 h-full',
         },
         fullWidth: {
             true: 'w-full',
             false: 'w-auto',
         },
+        fullHeight: {
+            true: 'h-full',
+            false: '',
+        },
     },
     defaultVariants: {
-        textareaSize: 'md',
+        textareaSize: 'fullHeight',
         fullWidth: true,
     },
 });
