@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import TotalSummary from '@/components/organisms/ModeratorAvatar/TotalSummary';
 import OpenTotalSummaryButton from '@/components/organisms/ModeratorAvatar/OpenTotalSummaryButton';
 import { ConferenceData } from '@/interfaces/conference';
+import { Member } from '@/app/group/[group_id]/_types';
 
 interface ConferenceTemplateProps {
     conferenceInfo: ConferenceData | null;
@@ -40,8 +41,6 @@ export interface SummaryMessageInterface {
 
 const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     const router = useRouter();
-
-    console.log('conferenceInfo => ', conferenceInfo);
 
     // 로그인 여부 확인
     useEffect(() => {
@@ -75,6 +74,15 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
 
     // 조인 상태
     const [isJoined, setIsJoined] = useState<boolean>(false); // 방에 조인되었는지 여부
+
+    // 현재 멤버
+    const [currentMembers, setCurrentMembers] = useState<any[]>([
+        {
+            id: memberData?.id,
+            nickname: memberData?.nickname,
+            imageUrl: memberData?.imageUrl,
+        },
+    ]);
 
     // 시스템에 의한 상태
     const [isMutedBySystem, setIsMutedBySystem] = useState<boolean>(false); // 시스템에 의해 음소거되었는지 여부
@@ -125,6 +133,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             console.log(`2. 피어 오픈됨, 피어아이디->${id}`);
             setMyPeerId(id);
             setIsPeerCreate(true);
+            setExistingPeerIds([id]);
         });
 
         myPeer.current.on('call', (call: any) => {
@@ -133,10 +142,14 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 ?.then((stream) => {
                     call.answer(stream); // Answer the call with an A/V stream.
                     call.on('stream', (remoteStream: MediaStream) => {
+                        console.log('call on stream before', remoteStream);
+                        console.log('call on stream before', existingPeers);
                         setExistingPeers((prevPeers) => ({
                             ...prevPeers,
-                            [remoteStream.id]: remoteStream, // 수신된 스트림을 기존 Peers에 추가
+                            [call.peer]: remoteStream, // 수신된 스트림을 기존 Peers에 추가
                         }));
+                        console.log('call on stream after', remoteStream);
+                        console.log('call on stream after', existingPeers);
                     });
                 });
         });
@@ -193,6 +206,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 remotePeerId, // 호출할 Peer ID에
                 localStream.current as MediaStream, // 로컬 스트림 전달
             );
+
             // 스트림 수신 이벤트 처리
             myCall?.on('stream', (stream) => {
                 setExistingPeers((prevPeers) => ({
@@ -227,8 +241,17 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             });
 
             console.log('조인 결과 => ', response);
+
             const { data } = response.data;
-            data.forEach((remotePeerId: string) => makeCall(remotePeerId));
+
+            setCurrentMembers((prevMembers) => [
+                ...prevMembers,
+                ...data.existingMembers,
+            ]);
+
+            data.existingPeerIds.forEach((remotePeerId: string) =>
+                makeCall(remotePeerId),
+            );
             console.log('모든 피어에 전화 연결 성공 => ', data);
 
             const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
@@ -238,11 +261,12 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
 
             setIsJoined(true);
             console.log('set isJoined => ');
-            setExistingPeerIds([
-                ...existingPeerIds,
-                ...data.data.existingPeerIds,
-            ]); // 방에 존재하는 peerIds 저장
+            setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
         } catch (error) {
+            console.log(
+                'conferenceInfo?.openTime 팅겨져 나가는 원인불명의 이유',
+                conferenceInfo?.openTime,
+            );
             if (!conferenceInfo?.openTime) {
                 router.push(`/conference/${conferenceInfo?.id}/waiting-room`);
             }
@@ -272,12 +296,17 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 <div className="fixed w-full h-[10%] bg-dr-dark-200 ">
                     <ConferenceProgress />
                 </div>
-
                 <div className="h-[10%]"></div>
                 <div className="flex w-full h-[80%]">
                     <div className="flex flex-wrap flex-1 h-[100%]">
                         {Object.keys(existingPeers).map((peerId) => {
-                            console.log(peerId, focusingPeerId);
+                            console.log(
+                                'peerId:',
+                                peerId,
+                                'focusingPeerId:',
+                                focusingPeerId,
+                            );
+
                             return (
                                 <>
                                     <Video
@@ -292,6 +321,8 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                     </div>
 
                     <Signal
+                        currentMembers={currentMembers}
+                        setCurrentMembers={setCurrentMembers}
                         conferenceInfo={conferenceInfo}
                         setFocusingPeerId={setFocusingPeerId}
                         client={client.current}
@@ -305,7 +336,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         memberData={memberData}
                         conferenceId={conferenceInfo?.id || 0}
                         setIsMutedBySystem={setIsMutedBySystem}
-                        setFocusingMemberId={setFocusingMemberId}
                         setIsAvatarSpeaking={setIsAvatarSpeaking}
                         setTimeForAvatarSpeaking={setTimeForAvatarSpeaking}
                         setGPTSummaryBySystem={setGPTSummaryBySystem}
