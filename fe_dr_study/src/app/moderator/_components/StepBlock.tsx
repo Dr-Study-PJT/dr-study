@@ -67,7 +67,7 @@ const blocks: Block[] = [
     {
         id: uuidv4(),
         type: 'block_string_input',
-        content: '',
+        content: '문자열 입력',
     },
     {
         id: uuidv4(),

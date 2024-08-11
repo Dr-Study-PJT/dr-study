@@ -179,7 +179,7 @@ const DroppableBlock: React.FC<{
                 {block.type === 'block_string_input' && (
                     <textarea
                         placeholder="문자열을 입력해주세요."
-                        defaultValue={block.content} // defaultValue로 설정
+                        defaultValue={block.content}
                         onBlur={handleStringChange}
                         className="bg-transparent border-none outline-none text-dr-black bg-violet-50 w-full resize-none h-16 p-2 text-dr-body-4 rounded-md"
                         rows={4}

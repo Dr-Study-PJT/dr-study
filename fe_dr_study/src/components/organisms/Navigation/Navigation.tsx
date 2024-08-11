@@ -25,6 +25,7 @@ import {
 } from './Navigation.types';
 import Tooltip from '../SideBar/Tooltip';
 import { groupAPI, notificationAPI } from '@/app/api/axiosInstanceManager';
+import MemberAvatar from '@/components/molecules/MemberAvatar';
 
 // 알림 읽음 상태로 변경하는 함수
 const handleReadNotification = async (
@@ -549,34 +550,32 @@ const ProfileDropDown = ({
             className="absolute overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 animate-popIn"
         >
             <div className="flex p-[1rem] gap-dr-10 border-b border-dr-gray-500">
-                <div className="relative w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">
-                    <Image
-                        alt="avatar"
-                        src={memberData?.imageUrl}
-                        fill
-                        onClick={toggleDropdown}
-                    />
-                </div>
+                <MemberAvatar member={memberData} />
+
                 <div className="flex-1 text-dr-body-3">
-                    <p className="font-semibold">{memberData?.nickname}</p>
-                    <p className="text-dr-gray-300">{memberData?.email}</p>
+                    <p className="font-semibold text-dr-body-3">
+                        {memberData?.nickname}
+                    </p>
+                    <p className="text-dr-body-4 text-dr-gray-300">
+                        {memberData?.email}
+                    </p>
                 </div>
             </div>
             <ul className="flex flex-col text-dr-body-3">
                 <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
                     <Link
                         href={`/member/${memberData.id}`}
-                        className="flex items-center text-white  hover:bg-dr-dark-100"
+                        className="flex items-center text-dr-gray-200 text-dr-body-4  hover:bg-dr-dark-100"
                     >
                         <Icon icon="person" size="sm" />
                         <p className="min-w-[10rem]">마이페이지</p>
                     </Link>
                 </li>
                 <li
-                    className="flex items-center cursor-pointer hover:bg-dr-dark-100"
+                    className="flex items-center text-dr-gray-200 text-dr-body-4  hover:bg-dr-dark-100 transition-colos duration-300"
                     onClick={onClickSetLogout}
                 >
-                    <button className="text-left block text-white rounded-b-lg hover:bg-dr-dark-100">
+                    <button className="flex items-center text-dr-gray-200 text-dr-body-4  hover:bg-dr-dark-100 transition-colos duration-300">
                         <Icon icon="logout" size="sm" />{' '}
                     </button>
                     <p className="min-w-[10rem]">로그아웃</p>
