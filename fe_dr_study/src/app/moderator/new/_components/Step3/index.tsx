@@ -10,12 +10,29 @@ import DroppableBlock from './DroppableBlock';
 import DroppableArea from './DroppableArea';
 import { v4 as uuidv4 } from 'uuid';
 import { generateScript } from './ScriptGenerator';
+import Tutorial from './Tutorial';
 
 const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     const [droppedBlocks, setDroppedBlocks] = useState<Block[]>([]);
     const [fbScript, setFbScript] = useState<string>('');
     const [blockFilter, setBlockFilter] = useState<string>('전체');
     const leftBlockContainerRef = useRef<HTMLDivElement>(null);
+
+    const [showTutorial, setShowTutorial] = useState(true);
+    const tutorialSteps = [
+        {
+            selector: '.LEFT-BLOCK-CONTAINER',
+            content:
+                '여기에는 사용할 수 있는 블록이 있습니다. 필요한 블록을 드래그하여 사용하세요.',
+        },
+        {
+            selector: '.RIGHT-ASSEMBLY-CONTAINER',
+            content: '여기에 블록을 드롭하여 스크립트를 생성할 수 있습니다.',
+        },
+    ];
+    const handleTutorialClose = () => {
+        setShowTutorial(false);
+    };
 
     const handleDrop = (block: Block, targetBlock?: Block) => {
         const newBlock = { ...block, id: uuidv4() };
@@ -213,6 +230,9 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                 block.type === 'block_iteration_index'
             );
         }
+        if (blockFilter === '편의') {
+            return block.type === 'block_convenience_full_study_speak';
+        }
         return false;
     });
 
@@ -227,194 +247,216 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     }, [fbScript]);
 
     return (
-        <DndProvider backend={HTML5Backend}>
-            <div className="LAYOUT-pageRoot w-[1200px] flex flex-col items-center justify-center h-auto min-h-full">
-                <div className="LAYOUT-formBoxContentsArea border-[1px] bg-dr-indigo-200 border-dr-indigo-100 w-full max-w-[80%] h-auto min-h-full mx-auto p-8 rounded-lg">
-                    <div className="TOTAL-AREA-CONTAINER h-[40rem] overflow-auto flex flex-row w-full min-h-full justify-between">
-                        <div
-                            className="LEFT-BLOCK-CONTAINER w-[38%] h-full  p-4 sticky top-8 self-start rounded-lg"
-                            ref={leftBlockContainerRef}
-                        >
-                            <div className="BLOCK-SWITCH-BUTTONS flex flex-row justify-between h-7 gap-1 mb-2">
-                                <Button
-                                    color={
-                                        blockFilter === '편의'
-                                            ? 'coral'
-                                            : 'gray'
-                                    }
-                                    onClick={() => setBlockFilter('편의')}
-                                >
-                                    편의
-                                </Button>
-                                <Button
-                                    color={
-                                        blockFilter === '전체'
-                                            ? 'coral'
-                                            : 'gray'
-                                    }
-                                    onClick={() => setBlockFilter('전체')}
-                                >
-                                    전체
-                                </Button>
-                                <Button
-                                    color={
-                                        blockFilter === '단계'
-                                            ? 'coral'
-                                            : 'dark'
-                                    }
-                                    onClick={() => setBlockFilter('단계')}
-                                >
-                                    단계
-                                </Button>
-                                <Button
-                                    color={
-                                        blockFilter === '명령'
-                                            ? 'coral'
-                                            : 'dark'
-                                    }
-                                    onClick={() => setBlockFilter('명령')}
-                                >
-                                    명령
-                                </Button>
-                                <Button
-                                    color={
-                                        blockFilter === '변수'
-                                            ? 'coral'
-                                            : 'dark'
-                                    }
-                                    onClick={() => setBlockFilter('변수')}
-                                >
-                                    변수
-                                </Button>
-                            </div>
-                            <div className="LEFT-BLOCKS-BOX bg-dr-indigo-100 rounded-lg w-full h-full flex flex-col gap-2 px-2 py-2">
-                                {filteredBlocks.map((block) => (
-                                    <DraggableBlock
-                                        key={block.id}
-                                        block={block}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                        <div className="DIVIDER-VERTICAL bg-dr-indigo-100 w-[1.5px] rounded-full"></div>
-                        <div className="RIGHT-ASSEMBLY-CONTAINER rounded-md w-[65%] h-full min-h-full bg-dr-indigo-100 p-4">
-                            <DroppableArea onDrop={handleDrop}>
-                                {droppedBlocks.map((block) => (
-                                    <DroppableBlock
-                                        key={block.id}
-                                        block={block}
-                                        onDrop={handleDrop}
-                                        onDelete={deleteBlock}
-                                        onStringInput={handleStringInput}
-                                        onParticipantInput={
-                                            handleParticipantInput
+        <div>
+            {showTutorial && (
+                <Tutorial steps={tutorialSteps} onClose={handleTutorialClose} />
+            )}
+
+            <DndProvider backend={HTML5Backend}>
+                <div className="LAYOUT-pageRoot w-[1200px] flex flex-col items-center justify-center h-auto min-h-full">
+                    <div className="LAYOUT-formBoxContentsArea border-[1px] bg-dr-indigo-200 border-dr-indigo-100 w-full max-w-[80%] h-auto min-h-full mx-auto p-8 rounded-lg">
+                        <div className="TOTAL-AREA-CONTAINER h-[40rem] overflow-auto flex flex-row w-full min-h-full justify-between">
+                            <div
+                                className="LEFT-BLOCK-CONTAINER w-[38%] h-full  p-4 sticky top-3 self-start rounded-lg"
+                                ref={leftBlockContainerRef}
+                            >
+                                <div className="BLOCK-SWITCH-BUTTONS w-full flex flex-col justify-between h-max gap-2 mb-2">
+                                    <Button
+                                        color={
+                                            blockFilter === '편의'
+                                                ? 'coral'
+                                                : 'gray'
                                         }
-                                        onDurationInput={handleDurationInput}
-                                        onLoopInput={handleLoopInput}
+                                        fullWidth
+                                        onClick={() => setBlockFilter('편의')}
+                                        classNameStyles="!h-7"
                                     >
-                                        {block.children &&
-                                            block.children.map((child) => (
-                                                <DroppableBlock
-                                                    key={child.id}
-                                                    block={child}
-                                                    onDrop={handleDrop}
-                                                    onDelete={deleteBlock}
-                                                    onStringInput={
-                                                        handleStringInput
-                                                    }
-                                                    onParticipantInput={
-                                                        handleParticipantInput
-                                                    }
-                                                    onDurationInput={
-                                                        handleDurationInput
-                                                    }
-                                                    onLoopInput={
-                                                        handleLoopInput
-                                                    }
-                                                >
-                                                    {child.children &&
-                                                        child.children.map(
-                                                            (grandchild) => (
-                                                                <DroppableBlock
-                                                                    key={
-                                                                        grandchild.id
-                                                                    }
-                                                                    block={
-                                                                        grandchild
-                                                                    }
-                                                                    onDrop={
-                                                                        handleDrop
-                                                                    }
-                                                                    onDelete={
-                                                                        deleteBlock
-                                                                    }
-                                                                    onStringInput={
-                                                                        handleStringInput
-                                                                    }
-                                                                    onParticipantInput={
-                                                                        handleParticipantInput
-                                                                    }
-                                                                    onDurationInput={
-                                                                        handleDurationInput
-                                                                    }
-                                                                    onLoopInput={
-                                                                        handleLoopInput
-                                                                    }
-                                                                >
-                                                                    {grandchild.children &&
-                                                                        grandchild.children.map(
-                                                                            (
-                                                                                grandgrandchild,
-                                                                            ) => (
-                                                                                <DroppableBlock
-                                                                                    key={
-                                                                                        grandgrandchild.id
-                                                                                    }
-                                                                                    block={
-                                                                                        grandgrandchild
-                                                                                    }
-                                                                                    onDrop={
-                                                                                        handleDrop
-                                                                                    }
-                                                                                    onDelete={
-                                                                                        deleteBlock
-                                                                                    }
-                                                                                    onStringInput={
-                                                                                        handleStringInput
-                                                                                    }
-                                                                                    onParticipantInput={
-                                                                                        handleParticipantInput
-                                                                                    }
-                                                                                    onDurationInput={
-                                                                                        handleDurationInput
-                                                                                    }
-                                                                                    onLoopInput={
-                                                                                        handleLoopInput
-                                                                                    }
-                                                                                ></DroppableBlock>
-                                                                            ),
-                                                                        )}
-                                                                </DroppableBlock>
-                                                            ),
-                                                        )}
-                                                </DroppableBlock>
-                                            ))}
-                                    </DroppableBlock>
-                                ))}
-                            </DroppableArea>
+                                        편의
+                                    </Button>
+                                    <div className="flex flex-row gap-2 w-full justify-between h-7">
+                                        <Button
+                                            color={
+                                                blockFilter === '전체'
+                                                    ? 'coral'
+                                                    : 'gray'
+                                            }
+                                            onClick={() =>
+                                                setBlockFilter('전체')
+                                            }
+                                        >
+                                            전체
+                                        </Button>
+                                        <Button
+                                            color={
+                                                blockFilter === '단계'
+                                                    ? 'coral'
+                                                    : 'dark'
+                                            }
+                                            onClick={() =>
+                                                setBlockFilter('단계')
+                                            }
+                                        >
+                                            단계
+                                        </Button>
+                                        <Button
+                                            color={
+                                                blockFilter === '명령'
+                                                    ? 'coral'
+                                                    : 'dark'
+                                            }
+                                            onClick={() =>
+                                                setBlockFilter('명령')
+                                            }
+                                        >
+                                            명령
+                                        </Button>
+                                        <Button
+                                            color={
+                                                blockFilter === '변수'
+                                                    ? 'coral'
+                                                    : 'dark'
+                                            }
+                                            onClick={() =>
+                                                setBlockFilter('변수')
+                                            }
+                                        >
+                                            변수
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="LEFT-BLOCKS-BOX bg-dr-indigo-100 rounded-lg w-full h-full flex flex-col gap-2 px-2 py-2">
+                                    {filteredBlocks.map((block) => (
+                                        <DraggableBlock
+                                            key={block.id}
+                                            block={block}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="DIVIDER-VERTICAL bg-dr-indigo-100 w-[1.5px] rounded-full"></div>
+                            <div className="RIGHT-ASSEMBLY-CONTAINER rounded-md w-[65%] h-full min-h-full bg-dr-indigo-100 p-4">
+                                <DroppableArea onDrop={handleDrop}>
+                                    {droppedBlocks.map((block) => (
+                                        <DroppableBlock
+                                            key={block.id}
+                                            block={block}
+                                            onDrop={handleDrop}
+                                            onDelete={deleteBlock}
+                                            onStringInput={handleStringInput}
+                                            onParticipantInput={
+                                                handleParticipantInput
+                                            }
+                                            onDurationInput={
+                                                handleDurationInput
+                                            }
+                                            onLoopInput={handleLoopInput}
+                                        >
+                                            {block.children &&
+                                                block.children.map((child) => (
+                                                    <DroppableBlock
+                                                        key={child.id}
+                                                        block={child}
+                                                        onDrop={handleDrop}
+                                                        onDelete={deleteBlock}
+                                                        onStringInput={
+                                                            handleStringInput
+                                                        }
+                                                        onParticipantInput={
+                                                            handleParticipantInput
+                                                        }
+                                                        onDurationInput={
+                                                            handleDurationInput
+                                                        }
+                                                        onLoopInput={
+                                                            handleLoopInput
+                                                        }
+                                                    >
+                                                        {child.children &&
+                                                            child.children.map(
+                                                                (
+                                                                    grandchild,
+                                                                ) => (
+                                                                    <DroppableBlock
+                                                                        key={
+                                                                            grandchild.id
+                                                                        }
+                                                                        block={
+                                                                            grandchild
+                                                                        }
+                                                                        onDrop={
+                                                                            handleDrop
+                                                                        }
+                                                                        onDelete={
+                                                                            deleteBlock
+                                                                        }
+                                                                        onStringInput={
+                                                                            handleStringInput
+                                                                        }
+                                                                        onParticipantInput={
+                                                                            handleParticipantInput
+                                                                        }
+                                                                        onDurationInput={
+                                                                            handleDurationInput
+                                                                        }
+                                                                        onLoopInput={
+                                                                            handleLoopInput
+                                                                        }
+                                                                    >
+                                                                        {grandchild.children &&
+                                                                            grandchild.children.map(
+                                                                                (
+                                                                                    grandgrandchild,
+                                                                                ) => (
+                                                                                    <DroppableBlock
+                                                                                        key={
+                                                                                            grandgrandchild.id
+                                                                                        }
+                                                                                        block={
+                                                                                            grandgrandchild
+                                                                                        }
+                                                                                        onDrop={
+                                                                                            handleDrop
+                                                                                        }
+                                                                                        onDelete={
+                                                                                            deleteBlock
+                                                                                        }
+                                                                                        onStringInput={
+                                                                                            handleStringInput
+                                                                                        }
+                                                                                        onParticipantInput={
+                                                                                            handleParticipantInput
+                                                                                        }
+                                                                                        onDurationInput={
+                                                                                            handleDurationInput
+                                                                                        }
+                                                                                        onLoopInput={
+                                                                                            handleLoopInput
+                                                                                        }
+                                                                                    ></DroppableBlock>
+                                                                                ),
+                                                                            )}
+                                                                    </DroppableBlock>
+                                                                ),
+                                                            )}
+                                                    </DroppableBlock>
+                                                ))}
+                                        </DroppableBlock>
+                                    ))}
+                                </DroppableArea>
+                            </div>
                         </div>
-                    </div>
-                    <div className="w-full h-max flex flex-row justify-end gap-2">
-                        <Button size="md" onClick={onBack} color="dark">
-                            이전으로
-                        </Button>
-                        <Button size="md" onClick={onNext}>
-                            다음으로
-                        </Button>
+                        <div className="w-full h-max flex flex-row justify-end gap-2">
+                            <Button size="md" onClick={onBack} color="dark">
+                                이전으로
+                            </Button>
+                            <Button size="md" onClick={onNext}>
+                                다음으로
+                            </Button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </DndProvider>
+            </DndProvider>
+        </div>
     );
 };
 

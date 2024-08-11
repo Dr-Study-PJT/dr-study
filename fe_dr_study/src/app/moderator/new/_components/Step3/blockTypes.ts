@@ -11,7 +11,8 @@ export type BlockType =
     | 'block_string_input'
     | 'block_getParticipantRecord_recent'
     | 'block_int_variable_num_of_participants'
-    | 'block_iteration_index';
+    | 'block_iteration_index'
+    | 'block_convenience_full_study_speak';
 
 export interface Block {
     id: string;
@@ -21,6 +22,7 @@ export interface Block {
     participant?: string;
     duration?: string;
     loopCount?: string;
+    presetValue?: string;
 }
 
 export const blocks: Block[] = [
@@ -79,6 +81,12 @@ export const blocks: Block[] = [
         type: 'block_iteration_index',
         content: '반복회차 i',
     },
+    {
+        id: uuidv4(),
+        type: 'block_convenience_full_study_speak',
+        content: '전체 스터디원 발표 및 AI 사회자 진행',
+        presetValue: '직전 참가자의 발표가 끝났어. 그 다음을 진행해줘',
+    },
 ];
 
 export const validChildBlocks: Record<BlockType, BlockType[]> = {
@@ -115,4 +123,10 @@ export const validChildBlocks: Record<BlockType, BlockType[]> = {
     block_getParticipantRecord_recent: [],
     block_int_variable_num_of_participants: [],
     block_iteration_index: [],
+    block_convenience_full_study_speak: [
+        'block_flow_phase_1',
+        'block_flow_phase_2',
+        'block_flow_phase_3',
+        'block_flow_phase_4',
+    ],
 };

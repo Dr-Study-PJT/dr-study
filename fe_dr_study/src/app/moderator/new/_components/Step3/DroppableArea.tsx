@@ -34,7 +34,7 @@ const DroppableArea: React.FC<{
             } transition-all duration-300`}
         >
             <div className="text-dr-white font-bold text-dr-body-4 ">
-                {isOver ? '내려놓을 수 있음' : '단계 블록을 추가하세요'}
+                {isOver ? '내려놓으세요.' : '블록을 추가하세요.'}
             </div>
 
             {children}

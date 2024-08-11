@@ -27,16 +27,47 @@ const DroppableBlock: React.FC<{
         accept: 'BLOCK',
         drop: (item: Block, monitor: DropTargetMonitor) => {
             if (!monitor.didDrop()) {
-                if (
-                    block.type === 'block_flow_loop' &&
-                    item.type === 'block_int_variable_num_of_participants'
-                ) {
-                    onLoopInput(block, '현재 총 참여인원 수');
-                } else if (
-                    block.type === 'block_command_letParticipant_speak' &&
-                    item.type === 'block_iteration_index'
-                ) {
-                    onParticipantInput(block, '반복회차 i');
+                if (item.type === 'block_convenience_full_study_speak') {
+                    const loopBlock: Block = {
+                        id: uuidv4(),
+                        type: 'block_flow_loop',
+                        content: '반복 블록',
+                        loopCount: '현재 총 참여인원 수',
+                        children: [
+                            {
+                                id: uuidv4(),
+                                type: 'block_command_letParticipant_speak',
+                                content: '발화 시작',
+                                participant: '반복회차 i',
+                                duration: '30',
+                            },
+                            {
+                                id: uuidv4(),
+                                type: 'block_command_queryToGPT',
+                                content: 'GPT 블록',
+                                children: [
+                                    {
+                                        id: uuidv4(),
+                                        type: 'block_string_input',
+                                        content:
+                                            item.presetValue ||
+                                            '사전 설정된 값',
+                                    },
+                                    {
+                                        id: uuidv4(),
+                                        type: 'block_getParticipantRecord_recent',
+                                        content: '직전 발화자의 발화 내용',
+                                    },
+                                    {
+                                        id: uuidv4(),
+                                        type: 'block_string_input',
+                                        content: '그 다음을 진행해줘',
+                                    },
+                                ],
+                            },
+                        ],
+                    };
+                    onDrop(loopBlock, block);
                 } else if (validChildBlocks[block.type].includes(item.type)) {
                     onDrop({ ...item, id: uuidv4() }, block);
                 } else {
@@ -54,10 +85,8 @@ const DroppableBlock: React.FC<{
         }),
         canDrop: (item: Block) =>
             validChildBlocks[block.type].includes(item.type) ||
-            (block.type === 'block_flow_loop' &&
-                item.type === 'block_int_variable_num_of_participants') ||
-            (block.type === 'block_command_letParticipant_speak' &&
-                item.type === 'block_iteration_index'),
+            (item.type === 'block_convenience_full_study_speak' &&
+                block.type.startsWith('block_flow_phase')),
     });
 
     const dropRef = useRef<HTMLDivElement>(null);
@@ -95,11 +124,12 @@ const DroppableBlock: React.FC<{
         block_flow_loop: 'bg-red-800 hover:bg-red-900',
         block_command_queryToGPT: 'bg-violet-500 hover:bg-violet-600',
         block_command_letParticipant_speak: 'bg-blue-500 hover:bg-blue-600',
-        block_string_input: 'bg-yellow-500 hover:bg-yellow-600',
+        block_string_input: 'bg-violet-300 hover:bg-violet-400',
         block_getParticipantRecord_recent: 'bg-black hover:bg-gray-900',
         block_int_variable_num_of_participants:
             'bg-green-500 hover:bg-green-600',
         block_iteration_index: 'bg-orange-500 hover:bg-orange-600',
+        block_convenience_full_study_speak: 'bg-coral-500 hover:bg-coral-600',
     };
 
     return (
@@ -111,12 +141,12 @@ const DroppableBlock: React.FC<{
                 canDrop ? 'border-2 border-opacity-100' : ''
             } rounded-md w-full my-2 min-h-20 h-auto transition-all duration-300 ${
                 canDrop ? 'pb-12' : 'pb-2'
-            } ${blockColors[block.type]}`} // Apply Tailwind classes
+            } ${blockColors[block.type]}`}
         >
             <div className="flex flex-row h-auto gap-2 justify-between">
                 {block.type !== 'block_string_input' && (
-                    <div className="HEAD rounded-tl-md rounded-br-md font-semibold text-dr-white h-full min-w-[100px] p-1">
-                        {block.content}
+                    <div className="HEAD bg-dr-indigo-200 rounded-tl-md rounded-br-md font-semibold text-dr-white h-full min-w-[80px] p-1">
+                        {block.content === '문자열 입력' ? '' : block.content}
                     </div>
                 )}
 
@@ -134,9 +164,10 @@ const DroppableBlock: React.FC<{
             <div className="CHILDREN h-auto w-full p-2">
                 {block.type === 'block_string_input' && (
                     <textarea
-                        placeholder="입력 후 엔터"
+                        placeholder="문자열을 입력해주세요."
+                        defaultValue={block.content} // defaultValue로 설정
                         onBlur={handleStringChange}
-                        className="bg-transparent border-none outline-none text-dr-black bg-white w-full resize-none h-16 p-2 text-dr-body-4"
+                        className="bg-transparent border-none outline-none text-dr-black bg-violet-50 w-full resize-none h-16 p-2 text-dr-body-4 rounded-md"
                         rows={4}
                     />
                 )}
@@ -151,7 +182,7 @@ const DroppableBlock: React.FC<{
                                     : block.participant || ''
                             }
                             onChange={handleParticipantChange}
-                            className="bg-transparent border-none outline-none text-dr-coral-300 font-semibold text-dr-black bg-white rounded-md w-1/4 text-dr-body-4 text-center"
+                            className="bg-transparent border-none outline-none text-dr-coral-300 font-semibold bg-white rounded-md w-1/4 text-dr-body-4 text-center"
                         />
                         <span>번째 참가자</span>
                         <input
