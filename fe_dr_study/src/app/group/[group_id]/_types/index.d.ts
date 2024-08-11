@@ -42,6 +42,7 @@ export interface GroupWithMembersData {
     memberCapacity: number;
     tags: string[];
     members: Member[];
+    imageId?: number;
 }
 
 export interface ConferenceData {
