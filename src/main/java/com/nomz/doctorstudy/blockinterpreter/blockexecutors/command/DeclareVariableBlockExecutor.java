@@ -19,7 +19,7 @@ public class DeclareVariableBlockExecutor extends BlockExecutor {
     @Override
     protected Object executeAction(List<Object> args) {
         String varName = (String) args.get(0);
-        threadProcessContext.declareVariable(varName);
+        threadProcessContext.get().declareVariable(varName);
         return null;
     }
 }

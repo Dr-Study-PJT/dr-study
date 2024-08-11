@@ -24,7 +24,7 @@ public class SetIntVariableBlockExecutor extends BlockExecutor {
 
         log.debug("key={}, val={}", key, val);
 
-        threadProcessContext.setVariable(key, val);
+        threadProcessContext.get().setVariable(key, val);
 
         return null;
     }

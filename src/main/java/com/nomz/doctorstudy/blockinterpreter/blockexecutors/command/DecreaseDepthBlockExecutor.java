@@ -18,7 +18,7 @@ public class DecreaseDepthBlockExecutor extends BlockExecutor {
 
     @Override
     protected Object executeAction(List<Object> args) {
-        threadProcessContext.decreaseScopeDepth();
+        threadProcessContext.get().decreaseScopeDepth();
         return null;
     }
 }

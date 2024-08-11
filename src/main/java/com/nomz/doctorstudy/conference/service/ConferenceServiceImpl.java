@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.conference.service;
 
-import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
@@ -35,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 
 @Slf4j
@@ -159,7 +157,9 @@ public class ConferenceServiceImpl implements ConferenceService {
             //throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
         }
 
-        roomService.startRoom(conferenceId, conference.getModerator().getProcessor().getScript());
+        // TODO: Finish Callback
+
+        roomService.startRoom(conferenceId, conference.getModerator().getProcessor().getScript(), () -> finishConference(conferenceId));
 
         conference.updateStartTime(LocalDateTime.now());
     }
@@ -179,7 +179,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         conference.updateFinishTime(LocalDateTime.now());
 
-        roomService.finishRoom(conferenceId);
+        roomService.setFinishCallback(conferenceId);
     }
 
     @Override

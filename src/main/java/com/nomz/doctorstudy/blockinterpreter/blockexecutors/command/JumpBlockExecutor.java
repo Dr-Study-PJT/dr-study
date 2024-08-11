@@ -26,11 +26,11 @@ public class JumpBlockExecutor extends BlockExecutor {
             return null;
         }
 
-        int labelIndex = threadProcessContext.getLabelIndex(labelName);
+        int labelIndex = threadProcessContext.get().getLabelIndex(labelName);
 
-        log.debug("jump from {} to {}", threadProcessContext.getCursor(), labelIndex);
+        log.debug("jump from {} to {}", threadProcessContext.get().getCursor(), labelIndex);
 
-        threadProcessContext.setCursor(labelIndex);
+        threadProcessContext.get().setCursor(labelIndex);
 
         return null;
     }

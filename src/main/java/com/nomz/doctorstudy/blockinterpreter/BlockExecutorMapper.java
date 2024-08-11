@@ -34,7 +34,7 @@ public class BlockExecutorMapper {
     private final CalculateBlockExecutor calculateBlockExecutor;
     private final CompareIntBlockExecutor compareIntBlockExecutor;
     private final BooleanToStringBlockExecutor booleanToStringBlockExecutor;
-    private final GPTQueryBlockExecutor gptQueryBlockExecutor;
+    private final GptQueryBlockExecutor gptQueryBlockExecutor;
     private final GetParticipantNameBlockExecutor getParticipantNameBlockExecutor;
     private final GetNumOfParticipantBlockExecutor getNumOfParticipantBlockExecutor;
 

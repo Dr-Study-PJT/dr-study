@@ -18,7 +18,7 @@ public class GetNumOfParticipantBlockExecutor extends BlockExecutor {
 
     @Override
     protected Object executeAction(List<Object> args) {
-        int numOfParticipant = (int) threadProcessContext.getVariable("num_of_participant");
+        int numOfParticipant = (int) threadProcessContext.get().getVariable("num_of_participant");
 
         log.debug("num_of_participant = {}", numOfParticipant);
 

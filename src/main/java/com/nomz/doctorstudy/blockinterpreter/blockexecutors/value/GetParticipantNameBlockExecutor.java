@@ -19,7 +19,7 @@ public class GetParticipantNameBlockExecutor extends BlockExecutor {
     @Override
     protected Object executeAction(List<Object> args) {
         int participantNum = (int) args.get(0);
-        String participantName = (String) threadProcessContext.getVariable("participant_name_" + participantNum);
+        String participantName = (String) threadProcessContext.get().getVariable("participant_name_" + participantNum);
 
         log.debug("name of participant {} is {}", participantNum, participantName);
 

@@ -48,8 +48,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
     protected Object executeAction(List<Object> args) {
         String speechContent = (String) args.get(0);
 
-        log.debug("let avatar speak: {}", speechContent);
-
+        long processId = threadProcessContext.get().getId();
         byte[] speechAudio = externalApiCallService.tts(speechContent, VoiceType.MEN_LOW);
 
         log.debug("let avatar speak: {}", speechContent);
@@ -65,7 +64,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         ProcessLockManager.sleep(processId, audioDurationMills);
         log.debug("thread:{} is being awaken", processId);
 
-        Object numOfParticipantObj = threadProcessContext.getVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
+        Object numOfParticipantObj = threadProcessContext.get().getVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
         if (numOfParticipantObj == null) return null;
 
         int numOfParticipant = (int) numOfParticipantObj;
@@ -90,7 +89,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
     @Override
     public Object executeGetProgramme(List<Object> args) {
-        threadProcessContext.addProgrammeInfo("AI 말하기");
+        threadProcessContext.get().addProgrammeInfo("AI 말하기");
 
         return null;
     }

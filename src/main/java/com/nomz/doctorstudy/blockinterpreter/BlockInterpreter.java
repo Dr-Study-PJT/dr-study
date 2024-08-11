@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -38,10 +37,10 @@ public class BlockInterpreter {
 
         ProcessContext processContext = processManager.getProcessContext(processId);
         threadProcessContext.setProcessContext(processContext);
-        threadProcessContext.setProcessStatus(ProcessStatus.RUNNING);
+        processContext.setStatus(ProcessStatus.RUNNING);
 
-        while (!threadProcessContext.isEndOfBlock()) {
-            Block commandBlock = threadProcessContext.currentBlock();
+        while (!processContext.isEndOfBlock()) {
+            Block commandBlock = processContext.currentBlock();
             Stack<InterpreterContext> stack = new Stack<>();
             stack.push(new InterpreterContext(commandBlock, new ArrayList<>(), 0));
             String methodForDebug = commandBlock.getMethod();
@@ -99,16 +98,16 @@ public class BlockInterpreter {
                 stack.peek().argCursor++;
             }
 
-            threadProcessContext.increaseCursor();
+            processContext.increaseCursor();
         }
 
         if (processMode == ProcessMode.PROGRAMME) {
-            log.info("Block Script Programme\n{}", threadProcessContext.getProgramme());
-            signalTransmitter.transmitSignal(processId, new ProgrammeSignal(threadProcessContext.getProgramme()));
+            log.info("Block Script Programme\n{}", processContext.getProgramme());
+            signalTransmitter.transmitSignal(processId, new ProgrammeSignal(processContext.getProgramme()));
         }
 
-        threadProcessContext.setProcessStatus(ProcessStatus.FINISH);
-        threadProcessContext.releaseProcessContext();
+        processContext.setStatus(ProcessStatus.FINISH);
+        threadProcessContext.removeProcessContext();
 
         log.info("processId={} ended to run", processId);
     }

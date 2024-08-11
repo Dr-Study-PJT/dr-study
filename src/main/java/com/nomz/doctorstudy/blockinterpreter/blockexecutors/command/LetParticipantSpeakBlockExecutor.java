@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.command;
 
+import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.ProcessLockManager;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
@@ -29,10 +30,12 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
         int participantNum = (int) args.get(0);
         int speakTimeLimit = (int) args.get(1);
 
-        long processId = threadProcessContext.getProcessId();
-        String participantName = threadProcessContext.getParticipantName(participantNum);
-        Long memberId = threadProcessContext.getParticipantMemberId(participantNum);
-        Integer numOfParticipant = threadProcessContext.getNumOfParticipant();
+        ProcessContext processContext = threadProcessContext.get();
+
+        long processId = processContext.getId();
+        String participantName = processContext.getParticipantName(participantNum);
+        Long memberId = processContext.getParticipantMemberId(participantNum);
+        Integer numOfParticipant = processContext.getNumOfParticipant();
 
         for (int i=1; i<=numOfParticipant; i++) {
             if (i == memberId) continue;
@@ -57,7 +60,7 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
 
     @Override
     public Object executeGetProgramme(List<Object> args) {
-        threadProcessContext.addProgrammeInfo("참여자 말하기");
+        threadProcessContext.get().addProgrammeInfo("참여자 말하기");
 
         return null;
     }
