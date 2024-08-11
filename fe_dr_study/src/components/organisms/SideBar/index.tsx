@@ -9,7 +9,6 @@ import { RootState } from '@/store';
 import Tooltip from './Tooltip';
 import { fetchConferenceList } from '@/app/group/_components/SectionContents';
 
-// 그룹 인터페이스 정의
 interface Group {
     id: number;
     name: string;
@@ -24,7 +23,61 @@ interface Group {
     memberCapacity: number;
 }
 
-// 내 그룹 정보 가져오기
+interface SidebarTooltipItemProps {
+    id: number;
+    imageUrl: string;
+    title: string;
+    isActive: boolean;
+    onClick: () => void;
+    isLive?: boolean;
+}
+
+const SidebarTooltipItem: React.FC<SidebarTooltipItemProps> = ({
+    imageUrl,
+    title,
+    isActive,
+    onClick,
+    isLive = false,
+}) => {
+    return (
+        <div
+            className={`BUTTON-ITEM relative cursor-pointer w-full flex items-center ${
+                isActive ? 'active' : ''
+            }`}
+            onClick={onClick}
+        >
+            <div
+                className={`FOCUS-MARK absolute left-0 w-[9%] h-[20%] rounded-r-full bg-dr-white opacity-0 ${
+                    isActive
+                        ? 'bg-dr-white h-[70%] opacity-100'
+                        : 'h-[0%] hover:bg-dr-white opacity-0 group-hover:opacity-0 transition-all duration-400'
+                }`}
+            ></div>
+            <Tooltip text={title}>
+                <div className="relative flex-shrink-0 p-[6px] ml-[3px] w-full h-[3rem] flex items-center justify-center">
+                    <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn ">
+                        <Image
+                            className="rounded-[2rem] hover:rounded-[0.7rem] transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100 "
+                            src={imageUrl}
+                            alt={`${title} Image`}
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                        {isLive && (
+                            <div className="CHIP-LIVE absolute bottom-[0.2rem] right-[0.4rem] transform translate-x-1/4 translate-y-1/4 flex items-center border-[0.1rem] border-dr-white bg-black rounded-full py-[0.03rem] pl-[0.2rem] pr-[0.3rem]">
+                                <div className="h-[0.35rem] w-[0.35rem] bg-[#FF0000] rounded-full mr-[0.1rem] animate-pulse" />
+                                <span className="text-white text-[0.4rem] font-bold">
+                                    LIVE
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </Tooltip>
+        </div>
+    );
+};
+
 const getMyGroups = async () => {
     let response = null;
     try {
@@ -36,7 +89,6 @@ const getMyGroups = async () => {
     } catch (error) {
         console.error(error);
     }
-
     return response;
 };
 
@@ -49,34 +101,27 @@ const SideBar = () => {
     const memberData = useSelector((state: RootState) => state.member);
 
     useEffect(() => {
-        const fetchMyGroups = async () => {
+        const fetchData = async () => {
             const myGroups = await getMyGroups();
-            console.log('내 그룹:');
-            console.log(myGroups);
+            console.log('내 그룹:', myGroups);
             setGroups(myGroups);
-        };
 
-        fetchMyGroups();
-
-        const loadMyLiveConferences = async () => {
-            if (!memberData.id) {
-                setConferences([]);
-                return;
+            if (memberData.id) {
+                const fetchedConferences = await fetchConferenceList({
+                    memberId: memberData.id,
+                    isOpened: true,
+                    isClose: false,
+                });
+                console.log('fetchedConferences:', fetchedConferences);
+                setConferences(fetchedConferences);
             }
-            const memberId = memberData?.id;
-            if (!memberId) return;
-            console.log(memberData);
-
-            const fetchedConferences = await fetchConferenceList({
-                memberId,
-                isOpened: true,
-                isClose: false,
-            });
-            console.log('fetchedConferences:', fetchedConferences.data);
-            setConferences(fetchedConferences.data);
         };
 
-        loadMyLiveConferences();
+        fetchData(); // 초기 데이터 로드
+
+        const intervalId = setInterval(fetchData, 10000); // 10초마다 데이터 갱신
+
+        return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 정리
     }, [memberData]);
 
     return (
@@ -90,51 +135,25 @@ const SideBar = () => {
                         const isActive =
                             pathname === `/conference/${conference?.id}`;
                         return (
-                            <div
-                                key={conference?.id}
-                                className={`BUTTON-CONFERENCE relative cursor-pointer w-full flex items-center ${
-                                    isActive ? 'active' : ''
-                                }`}
+                            <SidebarTooltipItem
+                                key={conference.id}
+                                id={conference.id}
+                                imageUrl={conference.imageUrl}
+                                title={conference.title || 'Conference'}
+                                isActive={isActive}
                                 onClick={() =>
-                                    router.push(`/conference/${conference?.id}`)
+                                    router.push(
+                                        `/conference/${conference.id}/waiting-room`,
+                                    )
                                 }
-                            >
-                                <div
-                                    className={`FOCUS-MARK absolute left-0 w-[9%] h-[20%] rounded-r-full bg-dr-white opacity-0 ${
-                                        isActive
-                                            ? 'bg-dr-white h-[70%] opacity-100'
-                                            : 'h-[0%] hover:bg-dr-white opacity-0 group-hover:opacity-0 transition-all duration-400'
-                                    }`}
-                                ></div>
-                                <Tooltip
-                                    text={conference?.title || 'Conference'}
-                                >
-                                    <div className="relative flex-shrink-0 p-[6px] ml-[3px] w-full h-[3rem] flex items-center justify-center">
-                                        <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
-                                            <Image
-                                                className="rounded-[10rem] hover:rounded-[0.7rem] transition-all duration-300"
-                                                src={conference?.imageUrl}
-                                                alt="Conference Image"
-                                                layout="fill"
-                                                objectFit="cover"
-                                            />
-                                            <div className="CHIP-LIVE absolute bottom-[0.2rem] right-[0.4rem] transform translate-x-1/4 translate-y-1/4 flex items-center border-[0.1rem] border-dr-white bg-black rounded-full py-[0.03rem] pl-[0.2rem] pr-[0.3rem]">
-                                                <div className="h-[0.35rem] w-[0.35rem] bg-[#FF0000] rounded-full mr-[0.1rem] animate-pulse" />
-                                                <span className="text-white text-[0.4rem] font-bold">
-                                                    LIVE
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tooltip>
-                            </div>
+                                isLive={true}
+                            />
                         );
                     })}
                 </div>
                 {conferences && (
                     <div className="VERTICAL-DIVIDER h-[3px] bg-[#424549] rounded w-[70%] self-center ml-1"></div>
                 )}
-
                 <div className="LIST-BUTTON-GROUP flex flex-col gap-3">
                     <div className="text-dr-body-4 cursor-default text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
                         내 그룹
@@ -142,36 +161,16 @@ const SideBar = () => {
                     {groups?.map((group) => {
                         const isActive = pathname === `/group/${group.id}`;
                         return (
-                            <div
+                            <SidebarTooltipItem
                                 key={group.id}
-                                className={`BUTTON-GROUP relative cursor-pointer w-full flex items-center ${
-                                    isActive ? 'active' : ''
-                                }`}
+                                id={group.id}
+                                imageUrl={group.imageUrl}
+                                title={group.name}
+                                isActive={isActive}
                                 onClick={() =>
                                     router.push(`/group/${group.id}`)
                                 }
-                            >
-                                <div
-                                    className={`FOCUS-MARK absolute left-0 w-[9%] h-[20%] rounded-r-full bg-dr-white opacity-0 ${
-                                        isActive
-                                            ? 'bg-dr-white h-[70%] opacity-100'
-                                            : 'h-[0%] hover:bg-dr-white opacity-0 group-hover:opacity-0 transition-all duration-500'
-                                    }`}
-                                ></div>
-                                <Tooltip text={group.name}>
-                                    <div className="relative flex-shrink-0 p-[6px] ml-[3px] w-full h-[3rem] flex items-center justify-center">
-                                        <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn">
-                                            <Image
-                                                className="rounded-[10rem] hover:rounded-[0.7rem] transition-all duration-300"
-                                                src={group.imageUrl}
-                                                alt="Group Image"
-                                                layout="fill"
-                                                objectFit="cover"
-                                            />
-                                        </div>
-                                    </div>
-                                </Tooltip>
-                            </div>
+                            />
                         );
                     })}
                 </div>

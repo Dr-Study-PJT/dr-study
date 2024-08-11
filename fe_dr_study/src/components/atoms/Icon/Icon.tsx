@@ -14,8 +14,8 @@ import {
     BsXLg,
     BsFillSendFill,
     BsBoxArrowInRight,
-    BsBell,
     BsBellFill,
+    BsChatDots,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -37,6 +37,7 @@ const iconName: IconKeyValue = {
     send: <BsFillSendFill />,
     logout: <BsBoxArrowInRight />,
     bell: <BsBellFill />,
+    dots: <BsChatDots />,
 };
 
 // Icon 컴포넌트

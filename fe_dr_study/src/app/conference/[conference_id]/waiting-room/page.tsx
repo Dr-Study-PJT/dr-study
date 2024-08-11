@@ -22,6 +22,10 @@ const Page = () => {
         return <div>{inviteesFetchError}</div>; // 오류 메시지 표시
     }
 
+    useEffect(() => {
+        console.log('conferenceInvitees 26번 라인 =>', conferenceInvitees);
+    }, [conferenceInvitees]);
+
     return (
         <ConferenceWaitingRoomTemplate
             memberData={memberData}

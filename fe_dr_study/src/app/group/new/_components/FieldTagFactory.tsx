@@ -7,6 +7,7 @@ import React, {
     SetStateAction,
 } from 'react';
 import { ICreateGroupReq } from '../_types/type';
+import { Label } from '@/components/atoms';
 
 interface FieldTagFactoryProps {
     postMetaInput: ICreateGroupReq;
@@ -70,7 +71,8 @@ const FieldTagFactory: React.FC<FieldTagFactoryProps> = ({
 
     return (
         <div className="flex flex-col gap-2 w-auto">
-            <label className="text-sm text-left">태그</label>
+            <Label htmlFor="">태그</Label>
+
             <div
                 ref={scrollRef}
                 className="flex flex-row justify-start h-11 w-full border-2px border-white rounded-md bg-dr-indigo-100 font-normal overflow-x-hidden white-space-nowrap"

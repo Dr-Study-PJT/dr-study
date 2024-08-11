@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 interface VideoProps {
     existingPeers: Record<string, MediaStream>;
@@ -14,6 +14,10 @@ const Video = ({ existingPeers, peerId, focusing }: VideoProps) => {
     const [displayCount, setDisplayCount] = useState<number>(
         Object.keys(existingPeers).length,
     );
+
+    useEffect(() => {
+        console.log(focusing);
+    }, [focusing]);
 
     const videoDimensions = () => {
         switch (displayCount) {
@@ -38,7 +42,10 @@ const Video = ({ existingPeers, peerId, focusing }: VideoProps) => {
 
     return (
         <div
-            className={`${videoDimensions()} flex border-[1px] border-dr-gray-500 items-center justify-center self-center rounded-lg overflow-hidden ${focusing ? 'border-2 border-blue-500' : ''}`}
+            className={`${videoDimensions()} flex border-[1px] border-dr-gray-500 items-center justify-center self-center rounded-lg overflow-hidden `}
+            style={{
+                border: focusing ? '1px solid #007AFF' : '',
+            }}
         >
             <video
                 ref={(el) => {

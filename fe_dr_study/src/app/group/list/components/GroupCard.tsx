@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaUsers } from 'react-icons/fa';
 import { formatDate, getDateTimePart } from '@/utils/date';
+import { getBackgroundColorRandomPastel } from '@/utils/colors';
 
 interface GroupCardProps {
     id: number;
@@ -27,11 +28,11 @@ const GroupCard: React.FC<GroupCardProps> = ({
 }) => {
     return (
         <Link href={`/group/${id}`} passHref>
-            <div className="GROUP-CARD cursor-pointer relative w-full flex items-start justify-between gap-4 mb-4 bg-dr-indigo-300 hover:bg-dr-indigo-200 transition-all duration-200 rounded-lg h-max min-h-36">
+            <div className="GROUP-CARD cursor-pointer relative w-full flex items-start justify-between gap-4 mb-4 bg-dr-indigo-300 hover:bg-dr-indigo-200 transition-all duration-200 rounded-lg h-max min-h-36 overflow-hidden">
                 <div className="-left-[4.5rem] flex flex-row relative h-36">
-                    <div className="relative w-36 h-36 mr-4 rounded-full overflow-hidden">
+                    <div className="relative w-36 h-36 mr-4 rounded-full overflow-hidden transition-all duration-300">
                         <Image
-                            className="pl-[4.5rem]"
+                            className={`pl-[4.5rem] ${getBackgroundColorRandomPastel()}  transition-colors duration-300`}
                             alt={name}
                             src={imageUrl}
                             layout="fill"

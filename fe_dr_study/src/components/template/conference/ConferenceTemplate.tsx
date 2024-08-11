@@ -14,6 +14,8 @@ import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';
+import TotalSummary from '@/components/organisms/ModeratorAvatar/TotalSummary';
+import OpenTotalSummaryButton from '@/components/organisms/ModeratorAvatar/OpenTotalSummaryButton';
 
 interface ConferenceTemplateProps {
     conferenceId: number;
@@ -30,6 +32,11 @@ export interface ClientInterface {
     streamId: string;
 }
 
+export interface SummaryMessageInterface {
+    message: string;
+    time: string;
+}
+
 const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const route = useRouter();
 
@@ -43,6 +50,9 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         title: '', // 방 제목
         memberCapacity: 0, // 방의 최대 인원 수
     });
+
+    // 세션 스토리지에서 멤버 ID 가져오기
+    const memberData = getSessionStorageItem('memberData');
 
     // stompClient 상태
     const [stompClient, setStompClient] = useState<any>(null);
@@ -58,6 +68,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const [isPeerCreated, setIsPeerCreate] = useState(false); // 내 피어가 생성되었는지 여부
     const [isMadeLocalStream, setIsMadeLocalStream] = useState(false); // 내 로컬 스트림이 생성되었는지 여부
     const [isFlag, setIsFlag] = useState(0); // 플래그 상태 (사용 용도에 따라 다름)
+    const [focusingPeerId, setFocusingPeerId] = useState<string>(''); // 현재 강조할 피어의 ID
 
     // 조인 상태
     const [isJoined, setIsJoined] = useState<boolean>(false); // 방에 조인되었는지 여부
@@ -68,18 +79,18 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     const [isAvatarSpeaking, setIsAvatarSpeaking] = useState<boolean>(false); // 아바타 발화 여부
     const [timeForAvatarSpeaking, setTimeForAvatarSpeaking] =
         useState<number>(0); // 아바타 발화 시간
-    const [gptSummaryBySystem, setGPTSummaryBySystem] =
-        useState<string>('서마리'); // 현재 화면에 표시되는 멤버의 ID
+    const [gptSummaryBySystem, setGPTSummaryBySystem] = useState<string>(''); // 현재 화면에 표시되는 멤버의 ID
     const [isStartRecordingAudio, setIsStartRecordingAudio] =
         useState<boolean>(false); // 오디오 스트림 시작 신호
     const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
 
-    // 세션 스토리지에서 멤버 ID 가져오기
-    const memberData = getSessionStorageItem('memberData');
+    // 전체 메시지
+    const [summaryMessages, setSummaryMessages] = useState<
+        SummaryMessageInterface[]
+    >([]);
 
-    // 피어와 로컬 스트림 참조
-    const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
-    const localStream = useRef<MediaStream | null>(null); // 로컬 미디어 스트림을 참조
+    // 오디오 주소
+    const [audioUrl, setAudioUrl] = useState<string>('');
 
     // 클라이언트 정보 참조
     const client = useRef<ClientInterface>({
@@ -87,6 +98,10 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
         peerId: '', // 클라이언트 피어 ID
         streamId: '', // 클라이언트 스트림 ID
     });
+
+    // 피어와 로컬 스트림 참조
+    const myPeer = useRef<Peer | null>(null); // 내 피어 객체를 참조
+    const localStream = useRef<MediaStream | null>(null); // 로컬 미디어 스트림을 참조
 
     // 구독 목록
     const subscriptionList = useRef<string[]>([]);
@@ -245,24 +260,54 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
     };
 
     return (
-        <div className="flex bg-dr-indigo-200 h-[100%] w-full">
-            <div className="flex flex-col h-full w-full">
+        <div className="flex bg-dr-indigo-200 h-[100%] w-[100%]">
+            <div className="flex flex-col w-full h-full">
                 <div className="fixed w-full h-[10%] bg-dr-dark-200 ">
                     <ConferenceProgress />
                 </div>
 
-                <div className="fixed top-[10%] left-0 flex flex-wrap w-[85%] h-[80%]">
-                    {Object.keys(existingPeers).map((peerId) => (
-                        <>
-                            <Video
-                                key={peerId}
-                                existingPeers={existingPeers}
-                                peerId={peerId}
-                                focusing={memberData?.id === focusingMemberId}
-                            />
-                        </>
-                    ))}
+                <div className="h-[10%]"></div>
+                <div className="flex w-full h-[80%]">
+                    <div className="flex flex-wrap flex-1 h-[100%]">
+                        {Object.keys(existingPeers).map((peerId) => {
+                            console.log(peerId, focusingPeerId);
+                            return (
+                                <>
+                                    <Video
+                                        key={peerId}
+                                        existingPeers={existingPeers}
+                                        peerId={peerId}
+                                        focusing={peerId === focusingPeerId}
+                                    />
+                                </>
+                            );
+                        })}
+                    </div>
+
+                    <Signal
+                        setFocusingPeerId={setFocusingPeerId}
+                        client={client.current}
+                        setSummaryMessages={setSummaryMessages}
+                        setAudioUrl={setAudioUrl}
+                        isJoined={isJoined}
+                        existingPeers={existingPeers}
+                        setExistingPeers={setExistingPeers}
+                        subscriptionList={subscriptionList.current}
+                        stompClient={stompClient}
+                        memberData={memberData}
+                        conferenceId={conferenceId}
+                        setIsMutedBySystem={setIsMutedBySystem}
+                        setFocusingMemberId={setFocusingMemberId}
+                        setIsAvatarSpeaking={setIsAvatarSpeaking}
+                        setTimeForAvatarSpeaking={setTimeForAvatarSpeaking}
+                        setGPTSummaryBySystem={setGPTSummaryBySystem}
+                        timeForAudioRecord={timeForAudioRecord}
+                        setTimeForAudioRecord={setTimeForAudioRecord}
+                        isStartRecordingAudio={isStartRecordingAudio}
+                        setIsStartRecordingAudio={setIsStartRecordingAudio}
+                    />
                 </div>
+                <div className="h-[10%]"></div>
 
                 <div className="fixed left-0 bottom-0 w-full h-[10%] ">
                     <ConferenceControlBar
@@ -277,6 +322,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     />
                     <div className="fixed bottom-[10%] left-[50%] w-[10%]">
                         <ModeratorAvatar
+                            audioUrl={audioUrl}
                             isAvatarSpeaking={isAvatarSpeaking}
                             timeForAvatarSpeaking={timeForAvatarSpeaking}
                             gptSummaryBySystem={gptSummaryBySystem}
@@ -295,27 +341,7 @@ const ConferenceTemplate = ({ conferenceId }: ConferenceTemplateProps) => {
                     컨퍼런스 시작 (방장만)
                 </Button>
             </div>
-
-            <div className="absolute w-[25%] max-w-[20rem] h-[80%] right-0 top-[10%]">
-                <Signal
-                    isJoined={isJoined}
-                    existingPeers={existingPeers}
-                    setExistingPeers={setExistingPeers}
-                    subscriptionList={subscriptionList.current}
-                    stompClient={stompClient}
-                    memberData={memberData}
-                    conferenceId={conferenceId}
-                    setIsMutedBySystem={setIsMutedBySystem}
-                    setFocusingMemberId={setFocusingMemberId}
-                    setIsAvatarSpeaking={setIsAvatarSpeaking}
-                    setTimeForAvatarSpeaking={setTimeForAvatarSpeaking}
-                    setGPTSummaryBySystem={setGPTSummaryBySystem}
-                    timeForAudioRecord={timeForAudioRecord}
-                    setTimeForAudioRecord={setTimeForAudioRecord}
-                    isStartRecordingAudio={isStartRecordingAudio}
-                    setIsStartRecordingAudio={setIsStartRecordingAudio}
-                />
-            </div>
+            <TotalSummary summaryMessages={summaryMessages} />
         </div>
     );
 };

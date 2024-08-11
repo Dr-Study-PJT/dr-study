@@ -1,19 +1,20 @@
 import { tv } from 'tailwind-variants';
 
 export const iconStyles = tv({
-    base: 'p-[6px] rounded-full transition duration-200 relative group', // group 추가
+    base: 'p-[8px] rounded-full transition duration-200 relative group', // group 추가
     variants: {
         cursor: {
             pointer: 'cursor-pointer',
         },
         size: {
             sm: 'text-[19px]',
-            md: 'text-[36px]',
+            md: 'text-[30px]',
             lg: 'text-[48px]',
             xl: 'text-[60px]',
         },
         bg: {
-            blue: 'text-dr-coral-200',
+            blackOpacity: 'bg-dr-black bg-opacity-50',
+            blue: 'bg-dr-coral-200',
             gray: 'bg-dr-gray-200',
             red: 'bg-dr-red',
             none: 'bg-transparent',

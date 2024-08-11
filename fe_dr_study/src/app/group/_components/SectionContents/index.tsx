@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/atoms';
 import { useDispatch } from 'react-redux';
 import { setIsModalOpen, setModalContent } from '@/store/slices/modalSlice';
-import ListConferenceToday from '../ConferenceWithMembers';
+import ListConferenceToday from '../ListConferenceTodays';
 import ArticleListContent from './ArticleListContent';
-import ConferenceHistoryContent from './ConferenceHistoryContent';
 import { ConferenceWithMembersData } from '../../[group_id]/_types';
 import { IConference } from '../../[group_id]/dummy';
 import { GET } from '@/app/api/routeModule';
+import { useRouter } from 'next/navigation';
+import ListConferenceHistoryContent from './ListConfereceHistoryContent';
 
 interface SectionContentsProps {
     groupId: string;
@@ -59,6 +60,7 @@ export const fetchConferenceList = async ({
             isAuth: true,
             revalidateTime: 0,
         });
+        console.log('GET 컨퍼런스 리스트 : ', response.data);
         return await response.data;
     } catch (error) {
         console.error('Error fetching conferences:', error);
@@ -76,6 +78,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     );
     const [conferencesWithMembers, setConferencesWithMembers] = useState([]);
     const dispatch = useDispatch();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchConferences = async () => {
@@ -94,8 +97,9 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
     }, [groupId]);
 
     const handleClickOpenConference = () => {
-        dispatch(setIsModalOpen());
-        dispatch(setModalContent('CreateConferenceForm'));
+        router.push(`/group/${groupId}/newconf`);
+        // dispatch(setIsModalOpen());
+        // dispatch(setModalContent('CreateConferenceForm'));
     };
 
     const renderContent = (activeTab: string, groupId: string) => {
@@ -104,7 +108,7 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                 return <ArticleListContent groupId={groupId} />;
             case '스터디 이력':
                 return (
-                    <ConferenceHistoryContent
+                    <ListConferenceHistoryContent
                         conferences={conferencesWithMembers}
                     />
                 );

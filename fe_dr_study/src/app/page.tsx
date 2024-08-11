@@ -1,12 +1,11 @@
 import Image from 'next/image';
 import React from 'react';
-import { FaUsers } from 'react-icons/fa';
 import { getGroupListBy } from './group/_api/ssr';
 import ButtonWithRouter from './group/_components/ButtonWithRouter';
 import Link from 'next/link';
 import GroupCard from './group/list/components/GroupCard';
 
-const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black overflow-x-hidden`;
+const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black overflow-x-hidden bg-gradient-to-b from-dr-black to-dr-indigo-100`;
 
 export default async function HomePage({}: {}) {
     const response_groupList = await getGroupListBy({ page: 1, size: 5 });
@@ -68,9 +67,9 @@ export default async function HomePage({}: {}) {
                 </div>
             </section>
             <section className="SECTION1-THUMBNAIL w-full h-max flex justify-center items-center p-14">
-                <div className="SECTION-BOX w-full bg-dr-black flex flex-col justify-start gap-8">
+                <div className="SECTION-BOX w-full  flex flex-col justify-start gap-8">
                     <div className="TITLES justify-start items-end flex flex-row gap-4">
-                        <div className="SECTION-TITLE w-max h-max text-dr-header-3 font-bold !text-dr-white">
+                        <div className="SECTION-TITLE w-max h-max text-dr-header-3 font-bold !text-dr-white ">
                             내가 참여중인 스터디.
                         </div>
                         <p className="text-dr-body-4 text-dr-white mb-1">
@@ -85,7 +84,7 @@ export default async function HomePage({}: {}) {
                             </Link>
                         </div>
                     </div>
-                    <div className="CONETENTS w-full h-max">
+                    <div className="CONETENTS w-full h-max bg-dr-indigo-400 p-4 rounded-xl shadow-md">
                         <div className="rounded-lg w-full">
                             {groupList_content
                                 ?.slice(0, 3)
@@ -108,7 +107,7 @@ export default async function HomePage({}: {}) {
             </section>
             <section className="w-full h-max flex flex-row p-14 gap-14">
                 <section className="SECTION1-THUMBNAIL w-full h-max flex justify-center items-center">
-                    <div className="SECTION-BOX w-full bg-dr-black flex flex-col justify-start gap-8">
+                    <div className="SECTION-BOX w-full  flex flex-col justify-start gap-8">
                         <div className="TITLES justify-start items-end flex flex-row gap-4">
                             <div className="SECTION-TITLE w-max h-max text-dr-header-3 font-bold !text-dr-white">
                                 지금 핫한 AI 사회자.
@@ -117,7 +116,7 @@ export default async function HomePage({}: {}) {
                                 Dr. Study의 인기있는 AI 사회자를 만나보세요.
                             </p>
                         </div>
-                        <div className="CONETENTS w-full h-max">
+                        <div className="CONETENTS w-full h-max bg-dr-indigo-400 p-4 rounded-xl shadow-md">
                             <div className="bg-dr-gray-800 rounded-lg">
                                 {groupList_content
                                     ?.slice(0, 3)
@@ -141,7 +140,7 @@ export default async function HomePage({}: {}) {
                     </div>
                 </section>
                 <section className="SECTION1-THUMBNAIL w-full h-max flex justify-center items-center">
-                    <div className="SECTION-BOX w-full bg-dr-black flex flex-col justify-start gap-8">
+                    <div className="SECTION-BOX w-full  flex flex-col justify-start gap-8">
                         <div className="TITLES justify-start items-end flex flex-row gap-4">
                             <div className="SECTION-TITLE w-max h-max text-dr-header-3 font-bold !text-dr-white">
                                 뜻밖의 스터디 발견.
@@ -150,7 +149,7 @@ export default async function HomePage({}: {}) {
                                 이런 스터디는 어떠신가요?
                             </p>
                         </div>
-                        <div className="CONETENTS w-full h-max">
+                        <div className="CONETENTS w-full h-max bg-dr-indigo-400 p-4 rounded-xl shadow-md">
                             <div className="bg-dr-gray-800 rounded-lg">
                                 {groupList_content?.map((group, index) => (
                                     <GroupCard

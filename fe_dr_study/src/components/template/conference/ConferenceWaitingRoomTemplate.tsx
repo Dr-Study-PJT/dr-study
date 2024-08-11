@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import MemberAvatar from '@/components/molecules/MemberAvatar';
+import { FaCrown } from 'react-icons/fa';
 
 interface ConferenceWaitingRoomTemplateProps {
     memberData: IMemberData | null;
@@ -46,6 +48,7 @@ const ConferenceWaitingRoomTemplate = ({
         // 스터디 멤버가 아니거나 컨퍼런스 초대자가 아닌 경우 홈으로 이동
         if (
             conferenceInfo?.hostId !== memberData?.id &&
+            conferenceInvitees.length &&
             !conferenceInvitees.some((invitee) => invitee.id === memberData?.id)
         ) {
             console.log('스터디 멤버가 아닙니다.');
@@ -97,19 +100,25 @@ const ConferenceWaitingRoomTemplate = ({
                         <h3 className="mt-6 text-xl font-semibold">
                             참여자 목록
                         </h3>
-                        <p>호스트 ID: {hostId}</p>
+                        <p>
+                            호스트는 당연히 자동참여해야하는데 초대 손봐주세용:{' '}
+                            {hostId}
+                        </p>
                         {conferenceInvitees.map((invitee) => (
                             <div
                                 key={invitee.id}
-                                className="flex items-center mt-2 gap-dr-5"
+                                className="flex items-center mt-2 gap-dr-5 relative"
                             >
-                                <div className="relative w-10 h-10 rounded-md overflow-hidden">
-                                    <Image
-                                        src={invitee.imageUrl}
-                                        alt={invitee.nickname}
-                                        fill
-                                    />
-                                </div>
+                                {invitee.id === hostId && (
+                                    <FaCrown className="absolute top-[-0.5rem] right-0.5rem text-yellow-400 text-lg z-20" />
+                                )}
+                                <MemberAvatar
+                                    member={{
+                                        id: invitee.id,
+                                        nickname: invitee.nickname,
+                                        imageUrl: invitee.imageUrl,
+                                    }}
+                                />
                                 <div className="text-sm">
                                     <p>
                                         {invitee.nickname}{' '}

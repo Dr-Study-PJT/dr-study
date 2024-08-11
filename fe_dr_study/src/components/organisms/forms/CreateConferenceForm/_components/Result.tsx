@@ -40,20 +40,19 @@ export const FailLottie = () => {
 interface ResultStepProps {
     loading: boolean;
     result?: {
-        id: number | null;
         success: boolean | null;
         description: string;
     };
     successMessage: string;
     failMessage: string;
     onHomeClick: () => void;
-    onSuccessConfirmClick?: () => void;
+    onSuccessConfirmClick: () => void;
     onFailureEditClick: () => void;
 }
 
 const ResultStep = ({
     loading,
-    result = { id: null, success: null, description: '' },
+    result = { success: null, description: '' },
     successMessage,
     failMessage,
     onHomeClick,
@@ -120,9 +119,7 @@ const ResultStep = ({
                         </Button>
                         <Button
                             rounded
-                            onClick={() => {
-                                `/group/${result.id}`;
-                            }}
+                            onClick={onSuccessConfirmClick}
                             fullWidth
                         >
                             로그인

@@ -104,6 +104,9 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
     const profileImageBoxRef = useRef<HTMLDivElement>(null);
 
+    const bellRef = useRef<HTMLDivElement>(null);
+    const notificationRef = useRef<HTMLDivElement>(null);
+
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [notifications, setNotifications] = useState<NotificationData[]>([]);
@@ -140,10 +143,30 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
         }
     }, [dispatch]);
 
+    // notification 외부 클릭 시 닫기
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                notificationRef.current &&
+                bellRef.current &&
+                !notificationRef.current.contains(event.target as Node) &&
+                !bellRef.current.contains(event.target as Node)
+            ) {
+                setIsNotificationOpen(false); // 알림창 닫기
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const onClickSetLogout = async () => {
         removeMemberData();
         dispatch(clearMemberState());
         dispatch(setIsSigned(TIsSigned.F));
+        setDropdownOpen(false);
         queryClient.removeQueries({ queryKey: ['memberData'] });
     };
 
@@ -199,11 +222,11 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                 >
                                     <div
                                         ref={profileImageBoxRef}
-                                        className="relative hover:w-[2.1rem] hover:h-[2.1rem] transition-all duration-300 w-[2rem] h-[2rem] animate-popIn overflow-hidden cursor-pointer"
+                                        className="relative transition-all duration-300 w-[2rem] h-[2rem] animate-popIn overflow-hidden cursor-pointer"
                                     >
                                         <Image
                                             onClick={toggleDropdown}
-                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300"
+                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100"
                                             src={memberData?.imageUrl}
                                             alt="Group Image"
                                             layout="fill"
@@ -223,7 +246,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                             <div
                                 className={`relative text-dr-white rounded-full cursor-pointer`}
                             >
-                                <div onClick={toggleIsNotificationOpen}>
+                                <div
+                                    ref={bellRef}
+                                    onClick={toggleIsNotificationOpen}
+                                >
                                     <Tooltip text={'알림'} direction="bottom">
                                         <Icon
                                             icon="bell"
@@ -246,7 +272,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
 
                             <div className="relative w-7 h-7">
                                 {isNotificationOpen && (
-                                    <div className="absolute w-[15rem] right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200">
+                                    <div
+                                        ref={notificationRef}
+                                        className="absolute animate-popIn w-[15rem] right-0 top-[112%] rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
+                                    >
                                         {notifications?.length > 0 ? (
                                             <ul className="flex flex-col text-dr-body-3 w-full">
                                                 {notifications.map(
@@ -495,6 +524,7 @@ const ProfileDropDown = ({
 }: ProfileDropDownProps) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    // 드롭다운 외부 클릭 시 닫기
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -516,7 +546,7 @@ const ProfileDropDown = ({
     return (
         <div
             ref={dropdownRef}
-            className="absolute overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200"
+            className="absolute overflow-hidden right-0 top-[100%] bg-dr-dark-800 rounded-lg shadow-lg z-20 border text-dr-white bg-dr-dark-300 border-dr-dark-200 animate-popIn"
         >
             <div className="flex p-[1rem] gap-dr-10 border-b border-dr-gray-500">
                 <div className="relative w-[2.5rem] h-[2.5rem] rounded-full overflow-hidden">
@@ -535,7 +565,7 @@ const ProfileDropDown = ({
             <ul className="flex flex-col text-dr-body-3">
                 <li className="flex items-center cursor-pointer hover:bg-dr-dark-100">
                     <Link
-                        href={`/members/${memberData.id}`}
+                        href={`/member/${memberData.id}`}
                         className="flex items-center text-white  hover:bg-dr-dark-100"
                     >
                         <Icon icon="person" size="sm" />

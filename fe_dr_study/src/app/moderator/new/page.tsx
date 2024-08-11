@@ -10,7 +10,7 @@ import { ICreateModeratorReq } from '../_types';
 import { createModerator } from '../_api/csr';
 import { useRouter } from 'next/navigation';
 
-const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full min-h-full h-max bg-gray-800 py-12`;
+const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full min-h-full h-max bg-dr-indigo-300 py-12`;
 const containerStyles = `CONTAINER-FORM min-w-[60%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
 
 const steps = [

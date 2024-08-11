@@ -16,7 +16,7 @@ const GroupApplyButton: React.FC<GroupApplyButtonProps> = ({ groupId }) => {
     const onClickApplyHandler = async () => {
         await postGroupApply({
             studyGroupId: parseInt(groupId),
-            message: message,
+            applyMessage: message,
         });
         setModalIsOpen(false);
     };
@@ -62,10 +62,10 @@ export default GroupApplyButton;
 
 const postGroupApply = async ({
     studyGroupId,
-    message,
+    applyMessage,
 }: {
     studyGroupId: number;
-    message: string;
+    applyMessage: string;
 }) => {
     try {
         const response = await POST({
@@ -74,7 +74,7 @@ const postGroupApply = async ({
             isAuth: true,
             body: {
                 groupId: studyGroupId,
-                message,
+                applyMessage,
             },
         });
         return response.data.data;

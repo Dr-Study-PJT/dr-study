@@ -4,6 +4,10 @@ import { Button } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
 import Image from 'next/image';
 import { Client } from 'stompjs';
+import {
+    ClientInterface,
+    SummaryMessageInterface,
+} from '@/components/template/conference/ConferenceTemplate';
 
 interface Message {
     id: number;
@@ -18,9 +22,16 @@ interface SignalInterface {
     time?: number; // 발화 시간 또는 아바타 움직임 시간
     content?: string; // GPT 요약
     peerId?: string; // 방송 종료 시 peerId
+    audioUrl?: string; // 오디오 파일 경로
+    next?: number; // 다음 발화자
+    programme?: any;
 }
 
 interface SignalProps {
+    setFocusingPeerId: Dispatch<SetStateAction<string>>;
+    client: ClientInterface;
+    setSummaryMessages: Dispatch<SetStateAction<SummaryMessageInterface[]>>;
+    setAudioUrl: Dispatch<SetStateAction<string>>;
     isJoined: boolean;
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
@@ -40,6 +51,10 @@ interface SignalProps {
 }
 
 const Signal = ({
+    setFocusingPeerId,
+    client,
+    setSummaryMessages,
+    setAudioUrl,
     isJoined,
     existingPeers,
     setExistingPeers,
@@ -72,26 +87,30 @@ const Signal = ({
         // 소켓 연결
         const connectSocket = () => {
             console.log('memberId before connect SockJS', memberData.id);
-            stompClient?.connect({ memberId: 'abc' }, () => {
-                if (stompClient?.connected) {
-                    subscribeToMessages();
-                    subscribeToSignals();
+            stompClient?.connect(
+                { memberId: memberData.id, roomId: conferenceId },
+                () => {
+                    if (stompClient?.connected) {
+                        subscribeToMessages();
+                        subscribeToSignals();
 
-                    heartbeatInterval = setInterval(() => {
-                        sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
-                    }, 10000); // 10초
-                }
-            });
+                        // 10초마다 생존 신고 전송
+                        // heartbeatInterval = setInterval(() => {
+                        //     sendHeartbeat(memberData?.id); // memberId는 현재 멤버의 ID로 설정해야 합니다.
+                        // }, 10000); // 10초
+                    }
+                },
+            );
         };
         if (isJoined) {
             connectSocket();
         }
         // 컴포넌트 언마운트 시 interval 클리어
-        if (!!stompClient && !stompClient.connected) {
-            return () => {
-                clearInterval(heartbeatInterval);
-            };
-        }
+        // if (!!stompClient && !stompClient.connected) {
+        //     return () => {
+        //         clearInterval(heartbeatInterval);
+        //     };
+        // }
     }, [isJoined]);
 
     // URL 생성 함수
@@ -115,6 +134,7 @@ const Signal = ({
         subscribeToSignal('gpt-summary', handleGPTSummarySignal);
         subscribeToSignal('next-step', handleNextStepSignal);
         subscribeToSignal('heartstop', handleHeartstop);
+        subscribeToSignal('programme', handleProgramme);
     };
 
     // 신호 수신을 위한 구독 함수
@@ -158,12 +178,19 @@ const Signal = ({
 
     // 발화 신호 처리
     const handleParticipantSpeakSignal = (newSignal: SignalInterface) => {
-        setFocusingMemberId(newSignal.id as number); // 발화자 id로 포커싱
-        setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 타이머
-        setIsStartRecordingAudio(true); // 오디오 녹음 시작
-        console.log(
-            `handleParticipantSpeakSignal: 멤버(${newSignal.id}) => 화면 포커싱, 오디오 스트림 타이머 실행 + 오디오 녹음 시작 + 버퍼를 서버로 전송`,
-        );
+        // newSignal.id 라는 멤버 아이디를 가진 사람의 피어 아이디를 focusingPeerId
+        console.log(client.memberId, newSignal.id?.toString());
+        if (client.memberId === newSignal.id?.toString()) {
+            setFocusingPeerId(client.peerId);
+        }
+        if (parseInt(client.memberId) === newSignal.id) {
+            setFocusingMemberId(newSignal.id as number); // 발화자 id로 포커싱
+            setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 타이머
+            setIsStartRecordingAudio(true); // 오디오 녹음 시작
+            console.log(
+                `handleParticipantSpeakSignal: 멤버${memberData} (${newSignal.id}) => 화면 포커싱, 오디오 스트림 타이머 실행 + 오디오 녹음 시작 + 버퍼를 서버로 전송`,
+            );
+        }
     };
 
     // 아바타 발화 신호 처리
@@ -172,15 +199,13 @@ const Signal = ({
         console.log('setTimeOut 시작 전');
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
         setTimeForAvatarSpeaking(newSignal.time as number);
+        setAudioUrl(newSignal.audioUrl as string); // 오디오 URL 설정
         // 아바타 발화는 해당 시간 동안만 수행
-        setTimeout(
-            () => {
-                console.log('setTimeOut 시작 됨');
-                setIsAvatarSpeaking(false);
-                setTimeForAvatarSpeaking(0);
-            },
-            (newSignal.time as number) * 1000,
-        );
+        setTimeout(() => {
+            console.log('setTimeOut 시작 됨');
+            setIsAvatarSpeaking(false);
+            setTimeForAvatarSpeaking(0);
+        }, newSignal.time as number);
         console.log(
             `handleAvatarSpeakSignal: 사회자 아바타 => 발화 상태로 ${newSignal.time}초 동안 전환 + Audio 실행 (S3 기능 구현 대기중)`,
         );
@@ -189,14 +214,31 @@ const Signal = ({
     // GPT 요약 신호 처리
     const handleGPTSummarySignal = (newSignal: SignalInterface) => {
         setGPTSummaryBySystem(newSignal.content as string); // 요약 내용 설정
+
+        setSummaryMessages((prevMessages) => [
+            ...prevMessages,
+            {
+                message: newSignal.content || '[올바르지 않은 문자열]',
+                time: new Date().toLocaleTimeString(),
+            }, // content가 undefined일 경우 빈 문자열로 대체
+        ]); // undefined 또는 빈 문자열 제거
+
         console.log(
             `handleGPTSummarySignal: 요약 메시지 전달 => \n ${newSignal.content}`,
         );
     };
 
     // 다음 발화자 신호 처리
-    const handleNextStepSignal = () => {
-        console.log(`handleNextStepSignal: 다음 스텝 표시 (구현중)`);
+    const handleNextStepSignal = (newSignal: SignalInterface) => {
+        console.log(`handleNextStepSignal: 다음 스텝 표시`, newSignal.next);
+    };
+
+    // 신호 단계 신호 처리
+    const handleProgramme = (newSignal: SignalInterface) => {
+        console.log('newSignal.programme:', newSignal.programme);
+        JSON.parse(newSignal.programme as string);
+
+        console.log(`handleProgramme: 다음 스텝 표시`, newSignal.next);
     };
 
     // 방송 종료 신호 처리
@@ -240,23 +282,8 @@ const Signal = ({
         }
     };
 
-    // 10초마다 생존 신고
-    const sendHeartbeat = (id: number) => {
-        if (stompClient) {
-            // Stomp 클라이언트가 존재할 때
-            stompClient?.send(
-                `/pub/signal/${conferenceId}/heartbeat`, // 메시지를 보낼 경로
-                {},
-                JSON.stringify({
-                    id: id, // 송신자 ID
-                }),
-            );
-            setMessage(''); // 메시지 입력 필드 초기화
-        }
-    };
-
     return (
-        <div className="flex flex-col h-full bg-dr-dark-300 p-[0.5rem]">
+        <div className="flex flex-col w-1/5 h-full bg-dr-dark-300 p-[0.5rem]">
             <div
                 ref={messagesEndRef}
                 className="flex h-full w-full overflow-y-scroll"
@@ -328,13 +355,14 @@ const Signal = ({
                 </Button>
             </form>
 
-            <div className="fixed left-8 bottom-8 p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40">
+            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40">
                 <Recorder
                     conferenceId={conferenceId}
                     memberId={memberData?.id}
                     stompClient={stompClient}
                     timeForAudioRecord={timeForAudioRecord}
                     setTimeForAudioRecord={setTimeForAudioRecord}
+                    setFocusingMemberId={setFocusingMemberId}
                     isStartRecordingAudio={isStartRecordingAudio}
                 />
             </div>

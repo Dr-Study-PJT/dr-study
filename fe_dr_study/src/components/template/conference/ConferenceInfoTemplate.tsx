@@ -43,7 +43,7 @@ const ConferenceInfoTemplate = ({
 
     return (
         <div className="flex items-center justify-center p-[6rem] bg-dr-indigo-200 text-dr-white ">
-            <div className="flex flex-col gap-dr-5 w-full max-w-[80%] h-full border-2 border-dr-gray-500 p-4 rounded-md p-[2rem] max-w-[50rem] ">
+            <div className="flex flex-col gap-dr-5 w-full h-full border-2 border-dr-gray-500 p-4 rounded-md p-[2rem] max-w-[50rem] ">
                 <div className="flex">
                     <div className="flex-1 rounded-lg">
                         <h2 className="text-dr-header-3 font-bold mb-2 text-dr-primary ">

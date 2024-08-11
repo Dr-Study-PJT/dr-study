@@ -1,20 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import './mod.css';
+import { Button } from '@/components/atoms';
+import OpenTotalSummaryButton from './OpenTotalSummaryButton';
 
 interface ModeratorAvatarProps {
     isAvatarSpeaking: boolean;
     timeForAvatarSpeaking: number;
     gptSummaryBySystem: string;
+    audioUrl: string;
 }
 
 const ModeratorAvatar = ({
     isAvatarSpeaking,
     timeForAvatarSpeaking,
     gptSummaryBySystem,
+    audioUrl,
 }: ModeratorAvatarProps) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
+    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         if (isAvatarSpeaking) {
@@ -23,12 +28,14 @@ const ModeratorAvatar = ({
                 isAvatarSpeaking,
             );
             setIsHovered(true);
+            // audio.play();
         } else {
             console.log(
                 'isAvatarSpeaking else (false) line => ',
                 isAvatarSpeaking,
             );
             setIsHovered(false);
+            // audio.pause(); // 오디오 일시 정지
         }
     }, [isAvatarSpeaking, timeForAvatarSpeaking]);
 
@@ -41,6 +48,21 @@ const ModeratorAvatar = ({
             timeForAvatarSpeaking,
         );
     }, [setIsHovered]);
+
+    useEffect(() => {
+        if (audioUrl) {
+            console.log('audioUrl: ', audioUrl);
+            setAudio(new Audio(audioUrl));
+        }
+    }, [audioUrl]);
+
+    useEffect(() => {
+        setAudio(
+            new Audio(
+                'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/audio_avatar_1.mp3',
+            ),
+        );
+    }, []);
 
     return (
         <div
@@ -77,6 +99,7 @@ const ModeratorAvatar = ({
             <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
                 {gptSummaryBySystem}
             </div>
+            <Button onClick={() => audio?.play()}>오디오 플레이</Button>
         </div>
     );
 };

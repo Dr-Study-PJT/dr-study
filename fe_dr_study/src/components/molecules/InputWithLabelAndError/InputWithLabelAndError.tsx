@@ -27,8 +27,8 @@ export const InputWithLabelAndError = React.forwardRef<
         const errorMessage = typeof error === 'string' ? error : error?.message;
         return (
             <div className={fullWidth ? 'w-full' : 'w-max'}>
-                <div className="flex flex-col gap-1">
-                    <Label htmlFor={id} className={labelClassName}>
+                <div className="flex flex-col gap-1 ">
+                    <Label htmlFor={id} className={`${labelClassName}`}>
                         {label}
                     </Label>
                     <div className="flex flex-col">
