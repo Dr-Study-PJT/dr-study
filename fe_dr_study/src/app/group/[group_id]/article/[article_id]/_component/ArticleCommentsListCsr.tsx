@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Span } from '@/components/atoms';
 import { CommentData } from '../_types';
@@ -30,6 +32,10 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     const [editContent, setEditContent] = useState<string>('');
     const data = getSessionStorageItem('memberData') || {};
 
+    useEffect(() => {
+        setCommentList(comments);
+    }, [comments]);
+
     const updateCommentList = (updatedComment: CommentData) => {
         setCommentList((prev) =>
             prev.map((comment) =>
@@ -38,6 +44,7 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                     : comment,
             ),
         );
+        console.log('Updated commentList:', commentList);
     };
 
     const handleDelete = async (commentId: number) => {

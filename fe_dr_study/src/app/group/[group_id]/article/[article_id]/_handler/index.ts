@@ -11,14 +11,14 @@ export const handleCommentSubmit = async (data: any, articleId: number) => {
         const response = await postingComment(articleId, {
             content: data.comment_content,
         });
-        console.log('handleCommentSubmit에서 확인용', response);
-
+        console.log('handleCommentSubmit에서 확인용:', response);
         return response.data;
     } catch (error) {
         console.error('댓글 작성 실패', error);
         throw error;
     }
 };
+
 
 export const handleCommentUpdate = async (
     commentId: number,

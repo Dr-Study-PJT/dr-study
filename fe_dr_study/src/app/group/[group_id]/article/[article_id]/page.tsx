@@ -1,6 +1,6 @@
 import { fetchingArticle } from './_api/ssr';
 import ArticleDetail from './_component/ArticleDetailSsr';
-import {ArticleComments }from './_component/ArticleCommentsMerged';
+import { ArticleComments } from './_component/ArticleCommentsMerged';
 
 export default async function ArticleDetailPage({
     params,
@@ -17,11 +17,13 @@ export default async function ArticleDetailPage({
         throw new Error('Article not found');
     }
 
+    const memberInfo = article.memberInfo; // memberInfo 가져오기
+
     return (
         <div className="w-full h-full bg-dr-indigo-100">
             <div className="flex flex-col justify-center items-center content-center p-[5rem]">
                 <ArticleDetail article={article} />
-                <ArticleComments article={article} />
+                <ArticleComments article={article} memberInfo={memberInfo} />
             </div>
         </div>
     );

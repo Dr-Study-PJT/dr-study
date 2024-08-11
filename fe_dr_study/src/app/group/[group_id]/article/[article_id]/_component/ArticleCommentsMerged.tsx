@@ -1,30 +1,25 @@
 'use client';
-
 import React, { useState } from 'react';
 import ArticleCommentsList from './ArticleCommentsListCsr';
 import ArticleCommentsForm from './ArticleCommentsFormCsr';
-import { CommentData, ArticleData } from '../_types';
+import { CommentData, ArticleData, Member } from '../_types';
 
 interface ArticleCommentsProps {
     article: ArticleData;
+    memberInfo: Member;
 }
 
-export const ArticleComments = ({ article }: ArticleCommentsProps) => {
+export const ArticleComments = ({
+    article,
+    memberInfo,
+}: ArticleCommentsProps) => {
     const [comments, setComments] = useState<CommentData[]>(
         article.comments || [],
     );
 
-    const handleCommentSubmitted = (comment: CommentData) => {
-        if (comment?.data?.commentId) {
-            setComments((prevComments) => [...prevComments, comment]);
-        } else {
-            console.error('Invalid comment:', comment);
-        }
+    const handleCommentSubmitted = (newComment: CommentData) => {
+        setComments((prevComments) => [...prevComments, newComment]);
     };
-
-    if (!article) {
-        return <p>Loading...</p>;
-    }
 
     return (
         <div className="w-full">
@@ -33,6 +28,8 @@ export const ArticleComments = ({ article }: ArticleCommentsProps) => {
                 onCommentSubmitted={handleCommentSubmitted}
                 initialContent=""
                 imageUrl={article.memberInfo.imageUrl}
+                memberInfo={memberInfo}
+                setComments={setComments}
             />
             {comments.length > 0 && <ArticleCommentsList comments={comments} />}
         </div>

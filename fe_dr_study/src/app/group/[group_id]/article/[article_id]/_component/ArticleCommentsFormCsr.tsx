@@ -11,7 +11,7 @@ import { Box } from '@/components/atoms/Box/Box';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { handleCommentSubmit } from '../_handler';
-import { CommentData } from '../_types';
+import { CommentData, Member } from '../_types';
 import Image from 'next/image';
 
 interface CommentFormProps {
@@ -87,6 +87,8 @@ interface ArticleCommentsFormProps {
     onCommentSubmitted: (comment: CommentData) => void;
     initialContent: string;
     imageUrl: string;
+    memberInfo: Member;
+    setComments: React.Dispatch<React.SetStateAction<CommentData[]>>;
 }
 
 const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
@@ -94,6 +96,8 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
     onCommentSubmitted,
     initialContent,
     imageUrl,
+    memberInfo,
+    setComments,
 }) => {
     const {
         register,
@@ -105,8 +109,18 @@ const ArticleCommentsForm: React.FC<ArticleCommentsFormProps> = ({
 
     const onSubmit = async (data: any) => {
         try {
-            const newComment = await handleCommentSubmit(data, articleId);
-            onCommentSubmitted(newComment);
+            const response = await handleCommentSubmit(data, articleId);
+            console.log('newComment:', response);
+
+            const newComment: CommentData = {
+                id: response.data.commentId,
+                content: data.comment_content,
+                createdAt: new Date().toISOString(),
+                memberInfo: memberInfo,
+                data: { commentId: response.data.commentId },
+            };
+
+            setComments((prevComments) => [...prevComments, newComment]);
             reset();
         } catch (error) {
             console.error('댓글 작성 실패', error);

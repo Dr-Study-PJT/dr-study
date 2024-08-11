@@ -4,7 +4,7 @@ import React from 'react';
 import { Box } from '@/components/atoms/Box/Box';
 import { Heading, Span } from '@/components/atoms';
 import { ArticleData } from '../_types';
-import ArticleCommentsForm from './ArticleCommentsFormCsr'; // 추가
+import ArticleDropdownButton from './ArticleDropdownButton';
 
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
@@ -23,13 +23,19 @@ interface ArticleDetailProps {
 const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
     return (
         <Box className="w-full" variant="articleDetail">
-            <Heading
-                variant="h2"
-                color="white"
-                className="flex flex-row justify-center items-center"
-            >
-                {article.title ? article.title : '제목 없음'}
-            </Heading>
+            <div className="relative w-full flex flex-row justify-center items-center">
+                <Heading
+                    variant="h2"
+                    color="white"
+                    className="flex justify-center items-center"
+                >
+                    {article.title ? article.title : '제목 없음'}
+                </Heading>
+
+    Drop
+</div>
+
+
             <Box
                 variant="articleCreateAtAndViews"
                 className="flex flex-row justify-between"
@@ -47,7 +53,6 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                     {article.content}
                 </Span>
             </Box>
-
         </Box>
     );
 };
