@@ -62,9 +62,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
             image = imageRepository.findById(1L)
                     .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
         }
-        if(request.getDueDate() != null && request.getDueDate().isBefore(LocalDate.from(LocalDate.now()))){
-            throw new BusinessException(StudyGroupErrorCode.DUE_DATE_PAST_ERROR);
-        }
 
         StudyGroup studyGroup = StudyGroup.builder()
                 .name(request.getName())
