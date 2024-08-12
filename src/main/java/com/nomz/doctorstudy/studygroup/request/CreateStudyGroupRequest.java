@@ -26,7 +26,7 @@ public class CreateStudyGroupRequest {
     @Schema(description = "스터디 그룹 설명", example = "정보처리기사 합격을 위한 스터디입니다.")
     private String description;
 
-    @Schema(description = "스터디 종료 날짜", example = "2024-07-22")
+    @Schema(description = "스터디 종료 날짜", example = "2025-07-22")
     private LocalDate dueDate;
 
     @NotNull(message = "스터디 인원은 반드시 포함되어야 합니다.")

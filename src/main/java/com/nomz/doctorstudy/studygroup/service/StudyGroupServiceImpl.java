@@ -28,7 +28,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,6 +62,10 @@ public class StudyGroupServiceImpl implements StudyGroupService {
             image = imageRepository.findById(1L)
                     .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
         }
+        if(request.getDueDate() != null && request.getDueDate().isBefore(LocalDate.from(LocalDate.now()))){
+            throw new BusinessException(StudyGroupErrorCode.DUE_DATE_PAST_ERROR);
+        }
+
         StudyGroup studyGroup = StudyGroup.builder()
                 .name(request.getName())
                 .image(image)
