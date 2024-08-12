@@ -1,3 +1,26 @@
+// conference: {
+//     moderatorInfo: {
+//         id: number,
+//         name: string,
+//         description,
+//         avatarId:
+//         avatarModelType
+//         avatarVoiceType
+//         avatarCharactorType
+//     }
+// }
+// moderator : {
+//     id
+//     name
+//     description
+//     prePrompt
+//     script
+//     createdAt
+//     creator: {
+//         멤버규약
+//     }
+// }
+
 export interface ConferenceData {
     id: number;
     hostId: number;
@@ -11,6 +34,16 @@ export interface ConferenceData {
     finishTime: Date | null;
     imageUrl: string;
     participants: Participant[];
+    moderatorInfo: IModeratorInConf;
+}
+export interface IModeratorInConf {
+    id: number;
+    name: string;
+    description: string;
+    avatarId: number;
+    avatarModelType: string;
+    avatarVoiceType: string;
+    avatarCharacterType: string;
 }
 
 export interface Participant {

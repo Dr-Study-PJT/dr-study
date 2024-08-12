@@ -98,7 +98,7 @@ const ConferenceControlBar = ({
     };
 
     return (
-        <div className="flex justify-center bg-dr-dark-200  gap-dr-10 h-full">
+        <div className="relative z-50 flex justify-center bg-dr-dark-200  gap-dr-10 h-full">
             <button className="cursor-auto" onClick={toggleVideo}>
                 {videoEnabled ? (
                     <Icon

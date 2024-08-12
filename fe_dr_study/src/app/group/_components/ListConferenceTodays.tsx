@@ -85,8 +85,8 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
 
     return (
         <div className="LIST-CONFERENCE-TODAY space-y-4">
-            {todayConferences.length > 0 ? (
-                todayConferences.map((conference, index) => (
+            {todayConferences?.length > 0 ? (
+                todayConferences?.map((conference, index) => (
                     <div
                         key={index}
                         onClick={() => handleConferenceClick(conference)}
