@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -97,10 +99,18 @@ public class FastApiCallService implements ExternalApiCallService{
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             log.debug("received stt response from FastAPI server, response={}", response);
 
-            return response.getBody();
+            String responseBody = response.getBody();
+            if (responseBody != null) {
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                return jsonNode.get("transcribed_fixed_text").asText();
+            } else {
+                return null;
+            }
         }catch(ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
