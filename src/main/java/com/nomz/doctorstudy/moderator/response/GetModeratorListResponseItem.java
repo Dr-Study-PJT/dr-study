@@ -20,7 +20,7 @@ public class GetModeratorListResponseItem {
         return builder()
                 .id(moderator.getId())
                 .name(moderator.getName())
-                //TODO: 임시 멤버 null 설정 .creatorId(moderator.getCreator().getId())
+                .creatorId(moderator.getCreator().getId())
                 .voiceType(moderator.getAvatar().getVoiceType())
                 .characterType(moderator.getAvatar().getCharacterType())
                 .modelType(moderator.getAvatar().getModelType())
