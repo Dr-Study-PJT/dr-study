@@ -22,11 +22,12 @@ public class ProcessManager {
         ProcessContext processContext = processContextMap.get(processId);
 
         if (processContext != null && processContext.getStatus() == ProcessStatus.RUNNING) {
-            throw new BlockException(BlockErrorCode.PROCESS_ALREADY_RUNNING);
+            log.warn("Enabled force restart for debugging");
+            //throw new BlockException(BlockErrorCode.PROCESS_ALREADY_RUNNING);
         }
 
         if (processContext != null && processContext.getStatus() == ProcessStatus.NORMAL_RUN_FINISH) {
-            log.warn("디버깅을 위해 다시 시작할 수 있도록 되어있습니다. 문제가 해결되면 재시작 불가능하도록 수정해주세요.");
+            log.warn("Enabled restart for debugging");
             processContextMap.remove(processId);
         }
 

@@ -187,6 +187,8 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_FINISHED);
         }
 
+        roomService.finishRoom(conferenceId);
+
         conference.updateFinishTime(LocalDateTime.now());
     }
 

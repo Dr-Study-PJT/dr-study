@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 public class FastApiCallService implements ExternalApiCallService{
 
     //@Value("${fast-api.url}")
-    private String baseUrl = "http://localhost:8000";
+    private String baseUrl = "http://192.168.100.149:8000";
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private RestTemplate restTemplate;

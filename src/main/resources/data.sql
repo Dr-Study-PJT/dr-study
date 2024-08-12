@@ -119,7 +119,6 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                     loop (1) {
                         let_participant_speak(1, 5000);
                         log(get_recent_participant_speak(1));
-                        let_avatar_speak(get_recent_participant_speak(1));
                     }
                 }
 ",

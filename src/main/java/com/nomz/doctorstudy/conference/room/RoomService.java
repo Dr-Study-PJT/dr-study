@@ -29,6 +29,7 @@ import java.util.function.Consumer;
 public class RoomService {
     private final Map<Long, Map<Long, RoomParticipantInfo>> existingParticipantMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, CompletableFuture<Void>> processThreadMap = new ConcurrentHashMap<>();
     private final WebSocketSessionManager webSocketSessionManager;
 
     private final ProcessManager processManager;
@@ -88,17 +89,26 @@ public class RoomService {
                 existingParticipantMap.get(roomId).values().stream().toList(),
                 prePrompt
         );
-        CompletableFuture.runAsync(() -> {
+        processThreadMap.put(roomId, CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
         }).thenRun(() -> {
             log.info("========== FINISHED NORMAL MODE ==========");
-            finishRoom(roomId);
             finishCallback.run();
-        });
+        }));
     }
 
     public void finishRoom(Long roomId) {
         processManager.removeProcess(roomId);
+
+        CompletableFuture<Void> completableFuture = processThreadMap.get(roomId);
+        if (completableFuture.isDone()) {
+            log.warn("Room:{}의 Completable Future가 완료돼지 않았습니다.", roomId);
+            completableFuture.cancel(true);
+        }
+        if (!completableFuture.isDone() && !completableFuture.isCancelled()) {
+            throw new BusinessException(RoomErrorCode.EXISTING_PROCESS_RUNNING);
+        }
+
         // TODO: Finish Callback
         log.debug("Room:{} finished", roomId);
     }
