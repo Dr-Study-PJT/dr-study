@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberStudyGroupRepository extends JpaRepository<MemberStudyGroup, MemberStudyGroupId> {
     List<MemberStudyGroup> findByMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(Long studyGroupId);
@@ -20,6 +21,5 @@ public interface MemberStudyGroupRepository extends JpaRepository<MemberStudyGro
             "AND m.isLeaved = false")
     List<MemberStudyGroup> findByMemberId(@Param("memberId") Long memberId);
     Integer countByStudyGroupAndIsLeavedFalse(StudyGroup studyGroup);
-    boolean existsByMemberStudyGroupIdMemberIdAndMemberStudyGroupIdStudyGroupIdAndIsLeavedFalse(Long memberId, Long studyGroupId);
-
+    Optional<MemberStudyGroup> findByMemberStudyGroupIdStudyGroupIdAndMemberStudyGroupIdMemberId(Long studyGroupId, Long memberId);
 }

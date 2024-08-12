@@ -14,10 +14,8 @@ import com.nomz.doctorstudy.studygroup.StudyGroupRole;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.nomz.doctorstudy.studygroup.entity.*;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
-import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
 import com.nomz.doctorstudy.studygroup.repository.*;
 import com.nomz.doctorstudy.studygroup.request.*;
-import com.nomz.doctorstudy.studygroup.response.GetStudyGroupListResponse;
 import com.nomz.doctorstudy.studygroup.response.GetStudyGroupPageResponse;
 import com.nomz.doctorstudy.tag.Tag;
 import com.nomz.doctorstudy.tag.TagRepository;
@@ -28,9 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -124,14 +120,20 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public MemberStudyGroupApply createApply(CreateApplyRequest createApplyRequest, Member requester) {
+    public MemberStudyGroupApply createApply(Long groupId, CreateApplyRequest createApplyRequest, Member requester) {
 
-        StudyGroup studyGroup = studyGroupRepository.findById(createApplyRequest.getGroupId())
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
 
-        memberStudyGroupApplyRepository.findByApplicantIdAndStudyGroupId(requester.getId(), createApplyRequest.getGroupId())
+        memberStudyGroupApplyRepository.findByApplicantIdAndStudyGroupId(requester.getId(), groupId)
                 .ifPresent((n) -> {
-                    throw new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_ALREADY_JOINED_ERROR);
+                    throw new BusinessException(StudyGroupErrorCode.STUDYGROUP_ALREADY_APPLYED_ERROR);
+                });
+
+        memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndMemberStudyGroupIdMemberId(
+                requester.getId(), groupId)
+                .ifPresent((n) -> {
+                    throw new BusinessException(StudyGroupErrorCode.STUDYGROUP_ALREADY_JOINED_ERROR);
                 });
 
         // 새로운 멤버-그룹-지원 엔티티 생성
