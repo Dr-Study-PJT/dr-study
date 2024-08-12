@@ -12,5 +12,6 @@ public class CommentSummary {
     private Long id;
     private String content;
     private LocalDateTime createdAt;
+    private Boolean isEdited;
     private MemberInfo memberInfo;
 }

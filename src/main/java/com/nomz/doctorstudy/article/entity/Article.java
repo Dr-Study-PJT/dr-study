@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,4 +53,7 @@ public class Article {
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ArticleTag> articleTags;
+
+    @ColumnDefault("0")
+    private Boolean isEdited;
 }
