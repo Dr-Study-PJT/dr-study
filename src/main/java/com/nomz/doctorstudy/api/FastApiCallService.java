@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -15,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FastApiCallService implements ExternalApiCallService{
 
-    //@Value("${fast-api.url}")
+  //  @Value("${fast-api.url}")
     private String baseUrl = "http://192.168.100.149:8000";
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
@@ -96,15 +98,19 @@ public class FastApiCallService implements ExternalApiCallService{
             log.debug("sent stt request to FastAPI server, url={}", url);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             log.debug("received stt response from FastAPI server, response={}", response);
-            String responseBody = response.getBody();
-            if (responseBody.charAt(0) == '\"' && responseBody.charAt(responseBody.length() - 1) == '\"') {
-                responseBody = responseBody.substring(1, responseBody.length() - 1);
-            }
 
-            return responseBody;
+            String responseBody = response.getBody();
+            if (responseBody != null) {
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                return jsonNode.get("transcribed_fixed_text").asText();
+            } else {
+                return null;
+            }
         }catch(ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
