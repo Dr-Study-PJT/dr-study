@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.studygroup.entity;
 
-import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.studygroup.ApplicationStatus;
+import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 

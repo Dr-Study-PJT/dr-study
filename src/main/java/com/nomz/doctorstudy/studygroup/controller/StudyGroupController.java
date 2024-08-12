@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.studygroup.controller;
 
+
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.member.Login;
@@ -174,7 +175,7 @@ public class StudyGroupController {
         );
     }
 
-    @PostMapping("/apply")
+    @PostMapping("/{groupId}/apply")
     @Operation(summary = "Study Group 지원")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Study Group 리스트 지원 성공", useReturnTypeSchema = true),
@@ -188,9 +189,10 @@ public class StudyGroupController {
     })
 
     public ResponseEntity<SuccessResponse<CreateApplyResponse>> createApply
-            (@Valid @RequestBody CreateApplyRequest request,
+            (@PathVariable("groupId") Long groupId,
+             @Valid @RequestBody CreateApplyRequest request,
              @Parameter(hidden = true) @Login Member requester) {
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(request, requester);
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.createApply(groupId, request, requester);
         CreateApplyResponse response = new CreateApplyResponse(memberStudyGroupApply.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -362,7 +364,7 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<List<GetStudyGroupListResponse>>> GetStudyGroupListByMemberId( @Parameter(hidden = true) @Login Member requester) {
+    public ResponseEntity<SuccessResponse<List<GetStudyGroupListResponse>>> GetStudyGroupListByMemberId(@Parameter(hidden = true) @Login Member requester) {
         List<MemberStudyGroup> memberStudyGroups  = studyGroupService.getStudyGroupListByMemberId(requester);
         List<GetStudyGroupListResponse> responseList = memberStudyGroups.stream()
                 .map(memberStudyGroup -> GetStudyGroupListResponse.of(memberStudyGroup.getStudyGroup()))

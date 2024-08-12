@@ -10,7 +10,6 @@ import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteQueryRep
 import com.nomz.doctorstudy.member.Login;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.notification.response.NotificationInfo;
-import com.nomz.doctorstudy.notification.NotificationItemType;
 import com.nomz.doctorstudy.notification.NotificationService;
 import com.nomz.doctorstudy.notification.entity.Notification;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;

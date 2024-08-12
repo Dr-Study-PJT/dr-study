@@ -20,9 +20,6 @@ public class CreateArticleRequest {
     @Schema(description = "게시글 본문", example = "8월 16일 스터디 진행합니다.")
     private String content;
 
-    @Schema(description = "스터디 그룹 아이디", example = "1")
-    private Long studyGroupId;
-
     @Schema(description = "태그", example = "[\"#공지사항\", \"#필독\"]")
     private List<String> tags;
 }

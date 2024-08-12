@@ -13,7 +13,6 @@ import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.conference.request.*;
-import com.nomz.doctorstudy.conference.room.RoomErrorCode;
 import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;

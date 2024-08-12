@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 
 
 public interface ArticleService {
-    Article createArticle(CreateArticleRequest request, Member requester);
+    Article createArticle(Long groupId, CreateArticleRequest request, Member requester);
     Article updateArticle(Long articleId, UpdateArticleRequest request, Member requester);
     Article getArticle(Long articleId);
     Article deleteArticle(Long articleId, Member requester);

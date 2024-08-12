@@ -43,10 +43,9 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleTagRepository articleTagRepository;
     private final CommentReposirory commentReposirory;
     @Override
-    public Article createArticle(CreateArticleRequest request, Member requester) {
-        StudyGroup studyGroup = studyGroupRepository.findById(request.getStudyGroupId())
+    public Article createArticle(Long groupId, CreateArticleRequest request, Member requester) {
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
-
 
         Article article = Article.builder()
                 .title(request.getTitle())
@@ -56,6 +55,7 @@ public class ArticleServiceImpl implements ArticleService{
                 .viewCount(0L)
                 .writer(requester)
                 .studyGroup(studyGroup)
+                .isEdited(Boolean.FALSE)
                 .build();
 
         articleRepository.save(article);
@@ -130,6 +130,7 @@ public class ArticleServiceImpl implements ArticleService{
                 .member(requester)
                 .article(article)
                 .isDeleted(Boolean.FALSE)
+                .isEdited(Boolean.FALSE)
                 .build();
 
         return commentReposirory.save(comment);
@@ -155,9 +156,8 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     @Transactional
     public Comment deleteComment(Long commentId, Member requester) {
-
-        Comment comment = commentReposirory.findByIdAndIsDeletedFalse(commentId)
-                .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
+        Comment comment = commentReposirory.findById(commentId)
+                .orElseThrow(() -> new BusinessException(ArticleErrorCode.COMMENT_NOT_FOUND_ERROR));
 
         if(!Objects.equals(requester.getId(), comment.getMember().getId())){
             throw new BusinessException(ArticleErrorCode.COMMENT_NOT_AUTHORIZED);
@@ -167,6 +167,5 @@ public class ArticleServiceImpl implements ArticleService{
 
         return comment;
     }
-
 
 }
