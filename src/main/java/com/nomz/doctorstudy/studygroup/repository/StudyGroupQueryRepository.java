@@ -35,24 +35,31 @@ public class StudyGroupQueryRepository {
      */
 
     public Page<StudyGroup> getStudyGroupList(StudyGroupSearchFilter filter, Pageable pageable){
-        JPAQuery<StudyGroup> queryBuilder = query.select(studyGroup).from(studyGroup);
+        // 기본 쿼리 빌더
+        JPAQuery<StudyGroup> baseQuery = query.select(studyGroup).from(studyGroup);
 
-        if(StringUtils.hasText(filter.getTagName())){
-            queryBuilder.leftJoin(studyGroup.studyGroupTags, studyGroupTag)
-                    .leftJoin(studyGroupTag.tag, tag);
-        }
-
-        JPAQuery<StudyGroup> pagedQuery = queryBuilder.where(
+        // 페이징 없는 쿼리로 전체 데이터 수 계산
+        long total = baseQuery.clone()  // 클론을 사용하여 baseQuery 복제
+                .where(
                         equalMemberId(filter.getMemberId()),
                         likeName(filter.getName()),
                         equalMemberCapacity(filter.getMemberCapacity()),
                         likeTagName(filter.getTagName()),
                         isNotDeleted()
-                ).offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                ).fetchCount();
 
-        long total = queryBuilder.fetch().size(); // 전체 데이터 수 조회
-        List<StudyGroup> results = pagedQuery.fetch(); // 페이징된 데이터 조회
+        // 페이징 적용된 쿼리
+        List<StudyGroup> results = baseQuery.clone()  // 동일한 쿼리 조건을 가진 클론 사용
+                .where(
+                        equalMemberId(filter.getMemberId()),
+                        likeName(filter.getName()),
+                        equalMemberCapacity(filter.getMemberCapacity()),
+                        likeTagName(filter.getTagName()),
+                        isNotDeleted()
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         return new PageImpl<>(results, pageable, total);
 
