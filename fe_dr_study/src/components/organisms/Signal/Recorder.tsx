@@ -132,26 +132,7 @@ function Recorder({
         }
     };
 
-    return (
-        <div className="flex flex-col gap-dr-5">
-            <h1>Audio Recorder</h1>
-            <Button
-                onClick={startAudioStream}
-                disabled={isRecording}
-                color={isRecording ? 'gray' : 'coral'}
-            >
-                Start Audio Stream
-            </Button>
-
-            <Button
-                onClick={stopAudioStream}
-                disabled={!isRecording}
-                color={isRecording ? 'coral' : 'gray'}
-            >
-                Stop Audio Stream
-            </Button>
-        </div>
-    );
+    return null;
 }
 
 export default Recorder;

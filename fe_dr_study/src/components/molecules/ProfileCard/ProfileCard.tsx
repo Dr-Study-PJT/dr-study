@@ -1,12 +1,14 @@
 import { memberAPI } from '@/app/api/axiosInstanceManager';
-import { PATCH, POST } from '@/app/api/routeModule';
+import { DELETE, PATCH, POST } from '@/app/api/routeModule';
 import { Member } from '@/app/group/[group_id]/_types';
 import { Button } from '@/components/atoms';
+import { removeMemberData } from '@/utils/sessionStorage';
 import { showToast } from '@/utils/toastUtil';
 import axios from 'axios';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { set } from 'react-hook-form';
 import { ToastContainer } from 'react-toastify';
 
 interface ProfileCardProps {
@@ -15,13 +17,15 @@ interface ProfileCardProps {
 
 const ProfileCard = ({ member }: ProfileCardProps) => {
     const [isEdit, setIsEdit] = useState(false);
+    const [withdrawalPassword, setWithdrawalPassword] = useState('');
     const [form, setForm] = useState({
         password: '',
         nickname: member?.nickname || '',
         imageUrl: member?.imageUrl || '',
-        file: null as File | null, // 파일 상태 추가
+        file: null as File | null,
     });
     const [imageId, setImageId] = useState<number | null>(null);
+    const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
 
     const params = useParams();
     if (!member) {
@@ -32,11 +36,12 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
         setIsEdit(!isEdit);
     };
 
+    const router = useRouter();
+
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, files } = e.target;
         if (name === 'imageUrl' && files) {
             const formData = new FormData();
-            console.log(files[0]);
             formData.append('file', files[0]);
             formData.append('domain', 'members');
 
@@ -83,7 +88,6 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
             });
 
             console.log(response);
-
             setIsEdit(false);
             showToast('success', '회원 정보가 수정되었습니다.');
         } catch (error) {
@@ -92,9 +96,44 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
         }
     };
 
+    const handleWithdrawal = async () => {
+        try {
+            console.log(withdrawalPassword);
+            const response = await DELETE({
+                API: memberAPI,
+                endPoint: '',
+                body: withdrawalPassword,
+                isAuth: true,
+            });
+            console.log(response);
+            removeMemberData();
+            setIsWithdrawalModalOpen(false);
+            showToast('success', '회원 탈퇴가 완료되었습니다.');
+            router.refresh();
+            router.push('/');
+
+            // 탈퇴 후 처리 (예: 로그아웃, 리다이렉트 등)
+        } catch (error) {
+            console.error('Error during withdrawal:', error);
+            showToast('error', '회원 탈퇴에 실패했습니다.');
+        }
+    };
+
     return (
         <div className=" flex flex-col items-center justify-center text-center text-dr-white gap-dr-10">
             <ToastContainer />
+
+            {isWithdrawalModalOpen && (
+                <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-center items-center bg-dr-dark-300 z-50">
+                    <UserWithdrawalModal
+                        onClose={() => setIsWithdrawalModalOpen(false)}
+                        onWithdrawal={handleWithdrawal}
+                        withdrawalPassword={withdrawalPassword}
+                        setWithdrawalPassword={setWithdrawalPassword}
+                    />
+                </div>
+            )}
+
             <div className="relative ">
                 <div
                     className={`relative w-[10rem] h-[10rem] rounded-full overflow-hidden ${isEdit && 'border-2 border-dr-coral-500'}`}
@@ -164,7 +203,18 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
                             </Button>
                         </div>
                     ) : (
-                        <Button onClick={handleEdit}>회원 정보 수정하기</Button>
+                        <div className="flex gap-dr-10 flex-wrap">
+                            <Button onClick={handleEdit}>
+                                회원 정보 수정하기
+                            </Button>
+                            <Button
+                                onClick={() => setIsWithdrawalModalOpen(true)}
+                                color="gray"
+                                classNameStyles="hover:bg-dr-red"
+                            >
+                                회원 탈퇴
+                            </Button>
+                        </div>
                     )}
                 </>
             )}
@@ -173,3 +223,38 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
 };
 
 export default ProfileCard;
+
+interface UserWithdrawalModalProps {
+    onClose: () => void;
+    onWithdrawal: () => Promise<void>;
+    withdrawalPassword: string;
+    setWithdrawalPassword: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const UserWithdrawalModal: React.FC<UserWithdrawalModalProps> = ({
+    onClose,
+    onWithdrawal,
+    withdrawalPassword,
+    setWithdrawalPassword,
+}) => {
+    return (
+        <div className="flex flex-col items-center bg-dr-dark-300 rounded shadow-lg p-[2rem] gap-[0.5rem]">
+            <h2 className="text-lg font-bold">회원 탈퇴</h2>
+            <p>회원 탈퇴를 위해 패스워드를 입력해 주세요.</p>
+            <input
+                type="password"
+                name="password"
+                value={withdrawalPassword}
+                onChange={(e) => setWithdrawalPassword(e.target.value)}
+                placeholder="비밀번호"
+                className="mt-2 p-2 border rounded"
+            />
+            <div className="flex space-x-4 mt-4">
+                <Button onClick={onWithdrawal} color="red">
+                    회원 탈퇴 확인
+                </Button>
+                <Button onClick={onClose}>취소</Button>
+            </div>
+        </div>
+    );
+};

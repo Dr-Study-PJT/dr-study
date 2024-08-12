@@ -209,6 +209,8 @@ const Signal = ({
         console.log('before setIsAvatarSpeaking', newSignal.time);
         console.log('setTimeOut 시작 전');
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
+        console.log('setIsAvatarSpeaking 실행');
+
         setTimeForAvatarSpeaking(newSignal.time as number);
         // 아바타 발화는 해당 시간 동안만 수행
         setTimeout(() => {
@@ -252,7 +254,8 @@ const Signal = ({
     // 신호 단계 신호 처리
     const handleProgramme = (newSignal: SignalInterface) => {
         console.log(`handleProgramme: 다음 스텝 표시`, newSignal);
-        dispatch(setFullPhase(newSignal.programme));
+
+        dispatch(setFullPhase({ programme: newSignal.programme }));
     };
 
     // joining 단계 신호 처리

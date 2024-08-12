@@ -370,7 +370,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             </div>
 
             <div className="fixed top-[3px] right-[3px] p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
-                {memberData.id === conferenceInfo?.hostId && (
+                {memberData?.id === conferenceInfo?.hostId && (
                     <>
                         <Paragraph>{conferenceInfo?.title}</Paragraph>
                         <Button fullWidth onClick={startConference}>
