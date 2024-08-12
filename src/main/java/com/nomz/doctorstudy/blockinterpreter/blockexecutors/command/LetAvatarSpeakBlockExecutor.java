@@ -60,8 +60,14 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         log.debug("tts audio duration={}", audioDurationMills);
 
         signalUtils.sendMuteSignals(processId, processContext.getParticipantInfoList().stream().map(RoomParticipantInfo::getMemberId).toList());
-        mediaService.saveAudio(file);
-        signalTransmitter.transmitSignal(processId, new AvatarSpeakSignal(audioDurationMills, "https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/speech.mp3"));
+        String audioURl = mediaService.saveAudio(file);
+        signalTransmitter.transmitSignal(
+                processId,
+                new AvatarSpeakSignal(
+                        audioDurationMills,
+                        audioURl
+                )
+        );
 
         log.debug("thread:{} started to sleep", processId);
         ProcessLockManager.sleep(processId, audioDurationMills);

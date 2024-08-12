@@ -119,8 +119,29 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                     loop (1) {
                         let_participant_speak(1, 5000);
                         log(get_recent_participant_speak(1));
+                        let_avatar_speak(get_recent_participant_speak(1));
                     }
                 }
+",
+        NOW()),
+       (1, "시연:올림픽 스크립트", "6번 사전 프롬프트",
+        "
+            phase(1) {
+                let_avatar_speak(gpt_query('15초 분량으로 인사'));
+                let_avatar_speak(gpt_query('1단계 안내하고 참여자들에게 발화 준비하라고 말하기'));
+            }
+            phase(2) {
+                loop (get_num_of_participant()) {
+                    let_participant_speak(get_num_of_iteration(), 30000);
+                    let_avatar_speak(gpt_query(
+                            string_concat(
+                                get_recent_participant_speak(1),
+                                gpt_query('약 10초 가량 피드백 후 다음 단계 안내')
+                            )
+                        )
+                    );
+                }
+            }
 ",
         NOW())
 ;
@@ -131,7 +152,8 @@ VALUES (1, 1, 1, '1번 사회자', NOW()),
        (2, 2, 2, '2번 사회자', NOW()),
        (1, 3, 3, '3번 사회자', NOW()),
        (2, 3, 4, '4번 사회자', NOW()),
-       (1, 3, 5, '5번 사회자', NOW())
+       (1, 3, 5, '5번 사회자', NOW()),
+       (1, 1, 6, '6번 사회자', NOW())
 ;
 
 --CONFERENCE--
