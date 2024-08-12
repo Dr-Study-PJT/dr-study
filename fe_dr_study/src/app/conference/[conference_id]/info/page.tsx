@@ -5,14 +5,20 @@ import ConferenceInfoTemplate from '@/components/template/conference/ConferenceI
 import useConferenceInfo from './_hooks/useConferenceInfo';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ToastContainer } from 'react-toastify';
+import { showToast } from '@/utils/toastUtil';
 
 interface ConferenceInfoPageProps {
     params: {
         conference_id: number;
     };
+    searchParams: { error: string };
 }
 
-const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
+const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({
+    params,
+    searchParams,
+}) => {
     const router = useRouter();
     const conferenceId = params.conference_id;
 
@@ -35,20 +41,32 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({ params }) => {
         }
     }, [conferenceData]);
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (searchParams.error === 'not_open') {
+                showToast('error', '컨퍼런스가 아직 개최되지 않았습니다.');
+            }
+        }, 1000);
+        return () => clearTimeout(timeout);
+    }, [searchParams]);
+
     // 컨퍼런스 정보 조회 실패 시 이용 불가 페이지로 이동
     if (isFetchFailed) {
         return <NotExistConference />;
     }
 
     return (
-        <ConferenceInfoTemplate
-            memberData={memberData}
-            conferenceId={conferenceId}
-            conferenceData={conferenceData}
-            moderators={moderators}
-            studyMembers={studyMembers}
-            handleOpenConference={handleOpenConference}
-        />
+        <>
+            <ToastContainer />
+            <ConferenceInfoTemplate
+                memberData={memberData}
+                conferenceId={conferenceId}
+                conferenceData={conferenceData}
+                moderators={moderators}
+                studyMembers={studyMembers}
+                handleOpenConference={handleOpenConference}
+            />
+        </>
     );
 };
 

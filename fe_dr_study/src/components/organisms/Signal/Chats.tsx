@@ -12,7 +12,7 @@ const Chats = ({
     }[];
 }) => {
     return (
-        <div className="flex gap-dr-10 flex-col  h-full w-full ">
+        <div className="flex gap-dr-10 flex-col h-full w-full ">
             {messages.map((msg, index) => (
                 <div key={index} className="flex items-start p-2 rounded-lg">
                     <div className="relative mr-2 min-w-[2rem] min-h-[2rem] rounded-full overflow-hidden">
