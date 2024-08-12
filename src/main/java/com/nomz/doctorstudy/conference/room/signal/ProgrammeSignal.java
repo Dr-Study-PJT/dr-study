@@ -1,6 +1,6 @@
 package com.nomz.doctorstudy.conference.room.signal;
 
-import com.nomz.doctorstudy.blockinterpreter.ProgrammeItem;
+import com.nomz.doctorstudy.blockinterpreter.programme.ProgrammeItem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

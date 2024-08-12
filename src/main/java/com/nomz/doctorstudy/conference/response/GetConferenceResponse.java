@@ -47,6 +47,9 @@ public class GetConferenceResponse {
     @Schema(description = "컨퍼런스 이미지 URL", example = "[image URL]")
     private final String imageUrl;
 
+    @Schema(description = "컨퍼런스 아바타 정보")
+    private final ConferenceModeratorInfo moderatorInfo;
+
     @Schema(description = "참여자 목록", example = "")
     private final List<MemberInfo> participants;
 
@@ -63,6 +66,7 @@ public class GetConferenceResponse {
                 .startTime(conference.getStartTime())
                 .finishTime(conference.getFinishTime())
                 .imageUrl(conference.getImage().getImageUrl())
+                .moderatorInfo(ConferenceModeratorInfo.of(conference.getModerator()))
                 .participants(conference.getParticipants().stream().
                         map(ConferenceMember::getMember).
                         map(com.nomz.doctorstudy.member.response.MemberInfo::of).toList())

@@ -18,7 +18,6 @@ public class Moderator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "processor_id", nullable = false)
     private Processor processor;
