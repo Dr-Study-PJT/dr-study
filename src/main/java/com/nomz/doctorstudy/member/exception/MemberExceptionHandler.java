@@ -19,7 +19,7 @@ public class MemberExceptionHandler {
 
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<?> MemberExceptionHandler1(MemberException e){
-        log.error("MemberException occurred", e);
+        log.error("MemberException occurred, message={}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );
@@ -35,7 +35,7 @@ public class MemberExceptionHandler {
 
     @ExceptionHandler(EmailException.class)
     public ResponseEntity<?> EmailExceptionHandler(EmailException e){
-        log.error("EmailException occurred", e);
+        log.error("EmailException occurred, message={}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse<>(e.getErrorCode().getDefaultMessage(), Map.of()), e.getErrorCode().getHttpStatus()
         );

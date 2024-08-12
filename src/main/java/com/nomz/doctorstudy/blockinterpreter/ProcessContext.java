@@ -1,20 +1,21 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
-import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+@Slf4j
 public class ProcessContext {
     @Getter
     private final long id;
     @Getter @Setter
     private int cursor;
-    @Getter @Setter
-    private int phase;
     @Getter @Setter
     private ProcessStatus status;
     private int scopeDepth;
@@ -26,14 +27,23 @@ public class ProcessContext {
     private final List<Transcript> transcripts = new ArrayList<>();
 
     @Getter
-    private final List<String> programme = new ArrayList<>();
-    private final List<Long> participantMemberIdList = new ArrayList<>();
+    private final GptContext gptContext;
 
-    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap) {
+    @Getter
+    private final List<ProgrammeItem> programme = new ArrayList<>();
+
+    @Getter
+    private final List<RoomParticipantInfo> participantInfoList = new ArrayList<>();
+
+    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
         this.id = id;
         this.commandBlocks = commandBlocks;
         this.initVariableMap = new HashMap<>(initVarMap);
         this.labelMap = new HashMap<>(labelMap);
+        this.gptContext = new GptContext(prePrompt);
+
+        this.participantInfoList.add(new RoomParticipantInfo(0L, "paddingMember", "Padding Member PeerId"));
+        this.participantInfoList.addAll(participantInfoList);
     }
 
     public void initialize() {
@@ -47,22 +57,36 @@ public class ProcessContext {
         this.transcripts.clear();
         this.programme.clear();
 
-        this.participantMemberIdList.clear();
-        this.participantMemberIdList.add(0L);
-
         declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), 0);
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size() - 1);
+
+        initParticipantInfo();
     }
 
-    public void addParticipant(Member member) {
-        participantMemberIdList.add(member.getId());
-        int participantId = participantMemberIdList.size() - 1;
+    private void initParticipantInfo() {
+        int seq = 1;
+        for (RoomParticipantInfo participantInfo : participantInfoList) {
+            String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + seq++;
+            declareVariable(variableName);
+            setVariable(variableName, participantInfo.getName());
+        }
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size());
+    }
 
-        String variableName = BlockVariable.PARTICIPANT_NAME.getToken() + participantId;
-        declareVariable(variableName);
-        setVariable(variableName, member.getNickname());
+    public Integer getNumOfParticipant() {
+        return participantInfoList.size() - 1;
+    }
 
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), (int) getVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken()) + 1);
+    public String getParticipantName(int numOfParticipant) {
+        return participantInfoList.get(numOfParticipant).getName();
+    }
+
+    public Long getParticipantMemberId(int numOfParticipant) {
+        return participantInfoList.get(numOfParticipant).getMemberId();
+    }
+
+    public void increaseCursor() {
+        cursor++;
     }
 
     public void increaseScopeDepth() {
@@ -76,11 +100,13 @@ public class ProcessContext {
 
     public void declareVariable(String key) {
         if (variableMapStack.get(scopeDepth).containsKey(key)) {
-            throw new BlockException(BlockErrorCode.VARIABLE_ALREADY_DECLARED);
+            log.warn("This variable:{} has already been declared once", key);
+            return;
+            //throw new BlockException(BlockErrorCode.VARIABLE_ALREADY_DECLARED);
         }
         variableMapStack.get(scopeDepth).put(key, null);
     }
-    
+
     public Object getVariable(String key) {
         for (int i = scopeDepth; i>=0; i--) {
             Object val = variableMapStack.get(i).get(key);
@@ -102,7 +128,8 @@ public class ProcessContext {
     }
 
     public void addTranscript(String content) {
-        transcripts.add(new Transcript(phase, content));
+        int currentPhase = (int) getVariable("current_phase");
+        transcripts.add(new Transcript(currentPhase, content));
     }
 
     public String getRecentTranscript(int n) {
@@ -135,15 +162,37 @@ public class ProcessContext {
         return commandBlocks.get(cursor);
     }
 
-    public void addProgrammeInfo(String info) {
-        programme.add(info);
+    public void addProgrammeInfo(String content) {
+        int currentPhase = (int) getVariable("current_phase");
+        programme.add(new ProgrammeItem(currentPhase, content));
     }
 
+    public void addGptHistory(String query, String answer) {
+        gptContext.addHistory(query, answer);
+    }
 
     @Getter
     @RequiredArgsConstructor
     private static class Transcript {
         private final int phase;
         private final String content;
+    }
+
+    public static class GptContext {
+        private final StringBuilder history = new StringBuilder();
+        @Getter
+        private final String prePrompt;
+
+        private GptContext(String prePrompt) {
+            this.prePrompt = prePrompt;
+        }
+
+        public void addHistory(String query, String answer) {
+            history.append("My Query=[").append(query).append("], Gpt Answer=[").append(answer).append("]");
+        }
+
+        public String getHistory() {
+            return history.toString();
+        }
     }
 }

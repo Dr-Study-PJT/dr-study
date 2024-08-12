@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Component
 public class ProcessManager {
     private final Map<Long, ProcessContext> processContextMap = new ConcurrentHashMap<>();
@@ -15,11 +18,20 @@ public class ProcessManager {
         return findProcessContext(processId).orElseThrow(() -> new BlockException(BlockErrorCode.PROCESS_NOT_FOUND));
     }
 
-    public void createProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap) {
-        if (processContextMap.containsKey(processId)) {
-            throw new BlockException(BlockErrorCode.PROCESS_ALREADY_EXISTS);
+    public void createProcess(Long processId, List<Block> blockList, Map<String, Object> varMap, Map<String, Integer> labelMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
+        ProcessContext processContext = processContextMap.get(processId);
+
+        if (processContext != null && processContext.getStatus() == ProcessStatus.RUNNING) {
+            log.warn("Enabled force restart for debugging");
+            //throw new BlockException(BlockErrorCode.PROCESS_ALREADY_RUNNING);
         }
-        ProcessContext processContext = new ProcessContext(processId, blockList, varMap, labelMap);
+
+        if (processContext != null && processContext.getStatus() == ProcessStatus.NORMAL_RUN_FINISH) {
+            log.warn("Enabled restart for debugging");
+            processContextMap.remove(processId);
+        }
+
+        processContext = new ProcessContext(processId, blockList, varMap, labelMap, participantInfoList, prePrompt);
         processContext.initialize();
         processContextMap.put(processId, processContext);
     }

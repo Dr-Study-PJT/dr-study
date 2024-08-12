@@ -20,7 +20,7 @@ public class GetIntVariableBlockExecutor extends BlockExecutor {
     @Override
     protected Object executeAction(List<Object> args) {
         String key = (String) args.get(0);
-        Integer val = (Integer) threadProcessContext.getVariable(key);
+        Integer val = (Integer) threadProcessContext.get().getVariable(key);
 
         log.debug("key={}, val={}", key, val);
 

@@ -20,10 +20,10 @@ public class GetStringVariableBlockExecutor extends BlockExecutor {
     @Override
     protected Object executeAction(List<Object> args) {
         String key = (String) args.get(0);
-        String val = (String) threadProcessContext.getVariable(key);
+        String val = (String) threadProcessContext.get().getVariable(key);
 
         log.debug("key={}, val={}", key, val);
 
-        return threadProcessContext.getVariable(key);
+        return threadProcessContext.get().getVariable(key);
     }
 }

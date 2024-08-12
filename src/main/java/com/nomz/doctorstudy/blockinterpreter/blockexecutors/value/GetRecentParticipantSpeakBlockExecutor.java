@@ -9,20 +9,26 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class GetParticipantNameBlockExecutor extends BlockExecutor {
+public class GetRecentParticipantSpeakBlockExecutor extends BlockExecutor {
     private final ThreadProcessContext threadProcessContext;
-    public GetParticipantNameBlockExecutor(ThreadProcessContext threadProcessContext) {
+
+    public GetRecentParticipantSpeakBlockExecutor(ThreadProcessContext threadProcessContext) {
         super(String.class, List.of(Integer.class));
         this.threadProcessContext = threadProcessContext;
     }
 
     @Override
     protected Object executeAction(List<Object> args) {
-        int participantNum = (int) args.get(0);
-        String participantName = (String) threadProcessContext.get().getVariable("participant_name_" + participantNum);
+        int n = (int) args.get(0);
 
-        log.debug("name of participant {} is {}", participantNum, participantName);
+        String recentTranscript = threadProcessContext.get().getRecentTranscript(n);
+        log.debug("Recent [{}] Transcript={}", n, recentTranscript);
 
-        return participantName;
+        return recentTranscript;
+    }
+
+    @Override
+    public Object executeGetProgramme(List<Object> args) {
+        return "Get Records In Phase Block";
     }
 }

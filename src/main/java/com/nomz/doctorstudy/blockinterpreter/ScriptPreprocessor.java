@@ -59,7 +59,7 @@ public class ScriptPreprocessor {
 
     private String preprocessPhase(String script) {
         Map<Integer, String> phaseMap = new HashMap<>();
-        int cursor = 0;
+        int cursor = script.indexOf(BlockType.PHASE.getToken() + "(");
         boolean startFlag = true;
 
         int count = 0;
@@ -67,8 +67,6 @@ public class ScriptPreprocessor {
             if (count++ > LOOP_LIMIT) {
                 throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "알 수 없는 이유로 무한루프가 발생했습니다.");
             }
-
-            cursor = script.indexOf("phase", cursor);
             if (cursor == -1) break;
             if (cursor == 0 && !startFlag) break;
             startFlag = false;
@@ -82,7 +80,7 @@ public class ScriptPreprocessor {
             int braceEndIdx = findBracketPairIndex(script, List.of('{', '}'), braceStartIdx);
 
             phaseMap.put(phaseNum, script.substring(braceStartIdx + 1, braceEndIdx));
-            cursor = script.indexOf(BlockType.PHASE.getToken(), cursor);
+            cursor = script.indexOf(BlockType.PHASE.getToken() + "(", cursor + 1);
         }
 
         StringBuilder sb = new StringBuilder();

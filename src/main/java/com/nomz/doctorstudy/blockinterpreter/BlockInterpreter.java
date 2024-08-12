@@ -2,11 +2,13 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.*;
 import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
+import com.nomz.doctorstudy.conference.room.SignalTransmitter;
+import com.nomz.doctorstudy.conference.room.signal.ProgrammeSignal;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,31 +21,31 @@ public class BlockInterpreter {
     private final ThreadProcessContext threadProcessContext;
     private final BlockExecutorMapper blockExecutorMapper;
     private final ScriptPreprocessor scriptPreprocessor;
+    private final SignalTransmitter signalTransmitter;
 
-    public void init(Long processId, String script, Map<String, Object> varMap) {
+    public void init(Long processId, String script, Map<String, Object> varMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
         List<Block> blocks = scriptPreprocessor.preprocessScript(script);
         Map<String, Integer> labelMap = parseLabels(blocks);
-        processManager.createProcess(processId, blocks, varMap, labelMap);
+        processManager.createProcess(processId, blocks, varMap, labelMap, participantInfoList, prePrompt);
     }
 
-    @Async
     public void interpret(Long processId) {
-        interpret(processId, ProcessMode.RUN);
+        interpret(processId, ProcessMode.NORMAL);
     }
 
-    @Async
     public void interpret(Long processId, ProcessMode processMode) {
         log.info("processId={} started to run", processId);
 
         ProcessContext processContext = processManager.getProcessContext(processId);
         threadProcessContext.setProcessContext(processContext);
-        threadProcessContext.setProcessStatus(ProcessStatus.RUNNING);
+        processContext.setStatus(ProcessStatus.RUNNING);
 
-        while (!threadProcessContext.isEndOfBlock()) {
-            Block commandBlock = threadProcessContext.currentBlock();
-            Stack<BlockInterpretContext> stack = new Stack<>();
-            stack.push(new BlockInterpretContext(commandBlock, new ArrayList<>(), 0));
+        while (!processContext.isEndOfBlock()) {
+            Block commandBlock = processContext.currentBlock();
+            Stack<InterpreterContext> stack = new Stack<>();
+            stack.push(new InterpreterContext(commandBlock, new ArrayList<>(), 0));
             String methodForDebug = commandBlock.getMethod();
+            log.debug("method={}", commandBlock.getMethod());
             log.debug("cursor={}, block={}", processContext.getCursor(), commandBlock.getMethod());
 
             while (!stack.empty()) {
@@ -55,7 +57,7 @@ public class BlockInterpreter {
                     Object result = null;
 
                     if (value.startsWith("'") && value.endsWith("'")) {
-                        result = processEscape(value);
+                        result = getEscapeProcessedString(value);
                     }
                     if (StringUtils.isNumeric(value)) {
                         result = Integer.parseInt(value);
@@ -77,9 +79,11 @@ public class BlockInterpreter {
                 }
 
                 if (stack.peek().argCursor < stack.peek().block.getArgBlocks().size()) {
-                    Block argBlock = stack.peek().block.getArgBlocks().get(stack.peek().argCursor);
-                    stack.push(new BlockInterpretContext(argBlock, new ArrayList<>(), 0));
-                    continue;
+                    if (!(stack.peek().argCursor == 0 && stack.peek().block.getArgBlocks().get(0).getMethod().isEmpty())) {
+                        Block argBlock = stack.peek().block.getArgBlocks().get(stack.peek().argCursor);
+                        stack.push(new InterpreterContext(argBlock, new ArrayList<>(), 0));
+                        continue;
+                    }
                 }
 
                 Object result = blockExecutor.execute(stack.peek().args, processMode);
@@ -98,20 +102,24 @@ public class BlockInterpreter {
                 stack.peek().argCursor++;
             }
 
-            threadProcessContext.increaseCursor();
+            processContext.increaseCursor();
         }
 
         if (processMode == ProcessMode.PROGRAMME) {
-            log.info("Block Script Programme\n{}", threadProcessContext.getProgramme());
+            log.info("Block Script Programme\n{}", processContext.getProgramme());
+            signalTransmitter.transmitSignal(processId, new ProgrammeSignal(processContext.getProgramme()));
+            processContext.setStatus(ProcessStatus.PROGRAMME_RUN_FINISH);
+        }
+        else {
+            processContext.setStatus(ProcessStatus.NORMAL_RUN_FINISH);
         }
 
-        threadProcessContext.setProcessStatus(ProcessStatus.FINISH);
-        threadProcessContext.releaseProcessContext();
+        threadProcessContext.removeProcessContext();
 
         log.info("processId={} ended to run", processId);
     }
 
-    private String processEscape(String value) {
+    private String getEscapeProcessedString(String value) {
         StringBuilder sb = new StringBuilder();
         String strVal = value.substring(1, value.length() - 1);
         boolean escapeFlag = false;
@@ -159,7 +167,7 @@ public class BlockInterpreter {
     }
 
     @AllArgsConstructor
-    private static class BlockInterpretContext {
+    private static class InterpreterContext {
         private final Block block;
         private final List<Object> args;
         public int argCursor;

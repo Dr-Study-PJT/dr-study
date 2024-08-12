@@ -4,12 +4,12 @@ import lombok.*;
 
 @Getter
 @RequiredArgsConstructor
-public class ParticipantSpeak implements Signal {
+public class ParticipantSpeakSignal implements Signal {
     private final Long id;
     private final Integer time;
 
     @Override
     public SignalType getSignalType() {
-        return SignalType.MUTE;
+        return SignalType.PARTICIPANT_SPEAK;
     }
 }

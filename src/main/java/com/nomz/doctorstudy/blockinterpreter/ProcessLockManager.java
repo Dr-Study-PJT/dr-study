@@ -3,7 +3,9 @@ package com.nomz.doctorstudy.blockinterpreter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ProcessLockManager {
@@ -21,6 +23,7 @@ public class ProcessLockManager {
             try {
                 log.debug("Process:{} started to sleep", processId);
                 lock.wait();
+                // TODO: callback 추가?
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new BlockException(BlockErrorCode.PROCESS_INTERRUPTED, e);
@@ -30,14 +33,22 @@ public class ProcessLockManager {
 
     public static void awaken(Long processId) {
         Object lock = lockMap.get(processId);
+        if (lock == null) {
+            throw new BlockException(BlockErrorCode.PROCESS_ALREADY_AWAKE);
+        }
 
         synchronized (lock) {
-            if (!lockMap.containsKey(processId)) {
-                throw new BlockException(BlockErrorCode.PROCESS_ALREADY_AWAKE);
-            }
             log.debug("Process:{} is awoken", processId);
             lock.notify();
             lockMap.remove(processId);
         }
+    }
+
+    public static void sleep(Long processId, int millisTime) {
+        CompletableFuture.runAsync(() -> {
+            ProcessLockManager.awaken(processId);
+        }, CompletableFuture.delayedExecutor(millisTime, TimeUnit.MILLISECONDS));
+        log.debug("WaitBlock: start sleep {} sec", (double) millisTime / 1000.0);
+        ProcessLockManager.sleep(processId);
     }
 }

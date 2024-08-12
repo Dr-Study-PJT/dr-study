@@ -1,8 +1,14 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.command;
 
+import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
+import com.nomz.doctorstudy.blockinterpreter.ProcessLockManager;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
+import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
+import com.nomz.doctorstudy.conference.room.SignalUtils;
+import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
+import com.nomz.doctorstudy.conference.room.signal.ParticipantSpeakSignal;
 import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,25 +19,64 @@ import java.util.List;
 @Component
 public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
     private final ThreadProcessContext threadProcessContext;
-    private final SignalTransmitter signalTransMitter;
+    private final SignalTransmitter signalTransmitter;
+    private final SignalUtils signalUtils;
 
-    public LetParticipantSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransMitter) {
+    public LetParticipantSpeakBlockExecutor(ThreadProcessContext threadProcessContext, SignalTransmitter signalTransmitter, SignalUtils signalUtils) {
         super(void.class, List.of(Integer.class, Integer.class));
         this.threadProcessContext = threadProcessContext;
-        this.signalTransMitter = signalTransMitter;
+        this.signalTransmitter = signalTransmitter;
+        this.signalUtils = signalUtils;
     }
 
     @Override
     protected Object executeAction(List<Object> args) {
-        log.debug("let participant speak!");
-        signalTransMitter.transmitSignal(1L, new UnmuteSignal(1L));
+        int participantNum = (int) args.get(0);
+        int speakTimeLimit = (int) args.get(1);
+
+        ProcessContext processContext = threadProcessContext.get();
+
+        long processId = processContext.getId();
+        String participantName = processContext.getParticipantName(participantNum);
+        Long speakMemberId = processContext.getParticipantMemberId(participantNum);
+
+        signalUtils.sendMuteSignals(processId, processContext.getParticipantInfoList().stream()
+                .map(RoomParticipantInfo::getMemberId)
+                .filter(id -> !id.equals(speakMemberId))
+                .toList()
+        );
+
+        log.debug("Participant[id={}, name={}] started to speak. time limit={}", speakMemberId, participantName, speakTimeLimit);
+        signalTransmitter.transmitSignal(processId, new ParticipantSpeakSignal(speakMemberId, speakTimeLimit));
+
+        ProcessLockManager.sleep(processId);
+
+        signalUtils.sendUnmuteSignals(processId, processContext.getParticipantInfoList().stream()
+                .map(RoomParticipantInfo::getMemberId)
+                .filter(id -> !id.equals(speakMemberId))
+                .toList()
+        );
 
         return null;
     }
 
     @Override
     public Object executeGetProgramme(List<Object> args) {
-        threadProcessContext.addProgrammeInfo("참여자 말하기");
+        int participantNum = (int) args.get(0);
+        int speakTimeLimit = (int) args.get(1);
+
+        ProcessContext processContext = threadProcessContext.get();
+        String participantName = processContext.getParticipantName(participantNum);
+        Long memberId = processContext.getParticipantMemberId(participantNum);
+
+        threadProcessContext.get().addProgrammeInfo(
+                String.format(
+                        "[MemberId=%d, Name=%s] 참여자 %f초 동안 발화",
+                        memberId,
+                        participantName,
+                        speakTimeLimit / 1000.0
+                )
+        );
 
         return null;
     }

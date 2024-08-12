@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class HeartStopSignal implements Signal {
+    private Long id;
     private String peerId;
 
     @Override

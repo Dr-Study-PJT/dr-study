@@ -8,6 +8,7 @@ import com.nomz.doctorstudy.conference.room.signal.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,6 +16,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -26,12 +28,16 @@ public class SignalController {
     private final BlockInterpreter blockInterpreter;
     private final ExternalApiCallService externalApiCallService;
     private final ProcessManager processManager;
-    private final RoomService roomService;
+
+    @Value("${audio-utils.upper-path}")
+    private String audioUpperPath;
+    private static final String AUDIO_FILE_NAME = "participant_audio_";
+    private static final String AUDIO_EXT = ".webm";
 
     @MessageMapping("/chat/{conferenceId}")
     @SendTo("/topic/chat/{conferenceId}")
     public ChatMessage handleChatMessage(@DestinationVariable("conferenceId") Long conferenceId, ChatMessage chatMessage) {
-        log.debug("sender:{} sent chat message:{} from conference:{}", chatMessage.getId(), chatMessage, conferenceId);
+        log.debug("[Conference{} Chat] {}: {}", conferenceId, chatMessage.getNickname(), chatMessage);
         return chatMessage;
     }
 
@@ -39,15 +45,19 @@ public class SignalController {
     public void handleParticipantAudioSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
         log.debug("signal: {} from conference: {}", signal, conferenceId);
 
+
         byte[] rawAudioData = Base64.getDecoder().decode(signal.getRawAudio());
+
+        String audioPath = audioUpperPath + AUDIO_FILE_NAME + conferenceId + AUDIO_EXT;
+        AudioUtils.saveFile(rawAudioData, audioPath);
+
         String transcript = externalApiCallService.stt(rawAudioData);
 
         ProcessContext processContext = processManager.getProcessContext(conferenceId);
         processContext.addTranscript(transcript);
+        // TODO: 발화 블록
 
         //
-        String testSrcAudio = "audio/participant_audio";
-        AudioUtils.saveFile(rawAudioData, testSrcAudio);
         //AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");
         //AudioUtils.playAudio(testSrcAudio + ".wav");
         //
@@ -61,7 +71,7 @@ public class SignalController {
     }
 
     //
-
+    //
     //
 
     @PostMapping("/v1/conferences/{conferenceId}/send-mute-signal")
@@ -99,7 +109,7 @@ public class SignalController {
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody String script
     ) {
-        blockInterpreter.init(conferenceId, script, Map.of());
+        blockInterpreter.init(conferenceId, script, Map.of(), List.of(), "");
         blockInterpreter.interpret(conferenceId);
 
         return ResponseEntity.ok("OK\n" + script);

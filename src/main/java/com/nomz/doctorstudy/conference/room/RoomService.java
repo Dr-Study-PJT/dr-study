@@ -1,30 +1,56 @@
 package com.nomz.doctorstudy.conference.room;
 
 import com.nomz.doctorstudy.blockinterpreter.*;
+import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
+import com.nomz.doctorstudy.conference.QuitMemberInfo;
 import com.nomz.doctorstudy.conference.room.signal.HeartStopSignal;
+import com.nomz.doctorstudy.conference.room.signal.JoiningSignal;
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
+import com.nomz.doctorstudy.member.exception.member.MemberException;
+import com.nomz.doctorstudy.member.repository.MemberRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoomService {
-    private final Map<Long, Map<Long, String>> existingPeerMap = new ConcurrentHashMap<>();
+    private final Map<Long, Map<Long, RoomParticipantInfo>> existingParticipantMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, CompletableFuture<Void>> processThreadMap = new ConcurrentHashMap<>();
     private final WebSocketSessionManager webSocketSessionManager;
 
     private final ProcessManager processManager;
     private final SignalTransmitter signalTransmitter;
     private final BlockInterpreter blockInterpreter;
+    private final MemberRepository memberRepository;
+
+    @Setter
+    private Consumer<QuitMemberInfo> quitMemberCallback;
+
+    @PostConstruct
+    public void setWebsocketConnectCallback() {
+        webSocketSessionManager.setConnectCallback(sessionData -> {
+            Member member = memberRepository.findById(sessionData.getMemberId())
+                    .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
+            signalTransmitter.transmitSignal(
+                    sessionData.getRoomId(),
+                    new JoiningSignal(member.getId(), member.getNickname(), member.getImage().getImageUrl())
+            );
+        });
+    }
 
     @PostConstruct
     public void setWebsocketDisconnectCallback() {
@@ -33,63 +59,93 @@ public class RoomService {
         });
     }
 
-    public void openRoom(Long roomId, String script) {
-        existingPeerMap.put(roomId, new HashMap<>());
+    public void openRoom(Long roomId) {
+        existingParticipantMap.put(roomId, new LinkedHashMap<>());
         joinLockMap.put(roomId, new ReentrantLock());
-
-        blockInterpreter.init(roomId, script, Map.of());
     }
 
     public void closeRoom(Long roomId) {
         joinLockMap.remove(roomId);
-        existingPeerMap.remove(roomId);
-
-        processManager.removeProcess(roomId);
+        existingParticipantMap.remove(roomId);
     }
 
-    public void startRoom(Long roomId) {
-        if (processManager.getProcessContext(roomId).getStatus() != ProcessStatus.READY) {
-            throw new BusinessException(BlockErrorCode.PROCESS_NOT_READY);
-        }
-        blockInterpreter.interpret(roomId);
+    public void startRoom(Long roomId, String subject, String script, String prePrompt, Runnable finishCallback) {
+        log.info("========== STARTING WITH PROGRAMME MODE ==========");
+        blockInterpreter.init(
+                roomId,
+                script,
+                Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
+                existingParticipantMap.get(roomId).values().stream().toList(),
+                prePrompt
+        );
+        blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
+        log.info("========== FINISHED PROGRAMME MODE ==========");
+
+        log.info("========== STARTING WITH NORMAL MODE ==========");
+        blockInterpreter.init(
+                roomId,
+                script,
+                Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
+                existingParticipantMap.get(roomId).values().stream().toList(),
+                prePrompt
+        );
+        processThreadMap.put(roomId, CompletableFuture.runAsync(() -> {
+            blockInterpreter.interpret(roomId);
+        }).thenRun(() -> {
+            log.info("========== FINISHED NORMAL MODE ==========");
+            finishCallback.run();
+        }));
     }
 
     public void finishRoom(Long roomId) {
+        processManager.removeProcess(roomId);
 
+        CompletableFuture<Void> completableFuture = processThreadMap.get(roomId);
+        if (completableFuture.isDone()) {
+            log.warn("Room:{}의 Completable Future가 완료돼지 않았습니다.", roomId);
+            completableFuture.cancel(true);
+        }
+        if (!completableFuture.isDone() && !completableFuture.isCancelled()) {
+            throw new BusinessException(RoomErrorCode.EXISTING_PROCESS_RUNNING);
+        }
+
+        // TODO: Finish Callback
+        log.debug("Room:{} finished", roomId);
     }
 
     public List<String> joinRoom(Member member, Long roomId, String peerId) {
-        addParticipantIdVariable(roomId, member);
+        log.debug("New Participant[memberId={}, name={}, peerId={}] is trying to join. Current participant list={}", member.getId(), member.getNickname(), peerId, existingParticipantMap.get(roomId).values());
 
-        List<String> existingPeerIds = addPeer(roomId, member.getId(), peerId);
+        if (existingParticipantMap.get(roomId).containsKey(member.getId())) {
+            throw new BusinessException(RoomErrorCode.PARTICIPANT_ALREADY_JOINED);
+        }
 
-        log.debug("member:{} joined room", member.getId());
+        List<String> existingPeerIds = addPeer(roomId, member, peerId);
 
         return existingPeerIds;
     }
 
     public void quitRoom(Long memberId, Long roomId) {
-        log.debug("occurred heartstop from member {}, because of quit", memberId);
+        log.debug("Member:{} quit from room:{}", memberId, roomId);
 
         String peerId = removePeer(roomId, memberId);
-        signalTransmitter.transmitSignal(roomId, new HeartStopSignal(peerId));
+        signalTransmitter.transmitSignal(roomId, new HeartStopSignal(memberId, peerId));
+
+        quitMemberCallback.accept(new QuitMemberInfo(roomId, memberId));
     }
 
-    private void addParticipantIdVariable(Long roomId, Member member) {
-        ProcessContext processContext = processManager.getProcessContext(roomId);
-        processContext.addParticipant(member);
-    }
-
-    private List<String> addPeer(Long roomId, Long memberId, String peerId) {
+    private List<String> addPeer(Long roomId, Member member, String peerId) {
         ReentrantLock lock = joinLockMap.get(roomId);
         if (lock == null) {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         lock.lock();
-        List<String> existingPeerIds = new ArrayList<>(existingPeerMap.get(roomId).values());
-        existingPeerMap.get(roomId).put(memberId, peerId);
-        log.debug("joined new peer, current existingPeerIds = {}", existingPeerMap.get(roomId));
+
+        List<String> existingPeerIds = existingParticipantMap.get(roomId).values().stream().map(RoomParticipantInfo::getPeerId).toList();
+        existingParticipantMap.get(roomId).put(member.getId(), new RoomParticipantInfo(member.getId(), member.getNickname(), peerId));
+
         lock.unlock();
+
         return existingPeerIds;
     }
 
@@ -99,8 +155,10 @@ public class RoomService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         lock.lock();
-        String peerId = existingPeerMap.get(roomId).get(memberId);
-        existingPeerMap.get(roomId).remove(memberId);
+
+        String peerId = existingParticipantMap.get(roomId).get(memberId).getPeerId();
+        existingParticipantMap.get(roomId).remove(memberId);
+
         lock.unlock();
 
         return peerId;

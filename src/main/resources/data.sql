@@ -25,6 +25,7 @@ VALUES (1, 1, "스터디그룹1", "스터디그룹1 설명", "스터디그룹1 �
 INSERT INTO member_study_group (member_id, study_group_id, role, join_date, is_leaved)
 VALUES (1, 1, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (2, 2, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
+       (2, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (3, 3, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (5, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL -1 HOUR), false)
 ;
@@ -96,10 +97,51 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
        (3, "아바타 말하기 스크립트", "3번 사전 프롬프트",
         "
                 phase(1) {
-                    loop(3) {
-                        let_avatar_speak('안녕하세요, 3번 프로세서 스크립트 실행 중입니다. 이 음성은 STT 기술을 이용해 만들어졌습니다. 안녕히계세요.');
+                    loop(1) {
+                        let_avatar_speak(gpt_query('반갑워 GPT야. 너는 내가 얼마나 반가운지 약 30자 정도로 대답해봐'));
+                        wait(1000);
                     }
                 }
+",
+        NOW()),
+       (1, "아바타 말하기 스크립트", "4번 사전 프롬프트",
+        "
+                phase(1) {
+                    loop (1) {
+                        let_avatar_speak('반갑습니다. 저는 현재 유영한과 신재민이 참여한 컨퍼런스의 사회자입니다. 제 목소리가 잘 들리십니까?');
+                    }
+                }
+",
+        NOW()),
+       (1, "사용자 말하기 스크립트", "5번 사전 프롬프트",
+        "
+                phase(1) {
+                    loop (1) {
+                        let_participant_speak(1, 5000);
+                        log(get_recent_participant_speak(1));
+                        let_avatar_speak(get_recent_participant_speak(1));
+                    }
+                }
+",
+        NOW()),
+       (1, "시연:올림픽 스크립트", "6번 사전 프롬프트",
+        "
+            phase(1) {
+                let_avatar_speak(gpt_query('15초 분량으로 인사'));
+                let_avatar_speak(gpt_query('1단계 안내하고 참여자들에게 발화 준비하라고 말하기'));
+            }
+            phase(2) {
+                loop (get_num_of_participant()) {
+                    let_participant_speak(get_num_of_iteration(), 30000);
+                    let_avatar_speak(gpt_query(
+                            string_concat(
+                                get_recent_participant_speak(1),
+                                gpt_query('약 10초 가량 피드백 후 다음 단계 안내')
+                            )
+                        )
+                    );
+                }
+            }
 ",
         NOW())
 ;
@@ -107,9 +149,11 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
 --MODERATOR--
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
 VALUES (1, 1, 1, '1번 사회자', NOW()),
-       (1, 2, 2, '2번 사회자', NOW()),
-       (2, 3, 1, '3번 사회자', NOW()),
-       (3, 4, 2, '4번 사회자', NOW())
+       (2, 2, 2, '2번 사회자', NOW()),
+       (1, 3, 3, '3번 사회자', NOW()),
+       (2, 3, 4, '4번 사회자', NOW()),
+       (1, 3, 5, '5번 사회자', NOW()),
+       (1, 1, 6, '6번 사회자', NOW())
 ;
 
 --CONFERENCE--
@@ -118,7 +162,8 @@ VALUES (1, 1, 1, 1, '컨퍼런스 1 제목', '컨퍼런스 1 주제', 10, null, 
        (1, 1, 2, 1, '컨퍼런스 2 제목', '컨퍼런스 2 주제', 10, null, null, "컨퍼런스 2 리뷰!"),
        (2, 2, 1, 1, '컨퍼런스 3 제목', '컨퍼런스 3 주제', 10, null, null, "컨퍼런스 3 리뷰!"),
        (2, 2, 2, 1, '컨퍼런스 4 제목', '컨퍼런스 4 주제', 10, null, null, "컨퍼런스 4 리뷰!"),
-       (1, 1, 2, 1, '컨퍼런스 5 제목', '컨퍼런스 5 주제', 10, DATE_ADD(NOW(), INTERVAL -3 HOUR), DATE_ADD(NOW(), INTERVAL -1 HOUR), "컨퍼런스 4 리뷰!")
+       (1, 1, 2, 1, '컨퍼런스 5 제목', '컨퍼런스 5 주제', 10, DATE_ADD(NOW(), INTERVAL -3 HOUR), DATE_ADD(NOW(), INTERVAL -1 HOUR), "컨퍼런스 5 리뷰!"),
+       (1, 1, 3, 1, '컨퍼런스 6 제목', '컨퍼런스 6 주제', 10, null, null, "컨퍼런스 6 리뷰!")
 ;
 
 --CONFERENCE_MEMBER--
@@ -132,7 +177,12 @@ INSERT INTO conference_member_invite (conference_id, member_id, created_at)
 VALUES (2, 1, DATE_ADD(NOW(), INTERVAL -2 HOUR)),
        (3, 1, DATE_ADD(NOW(), INTERVAL -50 MINUTE)),
        (1, 2, DATE_ADD(NOW(), INTERVAL -40 MINUTE)),
-       (1, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE))
+       (1, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+
+       (6, 2, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+       (6, 3, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+       (6, 4, DATE_ADD(NOW(), INTERVAL -30 MINUTE)),
+       (6, 5, DATE_ADD(NOW(), INTERVAL -30 MINUTE))
 ;
 
 
@@ -151,7 +201,8 @@ VALUES ('댓글 내용 1', DATE_ADD(NOW(), INTERVAL -1 MINUTE), 1, 1, FALSE),
        ('댓글 내용 2', DATE_ADD(NOW(), INTERVAL -2 MINUTE), 1, 2, FALSE),
        ('댓글 내용 3', DATE_ADD(NOW(), INTERVAL -3 MINUTE), 2, 3, FALSE),
        ('댓글 내용 4', DATE_ADD(NOW(), INTERVAL -4 MINUTE), 3, 4, FALSE),
-       ('댓글 내용 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5, FALSE);
+       ('댓글 내용 5', DATE_ADD(NOW(), INTERVAL -5 MINUTE), 4, 5, FALSE)
+;
 
 --ARTICLE_TAGS--
 INSERT INTO article_tag (article_id, tag_id)
@@ -160,4 +211,5 @@ VALUES (1, 1),
        (2, 1),
        (3, 3),
        (4, 4),
-       (5, 5);
+       (5, 5)
+;

@@ -20,9 +20,9 @@ public class LabelBlockExecutor extends BlockExecutor {
         Object arg = args.get(0);
 
         String name = (String) arg;
-        int index = threadProcessContext.getCursor();
+        int index = threadProcessContext.get().getCursor();
 
-        threadProcessContext.setLabelIndex(name, index);
+        threadProcessContext.get().setLabelIndex(name, index);
 
         return null;
     }

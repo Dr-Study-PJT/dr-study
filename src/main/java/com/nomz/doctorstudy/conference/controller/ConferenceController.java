@@ -309,17 +309,20 @@ public class ConferenceController {
                     }
                     """))),
     })
-    public ResponseEntity<SuccessResponse<List<String>>> joinConference(
+    public ResponseEntity<SuccessResponse<JoinConferenceResponse>> joinConference(
             @Parameter(hidden = true) @Login Member requester,
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody JoinConferenceRequest request
     ) {
+        List<Member> existingMembers = conferenceService.getConferenceParticipantList(conferenceId);
         List<String> existingParticipants = conferenceService.joinConference(requester, conferenceId, request);
+
+        JoinConferenceResponse response = JoinConferenceResponse.of(existingMembers, existingParticipants);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Conference 참여에 성공했습니다.",
-                        existingParticipants
+                        response
                 )
         );
     }

@@ -12,6 +12,9 @@ public enum SignalType {
     AVATAR_SPEAK("avatar-speak"),
     GPT_SUMMARY("gpt-summary"),
     HEART_STOP("heartstop"),
+    PROGRAMME("programme"),
+    NEXT_STEP("next-step"),
+    JOINING("joining"),
 
     PARTICIPANT_AUDIO("participant-audio"),
     HEART_BEAT("heartbeat")

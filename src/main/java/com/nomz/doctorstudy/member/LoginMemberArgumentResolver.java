@@ -35,12 +35,14 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof MemberDetails) {
-            Member member = ((MemberDetails) principal).getUser();
-            if (member != null) {
-                return member;
+        if (false) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof MemberDetails) {
+                Member member = ((MemberDetails) principal).getUser();
+                if (member != null) {
+                    return member;
+                }
             }
         }
 
@@ -53,6 +55,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String devMemberIdStr = request.getHeader(LoginToken.DEV_LOGIN_TOKEN);
         if (devMemberIdStr == null) {
+            log.debug("Failed to authenticate, Request={}", request.getRequestURI());
             throw new AuthException(AuthErrorCode.UNAUTHORIZED);
         }
         Long devMemberId = Long.parseLong(devMemberIdStr);

@@ -1,29 +1,32 @@
 package com.nomz.doctorstudy.conference.service;
 
-import com.nomz.doctorstudy.blockinterpreter.BlockInterpreter;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
 import com.nomz.doctorstudy.conference.entity.ConferenceMember;
+import com.nomz.doctorstudy.conference.entity.ConferenceMemberId;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.conference.request.*;
+import com.nomz.doctorstudy.conference.room.RoomErrorCode;
 import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
+import com.nomz.doctorstudy.moderator.entity.Processor;
 import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
 import com.nomz.doctorstudy.notification.NotificationService;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupErrorCode;
 import com.nomz.doctorstudy.studygroup.exception.StudyGroupException;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 
 @Slf4j
@@ -52,6 +54,13 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     private final RoomService roomService;
     private final NotificationService notificationService;
+
+    @PostConstruct
+    public void setQuitCallback() {
+        roomService.setQuitMemberCallback(quitMemberInfo -> {
+            removeConferenceMemberData(quitMemberInfo.getConferenceId(), quitMemberInfo.getMemberId());
+        });
+    }
 
     @Override
     @Transactional
@@ -124,7 +133,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         conference.updateModerator(moderator);
         conference.updateOpenTime(LocalDateTime.now());
 
-        roomService.openRoom(conferenceId, moderator.getProcessor().getScript());
+        roomService.openRoom(conferenceId);
     }
 
     @Override
@@ -155,12 +164,14 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         if (conference.getStartTime() != null) {
-            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
+            log.warn("시작된 적이 있는 Conference 입니다.");
+            //throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
         }
 
-        conference.updateStartTime(LocalDateTime.now());
+        Processor processor = conference.getModerator().getProcessor();
+        roomService.startRoom(conferenceId, conference.getSubject(), processor.getScript(), processor.getPrePrompt(), () -> finishConference(conferenceId));
 
-        roomService.startRoom(conferenceId);
+        conference.updateStartTime(LocalDateTime.now());
     }
 
     @Override
@@ -176,9 +187,9 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_FINISHED);
         }
 
-        conference.updateFinishTime(LocalDateTime.now());
-
         roomService.finishRoom(conferenceId);
+
+        conference.updateFinishTime(LocalDateTime.now());
     }
 
     @Override
@@ -187,12 +198,20 @@ public class ConferenceServiceImpl implements ConferenceService {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
+        if (conference.getOpenTime() == null) {
+            throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
+        }
+
         if (!(requester.getId().equals(conference.getHost().getId())) &&
                 !conference.getInvitees().stream().map(ConferenceMemberInvite::getMember)
-                        .map(Member::getId).toList().contains(requester.getId()))
-        {
+                        .map(Member::getId).toList().contains(requester.getId())) {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_INVITED);
         }
+
+        conferenceMemberRepository.findById(new ConferenceMemberId(conferenceId, requester.getId()))
+                        .ifPresent(id -> {
+                            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_JOINED);
+                        });
 
         conferenceMemberRepository.save(ConferenceMember.of(conference, requester));
 
@@ -205,6 +224,12 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Transactional
     public void quitConference(Member requester, Long conferenceId) {
         roomService.quitRoom(requester.getId(), conferenceId);
+    }
+
+    private void removeConferenceMemberData(Long conferenceId, Long memberId) {
+        conferenceMemberRepository.findById(new ConferenceMemberId(conferenceId, memberId))
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_JOINED));
+        conferenceMemberRepository.deleteById(new ConferenceMemberId(conferenceId, memberId));
     }
 
     @Override
