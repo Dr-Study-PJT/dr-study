@@ -1,7 +1,6 @@
 package com.nomz.doctorstudy.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -17,8 +16,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FastApiCallService implements ExternalApiCallService{
 
-  //  @Value("${fast-api.url}")
-    private String baseUrl = "http://192.168.100.149:8000";
+    @Value("${fast-api.url}")
+    private String baseUrl;
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private RestTemplate restTemplate;

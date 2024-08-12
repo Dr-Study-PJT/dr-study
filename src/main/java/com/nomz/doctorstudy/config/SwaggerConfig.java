@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,9 +17,27 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+    @Value("${auth.use-dev-token}")
+    private boolean useDevToken = false;
+
     @Bean
     @Profile("!local")
     public OpenAPI openAPI(ServletContext servletContext) {
+        return getOpenAPI(servletContext);
+    }
+
+    @Bean
+    @Profile("local")
+    public OpenAPI localOpenAPI(ServletContext servletContext) {
+        if (useDevToken) {
+            return getDevTokenOpenAPI(servletContext);
+        }
+        else {
+            return getOpenAPI(servletContext);
+        }
+    }
+
+    private OpenAPI getOpenAPI(ServletContext servletContext) {
         Info info = new Info()
                 .version("v1.0")
                 .title("Doctor Study API")
@@ -38,13 +57,10 @@ public class SwaggerConfig {
                 .info(info)
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
                 .security(List.of(securityRequirement))
-                .servers(List.of(server))
-                ;
+                .servers(List.of(server));
     }
 
-    @Bean
-    @Profile("local")
-    public OpenAPI localOpenAPI(ServletContext servletContext) {
+    private OpenAPI getDevTokenOpenAPI(ServletContext servletContext) {
         Info info = new Info()
                 .version("v1.0")
                 .title("Doctor Study API")
