@@ -1,6 +1,10 @@
 import { POST, PATCH, DELETE } from '@/app/api/routeModule';
 import { articleAPI } from '@/app/api/axiosInstanceManager';
-import { CreateCommentContent, UpdateCommentReq } from '../_types/index';
+import {
+    CreateCommentContent,
+    UpdateArticleReq,
+    UpdateCommentReq,
+} from '../_types/index';
 
 export const postingComment = async (
     articleId: number,
@@ -51,6 +55,25 @@ export const deletingComment = async (commentId: number) => {
         return response;
     } catch (error) {
         console.error('댓글 삭제 실패함 ㅠㅠ ', error);
+        throw error;
+    }
+};
+
+export const updatingArticle = async (
+    articleId: number,
+    updateArticleBody: UpdateArticleReq,
+) => {
+    try {
+        const response = await PATCH({
+            API: articleAPI,
+            endPoint: `/${articleId}`,
+            body: updateArticleBody,
+            params: articleId.toString(),
+            isAuth: true,
+        });
+        return response;
+    } catch (error) {
+        console.error('게시글 수정 실패함 ㅠㅠ ', error);
         throw error;
     }
 };

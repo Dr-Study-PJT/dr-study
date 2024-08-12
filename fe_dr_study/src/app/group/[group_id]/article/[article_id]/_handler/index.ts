@@ -4,6 +4,7 @@ import {
     updatingComment,
     deletingComment,
     deletingArticle,
+    updatingArticle,
 } from '../_api/csr';
 
 export const handleCommentSubmit = async (data: any, articleId: number) => {
@@ -48,3 +49,11 @@ export const handleArticleDelete = async (articleId: number) => {
         console.error('게시글 삭제 실패', error);
     }
 };
+
+export const handleArticleUpdate = async (articleId: number, title: string, content: string) => {
+    try {
+        await updatingArticle(articleId, { title, content });
+    } catch (error) {
+        console.error('게시글 수정 실패', error);
+    }
+}

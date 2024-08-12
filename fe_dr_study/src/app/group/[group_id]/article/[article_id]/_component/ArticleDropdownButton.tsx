@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 
 const ArticleDropdownButton: React.FC<{
-    onEdit: () => void;
+    groupId: number;
+    articleId: number;
     onDelete: () => void;
-}> = ({ onEdit, onDelete }) => {
+}> = ({ groupId, articleId, onDelete }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null);
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -14,15 +16,10 @@ const ArticleDropdownButton: React.FC<{
     const handleClickOutside = (event: MouseEvent) => {
         if (
             dropdownRef.current &&
-            !(dropdownRef.current as any).contains(event.target)
+            !dropdownRef.current.contains(event.target as Node)
         ) {
             setIsOpen(false);
         }
-    };
-
-    const handleEdit = () => {
-        onEdit();
-        setIsOpen(false); // 드롭다운 닫기
     };
 
     const handleDelete = () => {
@@ -52,12 +49,13 @@ const ArticleDropdownButton: React.FC<{
                     className="absolute right-0 mt-2 w-40 origin-top-right bg-gray-800 border border-gray-700 rounded-md shadow-lg"
                 >
                     <div className="py-1">
-                        <button
-                            onClick={handleEdit}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                        <Link
+                            href={`/group/${groupId}/article/${articleId}/edit`}
                         >
-                            수정
-                        </button>
+                            <span className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">
+                                수정
+                            </span>
+                        </Link>
                         <button
                             onClick={handleDelete}
                             className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"

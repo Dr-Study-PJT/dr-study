@@ -5,6 +5,8 @@ import { Box } from '@/components/atoms/Box/Box';
 import { Heading, Span } from '@/components/atoms';
 import { ArticleData } from '../_types';
 import ArticleDropdownButton from './ArticleDropdownButton';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
+import { handleArticleDelete } from '../_handler';
 
 const formatDate = (dateString: string | number | Date) => {
     return new Intl.DateTimeFormat('ko-KR', {
@@ -21,6 +23,21 @@ interface ArticleDetailProps {
 }
 
 const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
+    const currentUser = getSessionStorageItem('memberData');
+
+    const handleDelete = async () => {
+        try {
+            await handleArticleDelete(article.id);
+            alert('게시글이 성공적으로 삭제되었습니다.');
+            window.location.href = `/group/${article.studyGroupId}`;
+        } catch (error) {
+            console.error('게시글 삭제 실패:', error);
+        }
+    };
+
+    const isAuthor = currentUser && currentUser.id === article.memberInfo.id;
+    const groupId = article.studyGroupId || 0;
+
     return (
         <Box className="w-full" variant="articleDetail">
             <div className="relative w-full flex flex-row justify-center items-center">
@@ -31,10 +48,16 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                 >
                     {article.title ? article.title : '제목 없음'}
                 </Heading>
-
-    Drop
-</div>
-
+                {isAuthor && groupId !== 0 && (
+                    <div className="absolute right-0 text-white">
+                        <ArticleDropdownButton
+                            groupId={groupId}
+                            articleId={article.id}
+                            onDelete={handleDelete}
+                        />
+                    </div>
+                )}
+            </div>
 
             <Box
                 variant="articleCreateAtAndViews"
