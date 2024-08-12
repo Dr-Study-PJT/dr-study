@@ -15,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class FastApiCallService implements ExternalApiCallService{
 
-  //  @Value("${fast-api.url}")
-    private String baseUrl = "http://192.168.100.149:8000";
+    @Value("${fast-api.url}")
+    private String baseUrl;
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private RestTemplate restTemplate;
@@ -47,7 +47,9 @@ public class FastApiCallService implements ExternalApiCallService{
             String responseBody = response.getBody();
             if (responseBody != null) {
                 JsonNode jsonNode = objectMapper.readTree(responseBody);
-                return jsonNode.get("answer").asText();
+                String answer = jsonNode.get("answer").asText();
+                answer = answer.replaceAll("\n", "[Line Feed]");
+                return answer;
             } else {
                 return null;
             }

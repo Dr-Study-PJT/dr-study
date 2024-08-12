@@ -82,13 +82,7 @@ public class ModeratorController {
     public ResponseEntity<SuccessResponse<GetModeratorResponse>> getModerator(@PathVariable("moderatorId") Long moderatorId) {
         Moderator moderator = moderatorService.getModerator(moderatorId);
 
-        GetModeratorResponse response = GetModeratorResponse.builder()
-                .creatorId(moderator.getCreator().getId())
-                .processorId(moderator.getProcessor().getId())
-                .avatarId(moderator.getAvatar().getId())
-                .createdAt(moderator.getCreatedAt())
-                .name(moderator.getName())
-                .build();
+        GetModeratorResponse response = GetModeratorResponse.of(moderator);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(

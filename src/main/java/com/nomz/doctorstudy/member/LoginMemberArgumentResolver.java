@@ -10,6 +10,7 @@ import com.nomz.doctorstudy.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
     private final MemberRepository memberRepository;
+    @Value("${auth.use-dev-token}")
+    private boolean useDevToken = false;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -35,24 +38,32 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        if (false) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof MemberDetails) {
-                Member member = ((MemberDetails) principal).getUser();
-                if (member != null) {
-                    return member;
-                }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        log.debug("Requester Principal={}", principal);
+        if (principal instanceof MemberDetails) {
+            Member member = ((MemberDetails) principal).getUser();
+            log.debug("Found authenticated member={}", member);
+            if (member != null) {
+                return member;
             }
         }
 
+        if (useDevToken) {
+            return resolveDevelopToken(webRequest);
+        }
+
+        throw new AuthException(AuthErrorCode.UNAUTHORIZED);
+    }
+
+    private Member resolveDevelopToken(NativeWebRequest webRequest) {
         //
         // bypass code for test in development environment
         //
+        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         log.debug("Controller that requires authentication received request. But request doesn't have token header");
         log.debug("Trying to find bypass header -> '" + LoginToken.DEV_LOGIN_TOKEN + "'");
 
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String devMemberIdStr = request.getHeader(LoginToken.DEV_LOGIN_TOKEN);
         if (devMemberIdStr == null) {
             log.debug("Failed to authenticate, Request={}", request.getRequestURI());

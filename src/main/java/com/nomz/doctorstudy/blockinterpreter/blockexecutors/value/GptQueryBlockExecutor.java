@@ -28,13 +28,13 @@ public class GptQueryBlockExecutor extends BlockExecutor {
         String prePrompt = threadProcessContext.get().getGptContext().getPrePrompt();
 
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("==History Start==").append(gptHistory).append("==History End==");
-        queryBuilder.append("==PrePrompt Start==").append(prePrompt).append("==PrePrompt End==");
+        queryBuilder.append("[History Start]").append(gptHistory).append("[History End]");
+        queryBuilder.append("[PrePrompt Start]").append(prePrompt).append("[PrePrompt End]");
 
         String answer = externalApiCallService.gpt(queryBuilder.toString());
         threadProcessContext.get().addGptHistory(query, answer);
 
-        log.debug("\n[GPT]\nquery={}\nanswer={}", queryBuilder.toString(), answer);
+        log.debug("[GPT]query={}answer={}", queryBuilder.toString(), answer);
 
         return answer;
     }

@@ -1,8 +1,8 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
+import com.nomz.doctorstudy.blockinterpreter.programme.ProgrammeItem;
 import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -57,9 +57,6 @@ public class ProcessContext {
         this.transcripts.clear();
         this.programme.clear();
 
-        declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size() - 1);
-
         initParticipantInfo();
     }
 
@@ -70,7 +67,8 @@ public class ProcessContext {
             declareVariable(variableName);
             setVariable(variableName, participantInfo.getName());
         }
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size());
+        declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size() - 1);
     }
 
     public Integer getNumOfParticipant() {
@@ -162,7 +160,7 @@ public class ProcessContext {
         return commandBlocks.get(cursor);
     }
 
-    public void addProgrammeInfo(String content) {
+    public void addProgrammeItem(Map<String, Object> content) {
         int currentPhase = (int) getVariable("current_phase");
         programme.add(new ProgrammeItem(currentPhase, content));
     }

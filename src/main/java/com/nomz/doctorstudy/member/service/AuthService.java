@@ -5,6 +5,8 @@ import com.nomz.doctorstudy.common.redis.RedisUtil;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.auth.AuthErrorCode;
 import com.nomz.doctorstudy.member.exception.auth.AuthException;
+import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
+import com.nomz.doctorstudy.member.exception.member.MemberException;
 import com.nomz.doctorstudy.member.request.MemberLoginPostReq;
 import com.nomz.doctorstudy.member.request.VerifyPasswordRequest;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,7 @@ public class AuthService {
         String email = memberLoginPostReq.getEmail();
         String password = memberLoginPostReq.getPassword();
 
-        Member member = memberService.getUserByEmail(email);
+        Member member = memberService.getMemberByEmail(email);
 
         if(!passwordEncoder.matches(password, member.getPassword())){
             throw new AuthException(AuthErrorCode.AUTH_INVALID_ID_PASSWORD);
@@ -78,4 +80,15 @@ public class AuthService {
         log.info("비밀번호 일치합니다.");
 
     }
+
+    public void isLeavedMemberInLogin(String email){
+        Member member = memberService.getMemberByEmail(email);
+
+        log.info("isLeavedMember = {}", member.isLeaved());
+        if(member.isLeaved()){
+            throw new MemberException(MemberErrorCode.MEMBER_LEAVED_ERROR);
+        }
+
+    }
+
 }

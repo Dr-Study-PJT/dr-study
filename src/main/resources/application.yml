@@ -43,6 +43,10 @@ springdoc:
 audio-utils:
   upper-path: "audio/"
 
+  
+auth:
+  use-dev-token: false
+
 ---
 ## local
 spring:
@@ -58,4 +62,3 @@ spring:
 
 fast-api:
   url: http://192.168.100.149:8000
-

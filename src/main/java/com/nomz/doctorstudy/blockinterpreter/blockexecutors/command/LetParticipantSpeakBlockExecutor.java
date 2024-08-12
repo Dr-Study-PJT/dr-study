@@ -7,13 +7,13 @@ import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import com.nomz.doctorstudy.conference.room.SignalUtils;
-import com.nomz.doctorstudy.conference.room.signal.MuteSignal;
+import com.nomz.doctorstudy.conference.room.signal.NextStepSignal;
 import com.nomz.doctorstudy.conference.room.signal.ParticipantSpeakSignal;
-import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -57,6 +57,8 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
                 .toList()
         );
 
+        signalTransmitter.transmitSignal(processId, new NextStepSignal());
+
         return null;
     }
 
@@ -69,14 +71,7 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
         String participantName = processContext.getParticipantName(participantNum);
         Long memberId = processContext.getParticipantMemberId(participantNum);
 
-        threadProcessContext.get().addProgrammeInfo(
-                String.format(
-                        "[MemberId=%d, Name=%s] 참여자 %f초 동안 발화",
-                        memberId,
-                        participantName,
-                        speakTimeLimit / 1000.0
-                )
-        );
+        threadProcessContext.get().addProgrammeItem(Map.of("nickname", participantName, "time", speakTimeLimit));
 
         return null;
     }

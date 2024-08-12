@@ -10,6 +10,7 @@ import com.nomz.doctorstudy.member.exception.auth.AuthException;
 import com.nomz.doctorstudy.member.request.MemberRegisterPostReq;
 import com.nomz.doctorstudy.member.request.UpdateMemberInfoRequest;
 import com.nomz.doctorstudy.member.response.MemberInfo;
+import com.nomz.doctorstudy.member.service.AuthService;
 import com.nomz.doctorstudy.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Member API", description = "Member API 입니다.")
 public class MemberController {
     private final MemberService memberService;
+    private final AuthService authService;
 
     @PostMapping("/register")
     @Operation(summary = "Member 생성", description = "Member를 생성합니다")
@@ -53,6 +55,8 @@ public class MemberController {
     public ResponseEntity<?> register(
             @RequestBody @Valid MemberRegisterPostReq registerInfo) {
         log.info("registerInfo = {}", registerInfo.getNickname());
+
+        memberService.isLeavedMemberInRegister(registerInfo.getEmail());
 
         Member member = memberService.createUser(registerInfo);
 
@@ -122,7 +126,7 @@ public class MemberController {
     public ResponseEntity<?> getMemberInfo(@PathVariable(name = "memberEmail") @Valid String email) {
 
         log.info("memberEMAIL = {}", email);
-        Member member = memberService.getUserByEmail(email);
+        Member member = memberService.getMemberByEmail(email);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>("조회되었습니다.", MemberInfo.of(member))
@@ -186,6 +190,35 @@ public class MemberController {
         log.info("controller updateMember = {}", updatedMember);
         return ResponseEntity.ok(
                 new SuccessResponse<>("변경되었습니다.", null)
+        );
+    }
+
+    @DeleteMapping()
+    @Operation(summary = "Member 탈퇴(논리 삭제)", description = "로그인 된 Member를 탈퇴합니다.(논리 삭제)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "탈퇴 되었습니다.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "탈퇴에 실패했습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 입력입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "다시 로그인해주세요.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "유효하지 않은 유저입니다.",
+                        "errors": {
+                        }
+                    }
+                    """))),
+    })
+    public ResponseEntity<?> deleteMember(@Parameter(hidden = true) @Login Member member) {
+        log.info("login memberId = {}, memberEmail = {}", member.getId(), member.getEmail());
+
+        Member deletedmember = memberService.deleteMember(member.getId());
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>("탈퇴 되었습니다.", MemberInfo.of(deletedmember))
         );
     }
 
