@@ -38,7 +38,6 @@ interface SignalInterface {
     time?: number; // 발화 시간 또는 아바타 움직임 시간
     content?: string; // GPT 요약
     peerId?: string; // 방송 종료 시 peerId
-    audioUrl?: string; // 오디오 파일 경로
     next?: number; // 다음 발화자
     programme?: any;
     imageUrl?: string;
@@ -53,7 +52,6 @@ interface SignalProps {
     setFocusingPeerId: Dispatch<SetStateAction<string>>;
     client: ClientInterface;
     setSummaryMessages: Dispatch<SetStateAction<SummaryMessageInterface[]>>;
-    setAudioUrl: Dispatch<SetStateAction<string>>;
     isJoined: boolean;
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
@@ -78,7 +76,6 @@ const Signal = ({
     setFocusingPeerId,
     client,
     setSummaryMessages,
-    setAudioUrl,
     isJoined,
     existingPeers,
     setExistingPeers,
@@ -213,7 +210,6 @@ const Signal = ({
         console.log('setTimeOut 시작 전');
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
         setTimeForAvatarSpeaking(newSignal.time as number);
-        setAudioUrl(newSignal.audioUrl as string); // 오디오 URL 설정
         // 아바타 발화는 해당 시간 동안만 수행
         setTimeout(() => {
             console.log('setTimeOut 시작 됨');

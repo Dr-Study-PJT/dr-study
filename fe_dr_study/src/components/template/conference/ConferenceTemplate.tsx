@@ -95,7 +95,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     >([]);
 
     // 오디오 주소
-    const [audioUrl, setAudioUrl] = useState<string>('');
 
     // 클라이언트 정보 참조
     const client = useRef<ClientInterface>({
@@ -329,7 +328,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         setFocusingPeerId={setFocusingPeerId}
                         client={client.current}
                         setSummaryMessages={setSummaryMessages}
-                        setAudioUrl={setAudioUrl}
                         isJoined={isJoined}
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}
@@ -347,9 +345,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         setIsStartRecordingAudio={setIsStartRecordingAudio}
                     />
                 </div>
-                <div className="h-[10%]"></div>
+                {/* <div className="h-[10%]"></div> */}
 
-                <div className="fixed left-0 bottom-0 w-full h-[10%] ">
+                <div className="fixed left-0 bottom-0 w-full h-[10%] z-30">
                     <ConferenceControlBar
                         subscriptionList={subscriptionList.current}
                         client={client.current}
@@ -360,9 +358,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         setExistingPeers={setExistingPeers}
                         isMutedBySystem={isMutedBySystem}
                     />
-                    <div className="fixed bottom-[10%] left-[50%] w-[10%]">
+                    <div className="fixed bottom-[10%] left-[50%] w-[10%] z-40">
                         <ModeratorAvatar
-                            audioUrl={audioUrl}
+                            conferenceInfo={conferenceInfo}
                             isAvatarSpeaking={isAvatarSpeaking}
                             timeForAvatarSpeaking={timeForAvatarSpeaking}
                             gptSummaryBySystem={gptSummaryBySystem}

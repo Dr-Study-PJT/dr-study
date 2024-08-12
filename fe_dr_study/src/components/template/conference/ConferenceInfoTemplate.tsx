@@ -30,6 +30,21 @@ const ConferenceInfoTemplate = ({
     handleOpenConference,
 }: ConferenceInfoProps) => {
     const [isMemberInvited, setIsMemberInvited] = useState<boolean>(false); // 멤버 초대 여부
+    const [isHostOnly, setIsHostOnly] = useState<boolean>(false);
+    useEffect(() => {
+        console.log('memberData?.id:', memberData?.id);
+        console.log('conferenceData?.hostId:', conferenceData?.hostId);
+        console.log(
+            'conferenceData?.participants.length: ',
+            conferenceData?.participants.length,
+        );
+        console.log('isHostOnly: ', isHostOnly);
+
+        setIsHostOnly(
+            memberData?.id === conferenceData?.hostId &&
+                conferenceData?.participants.length === 0,
+        );
+    }, [isHostOnly, conferenceData]);
     // const [isClosedConference, setIsClosedConference] = useState<boolean>(
     //     (!conferenceData && true) || false,
     // ); // 컨퍼런스 종료 여부
@@ -110,10 +125,26 @@ const ConferenceInfoTemplate = ({
                         onClick={() =>
                             handleOpenConference(selectedModerator as Moderator)
                         }
-                        color={`${isMemberInvited && isModeratorSelected ? 'coral' : 'gray'}`}
-                        disabled={!isMemberInvited && !isModeratorSelected}
+                        color={`${
+                            (!isHostOnly &&
+                                isMemberInvited &&
+                                isModeratorSelected) ||
+                            (isHostOnly && isModeratorSelected)
+                                ? 'coral'
+                                : 'gray'
+                        }`}
+                        disabled={
+                            (isHostOnly && !isModeratorSelected) ||
+                            (!isHostOnly &&
+                                (!isMemberInvited || !isModeratorSelected))
+                        }
                         size="lg"
-                        classNameStyles={`relative group ${!isMemberInvited ? 'cursor-not-allowed' : ''}`}
+                        classNameStyles={`relative group ${
+                            (isHostOnly && !isModeratorSelected) ||
+                            (!isHostOnly && !isMemberInvited)
+                                ? 'cursor-not-allowed'
+                                : ''
+                        }`}
                     >
                         컨퍼런스 개최
                         <div className="text-start absolute top-[-0.25rem] hidden group-hover:block bg-black text-white text-dr-body-4 rounded -mt-10 left-[100%] transform -translate-x-1/2 whitespace-nowrap">

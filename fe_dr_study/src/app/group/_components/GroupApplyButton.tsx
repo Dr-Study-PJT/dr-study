@@ -80,10 +80,9 @@ const postGroupApply = async ({
     try {
         const response = await POST({
             API,
-            endPoint: 'apply',
+            endPoint: `${studyGroupId}/apply`,
             isAuth: true,
             body: {
-                groupId: studyGroupId,
                 applyMessage,
             },
         });

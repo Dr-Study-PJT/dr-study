@@ -109,20 +109,20 @@ const SideBar = () => {
 
             setGroups(myGroups?.filter((group: Group) => !group.isDeleted));
 
-            if (memberData.id) {
-                const fetchedConferences = await fetchConferenceList({
-                    memberId: memberData.id,
-                    isOpened: true,
-                    isClose: false,
-                });
-                console.log('fetchedConferences:', fetchedConferences);
-                setConferences(fetchedConferences);
-            }
+            // if (memberData.id) {
+            const fetchedConferences = await fetchConferenceList({
+                memberId: memberData?.id || -1,
+                isOpened: true,
+                isClose: false,
+            });
+            console.log('fetchedConferences:', fetchedConferences);
+            setConferences(fetchedConferences);
         };
+        // };
 
-        if (memberData.id) {
-            fetchData(); // 초기 데이터 로드
-        }
+        // if (memberData.id) {
+        fetchData(); // 초기 데이터 로드
+        // }
 
         const intervalId = setInterval(fetchData, 10000); // 10초마다 데이터 갱신
 
