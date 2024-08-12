@@ -1,5 +1,5 @@
 import { memberAPI } from '@/app/api/axiosInstanceManager';
-import { POST } from '@/app/api/routeModule';
+import { PATCH, POST } from '@/app/api/routeModule';
 import { Member } from '@/app/group/[group_id]/_types';
 import { Button } from '@/components/atoms';
 import { showToast } from '@/utils/toastUtil';
@@ -71,7 +71,7 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
 
     const handleSave = async () => {
         try {
-            const response = await POST({
+            const response = await PATCH({
                 API: memberAPI,
                 endPoint: '',
                 body: {
@@ -96,7 +96,9 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
         <div className=" flex flex-col items-center justify-center text-center text-dr-white gap-dr-10">
             <ToastContainer />
             <div className="relative ">
-                <div className="relative w-[10rem] h-[10rem] rounded-full overflow-hidden">
+                <div
+                    className={`relative w-[10rem] h-[10rem] rounded-full overflow-hidden ${isEdit && 'border-2 border-dr-coral-500'}`}
+                >
                     <Image
                         src={form.imageUrl || member.imageUrl} // 미리보기 이미지
                         alt="프로필 이미지"

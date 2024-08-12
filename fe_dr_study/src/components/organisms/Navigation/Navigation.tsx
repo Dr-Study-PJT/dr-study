@@ -128,11 +128,13 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
     };
 
     useEffect(() => {
-        fetchNotifications();
-        const intervalId = setInterval(fetchNotifications, 30000); // 30초마다 알림 데이터 가져오기
+        if (memberData.id) {
+            fetchNotifications();
+            const intervalId = setInterval(fetchNotifications, 30000); // 30초마다 알림 데이터 가져오기
 
-        return () => clearInterval(intervalId);
-    }, []);
+            return () => clearInterval(intervalId);
+        }
+    }, [memberData]);
 
     useEffect(() => {
         const memberData = getSessionStorageItem('memberData');
@@ -572,7 +574,7 @@ const ProfileDropDown = ({
                     </Link>
                 </li>
                 <li
-                    className="flex items-center text-dr-gray-200 text-dr-body-4  hover:bg-dr-dark-100 transition-colos duration-300"
+                    className="flex items-center text-dr-gray-200 text-dr-body-4  hover:bg-dr-dark-100 transition-colos duration-300 cursor-pointer"
                     onClick={onClickSetLogout}
                 >
                     <button className="flex items-center text-dr-gray-200 text-dr-body-4  hover:bg-dr-dark-100 transition-colos duration-300">

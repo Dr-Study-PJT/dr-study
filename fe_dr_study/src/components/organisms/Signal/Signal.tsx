@@ -102,8 +102,6 @@ const Signal = ({
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
     const messagesEndRef = useRef<HTMLDivElement>(null); // 메시지 목록 끝에 대한 참조
 
-    const [signals, setSignals] = useState<SignalInterface[]>([]); // 수신된 신호 목록을 저장하는 상태
-
     useEffect(() => {
         // 10초마다 생존 신고 전송
         // 소켓 연결
@@ -167,7 +165,6 @@ const Signal = ({
                 console.log(
                     `${signalType} signal received => \n newSignal: ${newSignal} \n`,
                 ); // 신호 수신 로그
-                setSignals((prevSignals) => [...prevSignals, newSignal]); // 신호 목록에 추가
                 handler(newSignal); // 각 신호에 맞는 핸들러 호출
             },
         );
@@ -323,12 +320,15 @@ const Signal = ({
     };
 
     return (
-        <div className="flex flex-col w-1/5 h-full bg-dr-dark-300 p-[0.5rem]">
-            <div className="relative w-full h-full text-dr-white">
-                <ConferenceParticipants currentMembers={currentMembers} />
+        <div className="flex flex-col w-1/5 h-full bg-dr-dark-300">
+            <div className="relative w-full h-[90%] text-dr-white ">
+                <div className="pb-[0.1rem] shadow-xl">
+                    <ConferenceParticipants currentMembers={currentMembers} />
+                </div>
+                <div className="h-[20%] "></div>
                 <div
                     ref={messagesEndRef}
-                    className="flex flex-col h-full w-full overflow-y-scroll"
+                    className="flex flex-col h-[80%] w-full overflow-y-scroll"
                 >
                     <Chats messages={messages} />
                 </div>
@@ -339,7 +339,7 @@ const Signal = ({
                     e.preventDefault();
                     sendMessage();
                 }}
-                className="relative flex h-[10%] gap-dr-10"
+                className="relative flex h-[10%] gap-dr-10  p-[0.5rem]"
             >
                 <textarea
                     value={message}

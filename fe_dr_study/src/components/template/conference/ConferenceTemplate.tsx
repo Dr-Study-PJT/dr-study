@@ -47,12 +47,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         if (!memberData) router.push('/auth/login');
     }, []);
 
-    // 방 정보 상태
-    const [roomInfo, setRoomInfo] = useState<RoomInfoInterface>({
-        title: '', // 방 제목
-        memberCapacity: 0, // 방의 최대 인원 수
-    });
-
     // 세션 스토리지에서 멤버 ID 가져오기
     const memberData = getSessionStorageItem('memberData');
 
@@ -122,8 +116,12 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     const ENDPOINT = 'room';
     const sockTargetUrl = `${BACK_HOST}/${ENDPOINT}`;
 
+    useEffect(() => {
+        onClickJoin();
+    }, []);
+
     // 1. new Peer 내 피어 생성
-    const onClickJoin = (e: React.MouseEvent<HTMLElement>) => {
+    const onClickJoin = () => {
         setIsFlag(1);
 
         myPeer.current = new Peer();
@@ -265,6 +263,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         } catch (error) {
             console.log(
                 'conferenceInfo?.openTime 팅겨져 나가는 원인불명의 이유',
+                conferenceInfo,
                 conferenceInfo?.openTime,
             );
             if (!conferenceInfo?.openTime) {
@@ -289,6 +288,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             console.error('Error fetching room list:', error);
         }
     };
+
+    console.log(memberData);
+    console.log(conferenceInfo);
 
     return (
         <div className="flex bg-dr-indigo-200 h-[100%] w-[100%]">
@@ -369,15 +371,15 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 </div>
             </div>
 
-            <div className="fixed top-8 left-8 p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
-                <Paragraph>컨퍼런스 페이지 제목 : {roomInfo.title}</Paragraph>
-                <Span color="white">최대 인원 : {roomInfo.memberCapacity}</Span>
-                <Button fullWidth onClick={onClickJoin}>
-                    컨퍼런스 참여
-                </Button>
-                <Button fullWidth onClick={startConference}>
-                    컨퍼런스 시작 (방장만)
-                </Button>
+            <div className="fixed top-[3px] right-[3px] p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
+                {memberData.id === conferenceInfo?.hostId && (
+                    <>
+                        <Paragraph>{conferenceInfo?.title}</Paragraph>
+                        <Button fullWidth onClick={startConference}>
+                            컨퍼런스 시작
+                        </Button>
+                    </>
+                )}
             </div>
             <TotalSummary summaryMessages={summaryMessages} />
         </div>
