@@ -70,7 +70,15 @@ export default function GroupDetailPage({
     useEffect(() => {
         setMemberData(getSessionStorageItem('memberData'));
     }, [memberRedux]);
+    useEffect(() => {
+        if (searchParams.error === 'not-invited') {
+            const timeout = setTimeout(() => {
+                showToast('error', '초대되지 않은 멤버입니다.');
+            }, 1000);
 
+            return () => clearTimeout(timeout);
+        }
+    }, []);
     const myMemberData = membersInThisGroup?.find(
         (member: GroupMember) => member.memberInfo.id === memberData?.id,
     );
