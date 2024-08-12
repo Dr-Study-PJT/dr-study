@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.studygroup.response;
 
-import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.ApplicationStatus;
+import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
