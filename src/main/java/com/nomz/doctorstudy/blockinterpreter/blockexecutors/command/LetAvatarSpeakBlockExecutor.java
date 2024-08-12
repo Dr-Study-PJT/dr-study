@@ -12,7 +12,6 @@ import com.nomz.doctorstudy.conference.room.SignalUtils;
 import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import com.nomz.doctorstudy.conference.room.signal.GptSummarySignal;
-import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
 import com.nomz.doctorstudy.image.service.MediaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

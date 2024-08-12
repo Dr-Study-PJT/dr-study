@@ -3,7 +3,6 @@ package com.nomz.doctorstudy.notification.response;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
 import com.nomz.doctorstudy.notification.NotificationItemType;
 import com.nomz.doctorstudy.notification.entity.Notification;
-import com.nomz.doctorstudy.studygroup.ApplicationStatus;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
