@@ -84,5 +84,10 @@ public class Member {
         this.image = updatedMemberInfoRequest.getImage();
     }
 
+    public void delete(){
+        this.isLeaved = true;
+        this.leavedDate = LocalDateTime.now();
+    }
+
 }
 
