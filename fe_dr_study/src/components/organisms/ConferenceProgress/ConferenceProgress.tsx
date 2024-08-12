@@ -27,9 +27,9 @@ const ConferenceProgress = ({}: ConferenceControlBarProps) => {
 
     return (
         <div className="relative flex flex-col items-center justify-center h-full">
-            {/* <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-0 left-0 w-full h-full">
                 <Slider />
-            </div> */}
+            </div>
             <div className="flex items-center text-dr-white">
                 {steps
                     .slice(currentStep, currentStep + 5)

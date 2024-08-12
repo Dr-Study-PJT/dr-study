@@ -120,9 +120,7 @@ const SideBar = () => {
             }
         };
 
-        if (memberData.id) {
-            fetchData(); // 초기 데이터 로드
-        }
+        fetchData(); // 초기 데이터 로드
 
         const intervalId = setInterval(fetchData, 10000); // 10초마다 데이터 갱신
 

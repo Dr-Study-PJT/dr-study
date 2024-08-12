@@ -212,8 +212,13 @@ const Signal = ({
         console.log('before setIsAvatarSpeaking', newSignal.time);
         console.log('setTimeOut 시작 전');
         setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
+        console.log('setIsAvatarSpeaking 실행');
+
         setTimeForAvatarSpeaking(newSignal.time as number);
+        console.log('setTimeForAvatarSpeaking 실행');
+
         setAudioUrl(newSignal.audioUrl as string); // 오디오 URL 설정
+        console.log('setAudioUrl 실행', newSignal.audioUrl);
         // 아바타 발화는 해당 시간 동안만 수행
         setTimeout(() => {
             console.log('setTimeOut 시작 됨');

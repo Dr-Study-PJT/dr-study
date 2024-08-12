@@ -1,70 +1,46 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import './mod.css';
 import { Button } from '@/components/atoms';
-import OpenTotalSummaryButton from './OpenTotalSummaryButton';
+import { ConferenceData } from '@/interfaces/conference';
 
 interface ModeratorAvatarProps {
     isAvatarSpeaking: boolean;
     timeForAvatarSpeaking: number;
     gptSummaryBySystem: string;
-    audioUrl: string;
+    conferenceInfo: ConferenceData | null;
 }
 
 const ModeratorAvatar = ({
     isAvatarSpeaking,
     timeForAvatarSpeaking,
     gptSummaryBySystem,
-    audioUrl,
+    conferenceInfo,
 }: ModeratorAvatarProps) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
-    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+
+    const audioUrl = `https://s3.ap-northeast-2.amazonaws.com/mz-stop/dr-study/audio/avatar_audio_${conferenceInfo?.id}.mp3`;
+    const uniqueUrl = `${audioUrl}?t=${new Date().getTime()}`;
+
+    const handleClickPlayAudio = () => {
+        const audio = new Audio(uniqueUrl);
+        if (audio) {
+            console.log('audio', audio);
+            audio.play().catch((error) => {
+                console.error('오디오 재생 중 오류 발생:', error);
+            });
+        }
+    };
 
     useEffect(() => {
         if (isAvatarSpeaking) {
-            console.log(
-                'isAvatarSpeaking if (true) line => ',
-                isAvatarSpeaking,
-            );
+            handleClickPlayAudio();
             setIsHovered(true);
-            // audio.play();
         } else {
-            console.log(
-                'isAvatarSpeaking else (false) line => ',
-                isAvatarSpeaking,
-            );
             setIsHovered(false);
-            // audio.pause(); // 오디오 일시 정지
         }
-    }, [isAvatarSpeaking, timeForAvatarSpeaking]);
-
-    useEffect(() => {
-        console.log(
-            'setIsHovered: ',
-            '\n isAvatarSpeaking:',
-            isAvatarSpeaking,
-            '\n timeForAvatarSpeaking:',
-            timeForAvatarSpeaking,
-        );
-    }, [setIsHovered]);
-
-    useEffect(() => {
-        if (audioUrl) {
-            console.log('audioUrl: ', audioUrl);
-
-            new Audio(audioUrl).play(); // 바로 실행
-            setAudio(new Audio(audioUrl));
-        }
-    }, [audioUrl]);
-
-    useEffect(() => {
-        setAudio(
-            new Audio(
-                'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/audio_avatar_1.mp3',
-            ),
-        );
-    }, []);
+    }, [isAvatarSpeaking]);
 
     return (
         <div
@@ -101,6 +77,7 @@ const ModeratorAvatar = ({
             <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
                 {gptSummaryBySystem}
             </div>
+            <Button onClick={handleClickPlayAudio}>버튼</Button>
         </div>
     );
 };

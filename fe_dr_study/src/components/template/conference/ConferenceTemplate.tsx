@@ -362,10 +362,10 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                     />
                     <div className="fixed bottom-[10%] left-[50%] w-[10%]">
                         <ModeratorAvatar
-                            audioUrl={audioUrl}
                             isAvatarSpeaking={isAvatarSpeaking}
                             timeForAvatarSpeaking={timeForAvatarSpeaking}
                             gptSummaryBySystem={gptSummaryBySystem}
+                            conferenceInfo={conferenceInfo}
                         />
                     </div>
                 </div>
