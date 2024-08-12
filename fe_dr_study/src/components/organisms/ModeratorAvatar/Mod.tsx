@@ -20,14 +20,16 @@ const ModeratorAvatar = ({
 }: ModeratorAvatarProps) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
 
+    const audioRef = useRef<HTMLAudioElement>(new Audio());
+
     const audioUrl = `https://s3.ap-northeast-2.amazonaws.com/mz-stop/dr-study/audio/avatar_audio_${conferenceInfo?.id}.mp3`;
-    const uniqueUrl = `${audioUrl}?t=${new Date().getTime()}`;
 
     const handleClickPlayAudio = () => {
-        const audio = new Audio(uniqueUrl);
-        if (audio) {
-            console.log('audio', audio);
-            audio.play().catch((error) => {
+        const uniqueUrl = `${audioUrl}?t=${new Date().getTime()}`;
+        audioRef.current.src = uniqueUrl;
+        if (audioRef.current) {
+            console.log('audioRef.current', audioRef.current);
+            audioRef.current.play().catch((error) => {
                 console.error('오디오 재생 중 오류 발생:', error);
             });
         }
@@ -69,7 +71,6 @@ const ModeratorAvatar = ({
                         ? 'Moderator Speaking'
                         : 'Moderator Not Speaking'
                 }
-                className={isAvatarSpeaking ? 'rotating' : ''}
                 style={{
                     animationDuration: `${timeForAvatarSpeaking * 1000}ms`, // 애니메이션 지속 시간 설정
                 }}
@@ -77,7 +78,6 @@ const ModeratorAvatar = ({
             <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
                 {gptSummaryBySystem}
             </div>
-            <Button onClick={handleClickPlayAudio}>버튼</Button>
         </div>
     );
 };

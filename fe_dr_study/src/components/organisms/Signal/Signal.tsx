@@ -261,7 +261,8 @@ const Signal = ({
     // 신호 단계 신호 처리
     const handleProgramme = (newSignal: SignalInterface) => {
         console.log(`handleProgramme: 다음 스텝 표시`, newSignal);
-        dispatch(setFullPhase(newSignal.programme));
+
+        dispatch(setFullPhase({ programme: newSignal.programme }));
     };
 
     // joining 단계 신호 처리
