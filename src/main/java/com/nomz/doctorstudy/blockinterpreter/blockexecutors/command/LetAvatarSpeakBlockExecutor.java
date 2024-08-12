@@ -12,7 +12,7 @@ import com.nomz.doctorstudy.conference.room.SignalUtils;
 import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import com.nomz.doctorstudy.conference.room.signal.GptSummarySignal;
-import com.nomz.doctorstudy.conference.room.signal.UnmuteSignal;
+import com.nomz.doctorstudy.conference.room.signal.NextStepSignal;
 import com.nomz.doctorstudy.image.service.MediaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -85,12 +86,14 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         log.debug("summary text={}", summary);
         signalTransmitter.transmitSignal(processId, new GptSummarySignal(summary));
 
+        signalTransmitter.transmitSignal(processId, new NextStepSignal());
+
         return null;
     }
 
     @Override
     public Object executeGetProgramme(List<Object> args) {
-        threadProcessContext.get().addProgrammeInfo("AI 말하기");
+        threadProcessContext.get().addProgrammeItem(Map.of("nickname", "Moderator", "time", -1));
 
         return null;
     }

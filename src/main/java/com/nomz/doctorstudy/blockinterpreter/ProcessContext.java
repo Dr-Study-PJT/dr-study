@@ -1,8 +1,8 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
+import com.nomz.doctorstudy.blockinterpreter.programme.ProgrammeItem;
 import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -160,7 +160,7 @@ public class ProcessContext {
         return commandBlocks.get(cursor);
     }
 
-    public void addProgrammeInfo(String content) {
+    public void addProgrammeItem(Map<String, Object> content) {
         int currentPhase = (int) getVariable("current_phase");
         programme.add(new ProgrammeItem(currentPhase, content));
     }

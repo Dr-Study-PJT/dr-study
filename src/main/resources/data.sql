@@ -130,16 +130,16 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 let_avatar_speak(
                     string_concat(
                         int_to_string(get_int_variable('current_phase')),
-                        '번째 페이즈에 진입합니다. 다시한번 말씀드립니다. 이제 곧',
+                        '번 페이즈에 진입합니다. 다시한번 말씀드립니다. 이제 곧',
                         int_to_string(get_int_variable('current_phase')),
-                        '번째 페이즈에 진입합니다.'
+                        '번 페이즈에 진입합니다.'
                     )
                 );
                 loop(3) {
                     let_avatar_speak(
                         string_concat(
                             int_to_string(get_num_of_iteration()),
-                            '번째 루프를 진행중입니다. 즐거운 시간 보내시길 바랍니다!'
+                            '번 루프를 진행중입니다. 즐거운 시간 보내시길 바랍니다!'
                         )
                     );
                 }
@@ -148,16 +148,16 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 let_avatar_speak(
                     string_concat(
                         int_to_string(get_int_variable('current_phase')),
-                        '번째 페이즈에 진입합니다. 다시한번 말씀드립니다. 이제 곧',
+                        '번 페이즈에 진입합니다. 다시한번 말씀드립니다. 이제 곧',
                         int_to_string(get_int_variable('current_phase')),
-                        '번째 페이즈에 진입합니다.'
+                        '번 페이즈에 진입합니다.'
                     )
                 );
                 loop(3) {
                     let_avatar_speak(
                         string_concat(
                             int_to_string(get_num_of_iteration()),
-                            '번째 루프를 진행중입니다. 즐거운 시간 보내시길 바랍니다!'
+                            '번 루프를 진행중입니다. 즐거운 시간 보내시길 바랍니다!'
                         )
                     );
                 }
@@ -166,16 +166,16 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 let_avatar_speak(
                     string_concat(
                         int_to_string(get_int_variable('current_phase')),
-                        '번째 페이즈에 진입합니다. 다시한번 말씀드립니다. 이제 곧',
+                        '번 페이즈에 진입합니다. 다시한번 말씀드립니다. 이제 곧',
                         int_to_string(get_int_variable('current_phase')),
-                        '번째 페이즈에 진입합니다.'
+                        '번 페이즈에 진입합니다.'
                     )
                 );
                 loop(3) {
                     let_avatar_speak(
                         string_concat(
                             int_to_string(get_num_of_iteration()),
-                            '번째 루프를 진행중입니다. 즐거운 시간 보내시길 바랍니다!'
+                            '번 루프를 진행중입니다. 즐거운 시간 보내시길 바랍니다!'
                         )
                     );
                 }
