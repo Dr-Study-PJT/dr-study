@@ -49,7 +49,9 @@ public class FastApiCallService implements ExternalApiCallService{
             String responseBody = response.getBody();
             if (responseBody != null) {
                 JsonNode jsonNode = objectMapper.readTree(responseBody);
-                return jsonNode.get("answer").asText();
+                String answer = jsonNode.get("answer").asText();
+                answer = answer.replaceAll("\n", "[Line Feed]");
+                return answer;
             } else {
                 return null;
             }

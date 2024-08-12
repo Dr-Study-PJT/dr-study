@@ -57,9 +57,6 @@ public class ProcessContext {
         this.transcripts.clear();
         this.programme.clear();
 
-        declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size() - 1);
-
         initParticipantInfo();
     }
 
@@ -70,7 +67,8 @@ public class ProcessContext {
             declareVariable(variableName);
             setVariable(variableName, participantInfo.getName());
         }
-        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size());
+        declareVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken());
+        setVariable(BlockVariable.NUM_OF_PARTICIPANT.getToken(), participantInfoList.size() - 1);
     }
 
     public Integer getNumOfParticipant() {

@@ -48,7 +48,7 @@ public class ProcessLockManager {
         CompletableFuture.runAsync(() -> {
             ProcessLockManager.awaken(processId);
         }, CompletableFuture.delayedExecutor(millisTime, TimeUnit.MILLISECONDS));
-        log.debug("WaitBlock: start sleep {} sec", (double) millisTime / 1000.0);
+        log.debug("Process:{} starts to sleep {} sec", processId, (double) millisTime / 1000.0);
         ProcessLockManager.sleep(processId);
     }
 }

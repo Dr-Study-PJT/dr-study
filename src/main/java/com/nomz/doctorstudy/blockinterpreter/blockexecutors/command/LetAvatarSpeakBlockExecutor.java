@@ -46,10 +46,11 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
     @Override
     protected Object executeAction(List<Object> args) {
+        String speechContent = (String) args.get(0);
+
         ProcessContext processContext = threadProcessContext.get();
         long processId = processContext.getId();
 
-        String speechContent = (String) args.get(0);
         byte[] speechAudio = externalApiCallService.tts(speechContent, VoiceType.MEN_LOW);
         log.debug("let avatar speak: {}", speechContent);
 
@@ -58,14 +59,20 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         File file = new File(audioPath);
         int audioDurationMills = AudioUtils.getAudioLength(file.getAbsolutePath());
         log.debug("tts audio duration={}", audioDurationMills);
+        String audioUrl = mediaService.saveAudio(file);
+
+        /*
+        // For Test
+        int audioDurationMills = 5000;
+        String audioUrl = "https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/speech.mp3";
+        */
 
         signalUtils.sendMuteSignals(processId, processContext.getParticipantInfoList().stream().map(RoomParticipantInfo::getMemberId).toList());
-        String audioURl = mediaService.saveAudio(file);
         signalTransmitter.transmitSignal(
                 processId,
                 new AvatarSpeakSignal(
                         audioDurationMills,
-                        audioURl
+                        audioUrl
                 )
         );
 
