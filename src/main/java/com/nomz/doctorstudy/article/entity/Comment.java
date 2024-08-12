@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.article.entity;
 import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
@@ -36,5 +37,8 @@ public class Comment {
 
     @Column(name="deleted_at")
     private LocalDateTime deletedAt;
+
+    @ColumnDefault("0")
+    private Boolean isEdited;
 
 }

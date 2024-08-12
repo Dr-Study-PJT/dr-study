@@ -29,6 +29,9 @@ public class GetArticleResponse {
     @Schema(description = "조회된 게시글 조회수", example = "1")
     private Long viewCount;
 
+    @Schema(description = "수정 여부", example = "false")
+    private Boolean isEdited;
+
     @Schema(description = "조회된 게시글 작성자 정보")
     private MemberInfo memberInfo;
 
@@ -37,6 +40,7 @@ public class GetArticleResponse {
 
     @Schema(description = "태그 리스트", example = "[\"#공지사항\", \"#필독\"]")
     private List<String> tags;
+
 
     public static GetArticleResponse of(Article article){
         List<String> tagNames = article.getArticleTags().stream()
@@ -47,6 +51,7 @@ public class GetArticleResponse {
                 .map(comment -> CommentSummary.builder()
                         .id(comment.getId())
                         .content(comment.getContent())
+                        .isEdited(comment.getIsEdited())
                         .memberInfo(MemberInfo.of(comment.getMember()))
                         .createdAt(comment.getCreatedAt())
                         .build())
@@ -58,6 +63,7 @@ public class GetArticleResponse {
                 .content(article.getContent())
                 .createdAt(article.getCreatedAt())
                 .viewCount(article.getViewCount())
+                .isEdited(article.getIsEdited())
                 .memberInfo(MemberInfo.of(article.getWriter()))
                 .comments(commentSummaries)
                 .tags(tagNames)

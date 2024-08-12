@@ -113,7 +113,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{articleId}")
-    @Operation(summary = "Article 조회(Auth 없는 버전)", description = "Article을 조회합니다.")
+    @Operation(summary = "Article 조회", description = "Article을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Article 조회 성공"),
             @ApiResponse(responseCode = "400", description = "유효하지 않은 입력", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
@@ -145,8 +145,9 @@ public class ArticleController {
                 .map(comment -> CommentSummary.builder()
                         .id(comment.getId())
                         .content(comment.getContent())
-                        .memberInfo(MemberInfo.of(comment.getMember()))
                         .createdAt(comment.getCreatedAt())
+                        .isEdited(comment.getIsEdited())
+                        .memberInfo(MemberInfo.of(comment.getMember()))
                         .build())
                 .collect(Collectors.toList());
 
@@ -156,6 +157,7 @@ public class ArticleController {
                 .content(article.getContent())
                 .createdAt(article.getCreatedAt())
                 .viewCount(article.getViewCount())
+                .isEdited(article.getIsEdited())
                 .memberInfo(MemberInfo.of(article.getWriter()))
                 .comments(commentSummaries)
                 .tags(tags)

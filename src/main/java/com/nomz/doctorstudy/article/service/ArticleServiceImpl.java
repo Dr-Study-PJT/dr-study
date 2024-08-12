@@ -85,15 +85,18 @@ public class ArticleServiceImpl implements ArticleService{
 
         article.setTitle(request.getTitle());
         article.setContent(request.getContent());
+        if(!article.getIsDeleted())
+            article.setIsEdited(Boolean.TRUE);
 
         return articleRepository.save(article);
     }
 
     @Override
+    @Transactional
     public Article getArticle(Long articleId) {
         Article article = articleRepository.findByIdAndIsDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ArticleErrorCode.ARTICLE_NOT_FOUND_ERROR));
-
+        article.setViewCount(article.getViewCount() + 1);
         return article;
     }
 
@@ -143,6 +146,8 @@ public class ArticleServiceImpl implements ArticleService{
             throw new BusinessException(ArticleErrorCode.COMMENT_NOT_AUTHORIZED);
         }
         comment.setContent(request.getContent());
+        if(!comment.getIsEdited())
+            comment.setIsEdited(Boolean.TRUE);
 
         return comment;
     }
