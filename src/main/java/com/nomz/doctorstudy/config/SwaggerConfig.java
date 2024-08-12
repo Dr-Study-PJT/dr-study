@@ -10,13 +10,41 @@ import io.swagger.v3.oas.models.servers.Server;
 import jakarta.servlet.ServletContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
     @Bean
+    @Profile("!local")
     public OpenAPI openAPI(ServletContext servletContext) {
+        Info info = new Info()
+                .version("v1.0")
+                .title("Doctor Study API")
+                .description("닥터 스터디 프로젝트 API");
+
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER).name("Authorization");
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
+
+        Server server = new Server()
+                .url(servletContext.getContextPath());
+
+        return new OpenAPI()
+                .info(info)
+                .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
+                .security(List.of(securityRequirement))
+                .servers(List.of(server))
+                ;
+    }
+
+    @Bean
+    @Profile("local")
+    public OpenAPI localOpenAPI(ServletContext servletContext) {
         Info info = new Info()
                 .version("v1.0")
                 .title("Doctor Study API")

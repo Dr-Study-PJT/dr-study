@@ -35,24 +35,30 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        if (false) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof MemberDetails) {
-                Member member = ((MemberDetails) principal).getUser();
-                if (member != null) {
-                    return member;
-                }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof MemberDetails) {
+            Member member = ((MemberDetails) principal).getUser();
+            if (member != null) {
+                return member;
             }
         }
 
+        if (false) {
+            return resolveDevelopToken(webRequest);
+        }
+
+        throw new AuthException(AuthErrorCode.UNAUTHORIZED);
+    }
+
+    private Member resolveDevelopToken(NativeWebRequest webRequest) {
         //
         // bypass code for test in development environment
         //
+        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         log.debug("Controller that requires authentication received request. But request doesn't have token header");
         log.debug("Trying to find bypass header -> '" + LoginToken.DEV_LOGIN_TOKEN + "'");
 
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String devMemberIdStr = request.getHeader(LoginToken.DEV_LOGIN_TOKEN);
         if (devMemberIdStr == null) {
             log.debug("Failed to authenticate, Request={}", request.getRequestURI());
