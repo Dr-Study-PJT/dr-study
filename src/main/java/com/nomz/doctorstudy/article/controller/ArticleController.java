@@ -45,7 +45,7 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
-    @PostMapping
+    @PostMapping("/{groupId}")
     @Operation(summary = "Article 생성", description = "Article을 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Article 생성 성공"),
@@ -66,9 +66,11 @@ public class ArticleController {
                     """)))
 
     })
-    public ResponseEntity<SuccessResponse<ArticleResponse>> createArticle(@RequestBody CreateArticleRequest request,
-                                                                          @Parameter(hidden = true) @Login Member requester) {
-        Article createdArticle = articleService.createArticle(request, requester);
+    public ResponseEntity<SuccessResponse<ArticleResponse>> createArticle(
+            @PathVariable("groupId") Long groupId,
+            @RequestBody CreateArticleRequest request,
+            @Parameter(hidden = true) @Login Member requester) {
+        Article createdArticle = articleService.createArticle(groupId, request, requester);
         ArticleResponse response = new ArticleResponse(createdArticle.getId());
         return ResponseEntity.ok(
                 new SuccessResponse<>(
