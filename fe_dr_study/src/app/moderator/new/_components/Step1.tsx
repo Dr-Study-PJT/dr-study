@@ -9,6 +9,8 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
 
+    const S3_URL = 'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study';
+
     const handleChange = (name: string, value: string) => {
         setData({
             ...data,
@@ -23,8 +25,9 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     }, []);
 
     useEffect(() => {
-        const videoSrc = `/videos/video_${data.modelType}.mp4`;
+        const videoSrc = `${S3_URL}/moderators/preset/videos/${data.modelType}_speak.mp4`;
         const audioSrc = `/audios/audio_${data.voiceType}${data.characterType}.mp3`;
+        // const audioSrc = `${S3_URL}/moderators/preset/audios/${data.voiceType}${data.characterType}.mp3`;
 
         if (videoRef.current) videoRef.current.src = videoSrc;
         if (audioRef.current) audioRef.current.src = audioSrc;
