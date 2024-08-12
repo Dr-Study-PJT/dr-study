@@ -1,7 +1,9 @@
 
 --IMAGE--
 INSERT INTO image (image_url, is_deleted, created_at)
-VALUES ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg", false, NOW())
+VALUES ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg", false, NOW()),
+       ("https://s3.ap-northeast-2.amazonaws.com/mz-stop/dr-study/images/members/2907ae0a-7236-49f2-a8cf-c6415e8789be.png", false, NOW()),
+       ("https://s3.ap-northeast-2.amazonaws.com/mz-stop/dr-study/images/groups/67e7d2ee-b291-45a7-8755-c9c53ae6de8f.png", false, NOW())
 ;
 
 --MEMBER-- password -> 'test'
@@ -11,14 +13,17 @@ VALUES ('test1@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEE
        ('test3@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', 'Im 철현', 1, NOW(), null, false),
        ('test4@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '김주현인데요', 1, NOW(), null, false),
        ('test5@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '갱모', 1, NOW(), null, false),
-       ('test6@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '신재민이에요', 1, NOW(), null, false)
+       ('test6@example.com', '$2a$10$j74cGWgZfsNP2DMvG6SH6.vydHQhm8vkP5ukIRngOEETV.C9kWGy6', '신재민이에요', 1, NOW(), null, false),
+       ('tester@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '테스터님', 2, NOW(), null, false)
 ;
 
 --STUDY_GROUP--
 INSERT INTO study_group (captain_id, image_id, name, description, goal, due_date, member_capacity, created_at, is_deleted)
 VALUES (1, 1, "스터디그룹1", "스터디그룹1 설명", "스터디그룹1 목표", DATE_ADD(NOW(), INTERVAL 7 DAY), 25, NOW(), false),
        (2, 1, "스터디그룹2", "스터디그룹2 설명", "스터디그룹2 목표", DATE_ADD(NOW(), INTERVAL 14 DAY), 50, NOW(), false),
-       (3, 1, "스터디그룹3", "스터디그룹3 설명", "스터디그룹3 목표", DATE_ADD(NOW(), INTERVAL 30 DAY), 50, NOW(), false)
+       (3, 1, "스터디그룹3", "스터디그룹3 설명", "스터디그룹3 목표", DATE_ADD(NOW(), INTERVAL 30 DAY), 50, NOW(), false),
+       (7, 3, "CS 전공 면접 스터디", "CS 전공면접에 대비하여 각자 공부한 내용을 면접식으로 주고받는 것에 목적을 둔 스터디입니다. 밝은 분위기에서 함께 준비해요!",
+       "면접 합격!", DATE_ADD(NOW(), INTERVAL 100 DAY), 6, DATE_ADD(NOW(), INTERVAL -30 DAY), false)
 ;
 
 --MEMBER STUDY GROUP--
@@ -26,7 +31,12 @@ INSERT INTO member_study_group (member_id, study_group_id, role, join_date, is_l
 VALUES (1, 1, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (2, 2, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
        (3, 3, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL 7 DAY), false),
-       (5, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL -1 HOUR), false)
+       (5, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL -1 HOUR), false),
+       (7, 4, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL -30 DAY), false),
+       (1, 4, 'MEMBER', DATE_ADD(NOW(), INTERVAL -20 DAY), false),
+       (2, 4, 'MEMBER', DATE_ADD(NOW(), INTERVAL -10 DAY), false),
+       (7, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL -1 HOUR), false),
+       (7, 2, 'MEMBER', DATE_ADD(NOW(), INTERVAL -1 HOUR), false)
 ;
 
 --Tag--
@@ -35,7 +45,10 @@ VALUES (1, '태그1'),
        (2, '태그2'),
        (3, '태그3'),
        (4, '태그4'),
-       (5, '태그5')
+       (5, '태그5'),
+       (6, '컴퓨터공학'),
+       (7, '전공면접')
+
 ;
 
 --STUDY GROUP TAG--
@@ -47,7 +60,9 @@ VALUES (1, 1),
        (2, 1),
        (3, 1),
        (4, 1),
-       (5, 1)
+       (5, 1),
+       (6, 4),
+       (7, 4)
 ;
 
 --MEMBER STUDY GROUP APPLY--
