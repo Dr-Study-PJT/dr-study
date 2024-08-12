@@ -45,7 +45,7 @@ audio-utils:
 
   
 auth:
-  use-dev-token: false
+  use-dev-token: true
 
 ---
 ## local
@@ -61,4 +61,4 @@ spring:
       port: 6379
 
 fast-api:
-  url: http://192.168.100.149:8000
+  url: http://localhost:8000

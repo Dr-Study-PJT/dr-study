@@ -23,10 +23,10 @@ public class BlockInterpreter {
     private final ScriptPreprocessor scriptPreprocessor;
     private final SignalTransmitter signalTransmitter;
 
-    public void init(Long processId, String script, Map<String, Object> varMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
+    public void init(Long processId, String script, Map<String, Object> varMap, ConferenceContext conferenceContext) {
         List<Block> blocks = scriptPreprocessor.preprocessScript(script);
         Map<String, Integer> labelMap = parseLabels(blocks);
-        processManager.createProcess(processId, blocks, varMap, labelMap, participantInfoList, prePrompt);
+        processManager.createProcess(processId, blocks, varMap, labelMap, conferenceContext);
     }
 
     public void interpret(Long processId) {

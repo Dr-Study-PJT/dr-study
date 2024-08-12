@@ -75,8 +75,11 @@ public class RoomService {
                 roomId,
                 script,
                 Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
-                existingParticipantMap.get(roomId).values().stream().toList(),
-                prePrompt
+                ConferenceContext.builder()
+                        .prePrompt(prePrompt)
+                        .subject(subject)
+                        .participantInfoList(existingParticipantMap.get(roomId).values().stream().toList())
+                        .build()
         );
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
         log.info("========== FINISHED PROGRAMME MODE ==========");
@@ -86,8 +89,11 @@ public class RoomService {
                 roomId,
                 script,
                 Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
-                existingParticipantMap.get(roomId).values().stream().toList(),
-                prePrompt
+                ConferenceContext.builder()
+                        .prePrompt(prePrompt)
+                        .subject(subject)
+                        .participantInfoList(existingParticipantMap.get(roomId).values().stream().toList())
+                        .build()
         );
         processThreadMap.put(roomId, CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
