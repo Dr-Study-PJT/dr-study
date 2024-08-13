@@ -16,6 +16,7 @@ export interface CreateConferenceFormData {
     title: string;
     subject: string;
     memberCapacity: number;
+    moderatorId: number;
     scheduledTime: Date;
 }
 
@@ -25,6 +26,7 @@ const initialFormData: CreateConferenceFormData = {
     title: '',
     subject: '',
     memberCapacity: 1,
+    moderatorId: 1,
     scheduledTime: new Date(new Date().getTime() + 60 * 60 * 1000),
 };
 

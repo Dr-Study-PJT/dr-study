@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { GET, POST } from '@/app/api/routeModule';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
-import { Moderator } from '@/interfaces/moderator';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { useRouter } from 'next/navigation';
 
@@ -16,13 +15,11 @@ const useConferenceInfo = (conferenceId: number) => {
         null,
     );
     const [studyMembers, setStudyMembers] = useState<ConferenceMember[]>([]);
-    const [moderators, setModerators] = useState<Moderator[]>([]);
     const [isFetchFailed, setIsFetchFailed] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async () => {
             await handleGetConferenceInfo();
-            await handleGetModerators();
         };
         fetchData();
     }, [conferenceId]);
@@ -32,7 +29,7 @@ const useConferenceInfo = (conferenceId: number) => {
             const response = await GET(`v1/conferences`, {
                 params: `${conferenceId}`,
                 isAuth: true,
-                revalidateTime: 10,
+                revalidateTime: 0,
             });
 
             if (Object.keys(response).includes('errors')) {
@@ -74,23 +71,7 @@ const useConferenceInfo = (conferenceId: number) => {
         }
     };
 
-    const handleGetModerators = async () => {
-        try {
-            const response = await GET(`v1/moderators`, {
-                params: '',
-                isAuth: true,
-                revalidateTime: 10,
-            });
-
-            console.log('사회자 리스트 조회 성공:', response);
-            const { data } = response;
-            setModerators(data);
-        } catch (error) {
-            console.error('사회자 리스트 조회 실패:', error);
-        }
-    };
-
-    const handleOpenConference = async (moderator: Moderator) => {
+    const handleOpenConference = async () => {
         console.log(
             '컨퍼런스 개최 요청 시작. conferenceData =>',
             conferenceData,
@@ -99,9 +80,7 @@ const useConferenceInfo = (conferenceId: number) => {
             const response = await POST({
                 API: API,
                 endPoint: `${conferenceId}/open`,
-                body: {
-                    moderatorId: moderator.id,
-                },
+                body: {},
                 isAuth: true,
             });
 
@@ -118,7 +97,6 @@ const useConferenceInfo = (conferenceId: number) => {
         memberData,
         conferenceData,
         studyMembers,
-        moderators,
         isFetchFailed,
         handleOpenConference,
     };

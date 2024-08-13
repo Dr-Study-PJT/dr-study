@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/atoms';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { StepProps } from '../_types';
@@ -12,6 +13,10 @@ import {
     validateDueDate,
 } from '../_validation';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
+import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
+import { GET } from '@/app/api/routeModule';
+import { Moderator } from '@/interfaces/moderator';
+import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/SelectModeratorBox';
 
 interface CreateConferenceTouchable {
     title?: boolean;
@@ -23,6 +28,28 @@ interface CreateConferenceTouchable {
 const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [touched, setTouched] = useState<CreateConferenceTouchable>({});
+    const [moderators, setModerators] = useState<Moderator[]>([]);
+    const [selectedModerator, setSelectedModerator] =
+        useState<Moderator | null>(null);
+
+    useEffect(() => {
+        const handleGetModerators = async () => {
+            try {
+                const response = await GET(`v1/moderators`, {
+                    params: '',
+                    isAuth: true,
+                    revalidateTime: 10,
+                });
+
+                console.log('사회자 리스트 조회 성공:', response);
+                const { data } = response;
+                setModerators(data);
+            } catch (error) {
+                console.error('사회자 리스트 조회 실패:', error);
+            }
+        };
+        handleGetModerators();
+    }, []);
 
     const handleChange = (name: string, value: string) => {
         setData({
@@ -58,6 +85,13 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     };
 
     const handleNext = () => {
+        if (selectedModerator) {
+            setData({
+                ...data,
+                moderatorId: selectedModerator.id,
+            });
+        }
+
         const newErrors = validateForm(data);
         setErrors(newErrors);
         setTouched({
@@ -114,10 +148,10 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                     : undefined
                             }
                         />
-                        <TextareaWithLabel
+                        <InputWithLabelAndError
                             id="subject"
                             label="컨퍼런스 주제"
-                            textareaSize="md"
+                            inputSize="md"
                             name="subject"
                             placeholder="컨퍼런스 주제를 입력해주세요."
                             value={data.subject}
@@ -125,6 +159,12 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                 handleChange('subject', e.target.value)
                             }
                             error={touched.subject ? errors.subject : undefined}
+                        />
+                        <SelectModeratorBox
+                            moderators={moderators}
+                            setIsModeratorInvited={() => {}}
+                            selectedModerator={selectedModerator}
+                            setSelectedModerator={setSelectedModerator}
                         />
                     </div>
                 </section>

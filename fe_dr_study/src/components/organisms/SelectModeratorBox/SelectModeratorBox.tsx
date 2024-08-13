@@ -1,6 +1,6 @@
 import { Moderator } from '@/interfaces/moderator';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 
 interface SelectModeratorBoxProps {
     moderators: Moderator[]; // 사회자 리스트
@@ -57,8 +57,9 @@ const ModeratorList = ({
                     <div className="relative w-[7rem] h-[7rem] rounded-full overflow-hidden">
                         <Image
                             src={
-                                moderator?.modelType ||
-                                '/images/AI_character.jpg'
+                                moderator?.modelType?.startsWith('/')
+                                    ? moderator.modelType
+                                    : `/images/AI_character.jpg`
                             }
                             fill
                             alt="moderator type image"
@@ -87,8 +88,11 @@ const SelectedModerator = ({
                         <div className="relative w-[6rem] h-[6rem] rounded-full overflow-hidden">
                             <Image
                                 src={
-                                    selectedModerator?.modelType ||
-                                    '/images/AI_character.jpg'
+                                    selectedModerator?.modelType?.startsWith(
+                                        '/',
+                                    )
+                                        ? selectedModerator.modelType
+                                        : `/images/AI_character.jpg`
                                 }
                                 fill
                                 alt="moderator type image"

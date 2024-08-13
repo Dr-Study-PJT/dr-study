@@ -36,7 +36,6 @@ const handleReadNotification = async (
         const response = await POST({
             isAuth: true,
             API: notificationAPI,
-            isAuth: true,
             endPoint: `${notificationId}/read`,
         });
 

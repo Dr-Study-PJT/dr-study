@@ -5,51 +5,39 @@ import HrLine from '@/components/atoms/HrLine/HrLine';
 import ToolTip from '@/components/atoms/Tooltip/ToolTip';
 import MeetingIdBox from '@/components/molecules/MeetingIdBox/MeetingIdBox';
 import InviteMembersBox from '@/components/organisms/InviteMembersBox/InviteMembersBox';
-import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/SelectModeratorBox';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
-import { Moderator } from '@/interfaces/moderator';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface ConferenceInfoProps {
-    memberData: any; // any 타입 수정 !필요!
+    memberData: any; // any 타입 수정 필요
     conferenceId: number; // 회의 ID
     conferenceData: ConferenceData | null; // 회의 데이터
-    moderators: Moderator[]; // 사회자 리스트
     studyMembers: ConferenceMember[]; // 스터디 멤버 리스트
-    handleOpenConference: (moderator: Moderator) => void; // 컨퍼런스 개최 함수
+    handleOpenConference: () => void; // 컨퍼런스 개최 함수
 }
 
 const ConferenceInfoTemplate = ({
     memberData,
     conferenceId,
     conferenceData,
-    moderators,
     studyMembers,
     handleOpenConference,
 }: ConferenceInfoProps) => {
     const [isMemberInvited, setIsMemberInvited] = useState<boolean>(false); // 멤버 초대 여부
     const [isHostOnly, setIsHostOnly] = useState<boolean>(false);
+    const [currentTime, setCurrentTime] = useState('0000. 0. 0. 오후 0:00:00');
+
     useEffect(() => {
         setIsHostOnly(
             memberData?.id === conferenceData?.hostId &&
                 conferenceData?.participants.length === 0,
         );
-    }, [isHostOnly, conferenceData]);
-    // const [isClosedConference, setIsClosedConference] = useState<boolean>(
-    //     (!conferenceData && true) || false,
-    // ); // 컨퍼런스 종료 여부
-
-    const [selectedModerator, setSelectedModerator] =
-        useState<Moderator | null>(null);
-    const [isModeratorSelected, setIsModeratorInvited] =
-        useState<boolean>(false); // 사회자 선택 여부
-    const [currentTime, setCurrentTime] = useState('0000. 0. 0. 오후 0:00:00');
+    }, [conferenceData]);
 
     return (
         <div className="flex items-center justify-center p-[6rem] bg-dr-indigo-200 text-dr-white ">
-            <div className="flex flex-col gap-dr-5 w-full h-full border-2 border-dr-gray-500 p-4 rounded-md p-[2rem] max-w-[50rem] ">
+            <div className="flex flex-col gap-dr-5 w-full h-full border-2 border-dr-gray-500 p-4 rounded-md max-w-[50rem] ">
                 <div className="flex">
                     <div className="flex-1 rounded-lg">
                         <h2 className="text-dr-header-3 font-bold mb-2 text-dr-primary ">
@@ -93,15 +81,6 @@ const ConferenceInfoTemplate = ({
                 </MeetingIdBox>
 
                 <HrLine />
-
-                <SelectModeratorBox
-                    moderators={moderators}
-                    setIsModeratorInvited={setIsModeratorInvited}
-                    selectedModerator={selectedModerator}
-                    setSelectedModerator={setSelectedModerator}
-                />
-
-                <HrLine />
                 <InviteMembersBox
                     memberData={memberData}
                     members={studyMembers}
@@ -114,26 +93,14 @@ const ConferenceInfoTemplate = ({
                 <HrLine />
                 <div className="py-[1rem]">
                     <Button
-                        onClick={() =>
-                            handleOpenConference(selectedModerator as Moderator)
-                        }
+                        onClick={handleOpenConference}
                         color={`${
-                            (!isHostOnly &&
-                                isMemberInvited &&
-                                isModeratorSelected) ||
-                            (isHostOnly && isModeratorSelected)
-                                ? 'coral'
-                                : 'gray'
+                            isHostOnly || isMemberInvited ? 'coral' : 'gray'
                         }`}
-                        disabled={
-                            (isHostOnly && !isModeratorSelected) ||
-                            (!isHostOnly &&
-                                (!isMemberInvited || !isModeratorSelected))
-                        }
+                        disabled={!isHostOnly && !isMemberInvited}
                         size="lg"
                         classNameStyles={`relative group ${
-                            (isHostOnly && !isModeratorSelected) ||
-                            (!isHostOnly && !isMemberInvited)
+                            !isHostOnly && !isMemberInvited
                                 ? 'cursor-not-allowed'
                                 : ''
                         }`}
@@ -144,12 +111,6 @@ const ConferenceInfoTemplate = ({
                                 <ToolTip
                                     isVisible={!isMemberInvited}
                                     content="- 한 명의 멤버도 초대하지 않은 상태입니다."
-                                />
-                            )}
-                            {!isModeratorSelected && (
-                                <ToolTip
-                                    isVisible={!isModeratorSelected}
-                                    content="- AI 사회자를 선택하여 컨퍼런스를 시작할 수 있습니다."
                                 />
                             )}
                         </div>

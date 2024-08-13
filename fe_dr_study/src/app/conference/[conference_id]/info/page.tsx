@@ -26,7 +26,6 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({
         memberData,
         conferenceData,
         studyMembers,
-        moderators,
         isFetchFailed,
         handleOpenConference,
     } = useConferenceInfo(conferenceId);
@@ -62,7 +61,6 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({
                 memberData={memberData}
                 conferenceId={conferenceId}
                 conferenceData={conferenceData}
-                moderators={moderators}
                 studyMembers={studyMembers}
                 handleOpenConference={handleOpenConference}
             />

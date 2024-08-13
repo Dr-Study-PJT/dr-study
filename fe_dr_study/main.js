@@ -1,4 +1,3 @@
-// main.js
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
@@ -20,11 +19,13 @@ function createWindow() {
 
     mainWindow.loadURL(
         isDev
-            ? 'http://localhost:5080'
-            : `file://${path.join(__dirname, 'out/index.html')}`,
+            ? 'http://localhost:5080' // 개발 모드에서는 로컬 서버
+            : 'https://www.dr-study.kro.kr', // 프로덕션 모드에서는 배포된 웹사이트
     );
 
-    mainWindow.webContents.openDevTools();
+    if (isDev) {
+        mainWindow.webContents.openDevTools();
+    }
 
     ipcMain.on('minimize-window', () => {
         mainWindow.minimize();

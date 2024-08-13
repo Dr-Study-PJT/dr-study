@@ -6,6 +6,7 @@ import { StepProps } from '../_types';
 import { useRouter } from 'next/navigation';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { getBackgroundColorRandomPastel } from '@/utils/colors';
+import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/SelectModeratorBox';
 
 const Step2: React.FC<StepProps> = ({
     onNext,
@@ -55,6 +56,7 @@ const Step2: React.FC<StepProps> = ({
                             value={data.subject}
                             disabled
                         />
+                        <p>선택된 AI 사회자: {data.moderatorId}</p>
                     </div>
                 </section>
             </div>

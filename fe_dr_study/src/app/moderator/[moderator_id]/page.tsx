@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import ScriptViewer from './scriptViewer';
+import ScriptViewer from './ScriptViewer';
 import { ICreateModeratorReq } from '../_types';
 import { Moderator } from '@/interfaces/moderator';
 import { GET } from '@/app/api/routeModule';
@@ -106,21 +106,21 @@ const ModeratorCard: React.FC<{ moderator: Moderator | null }> = ({
                 <div>
                     <p>AI 제작자 정보</p>
                 </div>
-                <Link href={`/member/${moderator?.creator?.id}`}>
+                <Link href={`/member/${moderator.creator.id}`}>
                     <div className="relative w-[8rem] h-[8rem] rounded-full overflow-hidden">
                         <Image
-                            src={moderator?.creator?.imageUrl}
-                            alt={moderator?.creator?.nickname}
+                            src={moderator.creator.imageUrl}
+                            alt={moderator.creator.nickname}
                             fill
                         />
                     </div>
                 </Link>
                 <div className="flex flex-col">
                     <h2 className="text-dr-header-3 font-bold text-dr-white">
-                        {moderator?.creator?.nickname}
+                        {moderator.creator.nickname}
                     </h2>
                     <p className="text-dr-body-3 text-dr-gray-200">
-                        {moderator?.creator?.email}
+                        {moderator.creator.email}
                     </p>
                 </div>
             </div>
