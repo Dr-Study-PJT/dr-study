@@ -57,7 +57,7 @@ const ModeratorList = ({
                     <div className="relative w-[7rem] h-[7rem] rounded-full overflow-hidden">
                         <Image
                             src={
-                                moderator.thumbnailUrl ||
+                                moderator?.modelType ||
                                 '/images/AI_character.jpg'
                             }
                             fill
@@ -87,7 +87,7 @@ const SelectedModerator = ({
                         <div className="relative w-[6rem] h-[6rem] rounded-full overflow-hidden">
                             <Image
                                 src={
-                                    selectedModerator.thumbnailUrl ||
+                                    selectedModerator?.modelType ||
                                     '/images/AI_character.jpg'
                                 }
                                 fill
