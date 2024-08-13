@@ -67,11 +67,8 @@ public class ConferenceServiceImpl implements ConferenceService {
         StudyGroup studyGroup = studyGroupRepository.findById(request.getStudyGroupId())
                 .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
 
-        Moderator moderator = null;
-        if (request.getModeratorId() != null) {
-            moderator = moderatorRepository.findById(request.getModeratorId())
-                    .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
-        }
+        Moderator moderator = moderatorRepository.findById(request.getModeratorId())
+                .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
         Conference conference = Conference.builder()
                 .moderator(moderator)
@@ -124,7 +121,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     @Override
     @Transactional
-    public void openConference(Long conferenceId, OpenConferenceRequest request) {
+    public void openConference(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
@@ -132,10 +129,6 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_OPENED);
         }
 
-        Moderator moderator = moderatorRepository.findById(request.getModeratorId())
-                .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
-
-        conference.updateModerator(moderator);
         conference.updateOpenTime(LocalDateTime.now());
 
         roomService.openRoom(conferenceId);
@@ -189,7 +182,8 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_STARTED);
         }
         if (conference.getFinishTime() != null) {
-            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_FINISHED);
+            log.warn("이미 종료된 적이 있는 컨퍼런스입니다.");
+            // throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_FINISHED);
         }
 
         roomService.finishRoom(conferenceId);

@@ -114,7 +114,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 phase(1) {
                     loop(1) {
                         let_avatar_speak(gpt_query('반갑워 GPT야. 너는 내가 얼마나 반가운지 약 30자 정도로 대답해봐'));
-                        wait(1000);
+                        wait(1);
                     }
                 }
 ",
@@ -132,7 +132,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
         "
                 phase(1) {
                     loop (1) {
-                        let_participant_speak(1, 5000);
+                        let_participant_speak(1, 5);
                         log(get_recent_participant_speak(1));
                         let_avatar_speak(get_recent_participant_speak(1));
                     }
@@ -205,7 +205,7 @@ phase(1) {
 
 phase(2) {
     loop (get_num_of_participant()) {
-        let_participant_speak(get_num_of_iteration(), 20000);
+        let_participant_speak(get_num_of_iteration(), 20);
         let_avatar_speak(
             gpt_query(
                 string_concat(

@@ -32,7 +32,7 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
     @Override
     protected Object executeAction(List<Object> args) {
         int participantNum = (int) args.get(0);
-        int speakTimeLimit = (int) args.get(1);
+        int speakMillisTimeLimit = (int) args.get(1) * 1000;
 
         ProcessContext processContext = threadProcessContext.get();
 
@@ -46,8 +46,8 @@ public class LetParticipantSpeakBlockExecutor extends BlockExecutor {
                 .toList()
         );
 
-        log.debug("Participant[id={}, name={}] started to speak. time limit={}", speakMemberId, participantName, speakTimeLimit);
-        signalTransmitter.transmitSignal(processId, new ParticipantSpeakSignal(speakMemberId, speakTimeLimit));
+        log.debug("Participant[id={}, name={}] started to speak. time limit={}", speakMemberId, participantName, speakMillisTimeLimit);
+        signalTransmitter.transmitSignal(processId, new ParticipantSpeakSignal(speakMemberId, speakMillisTimeLimit));
 
         ProcessLockManager.sleep(processId);
 
