@@ -49,7 +49,7 @@ public class FastApiCallService implements ExternalApiCallService{
             if (responseBody != null) {
                 JsonNode jsonNode = objectMapper.readTree(responseBody);
                 String answer = jsonNode.get("answer").asText();
-                answer = answer.replaceAll("\n", "[Line Feed]");
+                answer = answer.replaceAll("\n", "[Line Feed Symbol]");
                 return answer;
             } else {
                 return null;

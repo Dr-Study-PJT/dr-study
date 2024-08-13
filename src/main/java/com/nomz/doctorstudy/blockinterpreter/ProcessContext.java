@@ -35,15 +35,19 @@ public class ProcessContext {
     @Getter
     private final List<RoomParticipantInfo> participantInfoList = new ArrayList<>();
 
-    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap, List<RoomParticipantInfo> participantInfoList, String prePrompt) {
+    @Getter
+    private final ConferenceContext conferenceContext;
+
+    public ProcessContext(long id, List<Block> commandBlocks, Map<String, Object> initVarMap, Map<String, Integer> labelMap, ConferenceContext conferenceContext) {
         this.id = id;
         this.commandBlocks = commandBlocks;
         this.initVariableMap = new HashMap<>(initVarMap);
         this.labelMap = new HashMap<>(labelMap);
-        this.gptContext = new GptContext(prePrompt);
+        this.gptContext = new GptContext();
+        this.conferenceContext = conferenceContext;
 
         this.participantInfoList.add(new RoomParticipantInfo(0L, "paddingMember", "Padding Member PeerId"));
-        this.participantInfoList.addAll(participantInfoList);
+        this.participantInfoList.addAll(conferenceContext.getParticipantInfoList());
     }
 
     public void initialize() {
@@ -178,12 +182,6 @@ public class ProcessContext {
 
     public static class GptContext {
         private final StringBuilder history = new StringBuilder();
-        @Getter
-        private final String prePrompt;
-
-        private GptContext(String prePrompt) {
-            this.prePrompt = prePrompt;
-        }
 
         public void addHistory(String query, String answer) {
             history.append("My Query=[").append(query).append("], Gpt Answer=[").append(answer).append("]");
