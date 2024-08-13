@@ -15,6 +15,7 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(new Audio());
     const audioSrc = `${S3_URL}/audio/avatar_audio_${conferenceInfo?.id}.mp3`;
+    const videoSrc = `${S3_URL}/moderators/preset/videos/${'A'}_speak.mp4`;
 
     const isAvatarSpeaking = useSelector(
         (state: RootState) => state.isAvatarSpeaking.isAvatarSpeaking,
@@ -24,15 +25,18 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
     );
 
     useEffect(() => {
-        const videoSrc = `${S3_URL}/moderators/preset/videos/${'A'}_speak.mp4`;
-
         if (videoRef.current) videoRef.current.src = videoSrc;
     }, []);
 
     useEffect(() => {
         audioRef.current.src = audioSrc;
 
+        if (videoRef.current) {
+            videoRef.current.src = videoSrc;
+        }
+
         const uniqueUrl = `${audioSrc}?t=${new Date().getTime()}`;
+        console.log('isAvatarSpeaking:', isAvatarSpeaking);
 
         if (audioRef.current && videoRef.current && isAvatarSpeaking === true) {
             audioRef.current.src = uniqueUrl;
@@ -42,6 +46,7 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
             videoRef.current.play();
             audioRef.current.play();
         }
+
         if (!isAvatarSpeaking) {
             audioRef.current.onended = () => {
                 if (videoRef.current) {
@@ -68,6 +73,7 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
                 <video
                     ref={videoRef}
                     muted
+                    loop
                     autoPlay={false}
                     className="w-full h-full object-cover bg-dr-white"
                 />
