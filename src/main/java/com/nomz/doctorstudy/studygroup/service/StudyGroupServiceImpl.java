@@ -154,7 +154,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
     @Override
-    public MemberStudyGroupApply getApply(Long userId, Long groupId) {
+    public MemberStudyGroupApply getApply(Long groupId, Long userId) {
         return memberStudyGroupApplyRepository.findByApplicantIdAndStudyGroupId(userId, groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.APPLY_NOT_FOUND_ERROR));
     }
