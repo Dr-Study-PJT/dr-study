@@ -17,6 +17,7 @@ public enum StudyGroupErrorCode implements ErrorCode {
         USER_NOT_GROUP_CAPTAIN(HttpStatus.NOT_FOUND, "해당 멤버는 그룹장이 아닙니다."),
         MEMBER_STUDY_GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 멤버-스터디그룹을 찾을 수 없습니다."),
         MEMBER_NOT_IN_GROUP_ERROR(HttpStatus.FORBIDDEN, "해당 멤버-스터디그룹을 찾을 수 없습니다."),
+        APPLY_ALREADY_ENDED(HttpStatus.CONFLICT, "이미 처리 완료된 가입 요청입니다."),
     ;
     private final HttpStatus httpStatus;
     private final String defaultMessage;

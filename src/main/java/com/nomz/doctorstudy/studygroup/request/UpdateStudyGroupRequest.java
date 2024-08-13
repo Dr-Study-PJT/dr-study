@@ -11,15 +11,16 @@ import lombok.*;
 @ToString
 public class UpdateStudyGroupRequest {
 
-    @NotNull(message = "스터디 그룹 이름은 반드시 포함되어야 합니다.")
-    @Size(min = 1, max =32, message = "스터디 그룹 이름은 1자 이상 32자 이하여야 합니다.")
-    @Schema(description = "스터디 그룹 이름", example = "정보처리기사 스터디")
+    @Schema(description = "새로운 스터디 그룹 이름", example = "NEW 정보처리기사 스터디")
     private String name;
 
+    @Schema(description = "새로운 스터디 그룹장 ID", example = "1")
     private Long captainId;
 
+    @Schema(description = "새로운 스터디 이미지 ID", example = "1")
     private Long imageId;
 
+    @Schema(description = "새로운 스터디 그룹 설명", example = "NEW 설명입니다.")
     private String description;
 
 }

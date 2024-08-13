@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -68,7 +69,7 @@ public class ArticleController {
     })
     public ResponseEntity<SuccessResponse<ArticleResponse>> createArticle(
             @PathVariable("groupId") Long groupId,
-            @RequestBody CreateArticleRequest request,
+            @Valid @RequestBody CreateArticleRequest request,
             @Parameter(hidden = true) @Login Member requester) {
         Article createdArticle = articleService.createArticle(groupId, request, requester);
         ArticleResponse response = new ArticleResponse(createdArticle.getId());
@@ -246,7 +247,7 @@ public class ArticleController {
     })
     public ResponseEntity<SuccessResponse<CommentResponse>> createComment(
             @PathVariable("articleId") Long articleId,
-            @RequestBody CommentRequest request,
+            @Valid @RequestBody CommentRequest request,
             @Parameter(hidden = true) @Login Member requester
 
     ){

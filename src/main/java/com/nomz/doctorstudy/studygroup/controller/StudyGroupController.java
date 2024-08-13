@@ -157,7 +157,7 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<?>> updateStudyGroup(
+    public ResponseEntity<SuccessResponse<UpdateStudyGroupResponse>> updateStudyGroup(
             @PathVariable("groupId") Long groupId,
             @RequestBody UpdateStudyGroupRequest request,
             @Parameter(hidden = true) @Login Member requester) {
@@ -166,11 +166,12 @@ public class StudyGroupController {
         // 서비스 호출
         StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request, requester);
 
+        UpdateStudyGroupResponse response = new UpdateStudyGroupResponse(updatedStudyGroup.getId());
         // service 요청
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Study Group 업데이트에 성공했습니다.",
-                        null
+                        response
                 )
         );
     }
@@ -214,11 +215,12 @@ public class StudyGroupController {
                     """)))
     })
     public ResponseEntity<SuccessResponse<GetApplyResponse>> getApply
-            (@RequestParam("userId") Long userId,
-             @RequestParam("groupId") Long groupId){
+            (       @RequestParam("groupId") Long groupId,
+                    @RequestParam("userId") Long userId
+             ){
 
         // Service 로직
-        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.getApply(userId, groupId);
+        MemberStudyGroupApply memberStudyGroupApply = studyGroupService.getApply(groupId, userId);
         GetApplyResponse response = GetApplyResponse.of(memberStudyGroupApply);
 
         return ResponseEntity.ok(
@@ -300,7 +302,7 @@ public class StudyGroupController {
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
-                        "StudyGroup 리스트 조회에 성공했습니다.",
+                        "자신이 그룹장인 그룹에 승인 대기중인 멤버들(Applicants) 조회에 성공했습니다.",
                         responseList
                 )
         );
