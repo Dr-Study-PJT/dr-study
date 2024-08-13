@@ -1,46 +1,38 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Button } from '@/components/atoms';
 import { ConferenceData } from '@/interfaces/conference';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface ModeratorAvatarProps {
-    isAvatarSpeaking: boolean;
-    timeForAvatarSpeaking: number;
-    gptSummaryBySystem: string;
     conferenceInfo: ConferenceData | null;
 }
 
-const ModeratorAvatar = ({
-    isAvatarSpeaking,
-    gptSummaryBySystem,
-    conferenceInfo,
-}: ModeratorAvatarProps) => {
+const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
     const S3_URL = 'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study';
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(new Audio());
     const audioSrc = `${S3_URL}/audio/avatar_audio_${conferenceInfo?.id}.mp3`;
 
-    useEffect(() => {
-        // console.log(
-        //     'conferenceInfo?.moderatorInfo.avatarModelType: ',
-        //     conferenceInfo?.moderatorInfo.avatarModelType,
-        //     conferenceInfo?.moderatorInfo,
-        // );
+    const isAvatarSpeaking = useSelector(
+        (state: RootState) => state.isAvatarSpeaking.isAvatarSpeaking,
+    );
+    const gptSummaryBySystem = useSelector(
+        (state: RootState) => state.gptSummaryBySystemSlice.gptSummaryBySystem,
+    );
 
-        // const videoSrc = `${S3_URL}/moderators/preset/videos/video_${conferenceInfo?.moderatorInfo.avatarModelType}_speak.mp4`;
+    useEffect(() => {
         const videoSrc = `${S3_URL}/moderators/preset/videos/${'A'}_speak.mp4`;
 
         if (videoRef.current) videoRef.current.src = videoSrc;
-        console.log('videoRef:', videoRef?.current?.src);
     }, []);
 
     useEffect(() => {
         audioRef.current.src = audioSrc;
 
         const uniqueUrl = `${audioSrc}?t=${new Date().getTime()}`;
-        console.log('isAvatarSpeaking if (true) line => ', isAvatarSpeaking);
 
         if (audioRef.current && videoRef.current && isAvatarSpeaking === true) {
             audioRef.current.src = uniqueUrl;
@@ -49,7 +41,8 @@ const ModeratorAvatar = ({
 
             videoRef.current.play();
             audioRef.current.play();
-
+        }
+        if (!isAvatarSpeaking) {
             audioRef.current.onended = () => {
                 if (videoRef.current) {
                     videoRef.current.pause();
@@ -57,21 +50,7 @@ const ModeratorAvatar = ({
                 }
             };
         }
-        // }
     }, [isAvatarSpeaking]);
-
-    // 오디오 테스트용 버튼
-    const handleClickPlayAudio = () => {
-        const uniqueUrl = `${audioSrc}?t=${new Date().getTime()}`;
-
-        const audio = new Audio(uniqueUrl);
-        if (audio) {
-            console.log('audio', audio);
-            audio.play().catch((error) => {
-                console.error('오디오 재생 중 오류 발생:', error);
-            });
-        }
-    };
 
     return (
         <div className="relative">

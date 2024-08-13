@@ -1,7 +1,7 @@
 'use client';
 
 import { POST } from '@/app/api/routeModule';
-import { Button, Paragraph, Span } from '@/components/atoms';
+import { Button } from '@/components/atoms';
 import ConferenceControlBar from '@/components/organisms/ConferenceControlBar/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress/ConferenceProgress';
 import ModeratorAvatar from '@/components/organisms/ModeratorAvatar/Mod';
@@ -15,17 +15,10 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';
 import TotalSummary from '@/components/organisms/ModeratorAvatar/TotalSummary';
-import OpenTotalSummaryButton from '@/components/organisms/ModeratorAvatar/OpenTotalSummaryButton';
 import { ConferenceData } from '@/interfaces/conference';
-import { Member } from '@/app/group/[group_id]/_types';
 
 interface ConferenceTemplateProps {
     conferenceInfo: ConferenceData | null;
-}
-
-interface RoomInfoInterface {
-    title: string;
-    memberCapacity: number;
 }
 
 export interface ClientInterface {
@@ -64,7 +57,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     const [isPeerCreated, setIsPeerCreate] = useState(false); // 내 피어가 생성되었는지 여부
     const [isMadeLocalStream, setIsMadeLocalStream] = useState(false); // 내 로컬 스트림이 생성되었는지 여부
     const [isFlag, setIsFlag] = useState(0); // 플래그 상태 (사용 용도에 따라 다름)
-    const [focusingPeerId, setFocusingPeerId] = useState<string>(''); // 현재 강조할 피어의 ID
 
     // 조인 상태
     const [isJoined, setIsJoined] = useState<boolean>(false); // 방에 조인되었는지 여부
@@ -79,20 +71,8 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     ]);
 
     // 시스템에 의한 상태
-    const [isMutedBySystem, setIsMutedBySystem] = useState<boolean>(false); // 시스템에 의해 음소거되었는지 여부
-    const [focusingMemberId, setFocusingMemberId] = useState<number>(0); // 현재 강조할 멤버의 ID
-    const [isAvatarSpeaking, setIsAvatarSpeaking] = useState<boolean>(false); // 아바타 발화 여부
-    const [timeForAvatarSpeaking, setTimeForAvatarSpeaking] =
-        useState<number>(0); // 아바타 발화 시간
-    const [gptSummaryBySystem, setGPTSummaryBySystem] = useState<string>(''); // 현재 화면에 표시되는 멤버의 ID
     const [isStartRecordingAudio, setIsStartRecordingAudio] =
         useState<boolean>(false); // 오디오 스트림 시작 신호
-    const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
-
-    // 전체 메시지
-    const [summaryMessages, setSummaryMessages] = useState<
-        SummaryMessageInterface[]
-    >([]);
 
     // 오디오 주소
 
@@ -124,10 +104,8 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         setIsFlag(1);
 
         myPeer.current = new Peer();
-        console.log(`1. 피어 생성`);
 
         myPeer.current.on('open', (id) => {
-            console.log(`2. 피어 오픈됨, 피어아이디->${id}`);
             setMyPeerId(id);
             setIsPeerCreate(true);
             setExistingPeerIds([id]);
@@ -139,14 +117,10 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 ?.then((stream) => {
                     call.answer(stream); // Answer the call with an A/V stream.
                     call.on('stream', (remoteStream: MediaStream) => {
-                        console.log('call on stream before', remoteStream);
-                        console.log('call on stream before', existingPeers);
                         setExistingPeers((prevPeers) => ({
                             ...prevPeers,
                             [call.peer]: remoteStream, // 수신된 스트림을 기존 Peers에 추가
                         }));
-                        console.log('call on stream after', remoteStream);
-                        console.log('call on stream after', existingPeers);
                     });
                 });
         });
@@ -194,10 +168,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     const makeCall = async (remotePeerId?: string) => {
         if (!isFlag) return;
 
-        console.log(
-            'remotePeer에 전화 연결하기, remotePeerId => ',
-            remotePeerId,
-        );
         if (remotePeerId) {
             const myCall = myPeer.current?.call(
                 remotePeerId, // 호출할 Peer ID에
@@ -218,11 +188,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     const joinConference = async (peerId: string) => {
         if (!isFlag) return;
 
-        console.log('회의에 Join 하려는 클라이언트 데이터 => ', {
-            memberId: memberData?.id,
-            peerId: peerId,
-            streamId: localStream.current?.id,
-        });
         client.current = {
             memberId: memberData?.id,
             peerId,
@@ -237,8 +202,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 isAuth: true,
             });
 
-            console.log('조인 결과 => ', response);
-
             const { data } = response.data;
 
             setCurrentMembers((prevMembers) => [
@@ -249,7 +212,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             data.existingPeerIds.forEach((remotePeerId: string) =>
                 makeCall(remotePeerId),
             );
-            console.log('모든 피어에 전화 연결 성공 => ', data);
 
             const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
             const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
@@ -257,19 +219,12 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
 
             setIsJoined(true);
-            console.log('set isJoined => ');
             setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
         } catch (error) {
-            console.log(
-                'conferenceInfo?.openTime 팅겨져 나가는 원인불명의 이유',
-                conferenceInfo,
-                conferenceInfo?.openTime,
-            );
+            console.error('Error joining conference:', error);
             if (!conferenceInfo?.openTime) {
                 router.push(`/conference/${conferenceInfo?.id}/waiting-room`);
             }
-
-            console.error('Error fetching room list:', error);
         }
     };
 
@@ -282,7 +237,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 body: '', // body는 body
                 isAuth: true, // 항상 true로
             });
-            console.log('컨퍼런스 시작 성공 => ', response);
         } catch (error) {
             console.error('Error fetching room list:', error);
         }
@@ -296,15 +250,15 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 </div>
                 <div className="h-[10%]"></div>
                 <div className="flex w-full h-[80%]">
-                    <div className="flex flex-wrap flex-1 h-[100%]">
+                    <div className="relative flex flex-wrap flex-1 h-[100%]">
                         {Object.keys(existingPeers).map((peerId) => {
                             return (
-                                <Video
-                                    key={peerId}
-                                    existingPeers={existingPeers}
-                                    peerId={peerId}
-                                    focusing={peerId === focusingPeerId}
-                                />
+                                <React.Fragment key={peerId}>
+                                    <Video
+                                        existingPeers={existingPeers}
+                                        peerId={peerId}
+                                    />
+                                </React.Fragment>
                             );
                         })}
                     </div>
@@ -313,9 +267,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         currentMembers={currentMembers}
                         setCurrentMembers={setCurrentMembers}
                         conferenceInfo={conferenceInfo}
-                        setFocusingPeerId={setFocusingPeerId}
                         client={client.current}
-                        setSummaryMessages={setSummaryMessages}
                         isJoined={isJoined}
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}
@@ -323,17 +275,10 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         stompClient={stompClient}
                         memberData={memberData}
                         conferenceId={conferenceInfo?.id || 0}
-                        setIsMutedBySystem={setIsMutedBySystem}
-                        setIsAvatarSpeaking={setIsAvatarSpeaking}
-                        setTimeForAvatarSpeaking={setTimeForAvatarSpeaking}
-                        setGPTSummaryBySystem={setGPTSummaryBySystem}
-                        timeForAudioRecord={timeForAudioRecord}
-                        setTimeForAudioRecord={setTimeForAudioRecord}
                         isStartRecordingAudio={isStartRecordingAudio}
                         setIsStartRecordingAudio={setIsStartRecordingAudio}
                     />
                 </div>
-                {/* <div className="h-[10%]"></div> */}
 
                 <div className="fixed left-0 bottom-0 w-full h-[10%] z-30">
                     <ConferenceControlBar
@@ -344,15 +289,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         localStream={localStream.current}
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}
-                        isMutedBySystem={isMutedBySystem}
                     />
                     <div className="fixed bottom-[10%] left-[50%] w-[10%] z-40">
-                        <ModeratorAvatar
-                            conferenceInfo={conferenceInfo}
-                            isAvatarSpeaking={isAvatarSpeaking}
-                            timeForAvatarSpeaking={timeForAvatarSpeaking}
-                            gptSummaryBySystem={gptSummaryBySystem}
-                        />
+                        <ModeratorAvatar conferenceInfo={conferenceInfo} />
                     </div>
                 </div>
             </div>
@@ -364,7 +303,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                     </Button>
                 )}
             </div>
-            <TotalSummary summaryMessages={summaryMessages} />
+            <TotalSummary />
         </div>
     );
 };

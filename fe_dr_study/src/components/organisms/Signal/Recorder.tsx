@@ -14,7 +14,6 @@ interface RecorderProps {
     timeForAudioRecord: number;
     setTimeForAudioRecord: Dispatch<React.SetStateAction<number>>;
     isStartRecordingAudio: boolean;
-    setFocusingPeerId: Dispatch<SetStateAction<string>>;
 }
 
 function Recorder({
@@ -24,7 +23,6 @@ function Recorder({
     timeForAudioRecord,
     setTimeForAudioRecord,
     isStartRecordingAudio,
-    setFocusingPeerId,
 }: RecorderProps) {
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
     const [isRecording, setIsRecording] = useState(false);
@@ -39,7 +37,6 @@ function Recorder({
             // 설정한 시간 후에 오디오 녹음 중지
             const timeout = setTimeout(() => {
                 stopAudioStream();
-                setFocusingPeerId('');
             }, timeForAudioRecord);
 
             return () => {

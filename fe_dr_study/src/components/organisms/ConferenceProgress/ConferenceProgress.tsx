@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import Carousel from '../Carousel/Carousel';
-import { setNextStep } from '@/store/slices/conferenceProgressSlice';
 
 interface Phase {
     id: number; // 단계 ID
@@ -56,16 +55,8 @@ const ConferenceProgress = () => {
         }
     }, [step]);
 
-    // const dispatch = useDispatch();
-
     return (
         <div className="flex flex-col h-full ">
-            {/* <button
-                className="bg-dr-red"
-                onClick={() => dispatch(setNextStep())} // 다음 단계로 이동하는 버튼
-            >
-                dd
-            </button> */}
             <div className="px-[15%] pt-[0.3rem]">
                 <div className="h-full">
                     {/* 단계 슬라이드 컴포넌트 */}

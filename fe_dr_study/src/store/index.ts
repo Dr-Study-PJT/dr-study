@@ -4,6 +4,12 @@ import authReducer from './slices/authSlice';
 import modalReducer from './slices/modalSlice';
 import notificationReducer from './slices/notificationSlice';
 import conferenceProgressReducer from './slices/conferenceProgressSlice';
+import focusingPeerIdReducer from './slices/conferenceFocusingPeerIdSlice';
+import isAvatarSpeakingReducer from './slices/isAvatarSpeakingSlice';
+import timeForAvatarSpeakingReducer from './slices/timeForAvatarSpeakingSlice';
+import isMutedBySystemReducer from './slices/isMutedBySystemSlice';
+import gptSummaryBySystemReducer from './slices/gptSummaryBySystemSlice';
+import summaryMessagesSlice from './slices/summaryMessagesSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +18,12 @@ export const store = configureStore({
         modal: modalReducer,
         notification: notificationReducer,
         conferenceProgress: conferenceProgressReducer,
+        focusingPeerId: focusingPeerIdReducer,
+        isAvatarSpeaking: isAvatarSpeakingReducer,
+        timeForAvatarSpeaking: timeForAvatarSpeakingReducer,
+        isMutedBySystem: isMutedBySystemReducer,
+        gptSummaryBySystemSlice: gptSummaryBySystemReducer,
+        summaryMessagesSlice: summaryMessagesSlice,
     },
 });
 
