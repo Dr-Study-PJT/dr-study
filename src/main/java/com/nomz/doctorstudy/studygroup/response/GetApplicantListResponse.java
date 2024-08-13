@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class GetApplicantListResponse {
+    @Schema(description = "신청 ID")
+    private final Long applyId;
+
     @Schema(description = "신청 대기자")
     private final MemberInfo applicant;
 
@@ -28,6 +31,7 @@ public class GetApplicantListResponse {
 
     public static GetApplicantListResponse of(MemberStudyGroupApply memberStudyGroupApply) {
         return builder()
+                .applyId(memberStudyGroupApply.getId())
                 .applicant(MemberInfo.of(memberStudyGroupApply.getApplicant()))
                 .groupId(memberStudyGroupApply.getStudyGroup().getId())
                 .groupName(memberStudyGroupApply.getStudyGroup().getName())
