@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateConferenceRequest {
-    @NotNull(message = "사회자 아이디는 반드시 포함되어야 합니다.")
     @Schema(description = "사회자 아이디", example = "1")
     private Long moderatorId;
 
