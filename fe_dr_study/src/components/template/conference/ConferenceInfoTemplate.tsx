@@ -32,14 +32,6 @@ const ConferenceInfoTemplate = ({
     const [isMemberInvited, setIsMemberInvited] = useState<boolean>(false); // 멤버 초대 여부
     const [isHostOnly, setIsHostOnly] = useState<boolean>(false);
     useEffect(() => {
-        console.log('memberData?.id:', memberData?.id);
-        console.log('conferenceData?.hostId:', conferenceData?.hostId);
-        console.log(
-            'conferenceData?.participants.length: ',
-            conferenceData?.participants.length,
-        );
-        console.log('isHostOnly: ', isHostOnly);
-
         setIsHostOnly(
             memberData?.id === conferenceData?.hostId &&
                 conferenceData?.participants.length === 0,
@@ -151,7 +143,7 @@ const ConferenceInfoTemplate = ({
                             {!isMemberInvited && (
                                 <ToolTip
                                     isVisible={!isMemberInvited}
-                                    content="- 한 명 이상 초대하여 컨퍼런스를 시작할 수 있습니다."
+                                    content="- 한 명의 멤버도 초대하지 않은 상태입니다."
                                 />
                             )}
                             {!isModeratorSelected && (

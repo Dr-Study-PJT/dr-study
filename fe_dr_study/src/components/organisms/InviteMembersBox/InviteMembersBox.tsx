@@ -1,5 +1,5 @@
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
-import { POST } from '@/app/api/routeModule';
+import { GET, POST } from '@/app/api/routeModule';
 import { Button } from '@/components/atoms';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
 import { showToast } from '@/utils/toastUtil';
@@ -38,14 +38,14 @@ const InviteMembersBox = ({
         if (
             selectedMembers.some(
                 (currentMember) =>
-                    currentMember.memberInfo.id === member?.memberInfo.id,
+                    currentMember.memberInfo?.id === member?.memberInfo?.id,
             )
         ) {
             // 선택된 멤버라면 목록에서 제거
             setSelectedMembers((prev) =>
                 prev.filter(
                     (currentMember) =>
-                        currentMember.memberInfo.id !== member?.memberInfo.id,
+                        currentMember.memberInfo?.id !== member?.memberInfo?.id,
                 ),
             );
         } else {
@@ -57,7 +57,7 @@ const InviteMembersBox = ({
     // 선택된 멤버 제거 핸들러
     const handleRemoveMember = (member: ConferenceMember) => {
         setSelectedMembers((prev) =>
-            prev.filter((member) => member.memberInfo.id !== memberData?.id),
+            prev.filter((member) => member.memberInfo?.id !== memberData?.id),
         ); // 목록에서 제거
     };
 
@@ -80,7 +80,7 @@ const InviteMembersBox = ({
             });
 
             const invitePromises = selectedMembers.map((member) => {
-                console.log('초대할 멤버 아이디: ', member?.memberInfo.id);
+                console.log('초대할 멤버 아이디: ', member?.memberInfo?.id);
                 return POST({
                     API: API,
                     endPoint: `${conferenceId}/invite`,
@@ -123,9 +123,6 @@ const InviteMembersBox = ({
     const maxInviteMemberCount =
         capacity < members?.length ? capacity : members?.length; // 초대할 수 있는 최대 멤버 수
 
-    useEffect(() => {
-        console.log('isMemberInvited:', isMemberInvited);
-    }, [setIsMemberInvited]);
     return (
         <>
             <ToastContainer position="bottom-right" />
@@ -140,7 +137,7 @@ const InviteMembersBox = ({
                             {members
                                 .filter(
                                     (member) =>
-                                        member.memberInfo.id !=
+                                        member.memberInfo?.id !=
                                         conferenceData?.hostId,
                                 )
                                 ?.map((member) => (
@@ -149,8 +146,8 @@ const InviteMembersBox = ({
                                             selectedMembers.some(
                                                 (currentMember) =>
                                                     currentMember.memberInfo
-                                                        .id ===
-                                                    member?.memberInfo.id,
+                                                        ?.id ===
+                                                    member?.memberInfo?.id,
                                             )
                                                 ? 'border border-blue-500'
                                                 : ''
@@ -161,7 +158,7 @@ const InviteMembersBox = ({
                                         <div className="relative w-[4rem] h-[4rem]">
                                             <Image
                                                 src={
-                                                    member?.memberInfo.imageUrl
+                                                    member?.memberInfo?.imageUrl
                                                 }
                                                 alt="profile-image"
                                                 fill
@@ -191,7 +188,7 @@ const InviteMembersBox = ({
                                     className={`bg-dr-indigo-100 p-[1rem] w-[7rem] h-[7rem] duration-200 hover:bg-dr-gray-500 cursor-pointer flex flex-col items-center gap-1 rounded-md ${
                                         selectedMembers.some(
                                             (member) =>
-                                                member.memberInfo.id ===
+                                                member.memberInfo?.id ===
                                                 memberData?.id,
                                         )
                                             ? 'border border-blue-500'

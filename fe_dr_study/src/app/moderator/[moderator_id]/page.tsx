@@ -2,9 +2,21 @@
 import React, { useEffect, useState } from 'react';
 import ScriptViewer from './scriptViewer';
 import { ICreateModeratorReq } from '../_types';
+import { Moderator } from '@/interfaces/moderator';
+import { GET } from '@/app/api/routeModule';
+import Loading from '@/app/loading';
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
+import { ModeratorDetail } from '@/components/template/moderator/ModeratorTemplate';
+import Link from 'next/link';
 
 const ModeratorDetailPage = () => {
+    const pathname = useParams();
+
+    const moderatorId = pathname.moderator_id;
+
     const [script, setScript] = useState<string>('');
+    const [moderator, setModerator] = useState<Moderator | null>(null);
 
     useEffect(() => {
         // 임의의 스크립트 예시
@@ -46,6 +58,7 @@ phase(4) {
 }
 `;
         setScript(testScript);
+        fetchModerator();
     }, []);
 
     const data: ICreateModeratorReq = {
@@ -58,10 +71,64 @@ phase(4) {
         prePrompt: 'Pre prompt here',
     };
 
+    const fetchModerator = async () => {
+        console.log(moderatorId);
+        const response = await GET(`v1/moderators/${moderatorId}`, {
+            params: '',
+            isAuth: true,
+            revalidateTime: 10,
+        });
+        console.log('사회자 조회 성공:', response);
+
+        setModerator(response.data);
+    };
+
     return (
         <div>
             <h1>Moderator Detail Page</h1>
+            <ModeratorCard moderator={moderator} />
             <ScriptViewer script={script} />
+        </div>
+    );
+};
+
+const ModeratorCard: React.FC<{ moderator: Moderator | null }> = ({
+    moderator,
+}) => {
+    console.log(moderator);
+    if (!moderator) {
+        return <Loading />;
+    }
+
+    return (
+        <div className=" w-full bg-dr-indigo-400 p-4 rounded-xl shadow-md flex flex-col gap-4 px-[10rem]">
+            <div className="flex flex-col items-center gap-4 text-dr-white  text-center bg-dr-indigo-300 py-[2rem] rounded-lg">
+                <div>
+                    <p>AI 제작자 정보</p>
+                </div>
+                <Link href={`/member/${moderator.creator.id}`}>
+                    <div className="relative w-[8rem] h-[8rem] rounded-full overflow-hidden">
+                        <Image
+                            src={moderator.creator.imageUrl}
+                            alt={moderator.creator.nickname}
+                            fill
+                        />
+                    </div>
+                </Link>
+                <div className="flex flex-col">
+                    <h2 className="text-dr-header-3 font-bold text-dr-white">
+                        {moderator.creator.nickname}
+                    </h2>
+                    <p className="text-dr-body-3 text-dr-gray-200">
+                        {moderator.creator.email}
+                    </p>
+                </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-4 text-dr-white  text-center bg-dr-indigo-300 py-[2rem] rounded-lg">
+                <p>AI 사회자 정보</p>
+                <ModeratorDetail moderator={moderator} />
+            </div>
         </div>
     );
 };

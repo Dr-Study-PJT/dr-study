@@ -76,7 +76,10 @@ const ListConferenceToday: React.FC<ListConferenceTodayProps> = ({
 
         if (isOpenedConference) {
             router.push(`/conference/${conference.id}/waiting-room`);
-        } else if (!isOpenedConference && memberData.id === conference.hostId) {
+        } else if (
+            !isOpenedConference &&
+            memberData?.id === conference.hostId
+        ) {
             router.push(`/conference/${conference.id}/info`);
         } else {
             router.push(`/conference/${conference.id}/waiting-room`);

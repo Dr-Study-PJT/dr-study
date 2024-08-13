@@ -18,7 +18,7 @@ export interface ArticleData {
 }
 
 export interface GroupData {
-    id: string;
+    id: number;
     name: string;
     imageUrl: string;
     createdAt: string;

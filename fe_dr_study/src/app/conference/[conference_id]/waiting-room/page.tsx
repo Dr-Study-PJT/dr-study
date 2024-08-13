@@ -4,10 +4,16 @@ import ConferenceWaitingRoomTemplate from '@/components/template/conference/Conf
 import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
 import useConferenceInvitees from '@/hooks/conference/useConferenceInvitees';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
+import { showToast } from '@/utils/toastUtil';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 
-const Page = () => {
+interface ConferenceWaitingRoomPageProps {
+    searchParams: { error: string };
+}
+
+const Page = ({ searchParams }: ConferenceWaitingRoomPageProps) => {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -27,12 +33,24 @@ const Page = () => {
         return null;
     }
 
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (searchParams.error === 'already_open') {
+                showToast('error', '컨퍼런스가 이미 개최되었습니다.');
+            }
+        }, 1000);
+        return () => clearTimeout(timeout);
+    }, [searchParams]);
+
     return (
-        <ConferenceWaitingRoomTemplate
-            memberData={memberData}
-            conferenceInfo={conferenceInfo}
-            conferenceInvitees={conferenceInvitees}
-        />
+        <>
+            <ConferenceWaitingRoomTemplate
+                memberData={memberData}
+                conferenceInfo={conferenceInfo}
+                conferenceInvitees={conferenceInvitees}
+            />
+            <ToastContainer />
+        </>
     );
 };
 

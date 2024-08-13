@@ -20,7 +20,7 @@ const MemberAvatar = ({ member, urlDisabled }: MemberAvatarProps) => {
         if (urlDisabled || !member.id) {
             return;
         }
-        router.push(`/members/${member.id}`);
+        router.push(`/member/${member.id}`);
     };
 
     return (

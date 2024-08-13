@@ -4,18 +4,21 @@ import { GET } from '@/app/api/routeModule';
 import { GroupData, Member } from '@/app/group/[group_id]/_types';
 import { IConference } from '@/app/group/[group_id]/dummy';
 import { fetchConferenceList } from '@/app/group/_components/SectionContents';
+import Loading from '@/app/loading';
 import MyPageTemplate from '@/components/template/my-page/MyPageTemplate';
 import { StatisticsData } from '@/interfaces/statistics';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const MemberDetailPage = () => {
     const params = useParams();
+    const router = useRouter();
+
     const { member_id } = params;
 
     const [member, setMember] = useState<Member | null>(null);
-    const [myGroups, setMyGroups] = useState<GroupData | null>(null);
-    const [conferences, setConferences] = useState<IConference[] | null>(null);
+    const [myGroups, setMyGroups] = useState<GroupData[]>([]);
+    const [conferences, setConferences] = useState<IConference[]>([]);
     const [statistics, setStatistics] = useState<StatisticsData | null>(null);
 
     const getMemberData = async () => {
@@ -35,7 +38,7 @@ const MemberDetailPage = () => {
 
     const getMyGroups = async () => {
         try {
-            const response = await GET(`v1/groups`, {
+            const response = await GET(`v1/groups/my-groups`, {
                 params: ``,
                 isAuth: true,
                 revalidateTime: 10,
@@ -79,13 +82,20 @@ const MemberDetailPage = () => {
     };
 
     useEffect(() => {
-        getMemberData();
-        getMyConferences();
-        getStatistics();
+        try {
+            getMemberData();
+            getMyConferences();
+            getStatistics();
+            getMyGroups();
+        } catch (error) {
+            console.error('member page data 요청 실패:', error);
+            router.push(`/auth/login?error=access_error`);
+        }
     }, []);
 
-    if (!member || !conferences) {
-        return <div>로딩중...</div>;
+    console.log(myGroups);
+    if (!member || !conferences || !statistics || !myGroups) {
+        return <Loading />;
     }
 
     return (
@@ -93,6 +103,7 @@ const MemberDetailPage = () => {
             member={member}
             conferences={conferences}
             statistics={statistics}
+            myGroups={myGroups}
         />
     );
 };

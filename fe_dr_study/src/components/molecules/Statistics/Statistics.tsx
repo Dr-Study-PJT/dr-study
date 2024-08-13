@@ -56,7 +56,10 @@ const Statistics = ({ statistics }: StatisticsProps) => {
                     <span className="font-semibold">Top 3 스터디 그룹</span>
                     <ul className="mt-2">
                         {statistics.top3StudyGroups.map((group) => (
-                            <Link href={`/group/${group.studyGroupId}`}>
+                            <Link
+                                href={`/group/${group.studyGroupId}`}
+                                key={group.studyGroupId}
+                            >
                                 <li
                                     key={group.studyGroupId}
                                     className="bg-dr-indigo-0 text-dr-white px-4 py-2 mb-2 rounded-lg shadow hover:bg-dr-gray-400 duration-200 cursor-pointer"

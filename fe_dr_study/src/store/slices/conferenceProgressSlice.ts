@@ -17,14 +17,12 @@ interface SignalInterface {
 
 // ConferenceProgressState 정의
 interface ConferenceProgressState {
-    phase: number;
-    content: string; // 이 부분은 필요에 따라 수정 가능
-    programme: ProgrammeInterface[];
+    step: number;
+    programme?: ProgrammeInterface[];
 }
 
 const initialState: ConferenceProgressState = {
-    phase: 0,
-    content: '',
+    step: 0,
     programme: [
         {
             phase: 0,
@@ -40,12 +38,8 @@ const conferenceProgressSlice = createSlice({
     name: 'conferenceStep',
     initialState,
     reducers: {
-        setNextStep: (
-            state,
-            action: PayloadAction<ConferenceProgressState>,
-        ) => {
-            state.phase = action.payload.phase;
-            state.content = action.payload.content;
+        setNextStep: (state) => {
+            state.step++;
         },
 
         setFullPhase: (state, action: PayloadAction<SignalInterface>) => {
