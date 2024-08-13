@@ -35,6 +35,7 @@ const handleReadNotification = async (
     try {
         const response = await POST({
             API: notificationAPI,
+            isAuth: true,
             endPoint: `${notificationId}/read`,
         });
 
@@ -55,6 +56,7 @@ const handleApproveApplication = async (
     try {
         const response = await POST({
             API: groupAPI,
+            isAuth: true,
             endPoint: `applications/${applicationId}/reply`,
             body: {
                 applicationStatus: 'APPROVED',
@@ -79,6 +81,7 @@ const handleRejectApplication = async (
     try {
         const response = await POST({
             API: groupAPI,
+            isAuth: true,
             endPoint: `applications/${applicationId}/reply`,
             body: {
                 applicationStatus: 'DENIED',

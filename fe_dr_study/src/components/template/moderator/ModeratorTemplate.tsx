@@ -44,18 +44,26 @@ const ModeratorInformation = () => {
                 </Button>
             </div>
 
-            <p className="text-dr-body-4 text-dr-gray-300">
-                - 사전 프롬프트로 학습한 내용을 바탕으로 스터디의 진행을
-                도와주며, 내용을 요약 정리하고, 개선 방안을 제안, 통계 및 수치와
-                같은 시각자료를 제공하는 등의 다양한 역할을 수행합니다.
-            </p>
-            <p className="text-dr-body-4 text-dr-gray-300">
-                - 다양한 외형, 목소리, 어조를 커스터마이즈 할 수 있습니다.
-            </p>
-            <p className="text-dr-body-4 text-dr-gray-300">
-                - 공유자들이 만들어 놓은 AI 사회자를 저장하여 나만의 온라인
-                스터디에 활용할 수 있습니다.
-            </p>
+            <div className="flex flex-col gap-3 w-full h-max border-[1px] border-dr-white bg-dr-coral-500 rounded-lg text-dr-body-4 text-dr-white p-3 font-medium">
+                <p className="">
+                    <p>
+                        사전 프롬프트로 학습한 내용을 바탕으로 스터디의 진행을
+                        도와주며, 내용을 요약 정리하고,
+                    </p>
+
+                    <p>
+                        개선 방안을 제안, 통계 및 수치와 같은 시각자료를
+                        제공하는 등의 다양한 역할을 수행합니다.
+                    </p>
+                </p>
+                <p className="">
+                    다양한 외형, 목소리, 어조를 커스터마이즈 할 수 있습니다.
+                </p>
+                <p className="">
+                    공유자들이 만들어 놓은 AI 사회자를 저장하여 나만의 온라인
+                    스터디에 활용할 수 있습니다.
+                </p>
+            </div>
         </div>
     );
 };

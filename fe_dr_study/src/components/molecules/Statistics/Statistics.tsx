@@ -12,38 +12,42 @@ const Statistics = ({ statistics }: StatisticsProps) => {
     }
 
     return (
-        <div className="text-dr-white p-6 rounded-lg ">
-            <h2 className="text-center font-bold text-dr-header-2 mb-4">
+        <div className="text-dr-white p-6 rounded-lg flex flex-col justify-start items-start h-full">
+            <div className="text-left text-dr-header-3 text-dr-coral-50 pt-[1rem] pb-[1rem] font-bold w-full h-full">
                 스터디 통계
-            </h2>
-            <div className="text-dr-white">
-                <div className="mb-4">
-                    <span className="font-semibold">총 회의 시간:</span>{' '}
-                    <span className="text-dr-body-1 text-dr-coral-100">
-                        {statistics.totalConferenceTime}초
-                    </span>
-                </div>
-                <div className="mb-4">
-                    <span className="font-semibold">총 참여 횟수:</span>{' '}
-                    <span className="text-dr-body-1 text-dr-coral-100">
-                        {statistics.totalConferenceJoinCount}회
-                    </span>
-                </div>
-                <div className="mb-4">
-                    <span className="font-semibold">총 그룹 참여 횟수:</span>{' '}
-                    <span className="text-dr-body-1 text-dr-coral-100">
-                        {statistics.totalGroupJoinCount}회
-                    </span>
+            </div>
+            <div className="text-dr-white flex flex-col justifiy-evenly h-full">
+                <div className="flex flex-row gap-4 justify-start">
+                    <div className="mb-4">
+                        <span className="font-semibold">총 회의 시간:</span>{' '}
+                        <span className="text-dr-body-1 text-dr-coral-100">
+                            {statistics.totalConferenceTime}초
+                        </span>
+                    </div>
+                    <div className="mb-4">
+                        <span className="font-semibold">총 참여 횟수:</span>{' '}
+                        <span className="text-dr-body-1 text-dr-coral-100">
+                            {statistics.totalConferenceJoinCount}회
+                        </span>
+                    </div>
+                    <div className="mb-4">
+                        <span className="font-semibold">
+                            총 그룹 참여 횟수:
+                        </span>{' '}
+                        <span className="text-dr-body-1 text-dr-coral-100">
+                            {statistics.totalGroupJoinCount}회
+                        </span>
+                    </div>
                 </div>
 
                 <div className="mb-4">
-                    <span className="font-semibold">그룹 태그</span>
+                    <span className="font-semibold">내 관심 태그들</span>
                     <ul className="flex flex-wrap mt-2">
                         {Object.entries(statistics.totalGroupTags).map(
                             ([key, value]) => (
                                 <li
                                     key={key}
-                                    className="bg-dr-indigo-0 text-dr-white px-3 py-1 rounded-full mr-2 mb-2 hover:bg-dr-gray-400 duration-200 cursor-pointer"
+                                    className="bg-dr-indigo-0 text-dr-white px-3 py-1 rounded-full mr-2 mb-2 hover:bg-dr-indigo-50 duration-200 cursor-pointer"
                                 >
                                     {key}: {value}
                                 </li>
@@ -62,7 +66,7 @@ const Statistics = ({ statistics }: StatisticsProps) => {
                             >
                                 <li
                                     key={group.studyGroupId}
-                                    className="bg-dr-indigo-0 text-dr-white px-4 py-2 mb-2 rounded-lg shadow hover:bg-dr-gray-400 duration-200 cursor-pointer"
+                                    className="bg-dr-indigo-0 text-dr-white px-4 py-2 mb-2 rounded-lg shadow hover:bg-dr-indigo-50 duration-200 cursor-pointer"
                                 >
                                     {group.studyGroupName}:{' '}
                                     <span className="font-bold text-dr-coral-300">

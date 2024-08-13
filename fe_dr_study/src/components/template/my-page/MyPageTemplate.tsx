@@ -24,11 +24,11 @@ const MyPageTemplate = ({
             {/* 상 */}
             <div className="w-[75%] flex p-[2rem] bg-dr-indigo-300 rounded-lg gap-dr-30">
                 {/* 왼 */}
-                <div className="flex items-center justify-center rounded-lg w-1/3 p-[2rem] bg-dr-indigo-100">
+                <div className="flex items-center justify-center rounded-lg w-1/3 p-[2rem] bg-dr-indigo-100 shadow-dr-rb-2">
                     <ProfileCard member={member} />
                 </div>
                 {/* 오 */}
-                <div className="flex items-center justify-center rounded-lg w-2/3 bg-dr-indigo-100">
+                <div className="flex items-start justify-start px-12 rounded-lg w-full bg-dr-indigo-100 shadow-dr-rb-2">
                     <Statistics statistics={statistics} />
                 </div>
             </div>
@@ -36,14 +36,14 @@ const MyPageTemplate = ({
             {/* 하 */}
             <div className="w-[75%] flex flex-col p-[2rem] bg-dr-indigo-300 rounded-lg gap-dr-30">
                 {/* 왼 */}
-                <div className="flex items-center justify-center rounded-lg w-full bg-dr-indigo-100">
+                <div className="flex items-center justify-center rounded-lg w-full bg-dr-indigo-100 shadow-dr-rb-2">
                     <ConferenceList conferences={conferences} />
                 </div>
                 {/* 오 */}
-                <div className="flex flex-col items-center justify-center w-full bg-dr-indigo-100 rounded-lg px-[2rem]">
-                    <p className="text-center text-dr-header-2 text-dr-white pt-[2rem] pb-[1rem]">
+                <div className="flex flex-col items-center justify-center w-full bg-dr-indigo-100 rounded-lg px-[2rem] shadow-dr-rb-2">
+                    <div className="text-left text-dr-header-3 text-dr-coral-50 pt-[2rem] pb-[1rem] font-bold w-full">
                         가입된 스터디 그룹
-                    </p>
+                    </div>
 
                     {myGroups?.map((group) => (
                         <GroupCard
