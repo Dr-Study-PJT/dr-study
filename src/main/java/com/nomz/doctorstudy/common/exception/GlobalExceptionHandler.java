@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.error("MethodArgumentNotValidException occurred", ex);
+        log.error("MethodArgumentNotValidException occurred, message={}", ex.getMessage());
 
         Map<String, Object> errors = new LinkedHashMap<>();
         for (FieldError fieldError : ex.getFieldErrors()) {
