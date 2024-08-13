@@ -158,10 +158,9 @@ public class ConferenceController {
     })
     public ResponseEntity<SuccessResponse<?>> openConference(
             @Parameter(hidden = true) @Login Member requester,
-            @PathVariable("conference_id") Long conferenceId,
-            @RequestBody OpenConferenceRequest request
+            @PathVariable("conference_id") Long conferenceId
     ) {
-        conferenceService.openConference(conferenceId, request);
+        conferenceService.openConference(conferenceId);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(

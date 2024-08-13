@@ -22,7 +22,7 @@ public class Conference {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "moderator_id")
+    @JoinColumn(name = "moderator_id", nullable = false)
     private Moderator moderator;
 
     @ManyToOne
