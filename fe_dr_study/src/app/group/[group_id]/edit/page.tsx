@@ -122,13 +122,13 @@ const EditArticle: React.FC<ArticleEditProps> = ({
     );
 };
 
-const EditArticlePage = async ({ params: { group_id, article_id } }: any) => {
+const EditArticlePage = async ({ params }: { params: { group_id: number, article_id: number } }) => {
+    const { group_id, article_id } = params;
     const articleData = await fetchingArticle(article_id);
-
     return (
         <EditArticle
-            groupId={parseInt(group_id)}
-            articleId={parseInt(article_id)}
+            groupId={group_id}
+            articleId={article_id}
             title={articleData.title}
             content={articleData.content}
         />

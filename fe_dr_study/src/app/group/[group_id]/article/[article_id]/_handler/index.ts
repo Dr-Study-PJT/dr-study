@@ -20,7 +20,6 @@ export const handleCommentSubmit = async (data: any, articleId: number) => {
     }
 };
 
-
 export const handleCommentUpdate = async (
     commentId: number,
     content: string,
@@ -50,10 +49,18 @@ export const handleArticleDelete = async (articleId: number) => {
     }
 };
 
-export const handleArticleUpdate = async (articleId: number, title: string, content: string) => {
+export const handleArticleUpdate = async (
+    articleId: number,
+    title: string,
+    content: string,
+) => {
     try {
-        await updatingArticle(articleId, { title, content });
+        await updatingArticle(articleId, {
+            title,
+            content
+        });
+
     } catch (error) {
         console.error('게시글 수정 실패', error);
     }
-}
+};

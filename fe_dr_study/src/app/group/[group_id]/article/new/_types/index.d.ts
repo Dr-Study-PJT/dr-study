@@ -4,3 +4,4 @@ export interface CreateArticleReq {
     studyGroupId: number;
     tags?: string[];
 }
+

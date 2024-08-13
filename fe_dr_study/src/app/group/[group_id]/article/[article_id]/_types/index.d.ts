@@ -9,7 +9,7 @@ import { title } from 'process';
 export interface ArticlePostReq {
     title: string;
     content: string;
-    studyGroupId: number;
+    // studyGroupId: number;
     tags?: [];
 }
 
@@ -102,4 +102,13 @@ export interface CommentUpdateRes {
     data: {
         commentId?: number;
     }
+}
+
+// 업데이트 Article
+export interface EditedArticleData {
+  
+        articleId?: number;
+        title: string;
+        content: string;
+    
 }

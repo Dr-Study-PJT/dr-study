@@ -6,41 +6,62 @@ import {
     FieldErrors,
     UseFormRegister,
     UseFormSetFocus,
+    UseFormHandleSubmit,
 } from 'react-hook-form';
 import { Box } from '@/components/atoms/Box/Box';
 import { Button, Heading } from '@/components/atoms';
-import { PageContainer } from '@/components/atoms/PageContainer/PageContainer';
 import { InputWithLabelAndError } from '@/components/molecules/InputWithLabelAndError/InputWithLabelAndError';
 import { formWrapperStyles } from '@/components/molecules/Form/Form.styles';
 import { handleKeyDownForNextInput } from '@/components/organisms/forms/_utils/handleKeyDownForNextInput';
 import formConditions from '@/constants/formConditions';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
-import { useRouter } from 'next/navigation';
-import { handleArticleSubmit } from './_handler';
-import { fetchingMemberData } from '../[article_id]/_api/ssr';
-import Link from 'next/link';
-import { ArticleData } from '../../_types';
-import { ArticlePostReq } from '../[article_id]/_types';
+import { handleArticleUpdate } from '../../_handler';
+import { title } from 'process';
+import { EditedArticleData } from '../../_types';
 
-
-interface ArticleCreateProps {
+interface EditArticleProps {
     groupId: number;
-    handleSubmit: (event?: React.BaseSyntheticEvent) => Promise<void>;
-    register: UseFormRegister<any>;
-    errors: FieldErrors<any>;
-    setFocus: UseFormSetFocus<any>;
-    reset: () => void;
+    articleId: number;
+    // onArticleUpdated: (EditedArticle: EditedArticleData) => void;
+
+    initialData: { title: string; content: string };
 }
 
-const CreateArticle: React.FC<ArticleCreateProps> = ({
+const EditArticle: React.FC<EditArticleProps> = ({
     groupId,
-    setFocus,
-    handleSubmit,
-    register,
-    errors,
-    reset,
+    articleId,
+    // onArticleUpdated,
+    initialData,
 }) => {
-    const router = useRouter();
+    const {
+        register,
+        handleSubmit,
+        setFocus,
+        formState: { errors },
+        reset,
+    } = useForm<{ articleTitle: string; description: string }>({
+        defaultValues: {
+            articleTitle: initialData.title,
+            description: initialData.content,
+        },
+    });
+
+    const onSubmit = async (data:any) => {
+        try {
+            const response = await handleArticleUpdate(articleId, data.articleTitle, data.description);
+            console.log('response:', response);
+            alert('게시글이 성공적으로 수정되었습니다.');
+            reset();
+            window.location.href = `/group/${groupId}/article/${articleId}`;
+            const EditedArticle: EditedArticleData = {
+                title: data.articleTitle, content: data.description ,
+            };
+            console.log('EditedArticle:', EditedArticle);
+            // onArticleUpdated(EditedArticle)
+        } catch (error) {
+            console.error('게시글 수정 실패', error);
+        }
+    };
 
     useEffect(() => {
         setFocus('articleTitle');
@@ -50,7 +71,7 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
         <>
             <Box variant="articleTitleSection">
                 <Heading variant="h2" color="white">
-                    게시글 작성하기
+                    게시글 수정하기
                 </Heading>
                 <Heading variant="h4" color="primary" className="p-[10px]">
                     입력하신 정보가 맞는지 다시 확인해주세요.
@@ -59,7 +80,7 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
             <Box variant="articleContainer">
                 <form
                     className={formWrapperStyles({ variant: 'steps' })}
-                    onSubmit={handleSubmit}
+                    onSubmit={handleSubmit(onSubmit)}
                 >
                     <InputWithLabelAndError
                         id="articleTitle"
@@ -73,7 +94,12 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
                             handleKeyDownForNextInput(
                                 e,
                                 'description',
-                                setFocus,
+                                (target) =>
+                                    setFocus(
+                                        target as
+                                            | 'articleTitle'
+                                            | 'description',
+                                    ),
                             )
                         }
                     />
@@ -91,12 +117,12 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
                             type="button"
                             onClick={() => {
                                 reset(); // 폼을 리셋합니다.
-                                router.back(); // 이전 페이지로 이동합니다.
+                                window.history.back(); // 이전 페이지로 이동합니다.
                             }}
                         >
                             취소하기
                         </Button>
-                        <Button type="submit">등록하기</Button>
+                        <Button type="submit">수정하기</Button>
                     </Box>
                 </form>
             </Box>
@@ -104,54 +130,4 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
     );
 };
 
-const NewArticlePage: React.FC = async ({ params: { group_id } }: any) => {
-    const {
-        register,
-        handleSubmit,
-        setFocus,
-        formState: { errors },
-        reset,
-    } = useForm();
-
-    const groupId = group_id;
-    const onSubmit = async (data: any) => {
-        // 여기서 memberInfo를 실제 사용자 정보로 대체
-    const newArticle: ArticlePostReq = {
-        // id: data.id,
-        title: data.articleTitle,
-        content: data.description,
-
-    };
-
-        try {
-            const response = await handleArticleSubmit(data, groupId);
-            // alert('게시글이 성공적으로 작성되었습니다.');
-            console.log('newArticle:', newArticle);
-            
-            reset();
-
-
-        } 
-        
-        catch (error) {
-            console.error('게시글 작성 실패', error);
-        }
-    };
-
-    return (
-        <PageContainer className="bg-[#36393E]">
-            <Box variant="createStudyGroupStepBox">
-                <CreateArticle
-                    groupId={groupId}
-                    setFocus={setFocus}
-                    handleSubmit={handleSubmit(onSubmit)}
-                    register={register}
-                    errors={errors}
-                    reset={reset}
-                />
-            </Box>
-        </PageContainer>
-    );
-};
-
-export default NewArticlePage;
+export default EditArticle;

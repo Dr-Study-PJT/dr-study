@@ -22,7 +22,7 @@ export default async function ArticleDetailPage({
     return (
         <div className="w-full h-full bg-dr-indigo-100">
             <div className="flex flex-col justify-center items-center content-center p-[5rem]">
-                <ArticleDetail article={article} />
+                <ArticleDetail article={article} groupId={groupId} /> {/* groupId를 전달 */}
                 <ArticleComments article={article} memberInfo={memberInfo} />
             </div>
         </div>

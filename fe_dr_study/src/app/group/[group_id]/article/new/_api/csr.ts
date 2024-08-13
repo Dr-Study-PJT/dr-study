@@ -8,11 +8,14 @@ import { ArticlePostReq } from '../../[article_id]/_types';
 // 2. Comment에 대해서... => CommentPost, CommentDelete, CommentPatch
 
 //case 1. 생성관련 함수들...
-export const postingArticle = async (createArticleBody: ArticlePostReq) => {
+export const postingArticle = async (
+    groupId: number,
+    createArticleBody: ArticlePostReq,
+) => {
     try {
         const response = await POST({
             API: articleAPI,
-            endPoint: ``,
+            endPoint: `${groupId}`,
             body: createArticleBody,
             isAuth: true,
         });

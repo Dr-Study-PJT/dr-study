@@ -20,23 +20,31 @@ const formatDate = (dateString: string | number | Date) => {
 
 interface ArticleDetailProps {
     article: ArticleData;
+    groupId: number;  // groupId를 props로 받습니다.
 }
 
-const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
-    const currentUser = getSessionStorageItem('memberData');
+const ArticleDetail: React.FC<ArticleDetailProps> = ({ article, groupId }) => {
+    const currentUser = getSessionStorageItem('memberData') || {};
 
     const handleDelete = async () => {
         try {
             await handleArticleDelete(article.id);
             alert('게시글이 성공적으로 삭제되었습니다.');
-            window.location.href = `/group/${article.studyGroupId}`;
         } catch (error) {
             console.error('게시글 삭제 실패:', error);
         }
     };
 
+    // 디버깅을 위해 console.log 추가
+    console.log('currentUser:', typeof currentUser);
+    console.log('currentUser.id:', typeof currentUser.id);
+    console.log('article.memberInfo.id:', typeof article.memberInfo.id);
+
     const isAuthor = currentUser && currentUser.id === article.memberInfo.id;
-    const groupId = article.studyGroupId || 0;
+
+    console.log('isAuthor:', isAuthor);
+    console.log('groupId:', groupId);
+    console.log('article:', article);
 
     return (
         <Box className="w-full" variant="articleDetail">
@@ -48,12 +56,13 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                 >
                     {article.title ? article.title : '제목 없음'}
                 </Heading>
-                {isAuthor && groupId !== 0 && (
+                {isAuthor && (
                     <div className="absolute right-0 text-white">
                         <ArticleDropdownButton
-                            groupId={groupId}
                             articleId={article.id}
                             onDelete={handleDelete}
+                            groupId={groupId}  // groupId를 전달합니다.
+
                         />
                     </div>
                 )}

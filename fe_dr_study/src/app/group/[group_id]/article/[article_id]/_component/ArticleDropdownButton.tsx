@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 const ArticleDropdownButton: React.FC<{
-    groupId: number;
     articleId: number;
     onDelete: () => void;
-}> = ({ groupId, articleId, onDelete }) => {
+    groupId: number; // groupId를 props로 받습니다.
+}> = ({ articleId, onDelete, groupId }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -48,7 +48,7 @@ const ArticleDropdownButton: React.FC<{
                     ref={dropdownRef}
                     className="absolute right-0 mt-2 w-40 origin-top-right bg-gray-800 border border-gray-700 rounded-md shadow-lg"
                 >
-                    <div className="py-1">
+                    <div className="flex flex-col py-1">
                         <Link
                             href={`/group/${groupId}/article/${articleId}/edit`}
                         >
@@ -56,12 +56,11 @@ const ArticleDropdownButton: React.FC<{
                                 수정
                             </span>
                         </Link>
-                        <button
-                            onClick={handleDelete}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                        >
-                            삭제
-                        </button>
+                        <Link href={`/group/${groupId}`} onClick={handleDelete}>
+                            <span className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer">
+                                삭제
+                            </span>
+                        </Link>
                     </div>
                 </div>
             )}

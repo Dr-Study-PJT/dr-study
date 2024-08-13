@@ -1,12 +1,15 @@
 import { postingArticle } from '../_api/csr';
 import { useRouter } from 'next/router';
 
-export const handleArticleSubmit = async (data: any, groupId: number) => {
+export const handleArticleSubmit = async (
+    data: any,
+    groupId: number,
+) => {
     try {
-        const response = await postingArticle({
+        const response = await postingArticle(groupId,{
             title: data.articleTitle, // form 데이터와 맞추기
             content: data.description, // form 데이터와 맞추기
-            studyGroupId: groupId,
+            // studyGroupId: groupId,
             // tags: ,
         });
         alert('게시글이 성공적으로 작성되었습니다.');

@@ -12,8 +12,8 @@ export interface ArticleData {
     id: number;
     title: string;
     content: string;
-    tags: string[];
-    timeAgo: string;
+    tags?: string[];
+    timeAgo?: string;
     member: Member;
 }
 

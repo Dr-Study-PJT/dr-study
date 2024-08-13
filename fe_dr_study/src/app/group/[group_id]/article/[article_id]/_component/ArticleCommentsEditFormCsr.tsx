@@ -42,6 +42,7 @@ const CommentEditForm: React.FC<CommentEditFormProps> = ({
         <Box variant="commentCreateContainer">
             <form onSubmit={handleSubmit} className="w-full flex items-center">
                 <div className="flex flex-col w-full">
+                    f{' '}
                     <InputWithLabelAndError
                         label={''}
                         id="comment_content"
