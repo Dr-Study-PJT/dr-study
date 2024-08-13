@@ -32,28 +32,19 @@ public class FastApiCallService implements ExternalApiCallService{
     }
 
     @Override
-    public String gpt(String s) {
+    public String gpt(String content) {
         String url = baseUrl + "/gpt/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String requestJson =  "{\"text\":\"" + s + "\"}";
-        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+        HttpEntity<String> entity = new HttpEntity<>(content, headers);
 
         try{
             log.debug("sent gpt request to FastAPI server, url={}", url);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             log.debug("received gpt response from FastAPI server, response={}", response);
-            String responseBody = response.getBody();
-            if (responseBody != null) {
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-                String answer = jsonNode.get("answer").asText();
-                answer = answer.replaceAll("\n", "[Line Feed Symbol]");
-                return answer;
-            } else {
-                return null;
-            }
+            return response.getBody();
         } catch (ResourceAccessException e){
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;
@@ -65,15 +56,14 @@ public class FastApiCallService implements ExternalApiCallService{
     }
 
     @Override
-    public byte[] tts(String s, VoiceType type) {
+    public byte[] tts(String content, VoiceType type) {
         String url = baseUrl + "/tts/";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Voice-Type", type.getToken());
 
-        String requestJson = "{\"text\":\"" + s + "\"}";
-        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+        HttpEntity<String> entity = new HttpEntity<>(content, headers);
 
         try{
             log.debug("sent tts request to FastAPI server, url={}", url);
@@ -100,18 +90,10 @@ public class FastApiCallService implements ExternalApiCallService{
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             log.debug("received stt response from FastAPI server, response={}", response);
 
-            String responseBody = response.getBody();
-            if (responseBody != null) {
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-                return jsonNode.get("transcribed_fixed_text").asText();
-            } else {
-                return null;
-            }
+            return response.getBody();
         }catch(ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
             return null;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
 }
