@@ -105,6 +105,8 @@ public class RoomService {
 
     public void finishRoom(Long roomId) {
         processManager.removeProcess(roomId);
+        
+        //TODO: Quit 신호 보내기 할 것
 
         CompletableFuture<Void> completableFuture = processThreadMap.get(roomId);
         if (completableFuture.isDone()) {
