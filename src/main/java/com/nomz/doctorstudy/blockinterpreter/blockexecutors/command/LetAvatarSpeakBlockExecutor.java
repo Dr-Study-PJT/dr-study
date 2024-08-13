@@ -9,6 +9,7 @@ import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import com.nomz.doctorstudy.common.audio.AudioUtils;
 import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import com.nomz.doctorstudy.conference.room.SignalUtils;
+import com.nomz.doctorstudy.conference.room.signal.AvatarDialogueSignal;
 import com.nomz.doctorstudy.conference.room.signal.AvatarSpeakSignal;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import com.nomz.doctorstudy.conference.room.signal.GptSummarySignal;
@@ -62,11 +63,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         log.debug("tts audio duration={}", audioDurationMills);
         String audioUrl = mediaService.saveAudio(file);
 
-        /*
-        // For Test
-        int audioDurationMills = 5000;
-        String audioUrl = "https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/audio/speech.mp3";
-        */
+        signalTransmitter.transmitSignal(processId, new AvatarDialogueSignal(speechContent));
 
         signalUtils.sendMuteSignals(processId, processContext.getParticipantInfoList().stream().map(RoomParticipantInfo::getMemberId).toList());
         signalTransmitter.transmitSignal(
