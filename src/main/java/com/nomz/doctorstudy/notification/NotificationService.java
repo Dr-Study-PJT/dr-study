@@ -10,11 +10,13 @@ import com.nomz.doctorstudy.notification.entity.Notification;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.repository.StudyGroupMemberApplyQueryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -68,7 +70,8 @@ public class NotificationService {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "해당하는 아이디의 알림이 없습니다."));
 
-        if (notification.getRecipient() != requester) {
+        if (notification.getRecipient().getId() != requester.getId()) {
+            log.info("recipient_id={}, requester_id={}", notification.getRecipient().getId(), requester.getId());
             throw new BusinessException(CommonErrorCode.FORBIDDEN, "알림의 수신인이 아니므로 읽을 수 없습니다.");
         }
 

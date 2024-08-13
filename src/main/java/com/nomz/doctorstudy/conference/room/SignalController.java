@@ -108,7 +108,7 @@ public class SignalController {
             @PathVariable("conferenceId") Long conferenceId,
             @RequestBody String script
     ) {
-        blockInterpreter.init(conferenceId, script, Map.of(), List.of(), "");
+        blockInterpreter.init(conferenceId, script, Map.of(), ConferenceContext.builder().build());
         blockInterpreter.interpret(conferenceId);
 
         return ResponseEntity.ok("OK\n" + script);

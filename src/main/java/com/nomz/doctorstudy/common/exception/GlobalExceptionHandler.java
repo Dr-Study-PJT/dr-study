@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(
                 new ErrorResponse<>(
-                        ex.getErrorCode().getDefaultMessage(),
+                        ex.getMessage(),
                         Map.of()
                 ),
                 ex.getErrorCode().getHttpStatus()
