@@ -10,7 +10,7 @@ VALUES ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg", false, NOW())
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberD.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberE.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberF.png", false, NOW()),
-       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberG.png", false, NOW()),
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberG.png", false, NOW()), -- 10
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberH.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberI.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberJ.jpg", false, NOW()),
@@ -22,8 +22,8 @@ VALUES ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg", false, NOW())
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%EC%BD%94%EB%94%A9.png", false, NOW()), -- 코딩
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%ED%86%A0%EB%A1%A0.jpg", false, NOW()), -- 토론
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/AI.jpg", false, NOW()), -- AI
-       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/History.jpg", false, NOW()) -- 한국사
-
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/History.jpg", false, NOW()), -- 한국사
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%EC%82%BC%EC%84%B1.jpeg", false, NOW()) -- 삼성
 ;
 
 --MEMBER-- password -> 'test'
@@ -50,31 +50,31 @@ VALUES
  "CS 전공면접에 대비하여 각자 공부한 내용을 면접식으로 주고받는 것에 목적을 둔 스터디입니다. 밝은 분위기에서 함께 준비해요!",
  "면접 합격!", DATE_ADD(NOW(), INTERVAL 100 DAY), 10, DATE_ADD(NOW(), INTERVAL -30 DAY), false),
 
-(3, 14, "삼성 공채 준비 스터디",
+(3, 22, "삼성 공채 준비 스터디",
  "삼성 공채를 목표로 하는 취준생들의 스터디입니다. 서로 정보 공유하며 함께 준비해요!",
  "삼성 공채 합격", DATE_ADD(NOW(), INTERVAL 90 DAY), 10, DATE_ADD(NOW(), INTERVAL -30 DAY), false),
 
-(4, 14, "월간 독서 클럽",
+(4, 16, "월간 독서 클럽",
  "매월 한 권의 책을 함께 읽고 토론하는 독서 모임입니다. 다양한 관점을 나누고 싶으신 분 환영합니다.",
  "연간 12권 독서", DATE_ADD(NOW(), INTERVAL 300 DAY), 15, DATE_ADD(NOW(), INTERVAL -365 DAY), false),
 
-(5, 15, "자격증 취득 스터디",
+(5, 17, "자격증 취득 스터디",
  "다양한 자격증 취득을 목표로 한 스터디입니다. 함께 공부하며 목표 달성을 이루어냅시다!",
  "자격증 취득", DATE_ADD(NOW(), INTERVAL 30 DAY), 20, DATE_ADD(NOW(), INTERVAL -12 DAY), false),
 
-(6, 16, "코딩 마스터 스터디",
+(6, 18, "코딩 마스터 스터디",
  "코딩 실력을 향상시키기 위해 함께 프로젝트를 진행하고 알고리즘 문제를 풀어보는 스터디입니다.",
  "코딩 실력 향상", DATE_ADD(NOW(), INTERVAL 120 DAY), 8, DATE_ADD(NOW(), INTERVAL -54 DAY), false),
 
-(7, 17, "심층 토론 스터디",
+(7, 19, "심층 토론 스터디",
  "시사와 사회 이슈에 대해 깊이 있게 토론하는 스터디입니다. 논리적인 사고를 키우고 싶은 분들 환영합니다.",
  "논리적 사고력 향상", DATE_ADD(NOW(), INTERVAL 30 DAY), 12, DATE_ADD(NOW(), INTERVAL -10 DAY), false),
 
-(8, 18, "AI 연구 스터디",
+(8, 20, "AI 연구 스터디",
  "AI 기술을 연구하고 발전시키기 위한 스터디입니다. 최신 논문을 함께 분석하고, 프로젝트를 진행해요.",
  "AI 연구 프로젝트 완수", DATE_ADD(NOW(), INTERVAL 270 DAY), 5, DATE_ADD(NOW(), INTERVAL -20 DAY), false),
 
-(5, 19, "한국사 1급 자격증 스터디",
+(5, 21, "한국사 1급 자격증 스터디",
  "한국사 1급 자격증 취득을 위한 학습공유 스터디입니다.",
  "한국사 1급 취득!", DATE_ADD(NOW(), INTERVAL 30 DAY), 10, DATE_ADD(NOW(), INTERVAL -10 DAY), false)
 ;
