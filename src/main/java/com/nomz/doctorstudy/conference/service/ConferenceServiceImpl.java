@@ -67,8 +67,11 @@ public class ConferenceServiceImpl implements ConferenceService {
         StudyGroup studyGroup = studyGroupRepository.findById(request.getStudyGroupId())
                 .orElseThrow(() -> new StudyGroupException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
 
-        Moderator moderator = moderatorRepository.findById(request.getModeratorId())
-                .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
+        Moderator moderator = null;
+        if (request.getModeratorId() != null) {
+            moderator = moderatorRepository.findById(request.getModeratorId())
+                    .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
+        }
 
         Conference conference = Conference.builder()
                 .moderator(moderator)

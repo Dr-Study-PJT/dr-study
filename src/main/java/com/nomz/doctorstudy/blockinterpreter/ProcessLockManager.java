@@ -23,7 +23,6 @@ public class ProcessLockManager {
             try {
                 log.debug("Process:{} started to sleep", processId);
                 lock.wait();
-                // TODO: callback 추가?
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new BlockException(BlockErrorCode.PROCESS_INTERRUPTED, e);

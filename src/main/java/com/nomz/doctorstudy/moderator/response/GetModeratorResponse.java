@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 public class GetModeratorResponse {
     private final Long id;
     private final String name;
+    private final String voiceType;
+    private final String characterType;
+    private final String modelType;
     private final String description;
     private final String prePrompt;
     private final String script;
@@ -23,6 +26,9 @@ public class GetModeratorResponse {
         return builder()
                 .id(moderator.getId())
                 .name(moderator.getName())
+                .voiceType(moderator.getAvatar().getVoiceType())
+                .characterType(moderator.getAvatar().getCharacterType())
+                .modelType(moderator.getAvatar().getModelType())
                 .description(moderator.getProcessor().getDescription())
                 .prePrompt(moderator.getProcessor().getPrePrompt())
                 .script(moderator.getProcessor().getScript())
