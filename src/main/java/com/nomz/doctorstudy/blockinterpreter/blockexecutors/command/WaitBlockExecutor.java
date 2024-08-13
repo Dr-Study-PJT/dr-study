@@ -24,11 +24,11 @@ public class WaitBlockExecutor extends BlockExecutor {
     @Override
     public Object executeAction(List<Object> args) {
         Object arg = args.get(0);
-        int time = Integer.parseInt(String.valueOf(arg));
+        int millisTime = Integer.parseInt(String.valueOf(arg)) * 1000;
 
         long processId = threadProcessContext.get().getId();
 
-        ProcessLockManager.sleep(processId, time);
+        ProcessLockManager.sleep(processId, millisTime);
 
         return null;
     }

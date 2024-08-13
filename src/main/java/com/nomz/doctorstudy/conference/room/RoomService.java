@@ -120,7 +120,13 @@ public class RoomService {
     }
 
     public List<String> joinRoom(Member member, Long roomId, String peerId) {
-        log.debug("New Participant[memberId={}, name={}, peerId={}] is trying to join. Current participant list={}", member.getId(), member.getNickname(), peerId, existingParticipantMap.get(roomId).values());
+        if (!existingParticipantMap.containsKey(roomId)) {
+            throw new BusinessException(RoomErrorCode.ROOM_NOT_FOUND);
+        }
+
+        log.debug("New Participant[memberId={}, name={}, peerId={}] is trying to join. Current participant list={}",
+                member.getId(), member.getNickname(), peerId, existingParticipantMap.get(roomId).values()
+        );
 
         if (existingParticipantMap.get(roomId).containsKey(member.getId())) {
             throw new BusinessException(RoomErrorCode.PARTICIPANT_ALREADY_JOINED);

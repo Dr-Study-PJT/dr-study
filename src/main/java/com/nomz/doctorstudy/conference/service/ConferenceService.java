@@ -18,7 +18,7 @@ public interface ConferenceService {
 
     List<Member> getConferenceParticipantList(Long conferenceId);
 
-    void openConference(Long conferenceId, OpenConferenceRequest request);
+    void openConference(Long conferenceId);
 
     void startConference(Long conferenceId);
 
