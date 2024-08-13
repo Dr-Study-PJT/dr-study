@@ -10,7 +10,7 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
 
     const S3_URL =
-        'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset/';
+        'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
 
     const handleChange = (name: string, value: string) => {
         setData({

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import ScriptViewer from './ScriptViewer';
+import ScriptViewer from './scriptViewer';
 import { ICreateModeratorReq } from '../_types';
 
 const ModeratorDetailPage = () => {
