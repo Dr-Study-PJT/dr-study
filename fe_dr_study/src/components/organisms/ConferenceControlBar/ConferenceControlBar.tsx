@@ -3,10 +3,11 @@
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { POST } from '@/app/api/routeModule';
 import Icon from '@/components/atoms/Icon/Icon';
-import ToolTip from '@/components/atoms/Tooltip/ToolTip';
 import { ClientInterface } from '@/components/template/conference/ConferenceTemplate';
+import { RootState } from '@/store';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 interface ConferenceControlBarProps {
     subscriptionList: string[];
@@ -15,7 +16,6 @@ interface ConferenceControlBarProps {
     localStream: MediaStream | null;
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
-    isMutedBySystem: boolean;
     conferenceId: number;
 }
 
@@ -26,10 +26,13 @@ const ConferenceControlBar = ({
     localStream,
     existingPeers,
     setExistingPeers,
-    isMutedBySystem,
     conferenceId,
 }: ConferenceControlBarProps) => {
     const router = useRouter();
+
+    const isMutedBySystem = useSelector(
+        (state: RootState) => state.isMutedBySystem.isMutedBySystem,
+    );
 
     const [videoEnabled, setVideoEnabled] = useState(true); // 비디오 상태
     const [audioEnabled, setAudioEnabled] = useState(true); // 오디오 상태
@@ -92,7 +95,6 @@ const ConferenceControlBar = ({
                 body: {},
                 isAuth: true,
             });
-            console.log('컨퍼런스 나가기 성공:', response);
         } catch (error) {
             console.error('컨퍼런스 나가기 실패:', error);
         } finally {
@@ -126,10 +128,6 @@ const ConferenceControlBar = ({
             <button onClick={toggleAudio} className="relative group">
                 {audioEnabled ? (
                     <>
-                        {/* <ToolTip
-                            isVisible={isMutedBySystem}
-                            content="시스템에 의해 제어할 수 없는 상태입니다."
-                        /> */}
                         {isMutedBySystem && (
                             <span className="tooltip-text absolute hidden group-hover:block bg-black text-white text-xs rounded py-1 px-3 -mt-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
                                 시스템에 의해 제어할 수 없는 상태입니다.

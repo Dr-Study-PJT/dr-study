@@ -18,25 +18,20 @@ const ConferencePage: React.FC<ConferencePageProps> = ({ params }) => {
     const { conferenceInfo, error } = useConferenceInfo();
     const memberData = getSessionStorageItem('memberData');
 
-    // // 컨퍼런스 정보 조회 실패 시 컨퍼런스 정보 페이지로 이동
-    // useEffect(() => {}, [conferenceInfo]);
-
-    // // 로그인 여부 확인
-    // useEffect(() => {}, [memberData]);
-
-    // 오픈 여부 확인
     useEffect(() => {
+        // conferenceInfo가 없으면 conferenceInfo를 가져오는 중이거나 에러가 발생한 상태
         if (conferenceInfo && !conferenceInfo.openTime) {
             router.push(
                 `/conference/${params.conference_id}/info?error=not_open`,
             );
         }
 
-        console.log(memberData);
+        // memberData가 없으면 로그인 페이지로 이동
         if (!memberData) {
             router.push('/auth/login');
         }
 
+        // 에러가 발생하면 conferenceInfo가 없는 상태이므로 conferenceInfo 페이지로 이동
         if (error) {
             router.push(`/conference/${params.conference_id}/info`);
         }

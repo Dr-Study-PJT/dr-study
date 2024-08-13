@@ -34,6 +34,7 @@ const handleReadNotification = async (
 ) => {
     try {
         const response = await POST({
+            isAuth: true,
             API: notificationAPI,
             isAuth: true,
             endPoint: `${notificationId}/read`,

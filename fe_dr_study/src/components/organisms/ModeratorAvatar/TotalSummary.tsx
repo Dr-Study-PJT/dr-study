@@ -1,18 +1,22 @@
-import { SummaryMessageInterface } from '@/components/template/conference/ConferenceTemplate';
 import React, { useEffect, useRef, useState } from 'react';
 import OpenTotalSummaryButton from './OpenTotalSummaryButton';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
-export const TotalSummary = ({
-    summaryMessages,
-}: {
-    summaryMessages: SummaryMessageInterface[];
-}) => {
+export const TotalSummary = ({}: {}) => {
+    // 상태: 요약 메시지 창 열림 여부
     const [isSummaryMessagesOpen, setIsSummaryMessagesOpen] =
         useState<boolean>(false);
+
+    // Redux에서 요약 메시지 가져오기
+    const summaryMessages = useSelector(
+        (state: RootState) => state.summaryMessagesSlice.summaryMessages,
+    );
 
     const messageBoxRef = useRef<HTMLUListElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
+    // 메시지 박스 스크롤을 아래로 이동
     const scrollToBottom = () => {
         if (messageBoxRef.current) {
             messageBoxRef.current.scrollTop =
@@ -20,18 +24,20 @@ export const TotalSummary = ({
         }
     };
 
+    // 요약 메시지 창 토글 함수
     const toggleSummaryMessagesOpen = (
         e: React.MouseEvent<HTMLButtonElement>,
     ) => {
-        e.stopPropagation();
-
-        setIsSummaryMessagesOpen((prev) => !prev);
+        e.stopPropagation(); // 클릭 이벤트 전파 방지
+        setIsSummaryMessagesOpen((prev) => !prev); // 상태 반전
     };
 
+    // 요약 메시지 창이 열릴 때 스크롤 아래로 이동
     useEffect(() => {
         scrollToBottom();
     }, [isSummaryMessagesOpen]);
 
+    // 외부 클릭 시 요약 메시지 창 닫기
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (

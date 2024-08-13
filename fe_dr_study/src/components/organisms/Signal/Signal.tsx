@@ -2,15 +2,10 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Recorder from './Recorder';
 import { Button } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
-import Image from 'next/image';
 import { Client } from 'stompjs';
-import {
-    ClientInterface,
-    SummaryMessageInterface,
-} from '@/components/template/conference/ConferenceTemplate';
+import { ClientInterface } from '@/components/template/conference/ConferenceTemplate';
 import { ConferenceData } from '@/interfaces/conference';
 import Chats from './Chats';
-import MemberAvatar from '@/components/molecules/MemberAvatar';
 import ConferenceParticipants from './ConferenceParticipants';
 import { Member } from '@/app/group/[group_id]/_types';
 import { useDispatch } from 'react-redux';
@@ -18,6 +13,11 @@ import {
     setFullPhase,
     setNextStep,
 } from '@/store/slices/conferenceProgressSlice';
+import { setIsAvatarSpeaking } from '@/store/slices/isAvatarSpeakingSlice';
+import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSlice';
+import { setIsMutedBySystem } from '@/store/slices/isMutedBySystemSlice';
+import { setGptSummaryBySystem } from '@/store/slices/gptSummaryBySystemSlice';
+import { pushSummaryMessages } from '@/store/slices/summaryMessagesSlice';
 
 export interface JoiningMember {
     id: number;
@@ -49,9 +49,7 @@ interface SignalProps {
     currentMembers: Member[];
     setCurrentMembers: Dispatch<SetStateAction<Member[]>>;
     conferenceInfo: ConferenceData | null;
-    setFocusingPeerId: Dispatch<SetStateAction<string>>;
     client: ClientInterface;
-    setSummaryMessages: Dispatch<SetStateAction<SummaryMessageInterface[]>>;
     isJoined: boolean;
     existingPeers: Record<string, MediaStream>;
     setExistingPeers: Dispatch<SetStateAction<Record<string, MediaStream>>>;
@@ -59,12 +57,6 @@ interface SignalProps {
     stompClient: Client | null;
     memberData?: any;
     conferenceId: number;
-    setIsMutedBySystem: Dispatch<SetStateAction<boolean>>;
-    setIsAvatarSpeaking: Dispatch<SetStateAction<boolean>>;
-    setTimeForAvatarSpeaking: Dispatch<SetStateAction<number>>;
-    setGPTSummaryBySystem: Dispatch<SetStateAction<string>>;
-    timeForAudioRecord: number;
-    setTimeForAudioRecord: Dispatch<SetStateAction<number>>;
     isStartRecordingAudio: boolean;
     setIsStartRecordingAudio: Dispatch<SetStateAction<boolean>>;
 }
@@ -72,10 +64,7 @@ interface SignalProps {
 const Signal = ({
     currentMembers,
     setCurrentMembers,
-    conferenceInfo,
-    setFocusingPeerId,
     client,
-    setSummaryMessages,
     isJoined,
     existingPeers,
     setExistingPeers,
@@ -83,12 +72,7 @@ const Signal = ({
     stompClient,
     conferenceId,
     memberData,
-    setIsMutedBySystem,
-    setIsAvatarSpeaking,
-    setTimeForAvatarSpeaking,
-    setGPTSummaryBySystem,
-    timeForAudioRecord,
-    setTimeForAudioRecord,
+
     isStartRecordingAudio,
     setIsStartRecordingAudio,
 }: SignalProps) => {
@@ -97,20 +81,19 @@ const Signal = ({
     const CHANNEL = 'topic'; // 채널 이름
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
+    const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
+
     const messagesEndRef = useRef<HTMLDivElement>(null); // 메시지 목록 끝에 대한 참조
 
     useEffect(() => {
-        // 10초마다 생존 신고 전송
         // 소켓 연결
         const connectSocket = () => {
-            console.log('memberId before connect SockJS', memberData.id);
             stompClient?.connect(
                 { memberId: memberData.id, roomId: conferenceId },
                 () => {
                     if (stompClient?.connected) {
                         subscribeToMessages();
                         subscribeToSignals();
-                        // sendJoining();
                     }
                 },
             );
@@ -120,10 +103,8 @@ const Signal = ({
         }
     }, [isJoined]);
 
-    // URL 생성 함수
-    const generateUrl = (type: string) => `/${CHANNEL}/${type}/${conferenceId}`;
-
     // 채팅 메시지 수신을 위한 구독 설정
+    const generateUrl = (type: string) => `/${CHANNEL}/${type}/${conferenceId}`;
     const subscribeToMessages = () => {
         stompClient?.subscribe(generateUrl('chat'), (message: any) => {
             const newMessage: Message = JSON.parse(message.body); // 수신된 메시지 파싱
@@ -159,9 +140,6 @@ const Signal = ({
             generateUrl(`signal/${signalType}`),
             (signal: any) => {
                 const newSignal: SignalInterface = JSON.parse(signal.body); // 수신된 신호 파싱
-                console.log(
-                    `${signalType} signal received => \n newSignal: ${newSignal} \n`,
-                ); // 신호 수신 로그
                 handler(newSignal); // 각 신호에 맞는 핸들러 호출
             },
         );
@@ -169,101 +147,61 @@ const Signal = ({
 
     // Mute 신호 처리
     const handleMuteSignal = (newSignal: SignalInterface) => {
-        console.log('before handleMuteSignal', newSignal);
         if (newSignal.id === memberData?.id) {
-            setIsMutedBySystem(true); // mute 상태로 변경
-            console.log(
-                `handleMuteSignal: 멤버(${memberData?.id}) => Mute 상태로 전환`,
-            );
+            dispatch(setIsMutedBySystem(true));
         }
     };
 
     // Unmute 신호 처리
     const handleUnmuteSignal = (newSignal: SignalInterface) => {
         if (newSignal.id === memberData?.id) {
-            setIsMutedBySystem(false); // unmute 상태로 변경
-            console.log(
-                `handleUnmuteSignal: 멤버(${memberData?.id}) => Unmute 상태로 전환`,
-            );
+            dispatch(setIsMutedBySystem(false));
         }
     };
 
     // 발화 신호 처리
     const handleParticipantSpeakSignal = (newSignal: SignalInterface) => {
         // newSignal.id 라는 멤버 아이디를 가진 사람의 피어 아이디를 focusingPeerId
-
-        console.log('포커싱 수행 =>', client.memberId, newSignal.id);
         if (client.memberId.toString() === newSignal.id?.toString()) {
-            console.log('포커싱 피어 아이디', client.peerId);
-            setFocusingPeerId(client.peerId);
             setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 타이머
             setIsStartRecordingAudio(true); // 오디오 녹음 시작
-            console.log(
-                `handleParticipantSpeakSignal: 멤버${memberData} (${newSignal.id}) => 화면 포커싱, 오디오 스트림 타이머 실행 + 오디오 녹음 시작 + 버퍼를 서버로 전송`,
-            );
         }
     };
 
     // 아바타 발화 신호 처리
     const handleAvatarSpeakSignal = (newSignal: SignalInterface) => {
-        console.log('before setIsAvatarSpeaking', newSignal.time);
-        console.log('setTimeOut 시작 전');
-        setIsAvatarSpeaking(true); // 아바타 발화 상태로 변경
-        console.log('setIsAvatarSpeaking 실행');
+        dispatch(setIsAvatarSpeaking(true));
+        dispatch(setTimeForAvatarSpeaking(newSignal.time));
 
-        setTimeForAvatarSpeaking(newSignal.time as number);
-        // 아바타 발화는 해당 시간 동안만 수행
         setTimeout(() => {
-            console.log('setTimeOut 시작 됨');
-            setIsAvatarSpeaking(false);
-            setTimeForAvatarSpeaking(0);
+            dispatch(setIsAvatarSpeaking(false));
+            dispatch(setTimeForAvatarSpeaking(0));
         }, newSignal.time as number);
-        console.log(
-            `handleAvatarSpeakSignal: 사회자 아바타 => 발화 상태로 ${newSignal.time}초 동안 전환 + Audio 실행 (S3 기능 구현 대기중)`,
-        );
     };
 
     // GPT 요약 신호 처리
     const handleGPTSummarySignal = (newSignal: SignalInterface) => {
-        setGPTSummaryBySystem(newSignal.content as string); // 요약 내용 설정
-
-        setSummaryMessages((prevMessages) => [
-            ...prevMessages,
-            {
+        dispatch(setGptSummaryBySystem(newSignal.content as string));
+        dispatch(
+            pushSummaryMessages({
                 message: newSignal.content || '[올바르지 않은 문자열]',
                 time: new Date().toLocaleTimeString(),
-            }, // content가 undefined일 경우 빈 문자열로 대체
-        ]); // undefined 또는 빈 문자열 제거
-
-        console.log(
-            `handleGPTSummarySignal: 요약 메시지 전달 => \n ${newSignal.content}`,
+            }),
         );
     };
 
     // 다음 발화자 신호 처리
     const handleNextStepSignal = (newSignal: SignalInterface) => {
-        console.log(`handleNextStepSignal: 다음 단계로`, newSignal);
-
-        if (newSignal) {
-            dispatch(setNextStep());
-        }
+        if (newSignal) dispatch(setNextStep());
     };
 
     // 신호 단계 신호 처리
     const handleProgramme = (newSignal: SignalInterface) => {
-        console.log(`handleProgramme: Programme 전달`, newSignal);
-
         dispatch(setFullPhase({ programme: newSignal.programme }));
     };
 
     // joining 단계 신호 처리
     const handleJoining = (newSignal: SignalInterface) => {
-        console.log('joining 시그널 수행 => newSignal:', newSignal);
-        // currentMembersRef.current.push({
-        //     id: newSignal.id as number,
-        //     imageUrl: newSignal.imageUrl as string,
-        //     nickname: newSignal.nickname as string,
-        // });
         setCurrentMembers((prevMembers): any => [
             ...prevMembers,
             {
@@ -276,18 +214,12 @@ const Signal = ({
 
     // 방송 종료 신호 처리
     const handleHeartstop = (newSignal: SignalInterface) => {
-        console.log('stop => newSignal:', newSignal);
-        console.log('before existingPeers :', existingPeers);
-
-        console.log(Object.keys(existingPeers));
         setExistingPeers((existingPeers) => {
             const newPeers = { ...existingPeers };
             delete newPeers[newSignal.peerId as string];
             return newPeers;
         });
 
-        console.log('after existingPeers :', existingPeers);
-        console.log('currentMembers=>', currentMembers);
         setCurrentMembers((currentMembers) =>
             currentMembers.filter((member) => member.id !== newSignal.id),
         );
@@ -371,7 +303,6 @@ const Signal = ({
                     timeForAudioRecord={timeForAudioRecord}
                     setTimeForAudioRecord={setTimeForAudioRecord}
                     isStartRecordingAudio={isStartRecordingAudio}
-                    setFocusingPeerId={setFocusingPeerId}
                 />
             </div>
         </div>
