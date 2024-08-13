@@ -15,6 +15,8 @@ public enum SignalType {
     PROGRAMME("programme"),
     NEXT_STEP("next-step"),
     JOINING("joining"),
+    DIALOGUE("avatar-dialogue"),
+
 
     PARTICIPANT_AUDIO("participant-audio"),
     HEART_BEAT("heartbeat")
