@@ -170,6 +170,10 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         if (!Objects.equals(requester.getId(), apply.getStudyGroup().getCaptain().getId())) {
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
         }
+        // * WAITING이 아닌 경우는 에러 처리 *
+        if(apply.getApplicationStatus() != ApplicationStatus.WAITING){
+            throw new BusinessException(StudyGroupErrorCode.APPLY_ALREADY_ENDED);
+        }
         // 3. status 변경
         apply.setApplicationStatus(createReplyRequest.getApplicationStatus());
         apply.setReplyMessage(createReplyRequest.getReplyMessage());
