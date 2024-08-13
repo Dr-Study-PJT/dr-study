@@ -203,13 +203,11 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public StudyGroup updateStudyGroup(Long groupId, UpdateStudyGroupRequest request, Member requester) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.STUDYGROUP_NOT_FOUND_ERROR));
-        Member captain = memberRepository.findById(request.getCaptainId())
-                .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
-        Image image = imageRepository.findById(request.getImageId())
-                .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
 
-        if (!Objects.equals(requester.getId(), captain.getId()))
+        // 그룹장이 아닐 시 에러 처리
+        if (!Objects.equals(requester.getId(), studyGroup.getCaptain().getId())) {
             throw new BusinessException(StudyGroupErrorCode.USER_NOT_GROUP_CAPTAIN);
+        }
 
         if (request.getName() != null) {
             studyGroup.setName(request.getName());
@@ -217,10 +215,26 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         if (request.getDescription() != null) {
             studyGroup.setDescription(request.getDescription());
         }
-        if (request.getCaptainId() != null) {
-            studyGroup.setCaptain(captain);
+
+        if(request.getCaptainId() != null){
+            Member newCaptain = memberRepository.findById(request.getCaptainId())
+                    .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
+
+            // 수정하려는 사람이 그룹에 속해있지 않을 경우 에러 처리
+            MemberStudyGroup oldMemberStudyGroup = memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndMemberStudyGroupIdMemberId(groupId, studyGroup.getCaptain().getId())
+                    .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_NOT_IN_GROUP_ERROR));
+            oldMemberStudyGroup.setRole(StudyGroupRole.MEMBER);
+
+
+            MemberStudyGroup newMemberStudyGroup = memberStudyGroupRepository.findByMemberStudyGroupIdStudyGroupIdAndMemberStudyGroupIdMemberId(groupId, request.getCaptainId())
+                    .orElseThrow(() -> new BusinessException(StudyGroupErrorCode.MEMBER_NOT_IN_GROUP_ERROR));
+            newMemberStudyGroup.setRole(StudyGroupRole.CAPTAIN);
+            studyGroup.setCaptain(newCaptain);
+
         }
         if (request.getImageId() != null) {
+            Image image = imageRepository.findById(request.getImageId())
+                    .orElseThrow(() -> new BusinessException(FileErrorCode.IMAGE_NOT_FOUND));
             studyGroup.setImage(image);
         }
         // 기타 필드에 대해 동일하게 처리

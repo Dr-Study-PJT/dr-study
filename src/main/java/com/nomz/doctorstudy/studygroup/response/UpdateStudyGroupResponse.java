@@ -8,5 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UpdateStudyGroupResponse {
     @Schema(description = "업데이트 된 그룹 아이디", example = "1")
-    private final long studyGroupId;
+    private final long groupId;
 }

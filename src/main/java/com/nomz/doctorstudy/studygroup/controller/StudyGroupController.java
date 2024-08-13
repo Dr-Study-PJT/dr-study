@@ -157,7 +157,7 @@ public class StudyGroupController {
                     }
                     """)))
     })
-    public ResponseEntity<SuccessResponse<?>> updateStudyGroup(
+    public ResponseEntity<SuccessResponse<UpdateStudyGroupResponse>> updateStudyGroup(
             @PathVariable("groupId") Long groupId,
             @RequestBody UpdateStudyGroupRequest request,
             @Parameter(hidden = true) @Login Member requester) {
@@ -166,11 +166,12 @@ public class StudyGroupController {
         // 서비스 호출
         StudyGroup updatedStudyGroup = studyGroupService.updateStudyGroup(groupId, request, requester);
 
+        UpdateStudyGroupResponse response = new UpdateStudyGroupResponse(updatedStudyGroup.getId());
         // service 요청
         return ResponseEntity.ok(
                 new SuccessResponse<>(
                         "Study Group 업데이트에 성공했습니다.",
-                        null
+                        response
                 )
         );
     }
