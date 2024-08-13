@@ -71,19 +71,21 @@ const ConferenceControlBar = ({
     };
 
     const handleDisconnectAll = async () => {
-        // 모든 연결된 사용자와의 통화 종료
-        Object.keys(existingPeers).forEach((peerId) => disconnectCall(peerId));
-        // 모든 구독 해제
-        subscriptionList.forEach((sub) => {
-            stompClient.unsubscribe(sub);
-        });
-
-        // 연결 종료
-        stompClient.disconnect(() => {
-            console.log('모든 구독 해제 및 연결 종료');
-        });
-
         try {
+            // 모든 연결된 사용자와의 통화 종료
+            Object.keys(existingPeers).forEach((peerId) =>
+                disconnectCall(peerId),
+            );
+            // 모든 구독 해제
+            subscriptionList.forEach((sub) => {
+                stompClient.unsubscribe(sub);
+            });
+
+            // 연결 종료
+            stompClient.disconnect(() => {
+                console.log('모든 구독 해제 및 연결 종료');
+            });
+
             const response = await POST({
                 API: API,
                 endPoint: `${conferenceId}/quit`,
@@ -91,9 +93,10 @@ const ConferenceControlBar = ({
                 isAuth: true,
             });
             console.log('컨퍼런스 나가기 성공:', response);
-            router.push(`/`);
         } catch (error) {
             console.error('컨퍼런스 나가기 실패:', error);
+        } finally {
+            router.push(`/`);
         }
     };
 

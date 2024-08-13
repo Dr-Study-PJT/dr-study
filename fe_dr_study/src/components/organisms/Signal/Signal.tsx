@@ -242,18 +242,16 @@ const Signal = ({
 
     // 다음 발화자 신호 처리
     const handleNextStepSignal = (newSignal: SignalInterface) => {
-        console.log(`handleNextStepSignal: 다음 스텝 표시`, newSignal);
-        // dispatch(
-        //     setNextStep({
-        //         phase: newSignal.phase || 0,
-        //         content: newSignal.content as string,
-        //     }),
-        // );
+        console.log(`handleNextStepSignal: 다음 단계로`, newSignal);
+
+        if (newSignal) {
+            dispatch(setNextStep());
+        }
     };
 
     // 신호 단계 신호 처리
     const handleProgramme = (newSignal: SignalInterface) => {
-        console.log(`handleProgramme: 다음 스텝 표시`, newSignal);
+        console.log(`handleProgramme: Programme 전달`, newSignal);
 
         dispatch(setFullPhase({ programme: newSignal.programme }));
     };

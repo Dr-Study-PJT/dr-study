@@ -14,6 +14,7 @@ interface GroupCardProps {
     tags: string[];
     memberCount: number;
     memberCapacity: number;
+    widthFull?: boolean;
 }
 
 const GroupCard: React.FC<GroupCardProps> = ({
@@ -25,9 +26,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
     tags,
     memberCount,
     memberCapacity,
+    widthFull,
 }) => {
     return (
-        <Link href={`/group/${id}`} passHref>
+        <Link
+            href={`/group/${id}`}
+            passHref
+            className={`${widthFull && 'w-full'}`}
+        >
             <div className="GROUP-CARD cursor-pointer relative w-full flex items-start justify-between gap-4 mb-4 bg-dr-indigo-300 hover:bg-dr-indigo-200 transition-all duration-200 rounded-lg h-max min-h-36 overflow-hidden">
                 <div className="-left-[4.5rem] flex flex-row relative h-36">
                     <div className="relative w-36 h-36 mr-4 rounded-full overflow-hidden transition-all duration-300">

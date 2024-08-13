@@ -32,12 +32,12 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({
     } = useConferenceInfo(conferenceId);
 
     useEffect(() => {
-        const isStartedConference = conferenceData?.startTime;
-        console.log(conferenceData);
-
+        const isStartedConference = conferenceData?.openTime;
         // 컨퍼런스가 시작되었을 경우 대기실로 이동
         if (isStartedConference) {
-            router.push(`/conference/${conferenceId}/waiting-room`);
+            router.push(
+                `/conference/${conferenceId}/waiting-room?error=already_open`,
+            );
         }
     }, [conferenceData]);
 

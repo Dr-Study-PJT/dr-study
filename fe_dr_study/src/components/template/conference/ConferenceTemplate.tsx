@@ -288,9 +288,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         }
     };
 
-    console.log(memberData);
-    console.log(conferenceInfo);
-
     return (
         <div className="flex bg-dr-indigo-200 h-[100%] w-[100%]">
             <div className="flex flex-col w-full h-full">
@@ -301,22 +298,13 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                 <div className="flex w-full h-[80%]">
                     <div className="flex flex-wrap flex-1 h-[100%]">
                         {Object.keys(existingPeers).map((peerId) => {
-                            console.log(
-                                'peerId:',
-                                peerId,
-                                'focusingPeerId:',
-                                focusingPeerId,
-                            );
-
                             return (
-                                <>
-                                    <Video
-                                        key={peerId}
-                                        existingPeers={existingPeers}
-                                        peerId={peerId}
-                                        focusing={peerId === focusingPeerId}
-                                    />
-                                </>
+                                <Video
+                                    key={peerId}
+                                    existingPeers={existingPeers}
+                                    peerId={peerId}
+                                    focusing={peerId === focusingPeerId}
+                                />
                             );
                         })}
                     </div>
@@ -371,12 +359,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
 
             <div className="fixed top-[3px] right-[3px] p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
                 {memberData?.id === conferenceInfo?.hostId && (
-                    <>
-                        <Paragraph>{conferenceInfo?.title}</Paragraph>
-                        <Button fullWidth onClick={startConference}>
-                            컨퍼런스 시작
-                        </Button>
-                    </>
+                    <Button fullWidth onClick={startConference}>
+                        컨퍼런스 시작
+                    </Button>
                 )}
             </div>
             <TotalSummary summaryMessages={summaryMessages} />

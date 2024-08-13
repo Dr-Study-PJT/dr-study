@@ -408,7 +408,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                                                                     );
                                                                                     // 컨퍼런스 대기방 이동
                                                                                     router.push(
-                                                                                        `/conferences/${notification?.itemInfo?.conferenceId}/waiting-room`,
+                                                                                        `/conference/${notification?.itemInfo?.conferenceId}/waiting-room`,
                                                                                     );
                                                                                 }}
                                                                             >

@@ -1,103 +1,86 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import Carousel from '../Carousel/Carousel';
+import { setNextStep } from '@/store/slices/conferenceProgressSlice';
 
-interface ConferenceControlBarProps {}
+interface Phase {
+    id: number; // 단계 ID
+    title: string; // 단계 제목
+}
 
-const ConferenceProgress = ({}: ConferenceControlBarProps) => {
-    const [currentSlide, setCurrentSlide] = useState<number>(0);
-    const fullPhase = useSelector(
+const ConferenceProgress = () => {
+    const programme = useSelector(
         (state: RootState) => state.conferenceProgress.programme,
+    ) as any;
+    const step = useSelector(
+        (state: RootState) => state.conferenceProgress.step,
     );
 
-    const totalSlides = fullPhase.length;
+    // 슬라이드 상태 초기화
+    const [phaseSlide, setPhaseSlide] = useState<Phase[]>([]);
+    const [contentSlide, setContentSlide] = useState<any[]>([]);
 
-    const nextSlide = () => {
-        if (currentSlide === totalSlides - 1) {
-            return;
-        }
-        setCurrentSlide((prev) => (prev + 1) % totalSlides);
-    };
+    // 페이지 상태 초기화
+    const [phasePage, setPhasePage] = useState<number>(0);
+    const [contentPage, setContentPage] = useState<number>(0);
 
     useEffect(() => {
-        console.log(fullPhase);
-    }, [fullPhase]);
+        if (programme) {
+            // 중복 제거한 단계 배열 생성
+            const phases = Object.keys(programme)
+                .map((key) => programme[key].phase)
+                .filter((value, index, self) => self.indexOf(value) === index);
+            setPhaseSlide(phases);
+            setContentSlide(
+                Object.keys(programme).map(
+                    (key: string) => programme[key].content.nickname,
+                ),
+            );
+        }
+    }, [programme]);
+
+    useEffect(() => {
+        // step이 변경될 때마다 페이지 상태를 업데이트
+        if (programme) {
+            // 이전 step의 phase와 현재 step의 phase가 다르면 phasePage를 +1
+            if (
+                programme.length > 1 &&
+                programme[step - 1]?.phase !== programme[step]?.phase
+            ) {
+                setPhasePage(phasePage + 1); // 단계 페이지 업데이트
+            }
+            setContentPage(contentPage + 1); // 내용 페이지 업데이트
+        }
+    }, [step]);
+
+    // const dispatch = useDispatch();
 
     return (
-        <div className="relative flex flex-col items-center justify-center h-full">
-            {/* <div className="relative w-full bg-fuchsia-200 overflow-hidden">
-                <div
-                    className="flex transition-transform duration-500"
-                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-                >
-                    {fullPhase.map((item, index) => (
-                        <div className="w-full flex-shrink-0" key={index}>
-                            <div className="text-center">
-                                <p>{item.phase}</p>
-                            </div>
-                        </div>
-                    ))}
-                    {fullPhase.map((item, index) => (
-                        <div className="w-full flex-shrink-0" key={index}>
-                            <div className="text-center">
-                                <p>{item.content.nickname}</p>
-                            </div>
-                        </div>
-                    ))}
+        <div className="flex flex-col h-full ">
+            {/* <button
+                className="bg-dr-red"
+                onClick={() => dispatch(setNextStep())} // 다음 단계로 이동하는 버튼
+            >
+                dd
+            </button> */}
+            <div className="px-[15%] pt-[0.3rem]">
+                <div className="h-full">
+                    {/* 단계 슬라이드 컴포넌트 */}
+                    <Carousel step={phasePage} slides={phaseSlide} />
                 </div>
-            </div> */}
+            </div>
 
-            {/* <div className="flex space-x-4 mt-4">
-                <button
-                    onClick={nextSlide}
-                    className="px-4 py-2 bg-blue-500 text-white rounded"
-                >
-                    다음
-                </button>
-            </div> */}
+            <div className="px-[15%]">
+                <div className="h-full">
+                    {/* 내용 슬라이드 컴포넌트 */}
+                    <Carousel step={step} slides={contentSlide} />
+                </div>
+            </div>
         </div>
     );
 };
 
-export default ConferenceProgress;
-
-{
-    /* <div className="flex items-center text-dr-white">
-    {fullPhase
-        .slice(currentSlide, currentSlide + 5)
-        .map((step, index) => (
-            <div className="flex items-center" key={index}>
-                <div
-                    className={`px-4 rounded ${index === 2 ? 'text-dr-header-3' : 'text-dr-gray-100 text-dr-body-3'}`}
-                >
-                    {step}
-                </div>
-                {index < steps.length - 1 && (
-                    <div className="w-1 h-1 bg-white rounded-full mx-2" />
-                )}
-            </div>
-        ))}
-</div> */
-}
-{
-    /* <div className="flex space-x-4 items-center">
-    {presenters
-        .slice(currentPresenter, currentPresenter + 7)
-        .map((presenter, index) => (
-            <div
-                key={index}
-                className={`px-4 py-1 rounded ${
-                    index === 2
-                        ? 'text-dr-body-1 font-bold text-dr-coral-500'
-                        : index === 0 || index === 1
-                          ? 'text-dr-body-4 text-dr-gray-300'
-                          : 'text-dr-body-4 text-dr-coral-300'
-                }`}
-            >
-                {presenter}
-            </div>
-        ))}
-</div> */
-}
+export default ConferenceProgress; // ConferenceProgress 컴포넌트를 기본 내보내기로 설정

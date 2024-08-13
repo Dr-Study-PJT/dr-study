@@ -12,8 +12,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { setMemberState } from '@/store/slices/memberSlice';
 import { TIsSigned, setIsSigned } from '@/store/slices/authSlice';
+import { ToastContainer } from 'react-toastify';
+import path from 'path';
+import { showToast } from '@/utils/toastUtil';
 
-const LoginPage = () => {
+interface ILoginPageProps {
+    searchParams: { error: string };
+}
+
+const LoginPage = ({ searchParams }: ILoginPageProps) => {
     const dispatch = useDispatch();
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -65,6 +72,13 @@ const LoginPage = () => {
         if (isLoggedIn) {
             router.push('/');
         }
+
+        const timeout = setTimeout(() => {
+            if (searchParams.error === 'access_error') {
+                showToast('error', '로그인이 필요한 서비스입니다.');
+            }
+        }, 1000);
+        return () => clearTimeout(timeout);
     }, [isLoggedIn, router]);
 
     return (
@@ -128,6 +142,7 @@ const LoginPage = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 };

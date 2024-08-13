@@ -10,6 +10,8 @@ const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
     const [selectedModerator, setSelectedModerator] =
         useState<Moderator | null>(null);
 
+    console.log('moderators:', moderators);
+
     return (
         <div className="relative flex py-[3rem] px-[20%] text-dr-white gap-dr-30 ">
             <div className="w-3/5 h-full">
@@ -82,10 +84,9 @@ const ModeratorList = ({
                     <div className="relative w-full h-[6rem]">
                         <Image
                             src={
-                                moderator?.thumbnailUrl ||
                                 '/images/robots/robot' +
-                                    ((moderator?.id % 5) + 1) +
-                                    '.png'
+                                ((moderator?.id % 5) + 1) +
+                                '.png'
                             }
                             alt={moderator?.name}
                             fill
@@ -101,15 +102,21 @@ const ModeratorList = ({
     );
 };
 
-const ModeratorDetail = ({ moderator }: { moderator: Moderator | null }) => {
+export const ModeratorDetail = ({
+    moderator,
+}: {
+    moderator: Moderator | null;
+}) => {
+    console.log('하나의 사회자:', moderator);
     return (
         <div className="w-2/5 sticky top-1 flex flex-col gap-dr-20 items-center justify-center py-[2rem] h-full ">
             <div className="flex flex-col text-center items-center w-[100%] ">
                 <div className="relative w-[100%] h-[20rem]">
                     <Image
                         src={
-                            moderator?.thumbnailUrl ||
-                            'https://plus.unsplash.com/premium_photo-1681466343780-3235b37889b7?q=80&w=2857&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                            moderator?.modelType
+                                ? `/images/robots/robot${moderator?.modelType}.png`
+                                : 'https://plus.unsplash.com/premium_photo-1681466343780-3235b37889b7?q=80&w=2857&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
                         }
                         alt={moderator?.name || 'sample moderator'}
                         fill
@@ -119,13 +126,29 @@ const ModeratorDetail = ({ moderator }: { moderator: Moderator | null }) => {
                 <div className="py-2 text-dr-header-2">
                     {moderator?.name || 'AI 사회자 이름'}
                 </div>
+                <div className="text-dr-body-3 text-dr-gray-300">
+                    <p>
+                        생성 일시{' '}
+                        {new Date(
+                            moderator?.createdAt as string,
+                        ).toLocaleDateString() || 'sample date'}
+                    </p>
+                </div>
                 <div className="flex flex-col justify-center w-[75%]">
                     <div className="flex flex-col justify-between">
                         <p className="my-2 p-2 text-dr-body-4 text-dr-gray-300 border border-dr-gray-300 rounded-md">
                             <span className="block text-dr-body-3 text-dr-gray-100">
                                 사전 프롬프트 요약
                             </span>
-                            {moderator?.prompt || 'Sample Prompt'}
+                            {moderator?.prePrompt || 'Sample Prompt'}
+                        </p>
+                    </div>
+                    <div className="flex flex-col justify-between">
+                        <p className="my-2 p-2 text-dr-body-4 text-dr-gray-300 border border-dr-gray-300 rounded-md">
+                            <span className="block text-dr-body-3 text-dr-gray-100">
+                                사회자 설명
+                            </span>
+                            {moderator?.description || 'Sample description'}
                         </p>
                     </div>
                     <div className="flex justify-between">

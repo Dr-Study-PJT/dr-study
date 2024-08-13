@@ -6,12 +6,18 @@ import { GET, POST } from '@/app/api/routeModule';
 import { groupAPI as API } from '@/app/api/axiosInstanceManager';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { showToast } from '@/utils/toastUtil';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
+import { useRouter } from 'next/navigation';
 
 interface GroupApplyButtonProps {
     groupId: string;
 }
 
 const GroupApplyButton: React.FC<GroupApplyButtonProps> = ({ groupId }) => {
+    const memberData = getSessionStorageItem('memberData');
+
+    const router = useRouter();
+
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [message, setMessage] = useState('');
 
@@ -30,11 +36,16 @@ const GroupApplyButton: React.FC<GroupApplyButtonProps> = ({ groupId }) => {
         setModalIsOpen(false);
     };
 
+    const openModal = () => {
+        if (!memberData) {
+            router.push('/auth/login?error=access_error');
+        }
+        setModalIsOpen(true);
+    };
+
     return (
         <div>
-            <Button onClick={() => setModalIsOpen(true)}>
-                스터디 가입 신청
-            </Button>
+            <Button onClick={() => openModal()}>스터디 가입 신청</Button>
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={() => setModalIsOpen(false)}

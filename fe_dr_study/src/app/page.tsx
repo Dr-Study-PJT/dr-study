@@ -78,7 +78,7 @@ export default async function HomePage({}: {}) {
                         <div className="text-dr-gray-200 flex-grow text-right text-dr-body-4">
                             <Link
                                 className="px-2 py-1 hover:text-dr-gray-100 transition-colors duration-200 cursor-pointer self-end"
-                                href={'/members/mypage'}
+                                href={'/group/list'}
                             >
                                 <span className="">더보기</span>
                             </Link>
