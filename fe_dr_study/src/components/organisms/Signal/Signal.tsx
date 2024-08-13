@@ -18,6 +18,8 @@ import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSl
 import { setIsMutedBySystem } from '@/store/slices/isMutedBySystemSlice';
 import { setGptSummaryBySystem } from '@/store/slices/gptSummaryBySystemSlice';
 import { pushSummaryMessages } from '@/store/slices/summaryMessagesSlice';
+import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
+import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
 
 export interface JoiningMember {
     id: number;
@@ -75,7 +77,6 @@ const Signal = ({
     const CHANNEL = 'topic'; // 채널 이름
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
-    const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
     const [isStartRecordingAudio, setIsStartRecordingAudio] =
         useState<boolean>(false); // 오디오 스트림 시작 신호
     const messagesEndRef = useRef<HTMLDivElement>(null); // 메시지 목록 끝에 대한 참조
@@ -124,6 +125,7 @@ const Signal = ({
         subscribeToSignal('next-step', handleNextStepSignal);
         subscribeToSignal('heartstop', handleHeartstop);
         subscribeToSignal('programme', handleProgramme);
+        subscribeToSignal('avatar-dialogue', handleAvatarDialogueSignal);
     };
 
     // 신호 수신을 위한 구독 함수
@@ -159,7 +161,8 @@ const Signal = ({
         // newSignal.id 라는 멤버 아이디를 가진 사람의 피어 아이디를 focusingPeerId
         console.log('newSignal.time => ', newSignal.time, 'ms');
         if (client.memberId.toString() === newSignal.id?.toString()) {
-            setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 타이머
+            dispatch(setTimeForAudioRecord(newSignal.time as number));
+
             setIsStartRecordingAudio(true); // 오디오 녹음 시작
         }
     };
@@ -184,6 +187,11 @@ const Signal = ({
                 time: new Date().toLocaleTimeString(),
             }),
         );
+    };
+
+    // 아바타 현재 발화 신호 처리
+    const handleAvatarDialogueSignal = (newSignal: SignalInterface) => {
+        dispatch(setAvatarDialogue(newSignal.content as string));
     };
 
     // 다음 발화자 신호 처리
@@ -291,13 +299,11 @@ const Signal = ({
                 </Button>
             </form>
 
-            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40">
+            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40 hidden">
                 <Recorder
                     conferenceId={conferenceId}
                     memberId={memberData?.id}
                     stompClient={stompClient}
-                    timeForAudioRecord={timeForAudioRecord}
-                    setTimeForAudioRecord={setTimeForAudioRecord}
                     isStartRecordingAudio={isStartRecordingAudio}
                 />
             </div>

@@ -57,10 +57,10 @@ export const TotalSummary = ({}: {}) => {
     }, []);
 
     return (
-        <div className="text-white">
+        <div className="text-white ">
             <ul
                 ref={messageBoxRef}
-                className={`${!isSummaryMessagesOpen && 'hidden'} absolute top-[50%] left-[50%] h-[75%] w-[60%] translate-x-[-50%] translate-y-[-50%] overflow-y-scroll rounded-lg shadow-lg bg-dr-indigo-500 bg-opacity-80  p-4`}
+                className={`${!isSummaryMessagesOpen && 'hidden'} animate-fadeIn absolute top-[50%] left-[50%] h-[75%] w-[60%] translate-x-[-50%] translate-y-[-50%] overflow-y-scroll rounded-lg shadow-lg bg-dr-indigo-300 bg-opacity-80  p-4`}
             >
                 <li className="space-y-2">
                     {summaryMessages.map((item, index) => (
@@ -81,7 +81,9 @@ export const TotalSummary = ({}: {}) => {
                     toggleSummaryMessagesOpen(e);
                 }}
             >
-                <OpenTotalSummaryButton />
+                <OpenTotalSummaryButton
+                    prevSummary={`${summaryMessages[summaryMessages.length - 1]?.message.slice(0, 10)}`}
+                />
             </button>
             <p
                 className={`${!isSummaryMessagesOpen && 'hidden'} absolute left-[50%] translate-x-[-50%] top-[15%]`}

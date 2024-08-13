@@ -1,4 +1,6 @@
 import { Button } from '@/components/atoms';
+import { RootState } from '@/store';
+import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
 import React, {
     useState,
     useRef,
@@ -6,13 +8,14 @@ import React, {
     Dispatch,
     SetStateAction,
 } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface RecorderProps {
     conferenceId: number;
     memberId: number;
     stompClient: any;
-    timeForAudioRecord: number;
-    setTimeForAudioRecord: Dispatch<React.SetStateAction<number>>;
+    // timeForAudioRecord: number;
+    // setTimeForAudioRecord: Dispatch<React.SetStateAction<number>>;
     isStartRecordingAudio: boolean;
 }
 
@@ -20,14 +23,21 @@ function Recorder({
     memberId,
     conferenceId,
     stompClient,
-    timeForAudioRecord,
-    setTimeForAudioRecord,
+    // timeForAudioRecord,
+    // setTimeForAudioRecord,
     isStartRecordingAudio,
 }: RecorderProps) {
+    const dispatch = useDispatch();
+
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
     const [isRecording, setIsRecording] = useState(false);
+
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+
+    const timeForAudioRecord = useSelector(
+        (state: RootState) => state.timeForAudioRecord.timeForAudioRecord,
+    );
 
     useEffect(() => {
         console.log('timeForAudioRecord:', timeForAudioRecord, 'ms');
@@ -42,7 +52,8 @@ function Recorder({
             return () => {
                 clearTimeout(timeout);
                 stopAudioStream();
-                setTimeForAudioRecord(0);
+                dispatch(setTimeForAudioRecord(0));
+                // setTimeForAudioRecord(0);
             };
         }
     }, [isStartRecordingAudio]);

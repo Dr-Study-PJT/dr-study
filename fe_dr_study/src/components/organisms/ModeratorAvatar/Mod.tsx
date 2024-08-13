@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ConferenceData } from '@/interfaces/conference';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -20,8 +20,8 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
     const isAvatarSpeaking = useSelector(
         (state: RootState) => state.isAvatarSpeaking.isAvatarSpeaking,
     );
-    const gptSummaryBySystem = useSelector(
-        (state: RootState) => state.gptSummaryBySystemSlice.gptSummaryBySystem,
+    const avatarDialogue = useSelector(
+        (state: RootState) => state.avatarDialogueSlice.avatarDialogueSlice,
     );
 
     useEffect(() => {
@@ -80,9 +80,11 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
                 <audio ref={audioRef} className="hidden" />
             </div>
 
-            <div className="absolute top-0 right-0 translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
-                {gptSummaryBySystem}
-            </div>
+            {avatarDialogue && (
+                <div className="absolute top-0 right-[20%] translate-x-[100%] text-dr-white bg-dr-black bg-opacity-40 text-center p-3 rounded-xl">
+                    {avatarDialogue}
+                </div>
+            )}
         </div>
     );
 };

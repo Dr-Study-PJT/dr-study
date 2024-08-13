@@ -239,9 +239,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     };
 
     return (
-        <div className="flex bg-dr-indigo-200 h-[100%] w-[100%]">
+        <div className="flex h-[100%] w-[100%] bg-dr-dark-200">
             <div className="flex flex-col w-full h-full">
-                <div className="fixed w-full h-[10%] bg-dr-dark-200 ">
+                <div className="fixed w-4/5 h-[10%] bg-dr-dark-200 ">
                     <ConferenceProgress />
                 </div>
                 <div className="h-[10%]"></div>
@@ -274,7 +274,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                     />
                 </div>
 
-                <div className="fixed left-0 bottom-0 w-full h-[10%] z-30">
+                <div className="fixed left-0 bottom-0 w-4/5 h-[10%] z-30">
                     <ConferenceControlBar
                         subscriptionList={subscriptionList.current}
                         client={client.current}
@@ -284,7 +284,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}
                     />
-                    <div className="fixed bottom-[10%] left-[50%] w-[10%] z-40">
+                    <div className="fixed bottom-[10%] left-[40%] w-[10%] z-40">
                         <ModeratorAvatar conferenceInfo={conferenceInfo} />
                     </div>
                 </div>
