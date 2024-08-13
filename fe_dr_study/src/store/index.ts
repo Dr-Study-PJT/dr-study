@@ -9,7 +9,9 @@ import isAvatarSpeakingReducer from './slices/isAvatarSpeakingSlice';
 import timeForAvatarSpeakingReducer from './slices/timeForAvatarSpeakingSlice';
 import isMutedBySystemReducer from './slices/isMutedBySystemSlice';
 import gptSummaryBySystemReducer from './slices/gptSummaryBySystemSlice';
-import summaryMessagesSlice from './slices/summaryMessagesSlice';
+import summaryMessagesReducer from './slices/summaryMessagesSlice';
+import avatarDialogueReducer from './slices/avatarDialogueSlice';
+import timeForAudioReducer from './slices/timeForAudioRecord';
 
 export const store = configureStore({
     reducer: {
@@ -23,7 +25,9 @@ export const store = configureStore({
         timeForAvatarSpeaking: timeForAvatarSpeakingReducer,
         isMutedBySystem: isMutedBySystemReducer,
         gptSummaryBySystemSlice: gptSummaryBySystemReducer,
-        summaryMessagesSlice: summaryMessagesSlice,
+        summaryMessagesSlice: summaryMessagesReducer,
+        avatarDialogueSlice: avatarDialogueReducer,
+        timeForAudioRecord: timeForAudioReducer,
     },
 });
 

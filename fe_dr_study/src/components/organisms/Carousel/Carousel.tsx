@@ -37,7 +37,7 @@ const Carousel = ({ step, slides }: CarouselProps) => {
             centeredSlides={true}
             allowTouchMove={false}
         >
-            {slides.length !== 1 &&
+            {slides[0] !== 0 &&
                 slides?.map((slide, index) =>
                     typeof slide === 'number' ? (
                         // 단계 슬라이드
