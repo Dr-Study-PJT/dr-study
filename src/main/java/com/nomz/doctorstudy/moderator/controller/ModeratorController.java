@@ -1,6 +1,5 @@
 package com.nomz.doctorstudy.moderator.controller;
 
-import com.nomz.doctorstudy.common.auth.MemberDetails;
 import com.nomz.doctorstudy.common.dto.ErrorResponse;
 import com.nomz.doctorstudy.common.dto.SuccessResponse;
 import com.nomz.doctorstudy.member.Login;
@@ -8,7 +7,6 @@ import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.nomz.doctorstudy.moderator.request.CreateModeratorRequest;
 import com.nomz.doctorstudy.moderator.response.CreateModeratorResponse;
-import com.nomz.doctorstudy.moderator.response.GetModeratorListResponseItem;
 import com.nomz.doctorstudy.moderator.response.GetModeratorResponse;
 import com.nomz.doctorstudy.moderator.service.ModeratorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,8 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,9 +90,9 @@ public class ModeratorController {
 
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<List<GetModeratorListResponseItem>>> getModeratorList() {
+    public ResponseEntity<SuccessResponse<List<GetModeratorResponse>>> getModeratorList() {
         List<Moderator> moderatorList = moderatorService.getModeratorList();
-        List<GetModeratorListResponseItem> responses = moderatorList.stream().map(GetModeratorListResponseItem::of).toList();
+        List<GetModeratorResponse> responses = moderatorList.stream().map(GetModeratorResponse::of).toList();
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
