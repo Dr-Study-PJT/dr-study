@@ -57,8 +57,6 @@ interface SignalProps {
     stompClient: Client | null;
     memberData?: any;
     conferenceId: number;
-    isStartRecordingAudio: boolean;
-    setIsStartRecordingAudio: Dispatch<SetStateAction<boolean>>;
 }
 
 const Signal = ({
@@ -66,15 +64,11 @@ const Signal = ({
     setCurrentMembers,
     client,
     isJoined,
-    existingPeers,
     setExistingPeers,
     subscriptionList,
     stompClient,
     conferenceId,
     memberData,
-
-    isStartRecordingAudio,
-    setIsStartRecordingAudio,
 }: SignalProps) => {
     const dispatch = useDispatch();
 
@@ -82,7 +76,8 @@ const Signal = ({
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
     const [timeForAudioRecord, setTimeForAudioRecord] = useState<number>(0); // 오디오 스트림 시작 신호
-
+    const [isStartRecordingAudio, setIsStartRecordingAudio] =
+        useState<boolean>(false); // 오디오 스트림 시작 신호
     const messagesEndRef = useRef<HTMLDivElement>(null); // 메시지 목록 끝에 대한 참조
 
     useEffect(() => {
@@ -162,6 +157,7 @@ const Signal = ({
     // 발화 신호 처리
     const handleParticipantSpeakSignal = (newSignal: SignalInterface) => {
         // newSignal.id 라는 멤버 아이디를 가진 사람의 피어 아이디를 focusingPeerId
+        console.log('newSignal.time => ', newSignal.time, 'ms');
         if (client.memberId.toString() === newSignal.id?.toString()) {
             setTimeForAudioRecord(newSignal.time as number); // 오디오 스트림 타이머
             setIsStartRecordingAudio(true); // 오디오 녹음 시작
