@@ -30,7 +30,7 @@ function Recorder({
     const chunksRef = useRef<Blob[]>([]);
 
     useEffect(() => {
-        console.log('timeForAudioRecord:', timeForAudioRecord);
+        console.log('timeForAudioRecord:', timeForAudioRecord, 'ms');
         if (timeForAudioRecord) {
             startAudioStream();
 

@@ -70,10 +70,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         },
     ]);
 
-    // 시스템에 의한 상태
-    const [isStartRecordingAudio, setIsStartRecordingAudio] =
-        useState<boolean>(false); // 오디오 스트림 시작 신호
-
     // 오디오 주소
 
     // 클라이언트 정보 참조
@@ -275,8 +271,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         stompClient={stompClient}
                         memberData={memberData}
                         conferenceId={conferenceInfo?.id || 0}
-                        isStartRecordingAudio={isStartRecordingAudio}
-                        setIsStartRecordingAudio={setIsStartRecordingAudio}
                     />
                 </div>
 
