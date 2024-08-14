@@ -19,20 +19,18 @@ const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
 
     return (
         <div className="flex text-dr-white bg-[#1A2036] w-full h-full items-center justify-center gap-3">
-            <>
-                <div className="flex flex-row items-center justify-center w-2/3">
-                    <section className="AI-LIST-BOX w-full bg-[#242B42] h-[70vh] rounded-2xl flex flex-wrap gap-4 justify-start overflow-y-auto overflow-x-hidden">
-                        <ModeratorList
-                            moderators={moderators}
-                            setSelectedModerator={setSelectedModerator}
-                            selectedModerator={selectedModerator}
-                        />
-                    </section>
-                </div>
-                <section className="AI-DETAIL-BOX w-1/3 min-w-[20vw] bg-[#242B42] border-[1px] border-dr-gray-200 hover:bg-dr-indigo-0 transition-colors duration-300 h-[70vh] rounded-2xl p-12">
-                    <ModeratorDetail moderator={selectedModerator} />
+            <div className="flex flex-row items-center justify-center w-2/3">
+                <section className="AI-LIST-BOX w-full bg-[#242B42] h-[70vh] rounded-2xl flex flex-wrap gap-4 justify-start overflow-y-auto overflow-x-hidden">
+                    <ModeratorList
+                        moderators={moderators}
+                        setSelectedModerator={setSelectedModerator}
+                        selectedModerator={selectedModerator}
+                    />
                 </section>
-            </>
+            </div>
+            <section className="AI-DETAIL-BOX w-1/3 min-w-[20vw] bg-[#242B42] border-[1px] border-dr-gray-200 hover:bg-dr-indigo-0 transition-colors duration-300 h-[70vh] rounded-2xl p-12">
+                <ModeratorDetail moderator={selectedModerator} />
+            </section>
         </div>
     );
 };
@@ -61,9 +59,14 @@ export const ModeratorList = ({
     return (
         <div className="flex flex-col justify-start items-center p-10">
             {!isDisableCreateNewModerator && (
-                <p className="text-dr-header-2 font-semibold text-[#b2bad3] text-start self-start mb-6">
-                    AI 사회자
-                </p>
+                <div className="flex flex-row items-end justify-start w-full gap-3 mb-5">
+                    <p className="text-dr-header-2 font-semibold text-[#b2bad3] text-start self-start">
+                        AI 사회자 목록
+                    </p>
+                    <div className="text-dr-body-4 text-slate-400 mb-1">
+                        간편하게 AI를 탐색해보세요.
+                    </div>
+                </div>
             )}
 
             <section className="w-full flex flex-wrap gap-4 justify-start">
