@@ -84,7 +84,7 @@ const LoginPage = ({ searchParams }: ILoginPageProps) => {
     }, [isLoggedIn, router]);
 
     return (
-        <div className="flex justify-center items-center w-full h-full bg-gray-800">
+        <div className="flex justify-center items-center w-full h-full">
             <div className="w-3/5 flex bg-gray-900 text-white rounded-lg shadow-lg overflow-hidden border-[1px] border-dr-gray-300 relative">
                 <div className="w-1/2 relative">
                     <Image

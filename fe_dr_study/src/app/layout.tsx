@@ -164,7 +164,7 @@ export default function RootLayout({
                                 <SideBar />
                                 {/* 사이드바 및 메인 컨텐츠 */}
                                 <div className="BODY-BOX flex h-full">
-                                    <div className="BODY-CONTENTS flex-1 overflow-auto bg-dr-indigo-400">
+                                    <div className="BODY-CONTENTS flex-1 overflow-auto bg-gradient-to-b from-dr-indigo-400 to-[#1A2036]">
                                         {children}
                                     </div>
                                 </div>

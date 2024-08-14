@@ -9,7 +9,7 @@ import { createGroup } from '../_api/csr';
 import { useRouter } from 'next/navigation';
 import TitleSection from '@/app/auth/register/_components/TitleSection';
 
-const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center py-8 w-full min-h-full h-max bg-dr-indigo-100`;
+const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center py-8 w-full min-h-full h-max from-dr-indigo-400 to-[#1A2036]`;
 const containerStyles = `CONTAINER-FORM min-w-[50%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
 
 interface IStep {

@@ -118,7 +118,7 @@ const ResultStep = ({
 
                         <Button
                             rounded
-                            onClick={() => router.push(`/moderator`)}
+                            onClick={() => router.push(`/moderator/list`)}
                             fullWidth
                         >
                             사회자 보기

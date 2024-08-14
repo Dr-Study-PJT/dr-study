@@ -2,9 +2,9 @@
 
 import ModeratorTemplate from '@/components/template/moderator/ModeratorTemplate';
 import { useEffect, useState } from 'react';
-import { GET } from '../api/routeModule';
+import { GET } from '../../api/routeModule';
 import { Moderator } from '@/interfaces/moderator';
-import Loading from '../loading';
+import Loading from '../../loading';
 
 const ModeratorListPage = () => {
     const [isLoading, setIsLoading] = useState(true);

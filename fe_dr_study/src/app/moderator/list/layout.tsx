@@ -2,8 +2,8 @@
 import Link from 'next/link';
 import { BiSearch } from 'react-icons/bi';
 import { FaUsers } from 'react-icons/fa';
-import LottieCommunity from '../group/_components/Lotties/Lottie_Community';
-import LottieTrending from '../group/_components/Lotties/Lottie_Trending';
+import LottieCommunity from '../../group/_components/Lotties/Lottie_Community';
+import LottieTrending from '../../group/_components/Lotties/Lottie_Trending';
 import { Button } from '@/components/atoms';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -14,7 +14,7 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     return (
         // <div className="relative flex flex-row justify-center pr-32 gap-4 h-max mb-14">
-        <div className="flex flex-col justify-between gap-6 items-center w-full p-14 h-full px-40 bg-[#1A2036]">
+        <div className="flex flex-col justify-between gap-12 items-center w-full p-24 h-max bg-gradient-to-b from-dr-indigo-400 to-[#1A2036]">
             <header className="filter-title relative flex items-center justify-start w-full h-16">
                 <div
                     className="absolute inset-0 opacity-75 z-0 rounded-lg border-2 border-dr-gray-100"

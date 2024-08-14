@@ -509,8 +509,8 @@ const NavigateLinks = ({ pathname }: NavigationLinksProps) => {
                 </li>
                 <li>
                     <Link
-                        href="/moderator"
-                        className={linkClasses('/moderator')}
+                        href="/moderator/list"
+                        className={linkClasses('/moderator/list')}
                     >
                         AI 사회자
                     </Link>
