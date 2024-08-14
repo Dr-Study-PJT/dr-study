@@ -9,14 +9,18 @@ import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { handleArticleDelete } from '../_handler';
 
 const formatDate = (dateString: string | number | Date) => {
+    const date = new Date(dateString);
+    const utcDate = new Date(date.getTime() - 9 * 60 * 60 * 1000); // 9시간 빼기
     return new Intl.DateTimeFormat('ko-KR', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-    }).format(new Date(dateString));
+        timeZone: 'UTC', // UTC 시간대로 설정
+    }).format(utcDate);
 };
+
 
 interface ArticleDetailProps {
     article: ArticleData;
@@ -40,12 +44,13 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article, groupId }) => {
     console.log('currentUser.id:', typeof currentUser.id);
     console.log('article.memberInfo.id:', typeof article.memberInfo.id);
 
-    const isAuthor = currentUser && currentUser.id === article.memberInfo.id;
+    const isAuthor = currentUser.id == article.memberInfo.id;
 
     console.log('isAuthor:', isAuthor);
     console.log('groupId:', groupId);
     console.log('article:', article);
-
+console.log('user:', currentUser.id);
+    console.log('article.memberInfo.id:', article.memberInfo.id);
     return (
         <Box className="w-full" variant="articleDetail">
             <div className="relative w-full flex flex-row justify-center items-center">
@@ -56,7 +61,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article, groupId }) => {
                 >
                     {article.title ? article.title : '제목 없음'}
                 </Heading>
-                {isAuthor && (
+                {currentUser.id ==article.memberInfo.id && (
                     <div className="absolute right-0 text-white">
                         <ArticleDropdownButton
                             articleId={article.id}

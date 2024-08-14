@@ -1,7 +1,7 @@
 // 게시글 수정 부분...
 import { POST } from '@/app/api/routeModule';
 import { articleAPI } from '@/app/api/axiosInstanceManager';
-import { ArticlePostReq } from '../../[article_id]/_types';
+import { CreateArticleReq, CreateArticleResponse } from '../_types';
 // 조회글에서 필요한 것?? => 댓글 POST, PATCH, DELETE
 // 당장 필요한 것?
 // 1. Article에 대해서... => ArticleDelete
@@ -10,7 +10,7 @@ import { ArticlePostReq } from '../../[article_id]/_types';
 //case 1. 생성관련 함수들...
 export const postingArticle = async (
     groupId: number,
-    createArticleBody: ArticlePostReq,
+    createArticleBody: CreateArticleReq,
 ) => {
     try {
         const response = await POST({
@@ -19,8 +19,10 @@ export const postingArticle = async (
             body: createArticleBody,
             isAuth: true,
         });
-        return response;
+        console.log('PostingArticle response:', response);
+        return response.data as CreateArticleResponse;
     } catch (error) {
         console.error('게시글 생성 실패함 ㅠㅠ ', error);
+        throw error; // 오류가 발생한 경우 예외를 던집니다.
     }
 };

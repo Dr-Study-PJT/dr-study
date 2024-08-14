@@ -6,6 +6,7 @@ import {
     FieldErrors,
     UseFormRegister,
     UseFormSetFocus,
+    SubmitHandler,
 } from 'react-hook-form';
 import { Box } from '@/components/atoms/Box/Box';
 import { Button, Heading } from '@/components/atoms';
@@ -17,11 +18,7 @@ import formConditions from '@/constants/formConditions';
 import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
 import { useRouter } from 'next/navigation';
 import { handleArticleSubmit } from './_handler';
-import { fetchingMemberData } from '../[article_id]/_api/ssr';
-import Link from 'next/link';
-import { ArticleData } from '../../_types';
-import { ArticlePostReq } from '../[article_id]/_types';
-
+import { CreateArticleReq, CreateArticleResponse } from './_types';
 
 interface ArticleCreateProps {
     groupId: number;
@@ -43,7 +40,7 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
     const router = useRouter();
 
     useEffect(() => {
-        setFocus('articleTitle');
+        setFocus('title');
     }, [setFocus]);
 
     return (
@@ -62,28 +59,24 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
                     onSubmit={handleSubmit}
                 >
                     <InputWithLabelAndError
-                        id="articleTitle"
+                        id="title"
                         label="제목"
                         placeholder="제목을 입력해주세요."
-                        {...register('articleTitle', {
+                        {...register('title', {
                             ...formConditions.plainText,
                         })}
-                        error={errors.articleTitle}
+                        error={errors.title}
                         onKeyDown={(e) =>
-                            handleKeyDownForNextInput(
-                                e,
-                                'description',
-                                setFocus,
-                            )
+                            handleKeyDownForNextInput(e, 'content', setFocus)
                         }
                     />
                     <TextareaWithLabel
-                        id="description"
+                        id="content"
                         label="내용"
                         textareaSize="lg"
                         placeholder="내용을 입력해주세요"
-                        {...register('description')}
-                        error={errors.description}
+                        {...register('content')}
+                        error={errors.content}
                     />
                     <Box variant="articleButtonContainer">
                         <Button
@@ -104,36 +97,38 @@ const CreateArticle: React.FC<ArticleCreateProps> = ({
     );
 };
 
-const NewArticlePage: React.FC = async ({ params: { group_id } }: any) => {
+const NewArticlePage: React.FC<any> = ({ params: { group_id } }: any) => {
+    const router = useRouter();
     const {
         register,
         handleSubmit,
         setFocus,
         formState: { errors },
         reset,
-    } = useForm();
+    } = useForm<CreateArticleReq>(); // 여기에서 제네릭 타입 지정
 
     const groupId = group_id;
-    const onSubmit = async (data: any) => {
-        // 여기서 memberInfo를 실제 사용자 정보로 대체
-    const newArticle: ArticlePostReq = {
-        // id: data.id,
-        title: data.articleTitle,
-        content: data.description,
-
-    };
+    const onSubmit: SubmitHandler<CreateArticleReq> = async (data) => {
+        const newArticle: CreateArticleReq = {
+            title: data.title,
+            content: data.content,
+            tags: data.tags,
+        };
 
         try {
-            const response = await handleArticleSubmit(data, groupId);
-            // alert('게시글이 성공적으로 작성되었습니다.');
-            console.log('newArticle:', newArticle);
-            
+            const response: CreateArticleResponse = await handleArticleSubmit(
+                newArticle,
+                groupId,
+            );
+            if (response && response.data && response.data.articleId) {
+                router.push(
+                    `/group/${groupId}/article/${response.data.articleId}`,
+                );
+            } else {
+                console.error('Invalid response structure:', response);
+            }
             reset();
-
-
-        } 
-        
-        catch (error) {
+        } catch (error) {
             console.error('게시글 작성 실패', error);
         }
     };
