@@ -18,6 +18,8 @@ import {
     BsChatDots,
     BsPen,
     BsPenFill,
+    BsFillVolumeUpFill,
+    BsFillVolumeMuteFill,
 } from 'react-icons/bs';
 
 import { iconStyles } from './Icon.styles';
@@ -41,6 +43,8 @@ const iconName: IconKeyValue = {
     bell: <BsBellFill />,
     dots: <BsChatDots />,
     pen: <BsPenFill />,
+    volume: <BsFillVolumeUpFill />,
+    volumeMute: <BsFillVolumeMuteFill />,
 };
 
 // Icon 컴포넌트

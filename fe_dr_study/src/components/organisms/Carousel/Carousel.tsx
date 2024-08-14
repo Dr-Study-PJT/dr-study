@@ -42,13 +42,15 @@ const Carousel = ({ step, slides }: CarouselProps) => {
                     typeof slide === 'number' ? (
                         // 단계 슬라이드
                         <SwiperSlide key={index}>
-                            <div className="text-dr-white">{slide}단계</div>
+                            <div className="text-dr-white text-nowrap">
+                                {slide}단계
+                            </div>
                         </SwiperSlide>
                     ) : (
                         // 내용 슬라이드
                         <SwiperSlide key={index}>
                             <div
-                                className={`text-dr-coral-200 ${index < step && 'text-dr-gray-300'}`}
+                                className={`text-dr-coral-200 ${index < step && 'text-dr-gray-300'} text-nowrap`}
                             >
                                 {slide}
                             </div>
