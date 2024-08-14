@@ -37,8 +37,4 @@ public class CreateConferenceRequest {
     @Max(value = 256, message = "최대 인원수의 최댓값은 256입니다.")
     @Schema(description = "최대 인원수", example = "10")
     private Integer memberCapacity;
-
-    @NotNull(message = "예정일은 반드시 포함되어야 합니다.")
-    @Schema(description = "예정일", example = "2024-08-010T22:20:42.483173")
-    private LocalDateTime scheduledTime;
 }

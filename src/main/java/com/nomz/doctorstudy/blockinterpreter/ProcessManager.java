@@ -38,7 +38,8 @@ public class ProcessManager {
 
     public void removeProcess(Long processId) {
         if (!processContextMap.containsKey(processId)) {
-            throw new BlockException(BlockErrorCode.PROCESS_NOT_FOUND);
+            log.warn("Tried to remove process:{}, but couldn't found process:{}", processId, processId);
+            // throw new BlockException(BlockErrorCode.PROCESS_NOT_FOUND);
         }
         processContextMap.remove(processId);
     }

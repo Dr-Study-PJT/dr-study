@@ -1,9 +1,9 @@
 package com.nomz.doctorstudy.conference.service;
 
 import com.nomz.doctorstudy.conference.entity.Conference;
-import com.nomz.doctorstudy.conference.entity.ConferenceMember;
+import com.nomz.doctorstudy.conference.entity.ConferenceMemberHistory;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteRepository;
-import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
+import com.nomz.doctorstudy.conference.repository.ConferenceMemberHistoryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
@@ -28,7 +28,7 @@ class ConferenceServiceImplTest {
     private ConferenceRepository conferenceRepository;
 
     @Autowired
-    private ConferenceMemberRepository conferenceMemberRepository;
+    private ConferenceMemberHistoryRepository conferenceMemberHistoryRepository;
 
     @Autowired
     private ConferenceMemberInviteRepository conferenceMemberInviteRepository;
@@ -55,7 +55,7 @@ class ConferenceServiceImplTest {
                         )
                 );
 
-        List<ConferenceMember> beforeConferenceMembers = conferenceMemberRepository.findByConferenceId(1L);
+        List<ConferenceMemberHistory> beforeConferenceMemberHistories = conferenceMemberHistoryRepository.findByConferenceId(1L);
 
         for (int i=0; i<cnt; i++) {
             Member member = Member.builder()
@@ -67,13 +67,13 @@ class ConferenceServiceImplTest {
 
             memberRepository.save(member);
 
-            ConferenceMember conferenceMember = ConferenceMember.of(conference, member);
-            conferenceMemberRepository.save(conferenceMember);
+            ConferenceMemberHistory conferenceMemberHistory = ConferenceMemberHistory.of(conference, member);
+            conferenceMemberHistoryRepository.save(conferenceMemberHistory);
         }
 
-        List<ConferenceMember> afterConferenceMembers = conferenceMemberRepository.findByConferenceId(1L);
+        List<ConferenceMemberHistory> afterConferenceMemberHistories = conferenceMemberHistoryRepository.findByConferenceId(1L);
 
-        Assertions.assertThat(afterConferenceMembers.size()).isEqualTo(beforeConferenceMembers.size() + cnt);
+        Assertions.assertThat(afterConferenceMemberHistories.size()).isEqualTo(beforeConferenceMemberHistories.size() + cnt);
     }
 
     @Test
@@ -118,11 +118,11 @@ class ConferenceServiceImplTest {
 
 
         // when
-        ConferenceMember conferenceMember = ConferenceMember.of(conference, hostMember);
-        conferenceMemberRepository.save(conferenceMember);
+        ConferenceMemberHistory conferenceMemberHistory = ConferenceMemberHistory.of(conference, hostMember);
+        conferenceMemberHistoryRepository.save(conferenceMemberHistory);
 
         // then
-        List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByConferenceId(conference.getId());
-        Assertions.assertThat(conferenceMembers).containsOnly(conferenceMember);
+        List<ConferenceMemberHistory> conferenceMemberHistories = conferenceMemberHistoryRepository.findByConferenceId(conference.getId());
+        Assertions.assertThat(conferenceMemberHistories).containsOnly(conferenceMemberHistory);
     }
 }

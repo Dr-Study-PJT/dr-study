@@ -2,19 +2,22 @@ package com.nomz.doctorstudy.conference.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
+import com.nomz.doctorstudy.conference.ConferenceEvent;
 import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
-import com.nomz.doctorstudy.conference.entity.ConferenceMember;
-import com.nomz.doctorstudy.conference.entity.ConferenceMemberId;
+import com.nomz.doctorstudy.conference.entity.ConferenceMemberHistory;
 import com.nomz.doctorstudy.conference.entity.ConferenceMemberInvite;
 import com.nomz.doctorstudy.conference.repository.ConferenceMemberInviteRepository;
-import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
+import com.nomz.doctorstudy.conference.repository.ConferenceMemberHistoryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceQueryRepository;
 import com.nomz.doctorstudy.conference.repository.ConferenceRepository;
 import com.nomz.doctorstudy.conference.request.*;
+import com.nomz.doctorstudy.conference.room.RoomErrorCode;
 import com.nomz.doctorstudy.conference.room.RoomService;
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
+import com.nomz.doctorstudy.member.exception.member.MemberException;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
@@ -36,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -48,7 +52,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final StudyGroupRepository studyGroupRepository;
     private final ConferenceRepository conferenceRepository;
     private final ConferenceQueryRepository conferenceQueryRepository;
-    private final ConferenceMemberRepository conferenceMemberRepository;
+    private final ConferenceMemberHistoryRepository conferenceMemberHistoryRepository;
     private final ConferenceMemberInviteRepository conferenceMemberInviteRepository;
 
     private final RoomService roomService;
@@ -77,7 +81,6 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .title(request.getTitle())
                 .subject(request.getSubject())
                 .memberCapacity(request.getMemberCapacity())
-                .scheduledTime(request.getScheduledTime())
                 .build();
         conferenceRepository.save(conference);
 
@@ -111,12 +114,20 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     @Transactional
     public List<Member> getConferenceParticipantList(Long conferenceId) {
-        Conference conference = conferenceRepository.findById(conferenceId)
+        conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
 
-        return conference.getParticipants().stream()
-                .map(ConferenceMember::getMember)
-                .toList();
+        try {
+            return roomService.getParticipants(conferenceId)
+                    .stream().map(info -> memberRepository.findById(info.getMemberId())
+                            .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR)))
+                    .toList();
+        } catch (BusinessException e) {
+            if (e.getErrorCode() == RoomErrorCode.ROOM_NOT_FOUND) {
+                return List.of();
+            }
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "컨퍼런스 참여자 리스트를 구하는 도중 알 수 없는 오류가 발생했습니다.");
+        }
     }
 
     @Override
@@ -207,22 +218,20 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_INVITED);
         }
 
-        conferenceMemberRepository.findById(new ConferenceMemberId(conferenceId, requester.getId()))
-                        .ifPresent(id -> {
-                            throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_JOINED);
-                        });
-
-        conferenceMemberRepository.save(ConferenceMember.of(conference, requester));
+        conferenceMemberHistoryRepository.save(ConferenceMemberHistory.of(conference, requester, ConferenceEvent.JOIN));
 
         List<String> peerIds = roomService.joinRoom(requester, conferenceId, request.getPeerId());
 
         return peerIds;
     }
 
-    private void removeConferenceMemberData(Long conferenceId, Long memberId) {
-        conferenceMemberRepository.findById(new ConferenceMemberId(conferenceId, memberId))
-                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_JOINED));
-        conferenceMemberRepository.deleteById(new ConferenceMemberId(conferenceId, memberId));
+    protected void removeConferenceMemberData(Long conferenceId, Long memberId) {
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+        Member member = memberRepository.findById(memberId)
+                        .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND_ERROR));
+
+        conferenceMemberHistoryRepository.save(ConferenceMemberHistory.of(conference, member, ConferenceEvent.QUIT));
     }
 
     @Override
@@ -259,14 +268,14 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     public Page<Conference> getConferenceListByMemberId(Long memberId, Pageable pageable) {
         // 1. 멤버가 속한 ConferenceMember 조회
-        List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByMemberId(memberId);
+        List<ConferenceMemberHistory> conferenceMemberHistories = conferenceMemberHistoryRepository.findByMemberId(memberId);
 
-        if (conferenceMembers.isEmpty()) {
+        if (conferenceMemberHistories.isEmpty()) {
             return Page.empty(pageable);
         }
 
         // 2. Conference ID 리스트 추출
-        List<Long> conferenceIds = conferenceMembers.stream()
+        List<Long> conferenceIds = conferenceMemberHistories.stream()
                 .map(cm -> cm.getConference().getId())
                 .collect(Collectors.toList());
 

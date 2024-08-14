@@ -3,13 +3,14 @@ package com.nomz.doctorstudy.conference.repository;
 import com.nomz.doctorstudy.conference.entity.Conference;
 import com.nomz.doctorstudy.conference.dto.ConferenceSearchFilter;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import static com.nomz.doctorstudy.conference.entity.QConference.conference;
-import static com.nomz.doctorstudy.studygroup.entity.QMemberStudyGroup.memberStudyGroup;
+import static com.nomz.doctorstudy.conference.entity.QConferenceMemberInvite.conferenceMemberInvite;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +32,7 @@ public class ConferenceQueryRepository {
         return query.select(conference)
                 .from(conference)
                 .where(
-                        eqStudyGroupMember(filter.getMemberId()),
+                        isInvited(filter.getMemberId()),
                         eqStudyGroup(filter.getStudyGroupId()),
                         isOpened(filter.getIsOpened()),
                         isClosed(filter.getIsClosed()),
@@ -41,15 +42,15 @@ public class ConferenceQueryRepository {
                 .fetch();
     }
 
-    private BooleanExpression eqStudyGroupMember(Long memberId) {
+    private BooleanExpression isInvited(Long memberId) {
         if (memberId != null) {
-            List<Long> studyGroupIds = query
-                    .select(memberStudyGroup.studyGroup.id)
-                    .from(memberStudyGroup)
-                    .where(memberStudyGroup.member.id.eq(memberId))
-                    .fetch();
-
-            return conference.studyGroup.id.in(studyGroupIds);
+            return JPAExpressions
+                    .selectOne()
+                    .from(conferenceMemberInvite)
+                    .where(conferenceMemberInvite.member.id.eq(memberId)
+                            .and(conferenceMemberInvite.conference.id.eq(conference.id))
+                    )
+                    .exists();
         }
         return null;
     }

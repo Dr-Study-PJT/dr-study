@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.statistic.service;
 
-import com.nomz.doctorstudy.conference.entity.ConferenceMember;
-import com.nomz.doctorstudy.conference.repository.ConferenceMemberRepository;
+import com.nomz.doctorstudy.conference.entity.ConferenceMemberHistory;
+import com.nomz.doctorstudy.conference.repository.ConferenceMemberHistoryRepository;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.statistic.dto.MemberStatisticDTO;
 import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroup;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StatisticServiceImpl implements  StatisticService{
-    private final ConferenceMemberRepository conferenceMemberRepository;
+    private final ConferenceMemberHistoryRepository conferenceMemberHistoryRepository;
     private final MemberRepository memberRepository;
     private final MemberStudyGroupRepository memberStudyGroupRepository;
     private final StudyGroupTagRepository studyGroupTagRepository;
@@ -32,18 +32,18 @@ public class StatisticServiceImpl implements  StatisticService{
     @Override
     @Transactional
     public MemberStatisticDTO getMemberStatistic(Long userId) {
-        List<ConferenceMember> conferenceMembers = conferenceMemberRepository.findByMemberId(userId);
+        List<ConferenceMemberHistory> conferenceMemberHistories = conferenceMemberHistoryRepository.findByMemberId(userId);
         List<MemberStudyGroup> memberStudyGroups = memberStudyGroupRepository.findByMemberId(userId);
 
         // 총 컨퍼런스 참여 시간과 횟수 계산
-        int totalConferenceTime = conferenceMembers.stream()
+        int totalConferenceTime = conferenceMemberHistories.stream()
                 .mapToInt(cm -> {
                     // 컨퍼런스 시간 차이를 계산
                     Duration duration = Duration.between(cm.getConference().getStartTime(), cm.getConference().getFinishTime());
                     return (int) duration.toMinutes();
                 })
                 .sum(); // 모든 시간 차이를 합산
-        int totalConferenceJoinCount = conferenceMembers.size();
+        int totalConferenceJoinCount = conferenceMemberHistories.size();
 
         // 스터디 그룹별 가입 횟수 계산
         Map<Long, Integer> studyGroupJoinCounts = memberStudyGroups.stream()

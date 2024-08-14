@@ -50,9 +50,6 @@ public class Conference {
     private Image image;
 
     @Column
-    private LocalDateTime scheduledTime;
-
-    @Column
     private LocalDateTime openTime;
 
     @Column
@@ -65,14 +62,7 @@ public class Conference {
     private LocalDateTime finishTime;
 
     @OneToMany(mappedBy = "conference")
-    private List<ConferenceMember> participants;
-
-    @OneToMany(mappedBy = "conference")
     private List<ConferenceMemberInvite> invitees;
-
-    public void updateModerator(Moderator moderator) {
-        this.moderator = moderator;
-    }
 
     public void updateOpenTime(LocalDateTime openTime) {
         this.openTime = openTime;

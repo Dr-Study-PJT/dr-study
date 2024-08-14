@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 @Service
 @RequiredArgsConstructor
 public class RoomService {
-    private final Map<Long, Map<Long, RoomParticipantInfo>> existingParticipantMap = new ConcurrentHashMap<>();
+    private final Map<Long, Map<Long, RoomParticipantInfo>> roomParticipantMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, ReentrantLock> joinLockMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, CompletableFuture<Void>> processThreadMap = new ConcurrentHashMap<>();
     private final WebSocketSessionManager webSocketSessionManager;
@@ -60,14 +60,22 @@ public class RoomService {
         });
     }
 
+    public List<RoomParticipantInfo> getParticipants(Long roomId) {
+        if (!roomParticipantMap.containsKey(roomId)) {
+            throw new BusinessException(RoomErrorCode.ROOM_NOT_FOUND);
+        }
+        return roomParticipantMap.get(roomId).values().stream().toList();
+    }
+
     public void openRoom(Long roomId) {
-        existingParticipantMap.put(roomId, new LinkedHashMap<>());
+        roomParticipantMap.put(roomId, new LinkedHashMap<>());
         joinLockMap.put(roomId, new ReentrantLock());
     }
 
     public void closeRoom(Long roomId) {
+        signalTransmitter.transmitSignal(roomId, new QuitSignal());
         joinLockMap.remove(roomId);
-        existingParticipantMap.remove(roomId);
+        roomParticipantMap.remove(roomId);
     }
 
     public void startRoom(Long roomId, String subject, String script, String prePrompt, Runnable finishCallback) {
@@ -79,7 +87,7 @@ public class RoomService {
                 ConferenceContext.builder()
                         .prePrompt(prePrompt)
                         .subject(subject)
-                        .participantInfoList(existingParticipantMap.get(roomId).values().stream().toList())
+                        .participantInfoList(roomParticipantMap.get(roomId).values().stream().toList())
                         .build()
         );
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
@@ -93,7 +101,7 @@ public class RoomService {
                 ConferenceContext.builder()
                         .prePrompt(prePrompt)
                         .subject(subject)
-                        .participantInfoList(existingParticipantMap.get(roomId).values().stream().toList())
+                        .participantInfoList(roomParticipantMap.get(roomId).values().stream().toList())
                         .build()
         );
         processThreadMap.put(roomId, CompletableFuture.runAsync(() -> {
@@ -107,31 +115,30 @@ public class RoomService {
     public void finishRoom(Long roomId) {
         processManager.removeProcess(roomId);
 
-        signalTransmitter.transmitSignal(roomId, new QuitSignal());
-
         CompletableFuture<Void> completableFuture = processThreadMap.get(roomId);
-        if (completableFuture.isDone()) {
-            log.warn("Room:{}의 Completable Future가 완료돼지 않았습니다.", roomId);
-            completableFuture.cancel(true);
-        }
-        if (!completableFuture.isDone() && !completableFuture.isCancelled()) {
-            throw new BusinessException(RoomErrorCode.EXISTING_PROCESS_RUNNING);
+        if (completableFuture != null) {
+            if (completableFuture.isDone()) {
+                log.warn("Room:{}의 Process가 아직 진행중입니다.", roomId);
+                completableFuture.cancel(true);
+            }
+            if (!completableFuture.isDone() && !completableFuture.isCancelled()) {
+                throw new BusinessException(RoomErrorCode.EXISTING_PROCESS_RUNNING);
+            }
         }
 
-        // TODO: Finish Callback
-        log.debug("Room:{} finished", roomId);
+        log.debug("Finished room:{}", roomId);
     }
 
     public List<String> joinRoom(Member member, Long roomId, String peerId) {
-        if (!existingParticipantMap.containsKey(roomId)) {
+        if (!roomParticipantMap.containsKey(roomId)) {
             throw new BusinessException(RoomErrorCode.ROOM_NOT_FOUND);
         }
 
         log.debug("New Participant[memberId={}, name={}, peerId={}] is trying to join. Current participant list={}",
-                member.getId(), member.getNickname(), peerId, existingParticipantMap.get(roomId).values()
+                member.getId(), member.getNickname(), peerId, roomParticipantMap.get(roomId).values()
         );
 
-        if (existingParticipantMap.get(roomId).containsKey(member.getId())) {
+        if (roomParticipantMap.get(roomId).containsKey(member.getId())) {
             throw new BusinessException(RoomErrorCode.PARTICIPANT_ALREADY_JOINED);
         }
 
@@ -147,6 +154,11 @@ public class RoomService {
         signalTransmitter.transmitSignal(roomId, new HeartStopSignal(memberId, peerId));
 
         quitMemberCallback.accept(new QuitMemberInfo(roomId, memberId));
+        
+        if (roomParticipantMap.get(roomId).isEmpty()) {
+            finishRoom(roomId);
+            closeRoom(roomId);
+        }
     }
 
     private List<String> addPeer(Long roomId, Member member, String peerId) {
@@ -156,8 +168,8 @@ public class RoomService {
         }
         lock.lock();
         try {
-            List<String> existingPeerIds = existingParticipantMap.get(roomId).values().stream().map(RoomParticipantInfo::getPeerId).toList();
-            existingParticipantMap.get(roomId).put(member.getId(), new RoomParticipantInfo(member.getId(), member.getNickname(), peerId));
+            List<String> existingPeerIds = roomParticipantMap.get(roomId).values().stream().map(RoomParticipantInfo::getPeerId).toList();
+            roomParticipantMap.get(roomId).put(member.getId(), new RoomParticipantInfo(member.getId(), member.getNickname(), peerId));
             return existingPeerIds;
         } catch (Exception e) {
             log.error("Unexpected error occurred while joining room", e);
@@ -175,8 +187,8 @@ public class RoomService {
         }
         lock.lock();
         try {
-            String peerId = existingParticipantMap.get(roomId).get(memberId).getPeerId();
-            existingParticipantMap.get(roomId).remove(memberId);
+            String peerId = roomParticipantMap.get(roomId).get(memberId).getPeerId();
+            roomParticipantMap.get(roomId).remove(memberId);
             return peerId;
         } catch (Exception e) {
             log.error("Unexpected error occurred while quiting room", e);

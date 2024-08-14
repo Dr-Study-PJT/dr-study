@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -92,8 +93,9 @@ public class ConferenceController {
     public ResponseEntity<SuccessResponse<GetConferenceResponse>> getConference(
             @PathVariable("conferenceId") Long conferenceId) {
         Conference conference = conferenceService.getConference(conferenceId);
+        List<Member> participants = conferenceService.getConferenceParticipantList(conferenceId);
 
-        GetConferenceResponse response = GetConferenceResponse.of(conference);
+        GetConferenceResponse response = GetConferenceResponse.of(conference, participants);
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -120,9 +122,11 @@ public class ConferenceController {
             @ParameterObject @ModelAttribute GetConferenceListRequest request
     ) {
         // TODO: 조인으로 성능 최적화 필요
-        List<GetConferenceResponse> responses = conferenceService.getConferenceList(request).stream()
-                .map(GetConferenceResponse::of)
-                .toList();
+        List<GetConferenceResponse> responses = new ArrayList<>();
+        for (Conference conference : conferenceService.getConferenceList(request)) {
+            List<Member> participants = conferenceService.getConferenceParticipantList(conference.getId());
+            responses.add(GetConferenceResponse.of(conference, participants));
+        }
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
@@ -438,10 +442,12 @@ public class ConferenceController {
             @RequestParam(name= "page", defaultValue = "1") int page,
             @RequestParam(name= "size", defaultValue = "10") int size
     ) {
-        Pageable pageable = PageRequest.of(page -1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Conference> conferncePage = conferenceService.getConferenceListByMemberId(memberId, pageable);
-        Page<GetConferenceResponse> responsePage = conferncePage.map(GetConferenceResponse::of);
-
+        Page<GetConferenceResponse> responsePage = conferncePage.map(conference -> {
+            List<Member> participants = conferenceService.getConferenceParticipantList(conference.getId());
+            return GetConferenceResponse.of(conference, participants);
+        });
 
         return ResponseEntity.ok(
                 new SuccessResponse<>(
