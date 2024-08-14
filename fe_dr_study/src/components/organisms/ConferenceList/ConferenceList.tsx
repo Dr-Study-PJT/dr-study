@@ -36,8 +36,8 @@ const ConferenceList = ({ conferences }: ConferenceListProps) => {
     };
 
     return (
-        <div className="flex flex-col w-full p-[2rem] text-dr-white rounded-lg gap-dr-30">
-            <div className="text-left text-dr-header-3 text-dr-coral-50 pt-[2rem] pb-[1rem] font-bold w-full">
+        <div className="flex flex-col w-full p-[1.2rem] text-dr-white rounded-lg">
+            <div className="text-left text-dr-header-1 text-dr-coral-50 pt-[1rem] pb-[1rem] font-bold w-full">
                 참여한 라이브 스터디
             </div>
             <div className="flex pb-[1.5rem] gap-dr-30 overflow-auto">

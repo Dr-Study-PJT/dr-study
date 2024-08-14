@@ -56,7 +56,6 @@ const Step2: React.FC<StepProps> = ({
                             value={data.subject}
                             disabled
                         />
-                        <p>선택된 AI 사회자: {data.moderatorId}</p>
                     </div>
                 </section>
             </div>

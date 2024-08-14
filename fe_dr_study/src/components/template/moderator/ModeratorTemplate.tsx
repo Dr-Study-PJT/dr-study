@@ -18,7 +18,7 @@ const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
     console.log('moderators:', moderators);
 
     return (
-        <div className="flex text-dr-white bg-[#1A2036] w-full h-full items-center justify-center gap-3">
+        <div className="flex text-dr-white w-full h-full items-center justify-center gap-6">
             <div className="flex flex-row items-center justify-center w-2/3">
                 <section className="AI-LIST-BOX w-full bg-[#242B42] h-[70vh] rounded-2xl flex flex-wrap gap-4 justify-start overflow-y-auto overflow-x-hidden">
                     <ModeratorList

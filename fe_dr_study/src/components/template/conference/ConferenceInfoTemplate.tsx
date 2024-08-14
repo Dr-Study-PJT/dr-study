@@ -37,37 +37,23 @@ const ConferenceInfoTemplate = ({
 
     return (
         <div className="flex items-center justify-center p-[6rem] bg-dr-indigo-200 text-dr-white ">
-            <div className="flex flex-col gap-dr-5 w-full h-full border-2 border-dr-gray-500 p-4 rounded-md max-w-[50rem] ">
-                <div className="flex">
-                    <div className="flex-1 rounded-lg">
+            <div className="flex flex-col gap-dr-5 w-full h-full border-2 border-slate-700 p-12 rounded-md max-w-[50rem] ">
+                <div className="flex justify-start gap-8">
+                    <div className="rounded-lg flex">
+                        <div className="relative w-[7rem] h-[7rem] rounded-lg overflow-hidden">
+                            <Image
+                                src={'/images/group_thumbnail_1.png'}
+                                alt={'group-thumbnail'}
+                                fill
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
                         <h2 className="text-dr-header-3 font-bold mb-2 text-dr-primary ">
                             {conferenceData?.title}
                         </h2>
                         <div className="flex flex-col gap-3 text-dr-body-1">
-                            <p className="text-dr-body-4 text-dr-gray-300">
-                                <span>
-                                    {(conferenceData?.startTime &&
-                                        new Date(
-                                            conferenceData.startTime,
-                                        ).toLocaleTimeString()) ||
-                                        currentTime}{' '}
-                                    |{' '}
-                                    {(conferenceData?.finishTime &&
-                                        new Date(
-                                            conferenceData.finishTime,
-                                        ).toLocaleTimeString()) ||
-                                        currentTime}{' '}
-                                </span>
-                            </p>
-                            <div className="relative w-[10rem] h-[10rem] rounded-lg overflow-hidden">
-                                <Image
-                                    src={'/images/group_thumbnail_1.png'}
-                                    alt={'group-thumbnail'}
-                                    fill
-                                />
-                            </div>
-                            <p className="text-dr-body-3">
-                                <span className="">컨퍼런스 주제:</span>{' '}
+                            <p className="text-dr-body-3 border-slate-700">
                                 {conferenceData?.subject}
                             </p>
                         </div>
@@ -95,7 +81,9 @@ const ConferenceInfoTemplate = ({
                     <Button
                         onClick={handleOpenConference}
                         color={`${
-                            isHostOnly || isMemberInvited ? 'coral' : 'gray'
+                            isHostOnly || isMemberInvited
+                                ? 'coral'
+                                : sslate - 6 - 80700
                         }`}
                         disabled={!isHostOnly && !isMemberInvited}
                         size="lg"
