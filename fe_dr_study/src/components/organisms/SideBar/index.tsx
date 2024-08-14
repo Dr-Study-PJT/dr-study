@@ -1,3 +1,5 @@
+'use client';
+
 import { GET } from '@/app/api/routeModule';
 import { IConference } from '@/app/group/[group_id]/dummy';
 import Image from 'next/image';
@@ -79,6 +81,28 @@ const SidebarTooltipItem: React.FC<SidebarTooltipItemProps> = ({
     );
 };
 
+const SidebarTooltipItemPlus: React.FC<{
+    count: number;
+    onClick: () => void;
+}> = ({ count, onClick }) => {
+    return (
+        <div
+            className="BUTTON-ITEM relative cursor-pointer w-full flex items-center"
+            onClick={onClick}
+        >
+            <Tooltip text={'더보기'}>
+                <div className="relative flex-shrink-0 p-[6px] ml-[3px] w-full h-[3rem] flex items-center justify-center">
+                    <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn text-dr-body-3 bg-dr-indigo-0 hover:bg-dr-coral-200 rounded-[0.7rem] hover:rounded-[2rem] flex items-center justify-center transition-all duration-300">
+                        <span className="text-dr-gray-100 font-bold">
+                            +{count}
+                        </span>
+                    </div>
+                </div>
+            </Tooltip>
+        </div>
+    );
+};
+
 const getMyGroups = async () => {
     let response = null;
     try {
@@ -99,6 +123,9 @@ const SideBar = () => {
     const pathname = usePathname();
     const [groups, setGroups] = useState<Group[]>([]);
     const [conferences, setConferences] = useState<IConference[]>([]);
+    const [showAllConferences, setShowAllConferences] = useState(false);
+    const [showAllGroups, setShowAllGroups] = useState(false);
+
     const memberData = useSelector((state: RootState) => state.member);
 
     const fetchData = useCallback(async () => {
@@ -141,6 +168,16 @@ const SideBar = () => {
         return () => clearInterval(intervalId);
     }, [memberData]);
 
+    const handleShowAllConferences = () => {
+        setShowAllConferences(true);
+        setTimeout(() => setShowAllConferences(false), 5000); // 5초 후 숨기기
+    };
+
+    const handleShowAllGroups = () => {
+        setShowAllGroups(true);
+        setTimeout(() => setShowAllGroups(false), 5000); // 5초 후 숨기기
+    };
+
     return (
         <div className="SIDEBAR-BOX fixed z-10 left-0 pt-12 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-dr-indigo-300 border-r-[1px] border-dr-indigo-100">
             <div className="flex flex-col gap-3">
@@ -148,7 +185,10 @@ const SideBar = () => {
                     <div className="text-dr-body-4 cursor-default text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
                         실시간
                     </div>
-                    {conferences?.map((conference) => {
+                    {(showAllConferences
+                        ? conferences
+                        : conferences.slice(0, 3)
+                    )?.map((conference) => {
                         const isActive =
                             pathname === `/conference/${conference?.id}`;
                         return (
@@ -167,6 +207,12 @@ const SideBar = () => {
                             />
                         );
                     })}
+                    {conferences.length > 3 && !showAllConferences && (
+                        <SidebarTooltipItemPlus
+                            count={conferences.length - 3}
+                            onClick={handleShowAllConferences}
+                        />
+                    )}
                 </div>
                 {conferences && (
                     <div className="VERTICAL-DIVIDER h-[3px] bg-[#424549] rounded w-[70%] self-center ml-1"></div>
@@ -175,21 +221,29 @@ const SideBar = () => {
                     <div className="text-dr-body-4 cursor-default text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
                         내 그룹
                     </div>
-                    {groups?.map((group) => {
-                        const isActive = pathname === `/group/${group.id}`;
-                        return (
-                            <SidebarTooltipItem
-                                key={group.id}
-                                id={group.id}
-                                imageUrl={group.imageUrl}
-                                title={group.name}
-                                isActive={isActive}
-                                onClick={() =>
-                                    router.push(`/group/${group.id}`)
-                                }
-                            />
-                        );
-                    })}
+                    {(showAllGroups ? groups : groups.slice(0, 3))?.map(
+                        (group) => {
+                            const isActive = pathname === `/group/${group.id}`;
+                            return (
+                                <SidebarTooltipItem
+                                    key={group.id}
+                                    id={group.id}
+                                    imageUrl={group.imageUrl}
+                                    title={group.name}
+                                    isActive={isActive}
+                                    onClick={() =>
+                                        router.push(`/group/${group.id}`)
+                                    }
+                                />
+                            );
+                        },
+                    )}
+                    {groups.length > 3 && !showAllGroups && (
+                        <SidebarTooltipItemPlus
+                            count={groups.length - 3}
+                            onClick={handleShowAllGroups}
+                        />
+                    )}
                 </div>
             </div>
         </div>
