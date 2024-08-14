@@ -10,17 +10,20 @@ VALUES ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg", false, NOW())
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberD.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberE.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberF.png", false, NOW()),
-       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberG.png", false, NOW()),
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberG.png", false, NOW()), -- 10
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberH.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberI.png", false, NOW()),
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberJ.jpg", false, NOW()),
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberK.jpg", false, NOW()),
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/members/MemberL.jpg", false, NOW()),
 
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%EB%8F%85%EC%84%9C.png", false, NOW()), -- 독서
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%EC%9E%90%EA%B2%A9%EC%A6%9D.jpeg", false, NOW()), -- 자격증
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%EC%BD%94%EB%94%A9.png", false, NOW()), -- 코딩
        ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%ED%86%A0%EB%A1%A0.jpg", false, NOW()), -- 토론
-       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/AI.jpg", false, NOW()) -- AI
-
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/AI.jpg", false, NOW()), -- AI
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/History.jpg", false, NOW()), -- 한국사
+       ("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/images/groups/%EC%82%BC%EC%84%B1.jpeg", false, NOW()) -- 삼성
 ;
 
 --MEMBER-- password -> 'test'
@@ -30,6 +33,8 @@ VALUES ('tester@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3
        ('testerb@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '장철현', 5, NOW(), null, false),
        ('testerc@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '유영한', 11, NOW(), null, false),
        ('testerd@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '조성우', 13, NOW(), null, false),
+       ('testerk@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '신재민', 14, NOW(), null, false),
+       ('testerl@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '김주현', 15, NOW(), null, false),
        ('testere@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '서이준', 8, NOW(), null, false),
        ('testerf@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '이현', 9, NOW(), null, false),
        ('testerg@example.com', '$2a$10$3OP12OuyAPl8iDzQeSjqYOhTLTYxb23Bje1lW7.cX3OZv5nldYHzm', '이준혁', 10, NOW(), null, false),
@@ -45,34 +50,39 @@ VALUES
  "CS 전공면접에 대비하여 각자 공부한 내용을 면접식으로 주고받는 것에 목적을 둔 스터디입니다. 밝은 분위기에서 함께 준비해요!",
  "면접 합격!", DATE_ADD(NOW(), INTERVAL 100 DAY), 10, DATE_ADD(NOW(), INTERVAL -30 DAY), false),
 
-(3, 14, "삼성 공채 준비 스터디",
+(3, 22, "삼성 공채 준비 스터디",
  "삼성 공채를 목표로 하는 취준생들의 스터디입니다. 서로 정보 공유하며 함께 준비해요!",
  "삼성 공채 합격", DATE_ADD(NOW(), INTERVAL 90 DAY), 10, DATE_ADD(NOW(), INTERVAL -30 DAY), false),
 
-(4, 14, "월간 독서 클럽",
+(4, 16, "월간 독서 클럽",
  "매월 한 권의 책을 함께 읽고 토론하는 독서 모임입니다. 다양한 관점을 나누고 싶으신 분 환영합니다.",
  "연간 12권 독서", DATE_ADD(NOW(), INTERVAL 300 DAY), 15, DATE_ADD(NOW(), INTERVAL -365 DAY), false),
 
-(5, 15, "자격증 취득 스터디",
+(5, 17, "자격증 취득 스터디",
  "다양한 자격증 취득을 목표로 한 스터디입니다. 함께 공부하며 목표 달성을 이루어냅시다!",
  "자격증 취득", DATE_ADD(NOW(), INTERVAL 30 DAY), 20, DATE_ADD(NOW(), INTERVAL -12 DAY), false),
 
-(6, 16, "코딩 마스터 스터디",
+(6, 18, "코딩 마스터 스터디",
  "코딩 실력을 향상시키기 위해 함께 프로젝트를 진행하고 알고리즘 문제를 풀어보는 스터디입니다.",
  "코딩 실력 향상", DATE_ADD(NOW(), INTERVAL 120 DAY), 8, DATE_ADD(NOW(), INTERVAL -54 DAY), false),
 
-(7, 17, "심층 토론 스터디",
+(7, 19, "심층 토론 스터디",
  "시사와 사회 이슈에 대해 깊이 있게 토론하는 스터디입니다. 논리적인 사고를 키우고 싶은 분들 환영합니다.",
  "논리적 사고력 향상", DATE_ADD(NOW(), INTERVAL 30 DAY), 12, DATE_ADD(NOW(), INTERVAL -10 DAY), false),
 
-(8, 18, "AI 연구 스터디",
+(8, 20, "AI 연구 스터디",
  "AI 기술을 연구하고 발전시키기 위한 스터디입니다. 최신 논문을 함께 분석하고, 프로젝트를 진행해요.",
- "AI 연구 프로젝트 완수", DATE_ADD(NOW(), INTERVAL 270 DAY), 5, DATE_ADD(NOW(), INTERVAL -20 DAY), false)
+ "AI 연구 프로젝트 완수", DATE_ADD(NOW(), INTERVAL 270 DAY), 5, DATE_ADD(NOW(), INTERVAL -20 DAY), false),
+
+(5, 21, "한국사 1급 자격증 스터디",
+ "한국사 1급 자격증 취득을 위한 학습공유 스터디입니다.",
+ "한국사 1급 취득!", DATE_ADD(NOW(), INTERVAL 30 DAY), 10, DATE_ADD(NOW(), INTERVAL -10 DAY), false)
 ;
 
 --MEMBER STUDY GROUP--
 INSERT INTO member_study_group (member_id, study_group_id, role, join_date, is_leaved)
 VALUES
+
 -- CS 전공 면접 스터디
 (2, 1, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL -30 DAY), false),
 (3, 1, 'MEMBER', DATE_ADD(NOW(), INTERVAL -20 DAY), false),
@@ -117,7 +127,14 @@ VALUES
 (8, 7, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL -20 DAY), false),
 (2, 7, 'MEMBER', DATE_ADD(NOW(), INTERVAL -25 DAY), false),
 (3, 7, 'MEMBER', DATE_ADD(NOW(), INTERVAL -30 DAY), false),
-(4, 7, 'MEMBER', DATE_ADD(NOW(), INTERVAL -22 DAY), false)
+(4, 7, 'MEMBER', DATE_ADD(NOW(), INTERVAL -22 DAY), false),
+
+(5, 8, 'CAPTAIN', DATE_ADD(NOW(), INTERVAL -10 DAY), false),
+(2, 8, 'MEMBER', DATE_ADD(NOW(), INTERVAL -9 DAY), false),
+(3, 8, 'MEMBER', DATE_ADD(NOW(), INTERVAL -8 DAY), false),
+(4, 8, 'MEMBER', DATE_ADD(NOW(), INTERVAL -9 DAY), false),
+(6, 8, 'MEMBER', DATE_ADD(NOW(), INTERVAL -8 DAY), false),
+(7, 8, 'MEMBER', DATE_ADD(NOW(), INTERVAL -9 DAY), false)
 ;
 
 --Tag--
@@ -141,7 +158,9 @@ VALUES (1, '컴퓨터공학'),
        (17, '코딩'),
        (18, '코드리뷰'),
        (19, '비판적 사고'),
-       (20, '인공지능')
+       (20, '인공지능'),
+       (21, '한국사'),
+       (22, '역사')
 ;
 
 --STUDY GROUP TAG--
@@ -180,7 +199,11 @@ VALUES
 (7, 9),
 (7, 15),
 (7, 19),
-(7, 20)
+(7, 20),
+
+(8, 10),
+(8, 21),
+(8, 22)
 
 ;
 
@@ -380,7 +403,13 @@ DATE_ADD(NOW(), INTERVAL -10 DAY), DATE_ADD(NOW(), INTERVAL -9 DAY), DATE_ADD(NO
 (7, 3, 4, 1, '하버드대 심리학 교수의 하버드 행복 수업 독후감 스터디',
 '하버드대 심리학 교수의 "하버드 행복 수업"을 읽고 행복에 대해 탐구합니다.', 10,
 NULL, NULL, DATE_ADD(NOW(), INTERVAL 5 DAY), NULL, NULL, NULL);
-;
+
+-- 한국사
+INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, open_time, start_time, scheduled_time, finish_time, close_time, ai_review)
+VALUES
+(5, 8, 4, 19, '근대 한국사 스터디',
+'근대 한국사에 대해 서로 퀴즈를 내며 공부합니다.', 10,
+NULL, NULL, DATE_ADD(NOW(), INTERVAL 1 DAY), NULL, NULL, NULL);
 
 --CONFERENCE_MEMBER--
 INSERT INTO conference_member (conference_id, member_id)
@@ -436,7 +465,14 @@ VALUES
     -- AI 연구 스터디 게시글
     (18, '최신 AI 연구 논문 리뷰', '최근 발표된 AI 연구 논문을 리뷰합니다. 논문 내용과 주요 결과를 함께 분석해 보아요.', DATE_ADD(NOW(), INTERVAL -2 DAY), FALSE, 2, 7, 1),
     (19, 'AI 연구 프로젝트 아이디어', 'AI 연구 프로젝트를 위한 아이디어를 공유합니다. 새로운 프로젝트에 대해 논의해 봅시다.', DATE_ADD(NOW(), INTERVAL -7 DAY), FALSE, 3, 7, 1),
-    (20, 'AI 기술 동향 보고서', '최근 AI 기술 동향에 대한 보고서를 공유합니다. 기술 발전과 트렌드를 함께 살펴보아요.', DATE_ADD(NOW(), INTERVAL -15 DAY), FALSE, 4, 7, 1);
+    (20, 'AI 기술 동향 보고서', '최근 AI 기술 동향에 대한 보고서를 공유합니다. 기술 발전과 트렌드를 함께 살펴보아요.', DATE_ADD(NOW(), INTERVAL -15 DAY), FALSE, 4, 7, 1),
+
+    -- 한국사 스터디 게시글
+    (21, '근현대사 주요 사건 정리', '한국 근현대사에서 중요한 사건들을 정리하고 분석합니다. 사건의 배경과 결과를 함께 토론해 봅시다.', DATE_ADD(NOW(), INTERVAL -3 DAY), FALSE, 3, 5, 8),
+    (22, '한국사 시험 대비 문제 풀이', '한국사 시험 대비를 위한 문제 풀이 세션입니다. 기출 문제를 함께 풀어보며 준비해요.', DATE_ADD(NOW(), INTERVAL -5 DAY), FALSE, 6, 6, 8),
+    (23, '역사적 인물 분석', '한국 근현대사에서 중요한 역할을 한 인물들에 대해 분석합니다. 그들의 영향력과 업적을 살펴봅니다.', DATE_ADD(NOW(), INTERVAL -5 DAY), FALSE, 5, 3, 8),
+    (24, '근현대사 시험 후기', '최근 치른 한국사 시험에 대한 후기를 공유합니다. 시험의 난이도와 문제 유형을 함께 논의해 봅시다.', DATE_ADD(NOW(), INTERVAL -2 DAY), FALSE, 1, 2, 8),
+    (25, '한국사 공부 방법 공유', '효과적인 한국사 공부 방법을 공유합니다. 각자의 공부 팁과 노하우를 나누어 봅시다.', DATE_ADD(NOW(), INTERVAL -3 DAY), FALSE, 4, 7, 8)
 ;
 
 --COMMENTS--
@@ -528,6 +564,32 @@ VALUES
     ('AI 기술 동향 보고서 유용하네요. 감사합니다.', DATE_ADD(NOW(), INTERVAL -12 DAY), 20, 4, FALSE),
     ('기술 동향에 대한 더 많은 정보가 있으면 좋겠습니다.', DATE_ADD(NOW(), INTERVAL -12 DAY), 20, 7, FALSE),
     ('트렌드 분석에 대한 의견을 공유합니다.', DATE_ADD(NOW(), INTERVAL -12 DAY), 20, 3, FALSE);
+
+
+
+-- 한국사
+INSERT INTO comment (content, created_at, article_id, member_id, is_deleted)
+VALUES
+    -- 근현대사 주요 사건 정리 (article_id 21)
+    ('이 사건은 정말 중요한 전환점이었어요. 자세한 토론 기대합니다.', DATE_ADD(NOW(), INTERVAL -2 DAY), 21, 2, FALSE),
+    ('이 부분에서 더 깊이 있게 분석하면 좋을 것 같아요.', DATE_ADD(NOW(), INTERVAL -1 DAY), 21, 4, FALSE),
+
+    -- 한국사 시험 대비 문제 풀이 (article_id 22)
+    ('이 문제 너무 어렵네요. 같이 풀어보면 좋을 것 같아요.', DATE_ADD(NOW(), INTERVAL -4 DAY), 22, 6, FALSE),
+    ('좋은 문제 감사합니다. 시험 준비에 도움이 많이 될 것 같아요.', DATE_ADD(NOW(), INTERVAL -3 DAY), 22, 3, FALSE),
+
+    -- 역사적 인물 분석 (article_id 23)
+    ('이 인물의 업적은 정말 대단합니다. 잘 정리해 주셔서 감사합니다.', DATE_ADD(NOW(), INTERVAL -4 DAY), 23, 5, FALSE),
+    ('이 인물에 대한 다른 자료도 함께 공유해 주실 수 있을까요?', DATE_ADD(NOW(), INTERVAL -2 DAY), 23, 7, FALSE),
+
+    -- 근현대사 시험 후기 (article_id 24)
+    ('시험 후기 잘 읽었습니다. 저도 비슷한 문제를 겪었어요.', DATE_ADD(NOW(), INTERVAL -1 DAY), 24, 4, FALSE),
+    ('시험이 정말 어려웠네요. 후기 공유 감사합니다.', DATE_ADD(NOW(), INTERVAL -1 DAY), 24, 6, FALSE),
+
+    -- 한국사 공부 방법 공유 (article_id 25)
+    ('좋은 공부 방법 공유해 주셔서 감사합니다. 저도 활용해 봐야겠어요.', DATE_ADD(NOW(), INTERVAL -2 DAY), 25, 2, FALSE),
+    ('이 방법 정말 효과적일 것 같아요. 덕분에 도움이 됩니다.', DATE_ADD(NOW(), INTERVAL -1 DAY), 25, 3, FALSE);
+
 ;
 
 --ARTICLE_TAGS--
@@ -618,6 +680,27 @@ VALUES
 
     -- 'AI 기술 동향 보고서'
     (20, 9),  -- AI
-    (20, 20)  -- 인공지능
+    (20, 20);  -- 인공지능
 
+INSERT INTO article_tag (article_id, tag_id)
+VALUES
+    -- 근현대사 주요 사건 정리 (article_id 21)
+    (21, 21), -- 한국사
+    (21, 22), -- 역사
+
+    -- 한국사 시험 대비 문제 풀이 (article_id 22)
+    (22, 21), -- 한국사
+    (22, 22), -- 역사
+
+    -- 역사적 인물 분석 (article_id 23)
+    (23, 21), -- 한국사
+    (23, 22), -- 역사
+
+    -- 근현대사 시험 후기 (article_id 24)
+    (24, 21), -- 한국사
+    (24, 22), -- 역사
+
+    -- 한국사 공부 방법 공유 (article_id 25)
+    (25, 21), -- 한국사
+    (25, 22)  -- 역사
 ;
