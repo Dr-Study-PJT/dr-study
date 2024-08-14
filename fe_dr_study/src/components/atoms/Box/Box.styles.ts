@@ -29,7 +29,8 @@ export const boxStyles = tv({
             // 이거 케이스 2개로 나눠서 정적이게 넣을거임(생성 모달이랑, PDP모달 ㅇㅇ)
             //
             articleContentsSection:
-                'w-full flex flex-row space-y-8 bg-[#282B30] rounded-[10px] border border-[#0E78F9] px-4 py-2',
+                'w-full flex flex-row space-y-8 bg-[#282B30]  px-4 py-2',
+                // rounded-[10px] border border-[#0E78F9]
             articleCommentsContainer: 'w-full flex flex-col justify-between  ',
 
             //
