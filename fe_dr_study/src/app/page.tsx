@@ -3,7 +3,7 @@ import React from 'react';
 import { getGroupListBy } from './group/_api/ssr';
 import ButtonWithRouter from './group/_components/ButtonWithRouter';
 import Link from 'next/link';
-import GroupCard from './group/list/components/GroupCard';
+import GroupCard from './group/list/_components/GroupCard';
 
 const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black overflow-x-hidden bg-gradient-to-b from-dr-black to-dr-indigo-100`;
 
@@ -17,7 +17,7 @@ export default async function HomePage({}: {}) {
                     <Image
                         alt="thumbnail"
                         src="/images/thumbnail.png"
-                        layout="fill"
+                        fill
                         objectFit="cover"
                     />
                     <div className="absolute bottom-0 left-[13%] w-[30%]">

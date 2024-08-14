@@ -36,8 +36,6 @@ export const Pagination = ({
         pagingButtons.push(i);
     }
 
-    console.log(currentPage);
-
     return (
         <>
             {(totalPage as number) > 0 && (

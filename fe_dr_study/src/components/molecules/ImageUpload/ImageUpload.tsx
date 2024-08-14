@@ -125,7 +125,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                 <Image
                                     src={image}
                                     alt="Uploaded"
-                                    layout="fill"
+                                    fill
                                     objectFit="cover"
                                     className="rounded-full"
                                 />

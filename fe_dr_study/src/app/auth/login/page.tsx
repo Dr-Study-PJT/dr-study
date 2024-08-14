@@ -15,6 +15,7 @@ import { TIsSigned, setIsSigned } from '@/store/slices/authSlice';
 import { ToastContainer } from 'react-toastify';
 import path from 'path';
 import { showToast } from '@/utils/toastUtil';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
 
 interface ILoginPageProps {
     searchParams: { error: string };
@@ -68,8 +69,10 @@ const LoginPage = ({ searchParams }: ILoginPageProps) => {
         loginMutation.mutate(formData);
     };
 
+    const sessionMemberData = getSessionStorageItem('memberData');
+
     useEffect(() => {
-        if (isLoggedIn) {
+        if (sessionMemberData) {
             router.push('/');
         }
 

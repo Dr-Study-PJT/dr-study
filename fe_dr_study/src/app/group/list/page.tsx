@@ -2,7 +2,7 @@ import React from 'react';
 import { Pagination } from './Pagenation';
 import { getGroupListBy, SearchParams, IGroupListResponse } from '../_api/ssr';
 import { ErrorLottie } from '../../_components/Lottie/Error/ErrorLottie';
-import GroupCard from './components/GroupCard';
+import GroupCard from './_components/GroupCard';
 
 const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-indigo-400 rounded-xl border-[1px] border-dr-indigo-100`;
 
