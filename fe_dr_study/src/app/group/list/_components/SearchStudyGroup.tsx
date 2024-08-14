@@ -7,76 +7,78 @@ import { useRouter } from 'next/navigation';
 import { showToast } from '@/utils/toastUtil';
 import { ToastContainer } from 'react-toastify';
 
-interface SearchModeratorProps {
+interface SearchStudyGroupProps {
     size: number;
+    page: number;
     name: string;
-    description: string;
+    tagName: string;
 }
 
-const SearchModerator = ({
-    setModeratorSearchResult,
-}: {
-    setModeratorSearchResult: Dispatch<SetStateAction<any[]>>;
-}) => {
-    const [moderatorQuery, setModeratorQuery] = useState<string>('');
-    const [isRequesting, setIsRequesting] = useState<boolean>(false); // 요청 상태 관리
+const SearchStudyGroup = () => {
+    const router = useRouter();
+
+    const [studyGroupQuery, setStudyGroupQuery] = useState<string>('');
 
     const isValidInput = (input: string) => {
         const regex = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s]*$/; // 허용할 문자 정의
         return regex.test(input);
     };
 
-    const getModeratorQueryResult = async ({
+    const getStudyQueryResult = async ({
         size,
+        page,
         name,
-        description,
-    }: SearchModeratorProps) => {
-        console.log('getModeratorQueryResult 호출');
-        const baseUrl = `v1/moderators&size=${size}`;
+        tagName,
+    }: SearchStudyGroupProps) => {
+        console.log('getStudyQueryResult 호출');
+        const baseUrl = `v1/groups?size=${size}?=page=${page}`;
         let urlWithFilterQuery = `${baseUrl}`;
 
         if (name) {
             urlWithFilterQuery += `&name=${name}`;
         }
 
-        if (description) {
-            urlWithFilterQuery += `&description=${description}`;
+        if (tagName) {
+            urlWithFilterQuery += `&tagName=${tagName}`;
         }
+
+        router.push(`/group/list?name=${name}&tagName=${tagName}`);
 
         const response = await GET(urlWithFilterQuery, {
             params: '',
             isAuth: true,
             revalidateTime: 0,
         });
-        console.log('moderator 검색 결과: ' + response);
+        console.log('study group 검색 결과: ' + response);
         return response;
     };
     // showToast('error', '검색 결과를 가져오는 중 오류가 발생했습니다.');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setModeratorQuery(e.target.value); // 입력 값 업데이트
+        setStudyGroupQuery(e.target.value); // 입력 값 업데이트
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        console.log('검색어:', moderatorQuery);
+        console.log('검색어:', studyGroupQuery);
         e.preventDefault(); // 기본 제출 이벤트 방지
 
         // 사용 예
-        if (!isValidInput(moderatorQuery)) {
+        if (!isValidInput(studyGroupQuery)) {
             showToast('error', '유효하지 않은 입력입니다.');
-            setModeratorQuery('');
+            setStudyGroupQuery('');
             return;
         }
 
         try {
-            const response = await getModeratorQueryResult({
+            const response = await getStudyQueryResult({
                 size: 5,
-                name: moderatorQuery,
-                description: moderatorQuery,
+                page: 1,
+                name: studyGroupQuery,
+                tagName: studyGroupQuery,
             });
             console.log(response);
-            setModeratorSearchResult(response?.content); // 검색 결과 업데이트
-            setModeratorQuery('');
+            // setModeratorSearchResult(response?.content); // 검색 결과 업데이트
+            setStudyGroupQuery('');
             if (!response) {
                 showToast('error', '검색 결과가 없습니다.');
             }
@@ -95,11 +97,11 @@ const SearchModerator = ({
             <div className="relative h-11 w-full">
                 <input
                     className="relative h-11 w-full bg-inherit px-2 pl-3 py-1 font-normal text-xs text-left outline-none rounded-md"
-                    value={moderatorQuery} // 상태와 연결
+                    value={studyGroupQuery} // 상태와 연결
                     autoFocus
                     autoComplete="off"
                     required
-                    placeholder="태그나 AI 사회자 이름으로 검색해요."
+                    placeholder="스터디 그룹을 검색해요."
                     onChange={handleInputChange} // 변경 핸들러 연결
                 />
                 <button
@@ -114,4 +116,4 @@ const SearchModerator = ({
     );
 };
 
-export default SearchModerator;
+export default SearchStudyGroup;

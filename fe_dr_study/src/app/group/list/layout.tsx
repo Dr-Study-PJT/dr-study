@@ -6,9 +6,9 @@ import LottieTrending from '../_components/Lotties/Lottie_Trending';
 import { Button } from '@/components/atoms';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import SearchStudyGroup from './_components/SearchModerator';
 import { StudyGroup } from '@/interfaces/studyGroupQueryResult';
 import StudyGroupSearchList from './_components/ModeratorSearchList';
+import SearchStudyGroup from './_components/SearchStudyGroup';
 
 const styleTransitionColor = `transition duration-300 ease-in-out`;
 
@@ -55,6 +55,7 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
                             스터디 그룹 만들기
                         </Button>
                     </div>
+                    <SearchStudyGroup />
                     {/* <SearchStudyGroup
                         setStudyGroupSearchResult={setStudyGroupSearchResult}
                     />

@@ -8,7 +8,7 @@ const ModeratorSearchList = ({
     return (
         <div className="text-dr-white bg-zinc-900 rounded-md">
             <ul className="p-[1rem] rounded-lg text-dr-body-3">
-                {moderatorSearchResult.length ? (
+                {moderatorSearchResult?.length ? (
                     moderatorSearchResult.map((moderator, idx) => (
                         <li key={idx}>
                             <Link href={`/moderator/${moderator.id}`}>
