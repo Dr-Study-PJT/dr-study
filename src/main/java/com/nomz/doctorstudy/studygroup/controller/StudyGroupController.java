@@ -381,4 +381,31 @@ public class StudyGroupController {
         );
     }
 
+
+    @GetMapping("/top-rated-tags")
+    @Operation(summary = "나의 Study Group 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "나의 Study Group 리스트 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "나의 Study Group 리스트 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "나의 Study Group 리스트 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<String>>> getTopRatedTags(
+            @RequestParam("count") int count
+    ) {
+        List<String> response = studyGroupService.getTopRatedTags(count).stream()
+                .map(com.nomz.doctorstudy.tag.Tag::getName)
+                .toList();
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "인기 태그 검색애 성공했습니다.",
+                        response
+                )
+        );
+    }
 }

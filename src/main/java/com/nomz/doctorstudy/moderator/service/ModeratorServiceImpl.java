@@ -3,13 +3,16 @@ package com.nomz.doctorstudy.moderator.service;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
+import com.nomz.doctorstudy.moderator.dto.ModeratorSearchFilter;
 import com.nomz.doctorstudy.moderator.entity.Avatar;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.nomz.doctorstudy.moderator.entity.Processor;
 import com.nomz.doctorstudy.moderator.repository.AvatarRepository;
+import com.nomz.doctorstudy.moderator.repository.ModeratorQueryRepository;
 import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
 import com.nomz.doctorstudy.moderator.repository.ProcessorRepository;
 import com.nomz.doctorstudy.moderator.request.CreateModeratorRequest;
+import com.nomz.doctorstudy.moderator.request.GetModeratorListRequest;
 import com.nomz.doctorstudy.moderator.response.CreateModeratorResponse;
 import com.nomz.doctorstudy.moderator.response.GetModeratorResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +28,9 @@ public class ModeratorServiceImpl implements ModeratorService {
     private final ModeratorRepository moderatorRepository;
     private final AvatarRepository avatarRepository;
     private final ProcessorRepository processorRepository;
+    private final ModeratorQueryRepository moderatorQueryRepository;
 
-//    @Transactional
+    //    @Transactional
     @Override
     public Long createModerator(Member requester, CreateModeratorRequest request) {
         Avatar avatar = createAvatar(requester, request);
@@ -52,8 +56,13 @@ public class ModeratorServiceImpl implements ModeratorService {
     }
 
     @Override
-    public List<Moderator> getModeratorList() {
-        return moderatorRepository.findAll();
+    public List<Moderator> getModeratorList(GetModeratorListRequest request) {
+        return moderatorQueryRepository.getModeratorList(ModeratorSearchFilter.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .count(request.getCount())
+                .build()
+        );
     }
 
     private Avatar createAvatar(Member requester, CreateModeratorRequest request) {

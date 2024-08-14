@@ -6,6 +6,7 @@ import com.nomz.doctorstudy.member.Login;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.nomz.doctorstudy.moderator.request.CreateModeratorRequest;
+import com.nomz.doctorstudy.moderator.request.GetModeratorListRequest;
 import com.nomz.doctorstudy.moderator.response.CreateModeratorResponse;
 import com.nomz.doctorstudy.moderator.response.GetModeratorResponse;
 import com.nomz.doctorstudy.moderator.service.ModeratorService;
@@ -17,8 +18,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -90,8 +93,21 @@ public class ModeratorController {
 
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<List<GetModeratorResponse>>> getModeratorList() {
-        List<Moderator> moderatorList = moderatorService.getModeratorList();
+    @Operation(summary = "Moderator 리스트 조회", description = "Moderator 리스트를 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Moderator 리스트 검색 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Moderator 리스트 검색 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class), examples = @ExampleObject("""
+                    {
+                        "message": "Moderator 조회에 실패했습니다.",
+                        "errors": {
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<SuccessResponse<List<GetModeratorResponse>>> getModeratorList(
+            @ParameterObject @Valid @ModelAttribute GetModeratorListRequest request
+    ) {
+        List<Moderator> moderatorList = moderatorService.getModeratorList(request);
         List<GetModeratorResponse> responses = moderatorList.stream().map(GetModeratorResponse::of).toList();
 
         return ResponseEntity.ok(
