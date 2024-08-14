@@ -10,8 +10,6 @@ import { useEffect } from 'react';
 import MemberAvatar from '@/components/molecules/MemberAvatar';
 import { FaCrown } from 'react-icons/fa';
 import { LoadingLottie } from '@/app/_components/Lottie/Loading/LoadingLottie';
-import { ToastContainer } from 'react-toastify';
-import { showToast } from '@/utils/toastUtil';
 
 interface ConferenceWaitingRoomTemplateProps {
     memberData: IMemberData | null;

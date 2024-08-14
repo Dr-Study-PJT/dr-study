@@ -220,7 +220,6 @@ export default function GroupDetailPage({
 
     return (
         <div className="w-full bg-dr-indigo-200 flex flex-col h-max">
-            <ToastContainer position="bottom-right" />
             <div className="SECTION-THUMBNAIL w-full h-max flex flex-row bg-dr-indigo-400 rounded-l-xl">
                 <div
                     className="LEFT-IMAGE-THUMBNAIL w-1/3 h-[50vh] rounded-l-xl bg-gradient-to-r from-dr-coral-200 to-dr-indigo-400 relative overflow-hidden cursor-pointer"

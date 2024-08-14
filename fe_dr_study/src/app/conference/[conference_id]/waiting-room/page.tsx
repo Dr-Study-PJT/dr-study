@@ -7,7 +7,6 @@ import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { showToast } from '@/utils/toastUtil';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
 
 interface ConferenceWaitingRoomPageProps {
     searchParams: { error: string };
@@ -49,14 +48,11 @@ const Page = ({ searchParams }: ConferenceWaitingRoomPageProps) => {
     }, [searchParams]);
 
     return (
-        <>
-            <ConferenceWaitingRoomTemplate
-                memberData={memberData}
-                conferenceInfo={conferenceInfo}
-                conferenceInvitees={conferenceInvitees}
-            />
-            <ToastContainer />
-        </>
+        <ConferenceWaitingRoomTemplate
+            memberData={memberData}
+            conferenceInfo={conferenceInfo}
+            conferenceInvitees={conferenceInvitees}
+        />
     );
 };
 

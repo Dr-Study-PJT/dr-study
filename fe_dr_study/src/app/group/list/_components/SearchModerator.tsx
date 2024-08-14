@@ -4,7 +4,6 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { GET } from '@/app/api/routeModule';
 import { showToast } from '@/utils/toastUtil';
-import { ToastContainer } from 'react-toastify';
 import { Button } from '@/components/atoms';
 
 interface SearchModeratorProps {
@@ -111,7 +110,6 @@ const SearchModerator = ({
             onSubmit={handleSubmit} // 폼 제출 이벤트 핸들러 추가
             className="relative flex flex-row gap-2 border-[1px] rounded-md border-primary outline-dr-gray-400 bg-[#121212] text-dr-white"
         >
-            <ToastContainer />
             <div className="relative h-11 w-full">
                 <input
                     className="relative h-11 w-full bg-inherit px-2 pl-3 py-1 font-normal text-xs text-left outline-none rounded-md"

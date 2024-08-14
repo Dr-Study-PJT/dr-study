@@ -1,5 +1,5 @@
 import { memberAPI } from '@/app/api/axiosInstanceManager';
-import { DELETE, PATCH, POST } from '@/app/api/routeModule';
+import { DELETE, PATCH } from '@/app/api/routeModule';
 import { Member } from '@/app/group/[group_id]/_types';
 import { Button } from '@/components/atoms';
 import { removeMemberData } from '@/utils/sessionStorage';
@@ -8,8 +8,6 @@ import axios from 'axios';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { set } from 'react-hook-form';
-import { ToastContainer } from 'react-toastify';
 
 interface ProfileCardProps {
     member: Member | null;
@@ -121,8 +119,6 @@ const ProfileCard = ({ member }: ProfileCardProps) => {
 
     return (
         <div className=" flex flex-col items-center justify-center text-center text-dr-white gap-dr-10">
-            <ToastContainer />
-
             {isWithdrawalModalOpen && (
                 <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex justify-center items-center bg-dr-dark-300 z-50">
                     <UserWithdrawalModal

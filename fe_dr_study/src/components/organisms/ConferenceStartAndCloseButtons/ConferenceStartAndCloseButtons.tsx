@@ -6,7 +6,6 @@ import { Button } from '@/components/atoms';
 import { ConferenceData } from '@/interfaces/conference';
 import { showToast } from '@/utils/toastUtil';
 import { useRouter } from 'next/navigation';
-import { ToastContainer } from 'react-toastify';
 
 const ConferenceStartAndCloseButtons = ({
     conferenceInfo,
@@ -56,7 +55,6 @@ const ConferenceStartAndCloseButtons = ({
 
     return (
         <div className="flex flex-col gap-dr-5">
-            <ToastContainer />
             <Button fullWidth onClick={startConference}>
                 컨퍼런스 시작
             </Button>
