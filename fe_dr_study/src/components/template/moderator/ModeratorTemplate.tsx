@@ -44,7 +44,7 @@ export const ModeratorList = ({
     isDisableCreateNewModerator,
 }: {
     moderators: Moderator[];
-    setSelectedModerator: (moderator: Moderator | null) => void;
+    setSelectedModerator?: (moderator: Moderator | null) => void;
     selectedModerator?: Moderator | null;
     isDisableCreateNewModerator?: boolean;
 }) => {
@@ -53,7 +53,9 @@ export const ModeratorList = ({
         'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
 
     const handleModeratorSelect = (moderator: Moderator) => {
-        setSelectedModerator(moderator);
+        if (setSelectedModerator) {
+            setSelectedModerator(moderator);
+        }
     };
 
     return (

@@ -27,7 +27,7 @@ import ConferenceStartAndCloseButtons from '../ConferenceStartAndCloseButtons/Co
 import FinishMyTurnButton from './FinishMyTurnButton';
 import { RootState } from '@/store';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export interface JoiningMember {
     id: number;

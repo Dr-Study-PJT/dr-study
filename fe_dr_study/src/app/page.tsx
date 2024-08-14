@@ -1,15 +1,35 @@
 import Image from 'next/image';
-import React from 'react';
+import { useState } from 'react';
 import { getGroupListBy } from './group/_api/ssr';
 import ButtonWithRouter from './group/_components/ButtonWithRouter';
 import Link from 'next/link';
 import GroupCard from './group/list/_components/GroupCard';
+import { ModeratorList } from '@/components/template/moderator/ModeratorTemplate';
+import { Moderator } from '@/interfaces/moderator';
+import { GET } from './api/routeModule';
 
 const pageStyles = `PAGE-HOME flex flex-col justify-start items-center w-full min-h-full h-max bg-dr-black overflow-x-hidden bg-gradient-to-b from-dr-black to-dr-indigo-100`;
 
 export default async function HomePage({}: {}) {
     const response_groupList = await getGroupListBy({ page: 1, size: 5 });
     const groupList_content = response_groupList?.content;
+
+    const fetchModerators = async () => {
+        try {
+            const response = await GET(`v1/moderators`, {
+                params: '',
+                isAuth: true,
+                revalidateTime: 10,
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return []; // 오류 발생 시 빈 배열 반환
+        }
+    };
+
+    const moderators = await fetchModerators();
+
     return (
         <div className={pageStyles}>
             <section className="SECTION1-THUMBNAIL relative w-full h-max flex justify-center items-center">
@@ -113,10 +133,22 @@ export default async function HomePage({}: {}) {
                             <p className="text-dr-body-4 text-dr-white mb-1">
                                 Dr. Study의 인기있는 AI 사회자를 만나보세요.
                             </p>
+                            <div className="text-dr-gray-200 flex-grow text-right text-dr-body-4">
+                                <Link
+                                    className="px-2 py-1 hover:text-dr-gray-100 transition-colors duration-200 cursor-pointer self-end"
+                                    href={'/moderator'}
+                                >
+                                    <span className="">더보기</span>
+                                </Link>
+                            </div>
                         </div>
                         <div className="CONETENTS w-full h-max bg-dr-indigo-400 p-4 rounded-xl shadow-md">
                             <div className="bg-dr-gray-800 rounded-lg">
-                                {groupList_content
+                                <ModeratorList
+                                    moderators={moderators.slice(0, 6)}
+                                    isDisableCreateNewModerator
+                                />
+                                {/* {groupList_content
                                     ?.slice(0, 3)
                                     .map((group, index) => (
                                         <GroupCard
@@ -132,7 +164,7 @@ export default async function HomePage({}: {}) {
                                                 group.memberCapacity
                                             }
                                         />
-                                    ))}
+                                    ))} */}
                             </div>
                         </div>
                     </div>
