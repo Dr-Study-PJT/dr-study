@@ -2,7 +2,9 @@
 
 import { POST } from '@/app/api/routeModule';
 import ConferenceControlBar from '@/components/organisms/ConferenceControlBar/ConferenceControlBar';
-import ConferenceProgress from '@/components/organisms/ConferenceProgress/ConferenceProgress';
+import ConferenceProgress, {
+    Timer,
+} from '@/components/organisms/ConferenceProgress/ConferenceProgress';
 import ModeratorAvatar from '@/components/organisms/ModeratorAvatar/Mod';
 import Signal from '@/components/organisms/Signal/Signal';
 import Video from '@/components/organisms/Video/Video';
@@ -235,14 +237,14 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     };
 
     return (
-        <div className="flex h-[100%] w-[100%] bg-dr-dark-200">
+        <div className="flex h-[100%] w-[100%] bg-[#191B28] border-b-[1px] border-dr-indigo-0">
             <div className="flex flex-col w-full h-full">
-                <div className="fixed w-4/5 h-[10%] bg-dr-dark-200 ">
+                <div className="fixed w-4/5 h-[11%] bg-[#191B28] border-b-[1px] border-dr-indigo-0">
                     <ConferenceProgress />
                 </div>
-                <div className="h-[10%]"></div>
-                <div className="flex w-full h-[80%]">
-                    <div className="relative flex flex-wrap flex-1 h-[100%]">
+                <div className="h-[11%]"></div>
+                <div className="flex w-full h-[80%] bg-[#242736] border-b-[1px] border-dr-indigo-0">
+                    <div className="CAM-LIST-PARTICIPANTS relative flex flex-wrap flex-1 h-[100%] p-4">
                         {Object.keys(existingPeers).map((peerId) => {
                             return (
                                 <React.Fragment key={peerId}>
@@ -271,7 +273,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                     />
                 </div>
 
-                <div className="fixed left-0 bottom-0 w-4/5 h-[10%] z-30">
+                <div className="fixed left-0 bottom-0 w-4/5 h-[9%] z-30 bg-[#191B28] border-t-[1px] border-dr-indigo-0">
                     <ConferenceControlBar
                         subscriptionList={subscriptionList.current}
                         client={client.current}
@@ -281,7 +283,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         existingPeers={existingPeers}
                         setExistingPeers={setExistingPeers}
                     />
-                    <div className="fixed bottom-[10%] left-[40%] w-[10%] z-40">
+                    <div className="fixed bottom-[9%] left-[40%] w-[10%] z-40 ">
                         <ModeratorAvatar conferenceInfo={conferenceInfo} />
                     </div>
                 </div>

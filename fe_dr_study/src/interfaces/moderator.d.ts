@@ -17,7 +17,6 @@ interface Moderator {
     prePrompt: string;
     script: string;
     createdAt: string;
-
     modelType: string;
     voiceType: string;
     characterType: string;

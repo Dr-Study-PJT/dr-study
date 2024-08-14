@@ -170,7 +170,7 @@ const SideBar = () => {
                     </div>
                     {(showAllConferences
                         ? conferences
-                        : conferences.slice(0, 3)
+                        : conferences?.slice(0, 3)
                     )?.map((conference) => {
                         const isActive =
                             pathname === `/conference/${conference?.id}`;
@@ -192,7 +192,7 @@ const SideBar = () => {
                     })}
                     {conferences.length > 3 && !showAllConferences && (
                         <SidebarTooltipItemPlus
-                            count={conferences.length - 3}
+                            count={conferences?.length - 3}
                             onClick={handleShowAllConferences}
                         />
                     )}
