@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.value;
 
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
+import com.nomz.doctorstudy.blockinterpreter.Transcript;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,9 @@ public class GetRecordsInPhaseBlockExecutor extends BlockExecutor {
     protected Object executeAction(List<Object> args) {
         int phase = (int) args.get(0);
 
-        List<String> phaseTranscript = threadProcessContext.get().getPhaseTranscript(phase);
+        List<Transcript> phaseTranscript = threadProcessContext.get().getPhaseTranscript(phase);
 
-        log.debug("Phase {} transcript={}", phase, phaseTranscript.toString());
+        log.debug("Phase [{}] Transcript List={}", phase, phaseTranscript.stream().map(Transcript::getSpeakerNameAndContent).toList());
 
         return phaseTranscript;
     }

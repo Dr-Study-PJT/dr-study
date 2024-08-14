@@ -15,6 +15,7 @@ public enum BlockErrorCode implements ErrorCode {
     PROCESS_NOT_READY(HttpStatus.BAD_REQUEST, "Process를 시작하려면 상태가 Ready여야 합니다."),
     PROCESS_ALREADY_RUNNING(HttpStatus.BAD_REQUEST, "Process가 이미 실행중입니다."),
     PROCESS_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "Process를 찾을 수 없습니다."),
+    PARTICIPANT_NAME_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "참여자의 이름을 찾을 수 없습니다"),
 
     // Script,
     VARIABLE_ALREADY_DECLARED(HttpStatus.BAD_REQUEST, "스코프 내에 이미 같은 이름의 변수가 존재합니다."),
