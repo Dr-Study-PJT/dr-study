@@ -21,25 +21,19 @@ const MyPageTemplate = ({
 }: MyPageTemplateProps) => {
     return (
         <div className="flex flex-col p-[4rem] justify-center items-center gap-dr-30 bg-dr-indigo-400 ">
-            {/* 상 */}
-            <div className="w-[75%] flex p-[2rem] bg-dr-indigo-300 rounded-lg gap-dr-30">
-                {/* 왼 */}
-                <div className="flex items-center justify-center rounded-lg w-1/3 p-[2rem] bg-dr-indigo-100 shadow-dr-rb-2">
-                    <ProfileCard member={member} />
+            <div className="flex flex-col p-[2rem] w-full bg-dr-indigo-300 rounded-lg ">
+                <div className="flex items-center justify-center rounded-lg w-full px-[3.5rem] pt-[2rem] bg-dr-indigo-100 border-b border-dr-gray-500 rounded-bl-none rounded-br-none">
+                    <ProfileCard member={member} statistics={statistics} />
                 </div>
-                {/* 오 */}
-                <div className="flex items-start justify-start px-12 rounded-lg w-full bg-dr-indigo-100 shadow-dr-rb-2">
+                <div className="flex items-start justify-start px-[2rem] rounded-lg w-full bg-dr-indigo-100 rounded-tl-none rounded-tr-none ">
                     <Statistics statistics={statistics} />
                 </div>
             </div>
 
-            {/* 하 */}
-            <div className="w-[75%] flex flex-col p-[2rem] bg-dr-indigo-300 rounded-lg gap-dr-30">
-                {/* 왼 */}
+            <div className=" flex flex-col p-[2rem] bg-dr-indigo-300 rounded-lg gap-dr-30">
                 <div className="flex items-center justify-center rounded-lg w-full bg-dr-indigo-100 shadow-dr-rb-2">
                     <ConferenceList conferences={conferences} />
                 </div>
-                {/* 오 */}
                 <div className="flex flex-col items-center justify-center w-full bg-dr-indigo-100 rounded-lg px-[2rem] shadow-dr-rb-2">
                     <div className="text-left text-dr-header-3 text-dr-coral-50 pt-[2rem] pb-[1rem] font-bold w-full">
                         가입된 스터디 그룹

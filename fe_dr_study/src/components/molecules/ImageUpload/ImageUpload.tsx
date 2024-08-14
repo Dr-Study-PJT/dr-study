@@ -1,16 +1,9 @@
 import Image from 'next/image';
-import React, {
-    Dispatch,
-    SetStateAction,
-    useState,
-    useCallback,
-    useEffect,
-} from 'react';
+import React, { Dispatch, SetStateAction, useState, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
 import { tv } from 'tailwind-variants';
 import axios from 'axios';
-import { ToastContainer } from 'react-toastify';
 import { showToast } from '@/utils/toastUtil';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -107,46 +100,42 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     };
 
     return (
-        <>
-            <ToastContainer position="bottom-right" />
-            <Controller
-                name="image"
-                control={control}
-                render={({ field }) => (
-                    <div className="IMAGE-AREA w-28 h-28 bg-dr-coral-50 rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors duration-300">
-                        <div
-                            className={`${shapeVariants({ shape })} relative w-full h-full cursor-pointer`}
-                            onDrop={onDrop}
-                            onDragOver={preventDefault}
-                            onDragEnter={preventDefault}
-                            onDragLeave={preventDefault}
-                        >
-                            {image ? (
-                                <Image
-                                    src={image}
-                                    alt="Uploaded"
-                                    fill
-                                    objectFit="cover"
-                                    className="rounded-full"
-                                />
-                            ) : (
-                                <div className="border-dr-coral-300 border-[1.5px] border-dashed rounded-full p-3">
-                                    <label className="flex flex-col items-center justify-center cursor-pointer text-dr-coral-300">
-                                        <FaPlus className="text-lg" />
-                                    </label>
-                                </div>
-                            )}
-                            <input
-                                type="file"
-                                className="absolute inset-0 opacity-0 cursor-pointer"
-                                accept="image/*"
-                                onChange={onFileChange}
+        <Controller
+            name="image"
+            control={control}
+            render={({ field }) => (
+                <div className="IMAGE-AREA w-28 h-28 bg-dr-coral-50 rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors duration-300">
+                    <div
+                        className={`${shapeVariants({ shape })} relative w-full h-full cursor-pointer`}
+                        onDrop={onDrop}
+                        onDragOver={preventDefault}
+                        onDragEnter={preventDefault}
+                        onDragLeave={preventDefault}
+                    >
+                        {image ? (
+                            <Image
+                                src={image}
+                                alt="Uploaded"
+                                fill
+                                className="rounded-full object-cover"
                             />
-                        </div>
+                        ) : (
+                            <div className="border-dr-coral-300 border-[1.5px] border-dashed rounded-full p-3">
+                                <label className="flex flex-col items-center justify-center cursor-pointer text-dr-coral-300">
+                                    <FaPlus className="text-lg" />
+                                </label>
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            accept="image/*"
+                            onChange={onFileChange}
+                        />
                     </div>
-                )}
-            />
-        </>
+                </div>
+            )}
+        />
     );
 };
 

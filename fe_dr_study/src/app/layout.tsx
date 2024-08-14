@@ -15,6 +15,7 @@ import Navigation from '@/components/organisms/Navigation/Navigation';
 import { useEffect, useState } from 'react';
 
 import { IoClose, IoRemove, IoSquareOutline } from 'react-icons/io5';
+import { ToastContainer } from 'react-toastify';
 
 const pretendard = localFont({
     src: [
@@ -168,6 +169,7 @@ export default function RootLayout({
                                     </div>
                                 </div>
                                 <ModalBox />
+                                <ToastContainer position="bottom-right" />
                             </>
                         )}
                     </RQProvider>

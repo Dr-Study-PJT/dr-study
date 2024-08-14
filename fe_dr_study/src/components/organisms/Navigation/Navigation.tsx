@@ -232,11 +232,10 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                     >
                                         <Image
                                             onClick={toggleDropdown}
-                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100"
+                                            className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100 object-cover"
                                             src={memberData?.imageUrl}
                                             alt="Group Image"
                                             fill
-                                            objectFit="cover"
                                         />
                                     </div>
                                 </Tooltip>
@@ -293,13 +292,12 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                                             <div className="text-white w-full h-max flex flex-row gap-2">
                                                                 <div className="relative w-[2rem] h-[2rem] animate-popIn">
                                                                     <Image
-                                                                        className="rounded-[10rem] transition-all duration-300"
+                                                                        className="rounded-[10rem] transition-all duration-300 object-cover"
                                                                         src={
                                                                             notification?.imageUrl
                                                                         }
                                                                         alt="notification image"
                                                                         fill
-                                                                        objectFit="cover"
                                                                     />
                                                                 </div>
                                                                 <div className="flex-1">

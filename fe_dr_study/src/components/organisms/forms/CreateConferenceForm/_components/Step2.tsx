@@ -24,7 +24,7 @@ const Step2: React.FC<StepProps> = ({
                             alt="avatar"
                             src="/images/login_thumbnail.png"
                             fill
-                            objectFit="cover"
+                            className="object-cover"
                         />
                     </div>
                     <div className="flex flex-col gap-4 w-full">

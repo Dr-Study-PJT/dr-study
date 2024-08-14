@@ -10,7 +10,6 @@ import { ICreateModeratorReq } from '../_types';
 import { createModerator } from '../_api/csr';
 import { useRouter } from 'next/navigation';
 import { showToast } from '@/utils/toastUtil';
-import { ToastContainer } from 'react-toastify';
 
 const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center items-center w-full min-h-full h-max bg-dr-indigo-200 py-12`;
 const containerStyles = `CONTAINER-FORM min-w-[60%] w-max h-max flex bg-dr-indigo-300 text-dr-white rounded-lg shadow-dr-rb-2 overflow-hidden border-[1px] border-dr-indigo-100 p-4`;
@@ -113,7 +112,6 @@ const CreateModeratorPage: React.FC = () => {
 
     return (
         <div className={pageStyles}>
-            <ToastContainer />
             <div className={containerStyles}>
                 <div className="h-max min-h-[70vh] w-full flex flex-col justify-start items-center gap-4 ">
                     {!isResultPage && (

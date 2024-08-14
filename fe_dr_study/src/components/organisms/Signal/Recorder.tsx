@@ -32,16 +32,21 @@ function Recorder({
         (state: RootState) => state.timeForAudioRecord.timeForAudioRecord,
     );
 
+    // const [isShowTextAudioMessageBox, setIsShowTextAudioMessageBox] =
+    //     useState<boolean>(false);
+
     useEffect(() => {
         console.log('timeForAudioRecord:', timeForAudioRecord, 'ms');
         if (timeForAudioRecord) {
             startAudioStream();
+            // setIsShowTextAudioMessageBox(true);
 
             // 설정한 시간 후에 오디오 녹음 중지
             const timeout = setTimeout(() => {
                 // 내 턴이 끝나지 않았을 때만 시간이 지남에 따라 녹음 중지
                 if (!isFinishMyTurn) {
                     stopAudioStream();
+                    // setIsShowTextAudioMessageBox(false);
                 }
             }, timeForAudioRecord);
 
@@ -143,7 +148,52 @@ function Recorder({
         }
     };
 
+    // const [textAudioMessage, setTextAudioMessage] = useState<string>('');
+
+    // const handleInputChange = (
+    //     event: React.ChangeEvent<HTMLTextAreaElement>,
+    // ) => {
+    //     setTextAudioMessage(event.target.value); // 입력 값 업데이트
+    // };
+
+    // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault(); // 기본 폼 제출 방지
+    //     // 메시지 처리 로직을 여기에 추가 (ex: API 호출 등)
+    //     console.log('작성한 메시지:', textAudioMessage);
+
+    //     stompClient.send(
+    //         `/pub/signal/${conferenceId}/participant-audio-text`,
+    //         {},
+    //         JSON.stringify({
+    //             id: memberId,
+    //             text: textAudioMessage, // 발화 내역을 text로 전송
+    //         }),
+    //     );
+    //     setTextAudioMessage(''); // 입력 값 초기화
+    // };
+
     return null;
+    // <>
+    //     {
+    //         <div className="text-black bg-black w-[20rem] h-[20rem]">
+    //             <form onSubmit={handleSubmit} className="h-full">
+    //                 <textarea
+    //                     value={textAudioMessage}
+    //                     onChange={handleInputChange}
+    //                     placeholder="메시지를 입력하세요"
+    //                     className="w-full h-full"
+    //                 />
+    //                 <button
+    //                     className="p-2 w-full bg-gray-200 hover:bg-dr-coral-400 disabled:bg-red-500 disabled:cursor-not-allowed"
+    //                     type="submit"
+    //                     disabled={!isShowTextAudioMessageBox}
+    //                 >
+    //                     전송
+    //                 </button>
+    //             </form>
+    //         </div>
+    //     }
+    // </>
 }
 
 export default Recorder;

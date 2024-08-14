@@ -5,7 +5,6 @@ import ConferenceInfoTemplate from '@/components/template/conference/ConferenceI
 import useConferenceInfo from './_hooks/useConferenceInfo';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ToastContainer } from 'react-toastify';
 import { showToast } from '@/utils/toastUtil';
 
 interface ConferenceInfoPageProps {
@@ -56,7 +55,6 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({
 
     return (
         <>
-            <ToastContainer />
             <ConferenceInfoTemplate
                 memberData={memberData}
                 conferenceId={conferenceId}

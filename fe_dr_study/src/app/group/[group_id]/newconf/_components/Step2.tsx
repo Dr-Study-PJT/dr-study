@@ -28,7 +28,7 @@ const Step2: React.FC<StepProps> = ({
                             alt=""
                             src={data.imageUrl}
                             fill
-                            objectFit="cover"
+                            className="object-cover"
                         />
                     </div>
                     <div className="flex flex-col gap-4 w-full">

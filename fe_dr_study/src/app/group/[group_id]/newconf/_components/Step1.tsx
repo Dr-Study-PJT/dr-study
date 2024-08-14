@@ -12,11 +12,10 @@ import {
     validateMemberCapacity,
     validateDueDate,
 } from '../_validation';
-import { TextareaWithLabel } from '@/components/molecules/TextareaWithLabel';
-import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
 import { GET } from '@/app/api/routeModule';
 import { Moderator } from '@/interfaces/moderator';
 import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/SelectModeratorBox';
+import { showToast } from '@/utils/toastUtil';
 
 interface CreateConferenceTouchable {
     title?: boolean;
@@ -85,6 +84,12 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     };
 
     const handleNext = () => {
+        console.log(selectedModerator);
+        if (!selectedModerator || selectedModerator?.id === -1) {
+            showToast('error', 'AI 사회자를 선택해주세요.');
+            return;
+        }
+
         if (selectedModerator) {
             setData({
                 ...data,
@@ -161,8 +166,6 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             error={touched.subject ? errors.subject : undefined}
                         />
                         <SelectModeratorBox
-                            moderators={moderators}
-                            setIsModeratorInvited={() => {}}
                             selectedModerator={selectedModerator}
                             setSelectedModerator={setSelectedModerator}
                         />

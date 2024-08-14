@@ -13,19 +13,15 @@ import {
     setFullPhase,
     setNextStep,
 } from '@/store/slices/conferenceProgressSlice';
-import isAvatarSpeakingSlice, {
-    setIsAvatarSpeaking,
-} from '@/store/slices/isAvatarSpeakingSlice';
+import { setIsAvatarSpeaking } from '@/store/slices/isAvatarSpeakingSlice';
 import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSlice';
 import { setIsMutedBySystem } from '@/store/slices/isMutedBySystemSlice';
 import { setGptSummaryBySystem } from '@/store/slices/gptSummaryBySystemSlice';
 import { pushSummaryMessages } from '@/store/slices/summaryMessagesSlice';
 import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
 import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
-import { setIsCloseSignal } from '@/store/slices/isCloseSignalSlice';
 import ConferenceStartAndCloseButtons from '../ConferenceStartAndCloseButtons/ConferenceStartAndCloseButtons';
 import FinishMyTurnButton from './FinishMyTurnButton';
-import { RootState } from '@/store';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
 import { useRouter } from 'next/navigation';
 
@@ -157,7 +153,9 @@ const Signal = ({
     // handleQuit 신호 처리
     const handleQuitSignal = () => {
         console.log('handleQuitSignal 호출');
-        router.push(`/conference/${conferenceId}/waiting-room`);
+        router.push(
+            `/conference/${conferenceId}/waiting-room?error=finished_conference`,
+        );
     };
 
     // Mute 신호 처리
@@ -206,6 +204,8 @@ const Signal = ({
             }),
         );
     };
+
+    // 요약
 
     // 아바타 현재 발화 신호 처리
     const handleAvatarDialogueSignal = (newSignal: SignalInterface) => {

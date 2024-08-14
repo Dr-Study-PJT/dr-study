@@ -60,11 +60,10 @@ const SidebarTooltipItem: React.FC<SidebarTooltipItemProps> = ({
                 <div className="relative flex-shrink-0 p-[6px] ml-[3px] w-full h-[3rem] flex items-center justify-center">
                     <div className="relative w-[2.3rem] h-[2.3rem] animate-popIn ">
                         <Image
-                            className="rounded-[2rem] hover:rounded-[0.7rem] transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100 "
+                            className="rounded-[2rem] hover:rounded-[0.7rem] transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100 object-cover"
                             src={imageUrl}
                             alt={`${title} Image`}
                             fill
-                            objectFit="cover"
                         />
                         {isLive && (
                             <div className="CHIP-LIVE absolute bottom-[0.2rem] right-[0.4rem] transform translate-x-1/4 translate-y-1/4 flex items-center border-[0.1rem] border-dr-white bg-black rounded-full py-[0.03rem] pl-[0.2rem] pr-[0.3rem]">

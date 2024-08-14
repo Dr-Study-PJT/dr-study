@@ -5,7 +5,6 @@ import { BiSearch } from 'react-icons/bi';
 import { GET } from '@/app/api/routeModule';
 import { useRouter } from 'next/navigation';
 import { showToast } from '@/utils/toastUtil';
-import { ToastContainer } from 'react-toastify';
 
 interface SearchStudyGroupProps {
     size: number;
@@ -108,7 +107,6 @@ const SearchStudyGroup = () => {
             onSubmit={(e) => e.preventDefault()} // 폼 제출 이벤트 방지
             className="flex flex-row gap-2 border-[1px] rounded-md border-primary outline-dr-gray-400 bg-[#121212] text-dr-white"
         >
-            <ToastContainer />
             <div className="relative h-11 w-full">
                 <input
                     className="relative h-11 w-full bg-inherit px-2 pl-3 py-1 font-normal text-xs text-left outline-none rounded-md"

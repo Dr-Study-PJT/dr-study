@@ -13,6 +13,7 @@ import summaryMessagesReducer from './slices/summaryMessagesSlice';
 import avatarDialogueReducer from './slices/avatarDialogueSlice';
 import timeForAudioReducer from './slices/timeForAudioRecord';
 import closeSignalReducer from './slices/isCloseSignalSlice';
+import showTextAudioMessageBoxReducer from './slices/showTextAudioMessageBoxSlice';
 
 export const store = configureStore({
     reducer: {
@@ -30,6 +31,7 @@ export const store = configureStore({
         avatarDialogueSlice: avatarDialogueReducer,
         timeForAudioRecord: timeForAudioReducer,
         closeSignalSlice: closeSignalReducer,
+        showTextAudioMessageBoxSlice: showTextAudioMessageBoxReducer,
     },
 });
 
