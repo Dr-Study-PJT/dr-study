@@ -58,25 +58,34 @@ export const TotalSummary = ({}: {}) => {
 
     return (
         <div className="text-white ">
+            <p
+                className={`${!isSummaryMessagesOpen && 'hidden'} absolute left-[50%] translate-x-[-50%] top-[15%] text-dr-body-3 font-semibold mb-4`}
+            >
+                스터디 진행 요약
+            </p>
             <ul
                 ref={messageBoxRef}
-                className={`${!isSummaryMessagesOpen && 'hidden'} animate-fadeIn absolute top-[50%] left-[50%] h-[75%] w-[60%] translate-x-[-50%] translate-y-[-50%] overflow-y-scroll rounded-lg shadow-lg bg-dr-indigo-300 bg-opacity-80  p-4`}
+                className={`${!isSummaryMessagesOpen && 'hidden'} animate-fadeIn absolute top-[50%] left-[50%] h-[60%] w-[40%] translate-x-[-50%] translate-y-[-50%] overflow-auto rounded-lg shadow-lg bg-dr-indigo-300 bg-opacity-80  p-4 z-50`}
             >
-                <li className="space-y-2">
+                <li className="space-y-2 mt-14">
                     {summaryMessages.map((item, index) => (
                         <div
                             key={index}
                             className="bg-dr-indigo-500 bg-opacity-80 hover:bg-dr-indigo-300 transition duration-200 p-3 rounded-lg shadow-md"
                         >
-                            <p className="text-dr-body-4">{item.time}</p>
-                            <p className="text-dr-body-3">{item.message}</p>
+                            <p className="text-dr-body-4 text-slate-400">
+                                {item.time}
+                            </p>
+                            <p className="text-dr-body-4 text-slate-200">
+                                {item.message}
+                            </p>
                         </div>
                     ))}
                 </li>
             </ul>
             <button
                 ref={buttonRef}
-                className="fixed bottom-[11.5%] left-[1rem] bg-dr-black bg-opacity-40 rounded-full"
+                className="fixed bottom-[11.5%] left-[1rem] bg-dr-black bg-opacity-40 rounded-md"
                 onClick={(e) => {
                     toggleSummaryMessagesOpen(e);
                 }}
@@ -85,11 +94,6 @@ export const TotalSummary = ({}: {}) => {
                     prevSummary={`${summaryMessages[summaryMessages.length - 1]?.message.slice(0, 10)}`}
                 />
             </button>
-            <p
-                className={`${!isSummaryMessagesOpen && 'hidden'} absolute left-[50%] translate-x-[-50%] top-[15%]`}
-            >
-                사회 진행 요약
-            </p>
         </div>
     );
 };

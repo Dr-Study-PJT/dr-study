@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -42,7 +42,7 @@ const Carousel = ({ step, slides }: CarouselProps) => {
                     typeof slide === 'number' ? (
                         // 단계 슬라이드
                         <SwiperSlide key={index}>
-                            <div className="text-dr-white text-nowrap">
+                            <div className={`text-dr-white text-nowrap`}>
                                 {slide}단계
                             </div>
                         </SwiperSlide>
@@ -50,7 +50,11 @@ const Carousel = ({ step, slides }: CarouselProps) => {
                         // 내용 슬라이드
                         <SwiperSlide key={index}>
                             <div
-                                className={`text-dr-coral-200 ${index < step && 'text-dr-gray-300'} text-nowrap`}
+                                className={` ${
+                                    index === step
+                                        ? 'text-dr-coral-200 text-dr-body-2'
+                                        : 'text-slate-400 text-dr-body-'
+                                } text-nowrap`}
                             >
                                 {slide}
                             </div>

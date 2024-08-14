@@ -27,7 +27,7 @@ import ConferenceStartAndCloseButtons from '../ConferenceStartAndCloseButtons/Co
 import FinishMyTurnButton from './FinishMyTurnButton';
 import { RootState } from '@/store';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export interface JoiningMember {
     id: number;
@@ -286,7 +286,7 @@ const Signal = ({
     };
 
     return (
-        <div className="flex flex-col w-1/5 h-full bg-dr-dark-300">
+        <div className="flex flex-col w-1/5 h-full bg-[#1C1F2E] border-t-[1px] border-dr-indigo-0">
             <div className="relative w-full h-[90%] text-dr-white ">
                 <div className="pb-[0.1rem] shadow-xl">
                     <ConferenceParticipants currentMembers={currentMembers} />
@@ -305,7 +305,7 @@ const Signal = ({
                     e.preventDefault();
                     sendMessage();
                 }}
-                className="relative flex h-[10%] gap-dr-10  p-[0.5rem]"
+                className="relative flex h-[11%] gap-dr-10  p-[0.5rem]"
             >
                 <textarea
                     value={message}
@@ -321,18 +321,23 @@ const Signal = ({
                         }
                     }}
                     placeholder="Enter message"
-                    className="pr-[15%] bg-dr-dark-300 border  w-full border-dr-coral-200 rounded-[10px] p-2 text-white" // 배경색, 테두리, 둥근 모서리 추가
+                    className="pr-[15%] bg-[#2c3047] border w-full border-slate-500 rounded-md p-2 text-slate-300 text-dr-body-4 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-all duration-300"
                 />
                 <Button
-                    classNameStyles="absolute right-0 bottom-0 bg-transparent hover:bg-transparent"
+                    classNameStyles="absolute right-0 bottom-0 bg-transparent "
                     onClick={sendMessage}
                     size="sm"
                 >
-                    <Icon icon="send" size="sm" shape="contained" />
+                    <Icon
+                        icon="send"
+                        size="sm"
+                        shape="contained"
+                        className="hover:bg-transparent transition-colors duration-300"
+                    />
                 </Button>
             </form>
 
-            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40 hidden">
+            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-slate-300 rounded-xl bg-dr-black bg-opacity-40 hidden">
                 <Recorder
                     conferenceId={conferenceId}
                     memberId={memberData?.id}
@@ -343,13 +348,11 @@ const Signal = ({
                 />
             </div>
 
-            <div className="fixed top-[3px] right-[3px] p-3 rounded-xl bg-dr-black bg-opacity-40">
-                {memberData?.id === conferenceInfo?.hostId && (
-                    <ConferenceStartAndCloseButtons
-                        conferenceInfo={conferenceInfo}
-                        // handleCloseSignal={handleCloseSignal}
-                    />
-                )}
+            <div className="fixed flex bottom-[3px] right-[3px] p-3 rounded-xl  bg-opacity-40">
+                <ConferenceStartAndCloseButtons
+                    conferenceInfo={conferenceInfo}
+                    // handleCloseSignal={handleCloseSignal}
+                />
             </div>
             <div className="absolute right-[21%] bottom-[11%] ">
                 <FinishMyTurnButton setIsFinishMyTurn={setIsFinishMyTurn} />

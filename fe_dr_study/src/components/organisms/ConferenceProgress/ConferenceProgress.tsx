@@ -14,6 +14,7 @@ const ConferenceProgress = () => {
     const programme = useSelector(
         (state: RootState) => state.conferenceProgress.programme,
     ) as any;
+
     const step = useSelector(
         (state: RootState) => state.conferenceProgress.step,
     );
@@ -56,17 +57,18 @@ const ConferenceProgress = () => {
     }, [step]);
 
     return (
-        <div className="flex flex-col h-full ">
-            <Timer />
+        <div className="relative flex flex-col h-full w-full">
+            <div className="PROGRESS-CIRCLE absolute w-24 h-24 rounded-full bg-dr-coral-500 top-[-75%] right-[50%] translate-x-12 z-10"></div>
+            {/* <div className="PROGRESS-LINE absolute w-88 h-24 rounded-full bg-dr-coral-300 border-b-2 border-dr-coral-300 top-[-75%] right-[50%] translate-x-40 z-0"></div> */}
             <div className="absolute top-[50%] left-[50%] translate-x-[-50%] text-dr-white "></div>
-            <div className="px-[15%] pt-[0.3rem]">
-                <div className="h-full">
+            <div className="px-[15%] pt-[0.2rem] mb-4 z-30">
+                <div className="h-full z-30">
                     {/* 단계 슬라이드 컴포넌트 */}
                     <Carousel step={phasePage} slides={phaseSlide} />
                 </div>
             </div>
 
-            <div className="px-[15%]">
+            <div className="px-[15%] z-20">
                 <div className="h-full">
                     {/* 내용 슬라이드 컴포넌트 */}
                     <Carousel step={step} slides={contentSlide} />
@@ -78,46 +80,56 @@ const ConferenceProgress = () => {
 
 export default ConferenceProgress; // ConferenceProgress 컴포넌트를 기본 내보내기로 설정
 
-const Timer = () => {
-    const [timer, setTimer] = useState<number>(0); // 초 단위로 설정 (예: 100초)
-    const [width, setWidth] = useState<number>(0); // 바의 길이 비율
+export const Timer = () => {
+    const [timer, setTimer] = useState<number>(0); // 초 단위로 설정
+    const [width, setWidth] = useState<number>(100); // 바의 초기 길이 비율 (100%)
 
     const timeForAudioRecord = useSelector(
         (state: RootState) => state.timeForAudioRecord.timeForAudioRecord,
     );
+
     useEffect(() => {
-        const countDown = setInterval(() => {
-            if (timer <= 0) {
-                clearInterval(countDown);
-                return;
+        let interval: NodeJS.Timeout;
+        if (timer > 0) {
+            interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+                setWidth((prev) =>
+                    prev > 0
+                        ? ((timer - 1) / (timeForAudioRecord / 1000)) * 100
+                        : 0,
+                );
+            }, 1000); // 1초마다 타이머와 진행 바 동기화
+
+            if (timer === 0) {
+                clearInterval(interval);
             }
-            setTimer((prev) => prev - 1);
-            setWidth((prev) => (prev > 0 ? prev - 100 / 100 : 0)); // 바의 길이를 줄임
-        }, 1000); // 1초마다 감소
+        }
 
-        return () => {
-            clearInterval(countDown);
-        };
-    }, [timer]);
+        return () => clearInterval(interval);
+    }, [timer, timeForAudioRecord]);
 
     useEffect(() => {
-        if (timeForAudioRecord) {
-            setTimer(timeForAudioRecord / 1000); // ms를 초로 변환
+        if (timeForAudioRecord > 0) {
+            const initialTime = timeForAudioRecord / 1000; // ms를 초로 변환
+            setTimer(initialTime); // 타이머 초기화
             setWidth(100); // 바의 길이 초기화
         }
     }, [timeForAudioRecord]);
-    useEffect(() => {
-        setTimer(50); // ms를 초로 변환
-        setWidth(100); // 바의 길이 초기화
-    }, []);
 
     return (
-        <div className="flex flex-col justify-center items-center w-[10rem] absolute top-[50%] left-[50%] translate-x-[-50%] text-dr-white">
-            <div
-                className={`h-[1rem] bg-red-200`}
-                style={{ width: `${width}%` }} // 바의 길이 비율 적용
-            ></div>
-            {timer > 0 && <p>발화 시간 : {timer}초</p>}
+        <div className="flex flex-col justify-center items-center w-[10rem] absolute top-[45%] left-[30%] translate-x-[-50%] translate-y-[-50%] text-slate-200 text-dr-body-3 font-semibold animate-popIn">
+            {timeForAudioRecord > 0 && (
+                <>
+                    <div className="relative w-full rounded-full">
+                        <div className="absolute h-[1rem] bg-dr-indigo-200 w-full rounded-full border-2 border-slate-300"></div>
+                        <div
+                            className="absolute h-[1rem] bg-dr-coral-200 rounded-full border-2 border-slate-300"
+                            style={{ width: `${width}%` }} // 타이머에 맞춘 진행 바 길이 설정
+                        ></div>
+                    </div>
+                    {timer > 0 && <p className="mt-2">남은 시간 : {timer}초</p>}
+                </>
+            )}
         </div>
     );
 };

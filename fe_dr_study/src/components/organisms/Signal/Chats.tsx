@@ -1,3 +1,4 @@
+import { getSessionStorageItem } from '@/utils/sessionStorage';
 import Image from 'next/image';
 import React from 'react';
 
@@ -24,21 +25,47 @@ const Chats = ({
                     </div>
                     <div className="flex flex-col">
                         <div className="flex items-center">
-                            <span className="font-semibold text-white">
+                            <span className="font-semibold text-slate-300 text-dr-body-3">
                                 {msg?.nickname}
                             </span>
-                            <span className="text-gray-400 text-sm ml-2">
+                            <span className="text-slate-500 text-dr-body-4 ml-2">
                                 {msg?.time &&
                                     new Date(msg?.time).toLocaleDateString()}
                             </span>{' '}
-                            {/* 시간 표시 추가 */}
                         </div>
-                        <div className="text-gray-200">{msg.message}</div>
+                        <div className="text-slate-200 text-dr-body-4">
+                            {msg.message}
+                        </div>
                     </div>
                 </div>
             ))}
         </div>
     );
 };
+
+// 더미 데이터 사용
+// const dummyMessages = [
+//     {
+//         nickname: 'JohnDoe',
+//         imageUrl: '/images/johndoe.png',
+//         time: '2024-08-14T14:00:00Z',
+//         message: 'Hello! How are you?',
+//     },
+//     {
+//         nickname: 'JaneSmith',
+//         imageUrl: '/images/janesmith.png',
+//         time: '2024-08-14T14:05:00Z',
+//         message: 'I am good, thank you! How about you?',
+//     },
+//     {
+//         nickname: 'Alice',
+//         imageUrl: '/images/alice.png',
+//         time: '2024-08-14T14:10:00Z',
+//         message: 'Just working on the project.',
+//     },
+// ];
+
+// 더미 데이터를 Chats 컴포넌트에 전달
+// const ChatsWithDummyData = () => <Chats messages={dummyMessages} />;
 
 export default Chats;

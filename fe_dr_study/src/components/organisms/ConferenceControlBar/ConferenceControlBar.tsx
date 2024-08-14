@@ -2,12 +2,18 @@
 
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { POST } from '@/app/api/routeModule';
+import { Button } from '@/components/atoms';
 import Icon from '@/components/atoms/Icon/Icon';
 import { ClientInterface } from '@/components/template/conference/ConferenceTemplate';
 import { RootState } from '@/store';
+import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
+import { setIsAvatarSpeaking } from '@/store/slices/isAvatarSpeakingSlice';
+import { pushSummaryMessages } from '@/store/slices/summaryMessagesSlice';
+import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSlice';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Timer } from '../ConferenceProgress/ConferenceProgress';
 
 interface ConferenceControlBarProps {
     subscriptionList: string[];
@@ -102,8 +108,43 @@ const ConferenceControlBar = ({
         }
     };
 
+    // const dispatch = useDispatch();
+
+    // const handleClickStartSpeaking = (boolean: boolean) =>
+    //     dispatch(setIsAvatarSpeaking(boolean));
+
+    // const handleClickAddDialogue = (message: string) =>
+    //     dispatch(setAvatarDialogue(message));
+
+    // const handleClickAddSummary = (message: {}) =>
+    //     dispatch(pushSummaryMessages(message));
+
     return (
-        <div className="relative z-50 flex justify-center bg-dr-dark-200  gap-dr-10 h-full">
+        <div className="relative z-50 flex justify-center bg-[#191B28]  gap-dr-10 h-full border-t-[1px] border-dr-indigo-0">
+            <Timer />
+            {/* <Button onClick={() => handleClickStartSpeaking(true)}>
+                isAvatarSpeaking True
+            </Button>
+            <Button onClick={() => handleClickStartSpeaking(false)}>
+                isAvatarSpeaking False
+            </Button>
+            <Button onClick={() => handleClickAddDialogue('')}>
+                handleClickAddDialogue
+            </Button>
+            <Button
+                onClick={() =>
+                    handleClickAddDialogue(
+                        '메시지입니다. 메시지입니다. 메시지입니다. 메시지입니다. 메시지입니다.',
+                    )
+                }
+            >
+                handleClickAddDialogue
+            </Button>
+            <Button
+                onClick={() => handleClickAddSummary({ message: '요약 추가.' })}
+            >
+                handleClickAddSummary
+            </Button> */}
             <button className="cursor-auto" onClick={toggleVideo}>
                 {videoEnabled ? (
                     <Icon
