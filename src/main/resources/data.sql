@@ -226,28 +226,28 @@ VALUES (1, 3, 'WAITING', DATE_ADD(NOW(), INTERVAL -10 MINUTE),  '스터디그룹
 --       (6, 3, 1, 2, NOW())
 --;
 
-INSERT INTO avatar (creator_id, character_type, model_type, voice_type, created_at) VALUES
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW()),
-(1 + FLOOR(RAND() * 6), SUBSTRING('ABCDEF', FLOOR(1 + RAND() * 6), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), SUBSTRING('ABC', FLOOR(1 + RAND() * 3), 1), NOW());
-
+INSERT INTO avatar (creator_id, character_type, model_type, voice_type, created_at)
+ VALUES
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW())
+ ;
 --PROCESSOR--
 INSERT INTO processor (creator_id, description, pre_prompt, script, created_at)
 VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트",
@@ -364,12 +364,20 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
 
 --MODERATOR--
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
-VALUES (1, 1, 1, '1번 사회자', NOW()),
-       (2, 2, 2, '2번 사회자', NOW()),
-       (1, 3, 3, '3번 사회자', NOW()),
-       (2, 3, 4, '4번 사회자', NOW()),
-       (1, 3, 5, '5번 사회자', NOW()),
-       (1, 1, 6, '6번 사회자', NOW())
+VALUES
+
+(1 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "강대범프로", NOW()),
+(2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "면접왕 이형", NOW()),
+(3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "설민석", NOW()),
+(4 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "정승제", NOW()),
+(5 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "전한길", NOW()),
+(6 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "샘 알트먼", NOW()),
+(7 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "일론 머스크", NOW()),
+(1 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "유재석", NOW()),
+(2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "전현무", NOW()),
+(3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "나동빈", NOW()),
+(4 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "조코딩", NOW()),
+(5 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "생활코딩", NOW())
 ;
 
 --CONFERENCE--
