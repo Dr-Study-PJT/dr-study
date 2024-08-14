@@ -1,6 +1,8 @@
+import ModeratorSearchList from '@/app/group/list/_components/ModeratorSearchList';
+import SearchModerator from '@/app/group/list/_components/SearchModerator';
 import { Moderator } from '@/interfaces/moderator';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface SelectModeratorBoxProps {
     moderators: Moderator[]; // 사회자 리스트
@@ -20,14 +22,29 @@ const SelectModeratorBox = ({
         setIsModeratorInvited(true);
     };
 
+    const [moderatorSearchResult, setModeratorSearchResult] = useState<any[]>(
+        [],
+    );
+
     return (
         <div>
-            <p className="text-dr-header-2 pb-2">AI 사회자 선택하기</p>
-            <ModeratorList
+            <p className="block text-dr-body-4 ${className} text-left !text-dr-coral-50 pb-[1rem]">
+                AI 사회자 선택하기
+            </p>
+
+            <div className="pb-[0.5rem]">
+                <SearchModerator
+                    setModeratorSearchResult={setModeratorSearchResult}
+                />
+            </div>
+            <ModeratorSearchList
+                moderatorSearchResult={moderatorSearchResult}
+            />
+            {/* <ModeratorList
                 moderators={moderators}
                 selectedModerator={selectedModerator}
                 handleModeratorSelect={handleModeratorSelect}
-            />
+            /> */}
             <SelectedModerator selectedModerator={selectedModerator} />
         </div>
     );
@@ -54,7 +71,7 @@ const ModeratorList = ({
                     key={moderator.id}
                     onClick={() => handleModeratorSelect(moderator)} // 클릭 시 선택
                 >
-                    <div className="relative w-[7rem] h-[7rem] rounded-full overflow-hidden">
+                    <div className="relative w-[4rem] h-[4rem] rounded-full overflow-hidden">
                         <Image
                             src={
                                 moderator?.modelType?.startsWith('/')
@@ -65,7 +82,7 @@ const ModeratorList = ({
                             alt="moderator type image"
                         />
                     </div>
-                    <p className="text-dr-body-3 py-1 ">{moderator.name}</p>
+                    <p className="text-dr-body-4 py-1 ">{moderator.name}</p>
                 </div>
             ))}
         </div>
