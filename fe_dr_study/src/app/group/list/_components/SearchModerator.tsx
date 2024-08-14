@@ -5,6 +5,7 @@ import { BiSearch } from 'react-icons/bi';
 import { GET } from '@/app/api/routeModule';
 import { showToast } from '@/utils/toastUtil';
 import { ToastContainer } from 'react-toastify';
+import { Button } from '@/components/atoms';
 
 interface SearchModeratorProps {
     count: number;
@@ -69,7 +70,7 @@ const SearchModerator = ({
 
         try {
             const response = await getModeratorQueryResult({
-                count: 5,
+                count: 100,
                 name: moderatorQuery,
                 description: moderatorQuery,
             });
@@ -85,10 +86,30 @@ const SearchModerator = ({
         }
     };
 
+    const handleRequestAllResult = async (e: React.FormEvent) => {
+        e.preventDefault(); // 기본 제출 이벤트 방지
+
+        try {
+            const response = await getModeratorQueryResult({
+                count: 100,
+                name: '',
+                description: '',
+            });
+            setModeratorSearchResult(response?.data); // 검색 결과 업데이트
+
+            if (!response.data.length) {
+                showToast('error', '검색 결과가 없습니다.');
+            }
+        } catch (error) {
+            console.error('검색 결과를 가져오는 중 오류가 발생했습니다.');
+            showToast('error', '검색 결과를 가져오는 중 오류가 발생했습니다.');
+        }
+    };
+
     return (
         <form
             onSubmit={handleSubmit} // 폼 제출 이벤트 핸들러 추가
-            className="flex flex-row gap-2 border-[1px] rounded-md border-primary outline-dr-gray-400 bg-[#121212] text-dr-white"
+            className="relative flex flex-row gap-2 border-[1px] rounded-md border-primary outline-dr-gray-400 bg-[#121212] text-dr-white"
         >
             <ToastContainer />
             <div className="relative h-11 w-full">
@@ -106,9 +127,17 @@ const SearchModerator = ({
                     onClick={handleSubmit} // 클릭 시 검색 실행
                     className="absolute right-1 top-3 text-black rounded min-w-fit"
                 >
-                    <BiSearch className="text-dr-gray-400 h-full mr-1" />
+                    <BiSearch className="text-dr-white h-full mr-1" />
                 </button>
             </div>
+            <Button
+                color="gray"
+                size="sm"
+                classNameStyles="absolute top-[50%] right-[2rem] translate-y-[-50%]"
+                onClick={handleRequestAllResult}
+            >
+                전체 검색
+            </Button>
         </form>
     );
 };

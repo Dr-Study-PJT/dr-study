@@ -17,6 +17,8 @@ import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
 import { GET } from '@/app/api/routeModule';
 import { Moderator } from '@/interfaces/moderator';
 import SelectModeratorBox from '@/components/organisms/SelectModeratorBox/SelectModeratorBox';
+import { showToast } from '@/utils/toastUtil';
+import { ToastContainer } from 'react-toastify';
 
 interface CreateConferenceTouchable {
     title?: boolean;
@@ -85,6 +87,12 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     };
 
     const handleNext = () => {
+        console.log(selectedModerator);
+        if (!selectedModerator || selectedModerator?.id === -1) {
+            showToast('error', 'AI 사회자를 선택해주세요.');
+            return;
+        }
+
         if (selectedModerator) {
             setData({
                 ...data,
@@ -108,6 +116,7 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
 
     return (
         <section className="w-2/3 self-center">
+            <ToastContainer />
             <div className="w-full min-h-48 h-max flex flex-row justify-around gap-6 items-center">
                 <section className="CONTENT w-full h-full flex flex-col gap-5">
                     <div className="w-full h-full flex flex-col justify-between gap-3 items-center">
@@ -161,8 +170,6 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                             error={touched.subject ? errors.subject : undefined}
                         />
                         <SelectModeratorBox
-                            moderators={moderators}
-                            setIsModeratorInvited={() => {}}
                             selectedModerator={selectedModerator}
                             setSelectedModerator={setSelectedModerator}
                         />

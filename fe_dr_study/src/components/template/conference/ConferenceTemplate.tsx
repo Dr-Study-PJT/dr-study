@@ -221,7 +221,15 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         } catch (error) {
             console.error('Error joining conference:', error);
             if (!conferenceInfo?.openTime) {
-                router.push(`/conference/${conferenceInfo?.id}/waiting-room`);
+                // 컨퍼런스가 개최되지 않았을 때 waiting-room으로 이동
+                router.push(
+                    `/conference/${conferenceInfo?.id}/waiting-room?error=not_open`,
+                );
+            } else {
+                // 회의 참여 실패 시, waiting-room으로 이동
+                router.push(
+                    `/conference/${conferenceInfo?.id}/waiting-room?error=join_failed`,
+                );
             }
         }
     };

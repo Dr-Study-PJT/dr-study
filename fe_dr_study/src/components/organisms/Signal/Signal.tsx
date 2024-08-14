@@ -157,7 +157,9 @@ const Signal = ({
     // handleQuit 신호 처리
     const handleQuitSignal = () => {
         console.log('handleQuitSignal 호출');
-        router.push(`/conference/${conferenceId}/waiting-room`);
+        router.push(
+            `/conference/${conferenceId}/waiting-room?error=finished_conference`,
+        );
     };
 
     // Mute 신호 처리
@@ -206,6 +208,8 @@ const Signal = ({
             }),
         );
     };
+
+    // 요약
 
     // 아바타 현재 발화 신호 처리
     const handleAvatarDialogueSignal = (newSignal: SignalInterface) => {

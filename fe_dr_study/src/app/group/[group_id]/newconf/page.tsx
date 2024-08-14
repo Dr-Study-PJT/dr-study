@@ -25,8 +25,8 @@ const initialFormData: CreateConferenceFormData = {
     imageId: 0,
     title: '',
     subject: '',
-    memberCapacity: 1,
-    moderatorId: 1,
+    memberCapacity: 16,
+    moderatorId: -1,
     scheduledTime: new Date(new Date().getTime() + 60 * 60 * 1000),
 };
 

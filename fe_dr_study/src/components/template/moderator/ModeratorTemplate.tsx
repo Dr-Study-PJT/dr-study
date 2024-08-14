@@ -37,45 +37,55 @@ const ModeratorTemplate = ({ moderators }: { moderators: Moderator[] }) => {
     );
 };
 
-const ModeratorList = ({
+export const ModeratorList = ({
     moderators,
     setSelectedModerator,
     selectedModerator,
+    isDisableCreateNewModerator,
 }: {
     moderators: Moderator[];
     setSelectedModerator: (moderator: Moderator | null) => void;
-    selectedModerator: Moderator | null;
+    selectedModerator?: Moderator | null;
+    isDisableCreateNewModerator?: boolean;
 }) => {
     const router = useRouter();
     const S3_URL =
         'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
 
+    const handleModeratorSelect = (moderator: Moderator) => {
+        setSelectedModerator(moderator);
+    };
+
     return (
         <div className="flex flex-col justify-start items-center p-10">
-            <p className="text-dr-header-2 font-semibold text-[#b2bad3] text-start self-start mb-6">
-                AI 사회자
-            </p>
+            {!isDisableCreateNewModerator && (
+                <p className="text-dr-header-2 font-semibold text-[#b2bad3] text-start self-start mb-6">
+                    AI 사회자
+                </p>
+            )}
 
             <section className="w-full flex flex-wrap gap-4 justify-start">
-                <div
-                    className="AI-CARD bg-[#1A2036] hover:bg-[#202741] shadow-dr-rb-2 rounded-xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors duration-300"
-                    style={{
-                        flex: '1 1 calc(20% - 12px)', // 카드가 부모 요소의 크기에 맞춰 유동적으로 배치
-                        maxWidth: '200px', // 카드의 최대 크기
-                    }}
-                    onClick={() => router.push('/moderator/new')}
-                >
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#242B42] hover:bg-dr-indigo-0 flex items-center justify-center transition-colors duration-300">
-                        <p className="text-md text-[#b2bad3] font-semibold">
-                            +
-                        </p>
+                {!isDisableCreateNewModerator && (
+                    <div
+                        className="AI-CARD bg-[#1A2036] hover:bg-[#202741] shadow-dr-rb-2 rounded-xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors duration-300"
+                        style={{
+                            flex: '1 1 calc(20% - 12px)', // 카드가 부모 요소의 크기에 맞춰 유동적으로 배치
+                            maxWidth: '200px', // 카드의 최대 크기
+                        }}
+                        onClick={() => router.push('/moderator/new')}
+                    >
+                        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#242B42] hover:bg-dr-indigo-0 flex items-center justify-center transition-colors duration-300">
+                            <p className="text-md text-[#b2bad3] font-semibold">
+                                +
+                            </p>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-md text-[#b2bad3] font-semibold">
+                                사회자 만들기
+                            </p>
+                        </div>
                     </div>
-                    <div className="text-center">
-                        <p className="text-md text-[#b2bad3] font-semibold">
-                            사회자 만들기
-                        </p>
-                    </div>
-                </div>
+                )}
 
                 {moderators.map((moderator) => {
                     return (
@@ -86,7 +96,7 @@ const ModeratorList = ({
                                 flex: '1 1 calc(20% - 16px)',
                                 maxWidth: '200px', // 카드 최대 크기
                             }}
-                            onClick={() => setSelectedModerator(moderator)} // 클릭 시 선택된 사회자 설정
+                            onClick={() => handleModeratorSelect(moderator)} // 클릭 시 선택된 사회자 설정
                         >
                             <div className="w-full h-full flex flex-col items-center justify-center gap-3">
                                 <div className="relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300">
@@ -130,7 +140,11 @@ const ModeratorList = ({
 };
 
 // ModeratorDetail 컴포넌트
-const ModeratorDetail = ({ moderator }: { moderator: Moderator | null }) => {
+export const ModeratorDetail = ({
+    moderator,
+}: {
+    moderator: Moderator | null;
+}) => {
     if (!moderator) {
         return (
             <div className="text-center text-dr-header-1 font-bold text-[#b2bad3]">
