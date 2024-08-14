@@ -1,15 +1,14 @@
 import { GET } from '@/app/api/routeModule';
 import { IConference } from '@/app/group/[group_id]/dummy';
-import Icon from '@/components/atoms/Icon/Icon';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import Tooltip from './Tooltip';
 import { fetchConferenceList } from '@/app/group/_components/SectionContents';
-import { ToastContainer } from 'react-toastify';
-import { showToast } from '@/utils/toastUtil';
+import { ConferenceData } from '@/interfaces/conference';
+import { Member } from '@/interfaces/moderator';
 
 interface Group {
     id: number;
@@ -102,31 +101,44 @@ const SideBar = () => {
     const [conferences, setConferences] = useState<IConference[]>([]);
     const memberData = useSelector((state: RootState) => state.member);
 
+    const fetchData = useCallback(async () => {
+        const myGroups = await getMyGroups();
+        console.log('내 그룹:', myGroups);
+
+        setGroups(myGroups?.filter((group: Group) => !group.isDeleted));
+
+        // 실시간 회의 목록 가져오기
+        const fetchedConferences = await fetchConferenceList({
+            memberId: memberData?.id || -1,
+            isOpened: true,
+            isClose: false,
+        });
+
+        // 내가 초대된 회의만 필터링
+        const filteredConferences = fetchedConferences.filter(
+            async (conference: ConferenceData) => {
+                const invitees = await GET(
+                    `v1/conferences/${conference.id}/invitees`,
+                    {
+                        params: '',
+                        isAuth: true,
+                        revalidateTime: 10,
+                    },
+                );
+                return invitees.data.some(
+                    (invitee: Member) => invitee.id === memberData.id,
+                );
+            },
+        );
+
+        setConferences(filteredConferences);
+    }, [memberData]);
+
     useEffect(() => {
-        const fetchData = async () => {
-            const myGroups = await getMyGroups();
-            console.log('내 그룹:', myGroups);
-
-            setGroups(myGroups?.filter((group: Group) => !group.isDeleted));
-
-            // if (memberData.id) {
-            const fetchedConferences = await fetchConferenceList({
-                memberId: memberData?.id || -1,
-                isOpened: true,
-                isClose: false,
-            });
-            console.log('fetchedConferences:', fetchedConferences);
-            setConferences(fetchedConferences);
-        };
-        // };
-
-        // if (memberData.id) {
-        fetchData(); // 초기 데이터 로드
-        // }
-
-        const intervalId = setInterval(fetchData, 10000); // 10초마다 데이터 갱신
-
-        return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 정리
+        // 초기 데이터 로드
+        fetchData();
+        const intervalId = setInterval(fetchData, 10000);
+        return () => clearInterval(intervalId);
     }, [memberData]);
 
     return (

@@ -107,7 +107,7 @@ const Timer = () => {
         }
     }, [timeForAudioRecord]);
     useEffect(() => {
-        setTimer(1000); // ms를 초로 변환
+        setTimer(50); // ms를 초로 변환
         setWidth(100); // 바의 길이 초기화
     }, []);
 

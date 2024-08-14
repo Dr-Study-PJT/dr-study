@@ -12,6 +12,7 @@ import gptSummaryBySystemReducer from './slices/gptSummaryBySystemSlice';
 import summaryMessagesReducer from './slices/summaryMessagesSlice';
 import avatarDialogueReducer from './slices/avatarDialogueSlice';
 import timeForAudioReducer from './slices/timeForAudioRecord';
+import closeSignalReducer from './slices/isCloseSignalSlice';
 
 export const store = configureStore({
     reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
         summaryMessagesSlice: summaryMessagesReducer,
         avatarDialogueSlice: avatarDialogueReducer,
         timeForAudioRecord: timeForAudioReducer,
+        closeSignalSlice: closeSignalReducer,
     },
 });
 
