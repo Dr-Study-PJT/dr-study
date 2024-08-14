@@ -40,8 +40,7 @@ const MemberAvatar = ({ member, urlDisabled }: MemberAvatarProps) => {
                             src={member.imageUrl}
                             unoptimized
                             fill
-                            style={{ objectFit: 'cover' }}
-                            className={`${getBackgroundColorRandomPastel()}`}
+                            className={`${getBackgroundColorRandomPastel()} object-cover`}
                         />
                     </div>
                 </Tooltip>
@@ -52,7 +51,7 @@ const MemberAvatar = ({ member, urlDisabled }: MemberAvatarProps) => {
                     src="/path/to/fallback-image.png"
                     unoptimized
                     fill
-                    style={{ objectFit: 'cover' }}
+                    className="object-cover"
                 />
             )}
         </div>

@@ -38,11 +38,10 @@ const GroupCard: React.FC<GroupCardProps> = ({
                 <div className="-left-[4.5rem] flex flex-row relative h-36">
                     <div className="relative w-36 h-36 mr-4 rounded-full overflow-hidden transition-all duration-300">
                         <Image
-                            className={`pl-[4.5rem] ${getBackgroundColorRandomPastel()}  transition-colors duration-300`}
+                            className={`pl-[4.5rem] ${getBackgroundColorRandomPastel()}  transition-colors duration-300 object-cover`}
                             alt={name}
                             src={imageUrl}
                             fill
-                            objectFit="cover"
                         />
                     </div>
                     <div className="flex items-center relative h-auto overflow-hidden p-2 w-max">

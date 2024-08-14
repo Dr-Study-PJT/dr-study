@@ -17,7 +17,12 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
                     <div
                         className={`rounded-full relative overflow-hidden w-24 h-24 ${getBackgroundColorRandomPastel()} transition-colors duration-300`}
                     >
-                        <Image alt="" src={imageUrl} fill objectFit="cover" />
+                        <Image
+                            alt=""
+                            src={imageUrl}
+                            fill
+                            className="object-cover"
+                        />
                     </div>
                     <div className="flex flex-col gap-4 w-full">
                         <InputWithLabelAndError

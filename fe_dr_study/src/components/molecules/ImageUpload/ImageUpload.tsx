@@ -126,8 +126,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                     src={image}
                                     alt="Uploaded"
                                     fill
-                                    objectFit="cover"
-                                    className="rounded-full"
+                                    className="rounded-full object-cover"
                                 />
                             ) : (
                                 <div className="border-dr-coral-300 border-[1.5px] border-dashed rounded-full p-3">

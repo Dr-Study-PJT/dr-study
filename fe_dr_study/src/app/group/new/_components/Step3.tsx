@@ -23,7 +23,7 @@ const Step3: React.FC<StepProps> = ({ onNext, onBack, onSubmit, data }) => {
                                 alt=""
                                 src={data.imageUrl}
                                 fill
-                                objectFit="cover"
+                                className="object-cover"
                             />
                         </div>
                         <InputWithLabelAndError

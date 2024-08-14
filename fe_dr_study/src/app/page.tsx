@@ -13,29 +13,27 @@ export default async function HomePage({}: {}) {
     return (
         <div className={pageStyles}>
             <section className="SECTION1-THUMBNAIL relative w-full h-max flex justify-center items-center">
-                <div className="relative w-full h-[58vh] flex justify-center items-center overflow-hidden">
+                <div className="relative w-full h-[58vh] flex justify-center items-center overflow-hidden ">
                     <Image
                         alt="thumbnail"
                         src="/images/thumbnail.png"
                         fill
-                        objectFit="cover"
+                        className="object-cover"
                     />
-                    <div className="absolute bottom-0 left-[13%] w-[30%]">
+                    <div className="absolute bottom-0 left-[13%] w-[30%] object-contain">
                         <Image
                             alt="home model 1"
                             src="/images/home_model1.png"
                             width={300}
                             height={300}
-                            objectFit="contain"
                         />
                     </div>
-                    <div className="absolute bottom-0 right-[3%] w-[30%]">
+                    <div className="absolute bottom-0 right-[3%] w-[30%] object-contain">
                         <Image
                             alt="home model 2"
                             src="/images/home_model2.png"
                             width={300}
                             height={300}
-                            objectFit="contain"
                         />
                     </div>
                     <div className="absolute inset-0 flex justify-between items-center px-10 mt-16">

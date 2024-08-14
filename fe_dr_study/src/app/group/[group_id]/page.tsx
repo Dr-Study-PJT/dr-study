@@ -240,21 +240,21 @@ export default function GroupDetailPage({
                             alt="thumbnail"
                             src={editedGroup.imageUrl}
                             fill
-                            style={{ objectFit: 'cover' }}
+                            className="object-cover"
                         />
                     ) : groupWithMembers?.imageUrl ? (
                         <Image
                             alt="thumbnail"
                             src={groupWithMembers.imageUrl}
                             fill
-                            style={{ objectFit: 'cover' }}
+                            className="object-cover"
                         />
                     ) : (
                         <Image
                             alt="thumbnail"
                             src="/path/to/fallback-image.png"
                             fill
-                            style={{ objectFit: 'cover' }}
+                            className="object-cover"
                         />
                     )}
                 </div>

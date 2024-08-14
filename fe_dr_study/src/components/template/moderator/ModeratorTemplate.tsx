@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { Moderator } from '@/interfaces/moderator';
-import { useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { Button, Label } from '@/components/atoms';
 import { useRouter } from 'next/navigation';
 import { getBackgroundColorRandomPastel } from '@/utils/colors';
@@ -101,7 +101,7 @@ export const ModeratorList = ({
                             <div className="w-full h-full flex flex-col items-center justify-center gap-3">
                                 <div className="relative w-20 h-20 rounded-full overflow-hidden transition-all duration-300">
                                     <Image
-                                        className={`transition-colors duration-300`}
+                                        className={`transition-colors duration-300 object-cover`}
                                         alt={moderator?.name}
                                         src={
                                             S3_URL +
@@ -110,8 +110,7 @@ export const ModeratorList = ({
                                             '_stop.jpg'
                                         }
                                         unoptimized={true}
-                                        layout="fill"
-                                        objectFit="cover"
+                                        fill
                                     />
                                 </div>
                                 <div className="text-center w-full">
@@ -138,8 +137,6 @@ export const ModeratorList = ({
         </div>
     );
 };
-
-// ModeratorDetail 컴포넌트
 export const ModeratorDetail = ({
     moderator,
 }: {
@@ -155,15 +152,20 @@ export const ModeratorDetail = ({
 
     const S3_URL =
         'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
+    const videoSrc = `${S3_URL}/videos/${moderator.modelType}_speak.mp4`;
+    const audioSrc = `/audios/audio_${moderator.voiceType}${moderator.characterType}.mp3`;
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
 
-    const videoSrc = `${S3_URL}/videos/${moderator.modelType}_speak.mp4`;
-    const audioSrc = `/audios/audio_${moderator.voiceType}${moderator.characterType}.mp3`;
-
-    if (videoRef.current) videoRef.current.src = videoSrc;
-    if (audioRef.current) audioRef.current.src = audioSrc;
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.src = videoSrc;
+        }
+        if (audioRef.current) {
+            audioRef.current.src = audioSrc;
+        }
+    }, [videoSrc, audioSrc]); // videoSrc와 audioSrc가 변경될 때마다 실행
 
     const handlePlay = () => {
         if (audioRef.current && videoRef.current) {

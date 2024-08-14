@@ -75,7 +75,7 @@ const ConferenceWaitingRoomTemplate = ({
                             src={imageUrl || '/images/conference-default.jpg'}
                             alt="conference-image"
                             fill
-                            objectFit="cover"
+                            className="object-cover"
                         />
                     </div>
                     <div className="flex gap-dr-10">
