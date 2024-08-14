@@ -12,15 +12,13 @@ const FinishMyTurnButton = ({
         setIsFinishMyTurn(true);
     };
 
-    const isAvatarSpeaking = useSelector(
-        (state: RootState) => state.isAvatarSpeaking.isAvatarSpeaking,
+    const focusingPeerId = useSelector(
+        (state: RootState) => state.focusingPeerId.focusingPeerId,
     );
-
-    console.log('isAvatarSpeaking:', isAvatarSpeaking);
 
     return (
         <>
-            {isAvatarSpeaking && (
+            {focusingPeerId && (
                 <Button size="lg" color="gray" onClick={handleClick}>
                     내 발화 차례 종료하기
                 </Button>

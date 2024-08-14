@@ -68,16 +68,6 @@ const InviteMembersBox = ({
         }
 
         try {
-            // 호스트 자신을 초대 요청
-            const inviteHost = POST({
-                API: API,
-                endPoint: `${conferenceId}/invite`,
-                body: {
-                    inviteeId: conferenceData?.hostId,
-                },
-                isAuth: true,
-            });
-
             const invitePromises = selectedMembers.map((member) => {
                 console.log('초대할 멤버 아이디: ', member?.memberInfo?.id);
                 return POST({
@@ -90,10 +80,7 @@ const InviteMembersBox = ({
                 });
             });
             // 모든 초대 요청이 완료될 때까지 대기
-            const promisesResult = await Promise.all([
-                inviteHost,
-                ...invitePromises,
-            ]);
+            const promisesResult = await Promise.all([...invitePromises]);
             console.log(
                 'handleInviteConferenceMember => 초대한 멤버 id 목록:',
                 promisesResult,
