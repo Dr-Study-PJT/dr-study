@@ -8,6 +8,5 @@ import lombok.Getter;
 public class StudyGroupSearchFilter {
     private final Long memberId;
     private final String name;
-    private final Integer memberCapacity;
     private final String tagName;
 }
