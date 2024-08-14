@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ArticleCommentsList from './ArticleCommentsListCsr';
 import ArticleCommentsForm from './ArticleCommentsFormCsr';
 import { CommentData, ArticleData, Member } from '../_types';
@@ -13,12 +13,20 @@ export const ArticleComments = ({
     article,
     memberInfo,
 }: ArticleCommentsProps) => {
-    const [comments, setComments] = useState<CommentData[]>(
-        article.comments || [],
-    );
+    const [comments, setComments] = useState<CommentData[]>([]);
+
+    useEffect(() => {
+        setComments(article.comments || []);
+    }, [article.comments]);
 
     const handleCommentSubmitted = (newComment: CommentData) => {
         setComments((prevComments) => [...prevComments, newComment]);
+    };
+
+    const handleCommentDeleted = (commentId: number) => {
+        setComments((prevComments) =>
+            prevComments.filter((comment) => comment.id !== commentId),
+        );
     };
 
     return (
@@ -31,7 +39,12 @@ export const ArticleComments = ({
                 memberInfo={memberInfo}
                 setComments={setComments}
             />
-            {comments.length > 0 && <ArticleCommentsList comments={comments} />}
+            {comments.length > 0 && (
+                <ArticleCommentsList
+                    comments={comments}
+                    onDelete={handleCommentDeleted} // 추가된 부분
+                />
+            )}
         </div>
     );
 };

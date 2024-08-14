@@ -19,13 +19,14 @@ const formatDate = (dateString: string | number | Date) => {
         minute: '2-digit',
     }).format(new Date(dateString));
 };
-
 interface ArticleCommentsListProps {
     comments: CommentData[];
+    onDelete: (commentId: number) => void; // 추가된 부분
 }
 
 const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
     comments,
+    onDelete, // 추가된 부분
 }) => {
     const [commentList, setCommentList] = useState<CommentData[]>(comments);
     const [editCommentId, setEditCommentId] = useState<number | null>(null);
@@ -44,7 +45,6 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
                     : comment,
             ),
         );
-        console.log('Updated commentList:', commentList);
     };
 
     const handleDelete = async (commentId: number) => {
@@ -52,6 +52,7 @@ const ArticleCommentsList: React.FC<ArticleCommentsListProps> = ({
         setCommentList((prev) =>
             prev.filter((comment) => comment.id !== commentId),
         );
+        onDelete(commentId); // 추가된 부분
     };
 
     const handleEditClick = (commentId: number, content: string) => {
