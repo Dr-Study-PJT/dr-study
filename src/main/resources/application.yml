@@ -29,8 +29,6 @@ spring:
     init:
       mode: always
 
-
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -43,7 +41,6 @@ springdoc:
 audio-utils:
   upper-path: "audio/"
 
-  
 auth:
   use-dev-token: true
 

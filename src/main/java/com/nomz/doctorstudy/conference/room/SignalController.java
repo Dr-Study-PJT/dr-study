@@ -44,7 +44,6 @@ public class SignalController {
     public void handleParticipantAudioSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
         log.debug("signal: {} from conference: {}", signal, conferenceId);
 
-
         byte[] rawAudioData = Base64.getDecoder().decode(signal.getRawAudio());
 
         String audioPath = audioUpperPath + AUDIO_FILE_NAME + conferenceId + AUDIO_EXT;
@@ -54,12 +53,18 @@ public class SignalController {
 
         ProcessContext processContext = processManager.getProcessContext(conferenceId);
         processContext.addTranscript(transcript);
-        // TODO: 발화 블록
 
-        //
-        //AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");
-        //AudioUtils.playAudio(testSrcAudio + ".wav");
-        //
+        ProcessLockManager.awaken(conferenceId);
+    }
+
+    @MessageMapping("/signal/{conferenceId}/participant-audio-text")
+    public void handleParticipantAudioSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioTextSignal signal) {
+        log.debug("signal: {} from conference: {}", signal, conferenceId);
+
+        String transcript = signal.getText();
+
+        ProcessContext processContext = processManager.getProcessContext(conferenceId);
+        processContext.addTranscript(transcript);
 
         ProcessLockManager.awaken(conferenceId);
     }
