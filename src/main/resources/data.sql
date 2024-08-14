@@ -381,71 +381,65 @@ VALUES
 ;
 
 --CONFERENCE--
-INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, open_time, start_time, scheduled_time, finish_time, close_time, ai_review)
+INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, open_time, start_time, finish_time, close_time, ai_review)
 VALUES
 -- 삼성 챌린지 컨퍼런스
-(3, 2, 1, 1, '삼성 채용 트렌드 분석', '2024년 삼성 채용 트렌드 분석과 준비 전략에 대해 논의합니다.', 10, DATE_ADD(NOW(), INTERVAL -10 DAY), DATE_ADD(NOW(), INTERVAL -9 DAY), null, DATE_ADD(NOW(), INTERVAL -8 DAY), DATE_ADD(NOW(), INTERVAL -7 DAY), '효과적인 트렌드 분석으로 면접 준비에 도움이 되었다.'),
-(3, 2, 2, 1, '삼성 직무 분석 및 자기소개서 작성', '삼성 각 직무에 대한 분석과 효과적인 자기소개서 작성 방법을 공유합니다.', 10, DATE_ADD(NOW(), INTERVAL -8 DAY), DATE_ADD(NOW(), INTERVAL -7 DAY), null, DATE_ADD(NOW(), INTERVAL -6 DAY), DATE_ADD(NOW(), INTERVAL -5 DAY), '직무 분석과 자기소개서 작성에 많은 도움이 되었다.'),
-(3, 2, 3, 1, '인적성 검사 대비', '삼성 인적성 검사 준비 방법과 모의 테스트를 진행합니다.', 10, DATE_ADD(NOW(), INTERVAL -4 DAY), DATE_ADD(NOW(), INTERVAL -3 DAY), null, DATE_ADD(NOW(), INTERVAL -2 DAY), DATE_ADD(NOW(), INTERVAL -1 DAY), '모의 테스트를 통해 실전 감각을 익힐 수 있었다.'),
-(3, 2, 4, 1, '실전 모의면접 연습', '삼성 면접을 대비한 실전 모의면접 세션입니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 2 DAY), null, null, null),
+(3, 2, 1, 1, '삼성 채용 트렌드 분석', '2024년 삼성 채용 트렌드 분석과 준비 전략에 대해 논의합니다.', 10, DATE_ADD(NOW(), INTERVAL -10 DAY), DATE_ADD(NOW(), INTERVAL -9 DAY), DATE_ADD(NOW(), INTERVAL -8 DAY), DATE_ADD(NOW(), INTERVAL -7 DAY), '효과적인 트렌드 분석으로 면접 준비에 도움이 되었다.'),
+(3, 2, 2, 1, '삼성 직무 분석 및 자기소개서 작성', '삼성 각 직무에 대한 분석과 효과적인 자기소개서 작성 방법을 공유합니다.', 10, DATE_ADD(NOW(), INTERVAL -8 DAY), DATE_ADD(NOW(), INTERVAL -7 DAY), DATE_ADD(NOW(), INTERVAL -6 DAY), DATE_ADD(NOW(), INTERVAL -5 DAY), '직무 분석과 자기소개서 작성에 많은 도움이 되었다.'),
+(3, 2, 3, 1, '인적성 검사 대비', '삼성 인적성 검사 준비 방법과 모의 테스트를 진행합니다.', 10, DATE_ADD(NOW(), INTERVAL -4 DAY), DATE_ADD(NOW(), INTERVAL -3 DAY), DATE_ADD(NOW(), INTERVAL -2 DAY), DATE_ADD(NOW(), INTERVAL -1 DAY), '모의 테스트를 통해 실전 감각을 익힐 수 있었다.'),
+(3, 2, 4, 1, '실전 모의면접 연습', '삼성 면접을 대비한 실전 모의면접 세션입니다.', 10, null, null, null, null, null),
 
 -- 코딩 마스터 스터디 컨퍼런스
-(6, 5, 4, 1, '최신 개발 기술 탐구 및 실습', '최신 개발 기술 동향을 탐구하고 실습하는 시간입니다.', 10, DATE_ADD(NOW(), INTERVAL -20 DAY), DATE_ADD(NOW(), INTERVAL -19 DAY), null, DATE_ADD(NOW(), INTERVAL -18 DAY), DATE_ADD(NOW(), INTERVAL -17 DAY), '새로운 기술을 실제 프로젝트에 적용할 수 있어 유익했다.'),
-(6, 5, 5, 1, '알고리즘 문제 풀기 및 코드 리뷰하기', '복잡한 알고리즘 문제를 풀고 코드 리뷰를 통해 개선합니다.', 10, DATE_ADD(NOW(), INTERVAL -15 DAY), DATE_ADD(NOW(), INTERVAL -14 DAY), null, DATE_ADD(NOW(), INTERVAL -13 DAY), DATE_ADD(NOW(), INTERVAL -12 DAY), '코드 리뷰를 통해 다른 접근법을 배울 수 있었다.'),
-(6, 5, 6, 1, '클린코드 읽고 코드 리뷰 및 개선하기', '클린코드를 읽고 자신의 코드를 리뷰하여 개선하는 세션입니다.', 10, DATE_ADD(NOW(), INTERVAL -10 DAY), DATE_ADD(NOW(), INTERVAL -9 DAY), null, DATE_ADD(NOW(), INTERVAL -8 DAY), DATE_ADD(NOW(), INTERVAL -7 DAY), '코드 품질 향상에 매우 도움이 되었다.'),
-(6, 5, 2, 1, '자료구조 학습하기', '자료구조의 기초부터 심화까지 학습하는 세션입니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 3 DAY), null, null, null),
+(6, 5, 4, 1, '최신 개발 기술 탐구 및 실습', '최신 개발 기술 동향을 탐구하고 실습하는 시간입니다.', 10, DATE_ADD(NOW(), INTERVAL -20 DAY), DATE_ADD(NOW(), INTERVAL -19 DAY), DATE_ADD(NOW(), INTERVAL -18 DAY), DATE_ADD(NOW(), INTERVAL -17 DAY), '새로운 기술을 실제 프로젝트에 적용할 수 있어 유익했다.'),
+(6, 5, 5, 1, '알고리즘 문제 풀기 및 코드 리뷰하기', '복잡한 알고리즘 문제를 풀고 코드 리뷰를 통해 개선합니다.', 10, DATE_ADD(NOW(), INTERVAL -15 DAY), DATE_ADD(NOW(), INTERVAL -14 DAY), DATE_ADD(NOW(), INTERVAL -13 DAY), DATE_ADD(NOW(), INTERVAL -12 DAY), '코드 리뷰를 통해 다른 접근법을 배울 수 있었다.'),
+(6, 5, 6, 1, '클린코드 읽고 코드 리뷰 및 개선하기', '클린코드를 읽고 자신의 코드를 리뷰하여 개선하는 세션입니다.', 10, DATE_ADD(NOW(), INTERVAL -10 DAY), DATE_ADD(NOW(), INTERVAL -9 DAY), DATE_ADD(NOW(), INTERVAL -8 DAY), DATE_ADD(NOW(), INTERVAL -7 DAY), '코드 품질 향상에 매우 도움이 되었다.'),
+(6, 5, 2, 1, '자료구조 학습하기', '자료구조의 기초부터 심화까지 학습하는 세션입니다.', 10, null, null, null, null, null),
 
 -- 정처기 자격증 스터디 컨퍼런스
-(5, 4, 1, 1, '데이터베이스', '데이터베이스 이론 및 실습을 다루는 세션입니다.', 10, DATE_ADD(NOW(), INTERVAL -5 DAY), DATE_ADD(NOW(), INTERVAL -4 DAY), null, DATE_ADD(NOW(), INTERVAL -3 DAY), DATE_ADD(NOW(), INTERVAL -2 DAY), '데이터베이스의 중요 개념을 정리할 수 있었다.'),
-(5, 4, 3, 1, '운영 체제', '운영 체제의 개념과 관련 문제를 다루는 세션입니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 1 DAY), null, null, null),
-(5, 4, 5, 1, '소프트웨어 공학', '소프트웨어 공학의 이론과 실제를 학습하는 시간입니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 5 DAY), null, null, null),
-(5, 4, 6, 1, '네트워크', '네트워크의 기본 원리와 심화 내용을 다루는 세션입니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 10 DAY), null, null, null),
+(5, 4, 1, 1, '데이터베이스', '데이터베이스 이론 및 실습을 다루는 세션입니다.', 10, DATE_ADD(NOW(), INTERVAL -5 DAY), DATE_ADD(NOW(), INTERVAL -4 DAY), DATE_ADD(NOW(), INTERVAL -3 DAY), DATE_ADD(NOW(), INTERVAL -2 DAY), '데이터베이스의 중요 개념을 정리할 수 있었다.'),
+(5, 4, 3, 1, '운영 체제', '운영 체제의 개념과 관련 문제를 다루는 세션입니다.', 10, null, null, null, null, null),
+(5, 4, 5, 1, '소프트웨어 공학', '소프트웨어 공학의 이론과 실제를 학습하는 시간입니다.', 10, null, null, null, null, null),
+(5, 4, 6, 1, '네트워크', '네트워크의 기본 원리와 심화 내용을 다루는 세션입니다.', 10, null, null, null, null, null),
 
 -- AI 토론 스터디 컨퍼런스
-(8, 7, 2, 1, 'AI 의 발전이 일자리에 미치는 영향', 'AI의 발전이 일자리에 미치는 긍정적 및 부정적 영향을 논의합니다.', 10, DATE_ADD(NOW(), INTERVAL -3 DAY), DATE_ADD(NOW(), INTERVAL -2 DAY), null, DATE_ADD(NOW(), INTERVAL -1 DAY), DATE_ADD(NOW(), INTERVAL -30 MINUTE), '다양한 시각에서 AI와 일자리의 관계를 이해할 수 있었다.'),
-(8, 7, 3, 1, 'AI 윤리 문제, 어디까지 허용할 수 있는가', 'AI 윤리에 대한 사회적 논의와 한계를 토론합니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 1 DAY), null, null, null),
-(8, 7, 4, 1, '자동화가 인간의 삶에 미치는 긍정 vs 부정 영향', '자동화의 장단점을 토론하며 미래 사회를 예측합니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 7 DAY), null, null, null),
-(8, 7, 1, 1, 'AI가 만드는 예술, 진짜 예술일까', 'AI가 창작하는 예술의 가치에 대해 토론합니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 14 DAY), null, null, null),
+(8, 7, 2, 1, 'AI 의 발전이 일자리에 미치는 영향', 'AI의 발전이 일자리에 미치는 긍정적 및 부정적 영향을 논의합니다.', 10, DATE_ADD(NOW(), INTERVAL -3 DAY), DATE_ADD(NOW(), INTERVAL -2 DAY), DATE_ADD(NOW(), INTERVAL -1 DAY), DATE_ADD(NOW(), INTERVAL -30 MINUTE), '다양한 시각에서 AI와 일자리의 관계를 이해할 수 있었다.'),
+(8, 7, 3, 1, 'AI 윤리 문제, 어디까지 허용할 수 있는가', 'AI 윤리에 대한 사회적 논의와 한계를 토론합니다.', 10, null, null, null, null, null),
+(8, 7, 4, 1, '자동화가 인간의 삶에 미치는 긍정 vs 부정 영향', '자동화의 장단점을 토론하며 미래 사회를 예측합니다.', 10, null, null, null, null, null),
+(8, 7, 1, 1, 'AI가 만드는 예술, 진짜 예술일까', 'AI가 창작하는 예술의 가치에 대해 토론합니다.', 10, null, null, null, null, null),
 
 -- 시사 토론 모임 컨퍼런스
-(7, 6, 6, 1, 'AI의 발전과 윤리적 문제, 어디까지 허용할까?', 'AI 발전과 관련된 윤리적 문제를 논의합니다.', 10, DATE_ADD(NOW(), INTERVAL -2 DAY), DATE_ADD(NOW(), INTERVAL -1 DAY), null, DATE_ADD(NOW(), INTERVAL -30 MINUTE), DATE_ADD(NOW(), INTERVAL -10 MINUTE), 'AI 윤리에 대한 깊이 있는 논의를 할 수 있었다.'),
-(7, 6, 3, 1, '환경 보호 vs 경제 성장, 균형점 찾기 토론', '환경 보호와 경제 성장 간의 균형을 찾는 방안을 논의합니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 3 DAY), null, null, null),
-(7, 6, 2, 1, '인터넷 검열과 표현의 자유, 경계는 어디에?', '인터넷 검열과 표현의 자유 사이의 경계에 대해 토론합니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 8 DAY), null, null, null),
-(7, 6, 4, 1, '유전자 편집의 윤리성, 사회적 수용 가능성은?', '유전자 편집 기술의 윤리적 문제와 사회적 수용 가능성에 대해 논의합니다.', 10, null, null, DATE_ADD(NOW(), INTERVAL 12 DAY), null, null, null);
+(7, 6, 6, 1, 'AI의 발전과 윤리적 문제, 어디까지 허용할까?', 'AI 발전과 관련된 윤리적 문제를 논의합니다.', 10, DATE_ADD(NOW(), INTERVAL -2 DAY), DATE_ADD(NOW(), INTERVAL -1 DAY), DATE_ADD(NOW(), INTERVAL -30 MINUTE), DATE_ADD(NOW(), INTERVAL -10 MINUTE), 'AI 윤리에 대한 깊이 있는 논의를 할 수 있었다.'),
+(7, 6, 3, 1, '환경 보호 vs 경제 성장, 균형점 찾기 토론', '환경 보호와 경제 성장 간의 균형을 찾는 방안을 논의합니다.', 10, null, null, null, null, null),
+(7, 6, 2, 1, '인터넷 검열과 표현의 자유, 경계는 어디에?', '인터넷 검열과 표현의 자유 사이의 경계에 대해 토론합니다.', 10, null, null, null, null, null),
+(7, 6, 4, 1, '유전자 편집의 윤리성, 사회적 수용 가능성은?', '유전자 편집 기술의 윤리적 문제와 사회적 수용 가능성에 대해 논의합니다.', 10, null, null, null, null, null);
 
 -- 과거에 종료된 컨퍼런스
-INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, open_time, start_time, scheduled_time, finish_time, close_time, ai_review)
+INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, open_time, start_time, finish_time, close_time, ai_review)
 VALUES
 (4, 3, 1, 1, '총, 균, 쇠 독후감 토론 : 인류 문명의 발달 원인을 찾아서',
 '제러드 다이아몬드의 명저 "총, 균, 쇠"를 읽고 인류 문명의 발달 원인에 대해 토론합니다.', 10,
-DATE_ADD(NOW(), INTERVAL -60 DAY), DATE_ADD(NOW(), INTERVAL -58 DAY), DATE_ADD(NOW(), INTERVAL -57 DAY), DATE_ADD(NOW(), INTERVAL -55 DAY), DATE_ADD(NOW(), INTERVAL -54 DAY), '활발한 토론과 심층적인 논의가 이루어짐.'),
+DATE_ADD(NOW(), INTERVAL -60 DAY), DATE_ADD(NOW(), INTERVAL -58 DAY), DATE_ADD(NOW(), INTERVAL -55 DAY), DATE_ADD(NOW(), INTERVAL -54 DAY), '활발한 토론과 심층적인 논의가 이루어짐.'),
 
 (5, 3, 2, 1, '유발 하라리의 사피엔스 독후감 스터디: 인류의 역사와 미래',
 '유발 하라리의 "사피엔스"를 읽고 인류의 역사와 미래에 대해 논의합니다.', 10,
-DATE_ADD(NOW(), INTERVAL -40 DAY), DATE_ADD(NOW(), INTERVAL -38 DAY), DATE_ADD(NOW(), INTERVAL -37 DAY), DATE_ADD(NOW(), INTERVAL -35 DAY), DATE_ADD(NOW(), INTERVAL -34 DAY), '인류의 역사와 미래에 대한 다양한 관점이 공유됨.'),
+DATE_ADD(NOW(), INTERVAL -40 DAY), DATE_ADD(NOW(), INTERVAL -38 DAY), DATE_ADD(NOW(), INTERVAL -35 DAY), DATE_ADD(NOW(), INTERVAL -34 DAY), '인류의 역사와 미래에 대한 다양한 관점이 공유됨.'),
 
 -- 현재 진행 중인 컨퍼런스
 (6, 3, 3, 1, '호밀밭의 파수꾼 독후감 스터디: 청소년기의 혼란과 성장',
 'J.D. 샐린저의 "호밀밭의 파수꾼"을 읽고 청소년기의 혼란과 성장에 대해 토론합니다.', 10,
-DATE_ADD(NOW(), INTERVAL -10 DAY), DATE_ADD(NOW(), INTERVAL -9 DAY), DATE_ADD(NOW(), INTERVAL -8 DAY), DATE_ADD(NOW(), INTERVAL -5 DAY), DATE_ADD(NOW(), INTERVAL -3 DAY), '청소년기의 정서와 사회적 도전에 대해 심도 있는 논의가 이루어짐.'),
+DATE_ADD(NOW(), INTERVAL -10 DAY), DATE_ADD(NOW(), INTERVAL -9 DAY), DATE_ADD(NOW(), INTERVAL -5 DAY), DATE_ADD(NOW(), INTERVAL -3 DAY), '청소년기의 정서와 사회적 도전에 대해 심도 있는 논의가 이루어짐.'),
 
 -- 미래에 예정된 컨퍼런스
 (7, 3, 4, 1, '하버드대 심리학 교수의 하버드 행복 수업 독후감 스터디',
 '하버드대 심리학 교수의 "하버드 행복 수업"을 읽고 행복에 대해 탐구합니다.', 10,
-NULL, NULL, DATE_ADD(NOW(), INTERVAL 5 DAY), NULL, NULL, NULL);
+NULL, NULL, NULL, NULL, NULL);
 
 -- 한국사
-INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, open_time, start_time, scheduled_time, finish_time, close_time, ai_review)
+INSERT INTO conference (host_id, study_group_id, moderator_id, image_id, title, subject, member_capacity, open_time, start_time, finish_time, close_time, ai_review)
 VALUES
 (5, 8, 4, 19, '근대 한국사 스터디',
 '근대 한국사에 대해 서로 퀴즈를 내며 공부합니다.', 10,
-NULL, NULL, DATE_ADD(NOW(), INTERVAL 1 DAY), NULL, NULL, NULL);
-
---CONFERENCE_MEMBER--
-INSERT INTO conference_member (conference_id, member_id)
-VALUES (5, 1),
-       (5, 5)
-;
+NULL, NULL, NULL, NULL, NULL);
 
 --CONFERENCE_MEMBER_INVITE--
 INSERT INTO conference_member_invite (conference_id, member_id, created_at)

@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.conference.response;
 
 import com.nomz.doctorstudy.conference.entity.Conference;
-import com.nomz.doctorstudy.conference.entity.ConferenceMember;
+import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.response.MemberInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -53,7 +53,7 @@ public class GetConferenceResponse {
     @Schema(description = "참여자 목록", example = "")
     private final List<MemberInfo> participants;
 
-    public static GetConferenceResponse of(Conference conference) {
+    public static GetConferenceResponse of(Conference conference, List<Member> participants) {
         return builder()
                 .id(conference.getId())
                 .hostId(conference.getHost().getId())
@@ -67,9 +67,7 @@ public class GetConferenceResponse {
                 .finishTime(conference.getFinishTime())
                 .imageUrl(conference.getImage().getImageUrl())
                 .moderatorInfo(ConferenceModeratorInfo.of(conference.getModerator()))
-                .participants(conference.getParticipants().stream().
-                        map(ConferenceMember::getMember).
-                        map(com.nomz.doctorstudy.member.response.MemberInfo::of).toList())
+                .participants(participants.stream().map(MemberInfo::of).toList())
                 .build();
     }
 }

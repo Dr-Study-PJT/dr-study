@@ -28,6 +28,10 @@ public class WebSocketSessionManager {
 
     public void removeSession(String session) {
         WebSocketSessionData webSocketSessionData = sessionRoomMap.get(session);
+        if (webSocketSessionData == null) {
+            log.warn("Tried to remove session from sessionRoomMap but couldn't session");
+            return;
+        }
         log.debug("Removed WebSocketSession sessionId={}, roomId={}, memberId={}", session, webSocketSessionData.getRoomId(), webSocketSessionData.getMemberId());
 
         sessionRoomMap.remove(session);
