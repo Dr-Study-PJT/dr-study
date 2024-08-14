@@ -10,10 +10,10 @@ const OpenTotalSummaryButton = ({
 }: OpenTotalSummaryButtonProps) => {
     console.log('prevSummary:', prevSummary);
     return (
-        <div className="cursor-pointer overflow-hidden rounded-full ">
+        <div className="cursor-pointer overflow-hidden rounded-lg ">
             {prevSummary && prevSummary !== 'undefined' && (
-                <p className="text-dr-white">
-                    이전 대화: "{prevSummary.slice(0, 10)}..."
+                <p className="text-dr-white text-dr-body-4 p-4">
+                    이전 대화: {prevSummary.slice(0, 10)}...
                 </p>
             )}
         </div>

@@ -171,7 +171,7 @@ const SideBar = () => {
                     </div>
                     {(showAllConferences
                         ? conferences
-                        : conferences.slice(0, 3)
+                        : conferences?.slice(0, 3)
                     )?.map((conference) => {
                         const isActive =
                             pathname === `/conference/${conference?.id}`;
@@ -193,7 +193,7 @@ const SideBar = () => {
                     })}
                     {conferences.length > 3 && !showAllConferences && (
                         <SidebarTooltipItemPlus
-                            count={conferences.length - 3}
+                            count={conferences?.length - 3}
                             onClick={handleShowAllConferences}
                         />
                     )}
@@ -205,7 +205,7 @@ const SideBar = () => {
                     <div className="text-dr-body-4 cursor-default text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">
                         내 그룹
                     </div>
-                    {(showAllGroups ? groups : groups.slice(0, 3))?.map(
+                    {(showAllGroups ? groups : groups?.slice(0, 3))?.map(
                         (group) => {
                             const isActive = pathname === `/group/${group.id}`;
                             return (
@@ -222,7 +222,7 @@ const SideBar = () => {
                             );
                         },
                     )}
-                    {groups.length > 3 && !showAllGroups && (
+                    {groups?.length > 3 && !showAllGroups && (
                         <SidebarTooltipItemPlus
                             count={groups.length - 3}
                             onClick={handleShowAllGroups}

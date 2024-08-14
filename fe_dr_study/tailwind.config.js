@@ -96,11 +96,22 @@ module.exports = {
                     '100%': { opacity: '1' },
                     '0%': { opacity: '0' },
                 },
+                pulseScale: {
+                    '0%, 100%': {
+                        transform: 'scale(1)',
+                        borderColor: 'theme("colors.dr-coral-50")',
+                    },
+                    '50%': {
+                        transform: 'scale(1.05)',
+                        borderColor: 'theme("colors.dr-coral-300")',
+                    },
+                },
             },
             animation: {
                 popIn: 'popIn 0.1s ease-out',
                 fadeIn: 'fadeIn 0.15s ease-out',
                 fadeIn: 'fadeOut 0.15s ease-out',
+                pulseScale: 'pulseScale 2s infinite ease-in-out',
             },
         },
     },

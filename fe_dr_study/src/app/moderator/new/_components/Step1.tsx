@@ -5,11 +5,12 @@ import { StepProps } from './type';
 import { LabelCheckboxGroup } from '@/components/organisms/LabelCheckboxGroup';
 import { FaPlay } from 'react-icons/fa';
 
-export const S3_URL =
-    'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
 const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
+
+    const S3_URL =
+        'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
 
     const handleChange = (name: string, value: string) => {
         setData({
