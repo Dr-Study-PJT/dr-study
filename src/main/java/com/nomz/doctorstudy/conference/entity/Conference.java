@@ -93,7 +93,7 @@ public class Conference {
     public Image getImage() {
         if (image == null) {
             return Image.builder()
-                    .imageUrl("https://mz-stop.s3.ap-northeast-2.amazonaws.com/dog.jpg")
+                    .imageUrl("https://mz-stop.s3.ap-northeast-2.amazonaws.com/video-call.png")
                     .isDeleted(false)
                     .createdAt(LocalDateTime.now())
                     .build();
