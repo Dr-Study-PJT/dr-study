@@ -3,6 +3,7 @@ package com.nomz.doctorstudy.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
+import com.nomz.doctorstudy.moderator.VoiceType;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -228,7 +228,7 @@ VALUES (1, 3, 'WAITING', DATE_ADD(NOW(), INTERVAL -10 MINUTE),  '스터디그룹
 
 INSERT INTO avatar (creator_id, character_type, model_type, voice_type, created_at)
  VALUES
- (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
+ (1 + FLOOR(RAND() * 6), 'C', SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), 'C', NOW()),
  (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
  (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
  (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
@@ -394,7 +394,7 @@ phase(2) {
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
 VALUES
 
-(1 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 7, "강대범프로", NOW()),
+(1 + FLOOR(RAND() * 7), 1, 7, "강대범프로", NOW()),
 (2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "면접왕 이형", NOW()),
 (3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "설민석", NOW()),
 (4 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "정승제", NOW()),

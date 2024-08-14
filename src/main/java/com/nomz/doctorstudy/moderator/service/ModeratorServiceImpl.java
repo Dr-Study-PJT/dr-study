@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.moderator.service;
 
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.member.entity.Member;
+import com.nomz.doctorstudy.moderator.AvatarTypeResolver;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.dto.ModeratorSearchFilter;
 import com.nomz.doctorstudy.moderator.entity.Avatar;

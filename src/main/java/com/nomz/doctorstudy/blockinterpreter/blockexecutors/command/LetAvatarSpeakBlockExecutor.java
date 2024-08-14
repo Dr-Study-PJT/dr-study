@@ -1,7 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.command;
 
 import com.nomz.doctorstudy.api.ExternalApiCallService;
-import com.nomz.doctorstudy.api.VoiceType;
+import com.nomz.doctorstudy.moderator.VoiceType;
 import com.nomz.doctorstudy.blockinterpreter.ProcessContext;
 import com.nomz.doctorstudy.blockinterpreter.ProcessLockManager;
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
@@ -53,7 +53,8 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
         ProcessContext processContext = threadProcessContext.get();
         long processId = processContext.getId();
 
-        byte[] speechAudio = externalApiCallService.tts(speechContent, VoiceType.MEN_LOW);
+        VoiceType voiceType = processContext.getConferenceContext().getVoiceType();
+        byte[] speechAudio = externalApiCallService.tts(speechContent, voiceType);
         log.debug("let avatar speak: {}", speechContent);
 
         String audioPath = audioUpperPath + AUDIO_FILE_NAME + processId + AUDIO_EXT;

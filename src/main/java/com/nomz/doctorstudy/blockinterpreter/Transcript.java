@@ -13,6 +13,6 @@ public class Transcript {
     private final String content;
 
     public String getSpeakerNameAndContent() {
-        return String.format("발화자=%s, 발화내용=%s", speakerName, speakerName);
+        return String.format("발화자=%s, 발화내용=%s", speakerName, content);
     }
 }
