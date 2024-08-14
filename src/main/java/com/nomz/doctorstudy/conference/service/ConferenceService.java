@@ -28,8 +28,6 @@ public interface ConferenceService {
 
     List<String> joinConference(Member requester, Long conferenceId, JoinConferenceRequest request);
 
-    void quitConference(Member requester, Long conferenceId);
-
     void inviteMemberConference(Member requester, Long conferenceId, InviteMemberConferenceRequest request);
 
     List<Member> getConferenceInvitees(Long conferenceId);

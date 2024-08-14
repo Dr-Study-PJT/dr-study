@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-public class BlockExecutorMapper {
+public class BlockExecutorResolver {
     // Command Blocks
     private final WaitBlockExecutor waitBlockExecutor;
     private final LogBlockExecutor logBlockExecutor;
@@ -44,7 +44,7 @@ public class BlockExecutorMapper {
     private final Map<String, BlockExecutor> map = new ConcurrentHashMap<>();
 
     @PostConstruct
-    private void initMap() {
+    private void init() {
         // Command Blocks
         map.put(BlockType.WAIT.getToken(), waitBlockExecutor);
         map.put(BlockType.SET_INT_VAR.getToken(), setIntVariableBlockExecutor);
@@ -74,7 +74,7 @@ public class BlockExecutorMapper {
         map.put(BlockType.GET_RECORDS_IN_PHASE.getToken(), getRecordsInPhaseBlockExecutor);
     }
 
-    public BlockExecutor getBlockExecutor(String method) {
+    public BlockExecutor resolve(String method) {
         return map.get(method);
     }
 }
