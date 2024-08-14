@@ -52,11 +52,11 @@ const Step2: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                     <div className="pb-4">
                         <Label
                             htmlFor=""
-                            className="text-dr-black font-bold mb-2"
+                            className="text-dr-black font-bold mb-2 px-2"
                         >
                             사전 프롬프트 프리셋 목록
                         </Label>
-                        <div className="text-dr-body-5 text-dr-gray-100 ">
+                        <div className="text-dr-body-4 text-dr-gray-100 px-2 pr-4">
                             간편하게 설명과 사전학습 프롬프트를 넣어보세요.
                         </div>
                     </div>

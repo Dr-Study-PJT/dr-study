@@ -132,9 +132,9 @@ const DroppableBlock: React.FC<{
 
     const blockColors = {
         block_flow_phase_1: 'bg-red-500 hover:bg-red-600',
-        block_flow_phase_2: 'bg-red-400 hover:bg-red-500',
-        block_flow_phase_3: 'bg-red-300 hover:bg-red-400',
-        block_flow_phase_4: 'bg-red-200 hover:bg-red-300',
+        block_flow_phase_2: 'bg-red-500 hover:bg-red-600',
+        block_flow_phase_3: 'bg-red-500 hover:bg-red-600',
+        block_flow_phase_4: 'bg-red-500 hover:bg-red-600',
         block_flow_loop: 'bg-red-800 hover:bg-red-900',
         block_command_queryToGPT: 'bg-violet-500 hover:bg-violet-600',
         block_command_letParticipant_speak: 'bg-blue-500 hover:bg-blue-600',

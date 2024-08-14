@@ -29,7 +29,7 @@ const ModeratorListPage = () => {
         setIsLoading(true); // 데이터 fetch 시작 시 로딩 상태 설정
         const moderators = await fetchModerators();
 
-        if (moderators.length === 0) {
+        if (!moderators?.length) {
             setIsLoading(false); // 로딩 완료
             return;
         }
@@ -50,9 +50,11 @@ const ModeratorListPage = () => {
         );
 
         const results = await Promise.all(fetchPromises);
+        console.log('results:', results);
         const validModerators = results.filter(
             (moderator) => moderator !== null,
         );
+        console.log('validModerators:', validModerators);
 
         setModerators(validModerators);
         setIsLoading(false); // 로딩 완료

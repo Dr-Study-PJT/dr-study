@@ -5,12 +5,11 @@ import { StepProps } from './type';
 import { LabelCheckboxGroup } from '@/components/organisms/LabelCheckboxGroup';
 import { FaPlay } from 'react-icons/fa';
 
+export const S3_URL =
+    'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
 const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
-
-    const S3_URL =
-        'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
 
     const handleChange = (name: string, value: string) => {
         setData({
@@ -106,6 +105,21 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                         id: 'type_model_c',
                                         label: '타입 C',
                                         value: 'C',
+                                    },
+                                    {
+                                        id: 'type_model_d',
+                                        label: '타입 D',
+                                        value: 'D',
+                                    },
+                                    {
+                                        id: 'type_model_e',
+                                        label: '타입 E',
+                                        value: 'E',
+                                    },
+                                    {
+                                        id: 'type_model_f',
+                                        label: '타입 F',
+                                        value: 'F',
                                     },
                                 ]}
                                 value={data.modelType}

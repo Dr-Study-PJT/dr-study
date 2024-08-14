@@ -26,7 +26,7 @@ const MemberDetailPage = () => {
             const response = await GET(`v1/members`, {
                 params: ``,
                 isAuth: true,
-                revalidateTime: 10,
+                revalidateTime: 0,
             });
 
             console.log('member 조회 성공:', response);
@@ -41,7 +41,7 @@ const MemberDetailPage = () => {
             const response = await GET(`v1/groups/my-groups`, {
                 params: ``,
                 isAuth: true,
-                revalidateTime: 10,
+                revalidateTime: 0,
             });
 
             console.log('groups 조회 성공:', response);
@@ -71,7 +71,7 @@ const MemberDetailPage = () => {
             const response = await GET(`v1/statistics/members/${member_id}`, {
                 params: ``,
                 isAuth: true,
-                revalidateTime: 10,
+                revalidateTime: 0,
             });
 
             console.log('statistics 조회 성공:', response);

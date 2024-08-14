@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import ScriptViewer from './ScriptViewer';
+// import ScriptViewer from './ScriptViewer';
 import { ICreateModeratorReq } from '../_types';
 import { Moderator } from '@/interfaces/moderator';
 import { GET } from '@/app/api/routeModule';
@@ -87,7 +87,7 @@ phase(4) {
         <div>
             <h1>Moderator Detail Page</h1>
             <ModeratorCard moderator={moderator} />
-            <ScriptViewer script={script} />
+            {/* <ScriptViewer script={script} /> */}
         </div>
     );
 };

@@ -13,7 +13,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
             <input
                 type="radio"
                 id={id}
-                className={`form-radio h-3 w-3 text-dr-coral-200 transition duration-150 ease-in-out ${className}`}
+                className={`form-radio h-3 w-3 text-dr-coral-200 transition duration-150 ease-in-out ${className}  display:none checkedbg-dr-coral-200`}
                 {...props}
             />
             <label htmlFor={id} className=" text-dr-white text-dr-body-4">

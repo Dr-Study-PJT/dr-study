@@ -18,7 +18,7 @@ const useConferenceInvitees = () => {
                     {
                         params: '',
                         isAuth: true,
-                        revalidateTime: 10,
+                        revalidateTime: 0,
                     },
                 );
 

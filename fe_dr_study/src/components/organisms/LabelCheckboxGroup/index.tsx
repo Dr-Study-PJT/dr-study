@@ -19,15 +19,31 @@ export const LabelCheckboxGroup: React.FC<LabelCheckboxGroupProps> = ({
             <Label htmlFor="" className="font-semibold !text-dr-coral-200 mb-2">
                 {groupName}
             </Label>
-            <div className="flex flex-row justify-between gap-3 w-full h-4 px-1">
-                {options.map((option) => (
-                    <LabelCheckbox
-                        key={option.id}
-                        {...option}
-                        checked={value === option.value}
-                        onChange={handleChange}
-                    />
-                ))}
+            <div className="flex flex-col gap-3 w-full">
+                <div className="flex flex-row justify-between gap-3 w-full h-4 px-1">
+                    {options
+                        ?.slice(0, 3)
+                        .map((option) => (
+                            <LabelCheckbox
+                                key={option.id}
+                                {...option}
+                                checked={value === option.value}
+                                onChange={handleChange}
+                            />
+                        ))}
+                </div>
+                <div className="flex flex-row justify-between gap-3 w-full h-4 px-1">
+                    {options
+                        ?.slice(3, 6)
+                        .map((option) => (
+                            <LabelCheckbox
+                                key={option.id}
+                                {...option}
+                                checked={value === option.value}
+                                onChange={handleChange}
+                            />
+                        ))}
+                </div>
             </div>
         </div>
     );

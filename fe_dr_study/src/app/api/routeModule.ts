@@ -30,7 +30,7 @@ export async function GET(
     {
         params = '',
         isAuth = false,
-        revalidateTime = 10,
+        revalidateTime = 0,
     }: {
         params?: string | null | undefined;
         isAuth?: boolean;
@@ -38,7 +38,7 @@ export async function GET(
     } = {
         params: '',
         isAuth: false,
-        revalidateTime: 10,
+        revalidateTime: 0,
     },
 ): Promise<any> {
     const headers = await getHeaders(isAuth);

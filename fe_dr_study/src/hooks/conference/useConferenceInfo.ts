@@ -17,7 +17,7 @@ const useConferenceInfo = () => {
                 const response = await GET(`v1/conferences/${conferenceId}`, {
                     params: '',
                     isAuth: true,
-                    revalidateTime: 10,
+                    revalidateTime: 0,
                 });
 
                 setConferenceInfo(response.data);
@@ -37,7 +37,7 @@ const useConferenceInfo = () => {
             const response = await GET(`v1/groups/${studyGroupId}/members`, {
                 params: '',
                 isAuth: true,
-                revalidateTime: 10,
+                revalidateTime: 0,
             });
 
             setStudyMembers(response.data);
