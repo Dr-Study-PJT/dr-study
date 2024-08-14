@@ -4,6 +4,7 @@ import com.nomz.doctorstudy.moderator.dto.ModeratorSearchFilter;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
@@ -21,15 +22,20 @@ public class ModeratorQueryRepository {
     }
 
     public List<Moderator> getModeratorList(ModeratorSearchFilter filter) {
-        return query.select(moderator)
+        JPAQuery<Moderator> moderatorQuery = query.select(moderator)
                 .from(moderator)
                 .where(Expressions.asBoolean(false).isTrue()
                         .or(wholeSearch(filter))
                         .or(likeName(filter.getName()))
                         .or(likeDescription(filter.getDescription()))
-                )
+                );
+
+        if (filter.getCount() != null) {
+            moderatorQuery = moderatorQuery.limit(filter.getCount());
+        }
+
+        return moderatorQuery
                 .orderBy(moderator.createdAt.desc())
-                .limit(filter.getCount())
                 .fetch();
     }
 

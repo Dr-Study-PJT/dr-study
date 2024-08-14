@@ -18,7 +18,6 @@ public class GetModeratorListRequest {
     @Schema(description = "설명", example = "수행")
     private String description;
 
-    @NotNull(message = "최대 조회 개수는 반드시 포함되어야 합니다.")
     @Schema(description = "최대 조회 개수", example = "5")
     private Integer count;
 }

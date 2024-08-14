@@ -11,5 +11,5 @@ import lombok.Getter;
 public class ModeratorSearchFilter {
     private final String name;
     private final String description;
-    private final int count;
+    private final Integer count;
 }
