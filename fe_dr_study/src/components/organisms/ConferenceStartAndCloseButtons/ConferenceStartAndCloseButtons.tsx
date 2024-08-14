@@ -10,10 +10,10 @@ import { ToastContainer } from 'react-toastify';
 
 const ConferenceStartAndCloseButtons = ({
     conferenceInfo,
-    handleCloseSignal,
+    // handleCloseSignal,
 }: {
     conferenceInfo: ConferenceData | null;
-    handleCloseSignal: () => void;
+    // handleCloseSignal: () => void;
 }) => {
     const router = useRouter();
 
@@ -29,6 +29,7 @@ const ConferenceStartAndCloseButtons = ({
                 body: '',
                 isAuth: true,
             });
+            console.log('conference start 요청 성공:', response);
         } catch (error) {
             console.error('Error start conference list:', error);
         }
@@ -45,8 +46,8 @@ const ConferenceStartAndCloseButtons = ({
                 body: '',
                 isAuth: true,
             });
-            handleCloseSignal();
-            router.push(`/conference/${conferenceInfo?.id}/waiting-room`);
+
+            console.log('conference close 요청 성공:', response);
         } catch (error) {
             console.error('Error close conference list:', error);
             showToast('error', '컨퍼런스 종료에 실패했습니다.');

@@ -63,7 +63,7 @@ const SidebarTooltipItem: React.FC<SidebarTooltipItemProps> = ({
                             className="rounded-[2rem] hover:rounded-[0.7rem] transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100 "
                             src={imageUrl}
                             alt={`${title} Image`}
-                            layout="fill"
+                            fill
                             objectFit="cover"
                         />
                         {isLive && (
@@ -130,7 +130,6 @@ const SideBar = () => {
 
     const fetchData = useCallback(async () => {
         const myGroups = await getMyGroups();
-        console.log('내 그룹:', myGroups);
 
         setGroups(myGroups?.filter((group: Group) => !group.isDeleted));
 
@@ -142,23 +141,8 @@ const SideBar = () => {
         });
 
         // 내가 초대된 회의만 필터링
-        const filteredConferences = fetchedConferences.filter(
-            async (conference: ConferenceData) => {
-                const invitees = await GET(
-                    `v1/conferences/${conference.id}/invitees`,
-                    {
-                        params: '',
-                        isAuth: true,
-                        revalidateTime: 10,
-                    },
-                );
-                return invitees.data.some(
-                    (invitee: Member) => invitee.id === memberData.id,
-                );
-            },
-        );
 
-        setConferences(filteredConferences);
+        setConferences(fetchedConferences);
     }, [memberData]);
 
     useEffect(() => {
@@ -179,7 +163,7 @@ const SideBar = () => {
     };
 
     return (
-        <div className="SIDEBAR-BOX fixed z-10 left-0 pt-12 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-dr-indigo-300 border-r-[1px] border-dr-indigo-100">
+        <div className="SIDEBAR-BOX fixed z-10 left-0 pt-12 pb-8 flex flex-col items-center justify-between w-[3rem] h-[calc(100dvh-1.4rem)] bg-dr-indigo-300 border-r-[1px] border-dr-indigo-100 ">
             <div className="flex flex-col gap-3">
                 <div className="LIST-BUTTON-CONFERENCE flex flex-col gap-3">
                     <div className="text-dr-body-4 cursor-default text-dr-gray-300 w-full text-center font-semibold pl-1 mt-1 animate-popIn">

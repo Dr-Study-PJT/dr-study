@@ -74,7 +74,7 @@ const ConferenceWaitingRoomTemplate = ({
                         <Image
                             src={imageUrl || '/images/conference-default.jpg'}
                             alt="conference-image"
-                            layout="fill"
+                            fill
                             objectFit="cover"
                         />
                     </div>

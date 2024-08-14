@@ -235,7 +235,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                             className="rounded-[10rem] border-2 border-dr-white hover:border-dr-black transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100"
                                             src={memberData?.imageUrl}
                                             alt="Group Image"
-                                            layout="fill"
+                                            fill
                                             objectFit="cover"
                                         />
                                     </div>
@@ -298,7 +298,7 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                                                                             notification?.imageUrl
                                                                         }
                                                                         alt="notification image"
-                                                                        layout="fill"
+                                                                        fill
                                                                         objectFit="cover"
                                                                     />
                                                                 </div>

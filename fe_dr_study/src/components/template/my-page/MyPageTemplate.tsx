@@ -1,6 +1,6 @@
 import { GroupData, Member } from '@/app/group/[group_id]/_types';
 import { IConference } from '@/app/group/[group_id]/dummy';
-import GroupCard from '@/app/group/list/components/GroupCard';
+import GroupCard from '@/app/group/list/_components/GroupCard';
 import ProfileCard from '@/components/molecules/ProfileCard/ProfileCard';
 import Statistics from '@/components/molecules/Statistics/Statistics';
 import ConferenceList from '@/components/organisms/ConferenceList/ConferenceList';

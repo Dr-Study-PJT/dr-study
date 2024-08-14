@@ -27,6 +27,7 @@ import ConferenceStartAndCloseButtons from '../ConferenceStartAndCloseButtons/Co
 import FinishMyTurnButton from './FinishMyTurnButton';
 import { RootState } from '@/store';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
+import { useRouter } from 'next/router';
 
 export interface JoiningMember {
     id: number;
@@ -81,6 +82,7 @@ const Signal = ({
     memberData,
 }: SignalProps) => {
     const dispatch = useDispatch();
+    const router = useRouter();
 
     const CHANNEL = 'topic'; // 채널 이름
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
@@ -135,6 +137,7 @@ const Signal = ({
         subscribeToSignal('heartstop', handleHeartstop);
         subscribeToSignal('programme', handleProgramme);
         subscribeToSignal('avatar-dialogue', handleAvatarDialogueSignal);
+        subscribeToSignal('quit', handleQuitSignal);
     };
 
     // 신호 수신을 위한 구독 함수
@@ -149,6 +152,12 @@ const Signal = ({
                 handler(newSignal); // 각 신호에 맞는 핸들러 호출
             },
         );
+    };
+
+    // handleQuit 신호 처리
+    const handleQuitSignal = () => {
+        console.log('handleQuitSignal 호출');
+        router.push(`/conference/${conferenceId}/waiting-room`);
     };
 
     // Mute 신호 처리
@@ -238,20 +247,20 @@ const Signal = ({
         );
     };
 
-    // 스트림 연결 종료 신호 처리
-    const handleCloseSignal = () => {
-        dispatch(setIsCloseSignal(true));
+    // 방송 종료 신호 처리
+    // const handleCloseSignal = () => {
+    //     dispatch(setIsCloseSignal(true));
 
-        if (stompClient) {
-            stompClient?.send(
-                `/pub/signal/${conferenceId}/close`,
-                {},
-                JSON.stringify({
-                    id: memberData?.id, // 송신자 ID
-                }),
-            );
-        }
-    };
+    //     if (stompClient) {
+    //         stompClient?.send(
+    //             `/pub/signal/${conferenceId}/close`,
+    //             {},
+    //             JSON.stringify({
+    //                 id: memberData?.id, // 송신자 ID
+    //             }),
+    //         );
+    //     }
+    // };
 
     // 메시지 전송 함수
     const sendMessage = () => {
@@ -338,7 +347,7 @@ const Signal = ({
                 {memberData?.id === conferenceInfo?.hostId && (
                     <ConferenceStartAndCloseButtons
                         conferenceInfo={conferenceInfo}
-                        handleCloseSignal={handleCloseSignal}
+                        // handleCloseSignal={handleCloseSignal}
                     />
                 )}
             </div>
