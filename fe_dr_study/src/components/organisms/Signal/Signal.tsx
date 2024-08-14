@@ -13,19 +13,15 @@ import {
     setFullPhase,
     setNextStep,
 } from '@/store/slices/conferenceProgressSlice';
-import isAvatarSpeakingSlice, {
-    setIsAvatarSpeaking,
-} from '@/store/slices/isAvatarSpeakingSlice';
+import { setIsAvatarSpeaking } from '@/store/slices/isAvatarSpeakingSlice';
 import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSlice';
 import { setIsMutedBySystem } from '@/store/slices/isMutedBySystemSlice';
 import { setGptSummaryBySystem } from '@/store/slices/gptSummaryBySystemSlice';
 import { pushSummaryMessages } from '@/store/slices/summaryMessagesSlice';
 import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
 import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
-import { setIsCloseSignal } from '@/store/slices/isCloseSignalSlice';
 import ConferenceStartAndCloseButtons from '../ConferenceStartAndCloseButtons/ConferenceStartAndCloseButtons';
 import FinishMyTurnButton from './FinishMyTurnButton';
-import { RootState } from '@/store';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
 import { useRouter } from 'next/navigation';
 
@@ -336,7 +332,7 @@ const Signal = ({
                 </Button>
             </form>
 
-            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40 hidden">
+            <div className="fixed left-[3rem] bottom-[15rem] p-3 text-dr-white rounded-xl bg-dr-black bg-opacity-40">
                 <Recorder
                     conferenceId={conferenceId}
                     memberId={memberData?.id}
