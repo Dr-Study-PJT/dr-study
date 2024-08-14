@@ -5,14 +5,12 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 interface SelectModeratorBoxProps {
-    moderators: Moderator[]; // 사회자 리스트
     setIsModeratorInvited: (isModeratorInvited: boolean) => void;
     selectedModerator: Moderator | null;
     setSelectedModerator: (moderator: Moderator) => void;
 }
 
 const SelectModeratorBox = ({
-    moderators,
     setIsModeratorInvited,
     selectedModerator,
     setSelectedModerator,

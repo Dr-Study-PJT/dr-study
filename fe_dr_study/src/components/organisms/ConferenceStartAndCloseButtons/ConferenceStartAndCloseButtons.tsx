@@ -29,6 +29,7 @@ const ConferenceStartAndCloseButtons = ({
                 body: '',
                 isAuth: true,
             });
+            console.log('conference start 요청 성공:', response);
         } catch (error) {
             console.error('Error start conference list:', error);
         }

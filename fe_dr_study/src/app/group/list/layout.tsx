@@ -5,19 +5,38 @@ import LottieCommunity from '../_components/Lotties/Lottie_Community';
 import LottieTrending from '../_components/Lotties/Lottie_Trending';
 import { Button } from '@/components/atoms';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StudyGroup } from '@/interfaces/studyGroupQueryResult';
-import StudyGroupSearchList from './_components/ModeratorSearchList';
 import SearchStudyGroup from './_components/SearchStudyGroup';
+import { GET } from '@/app/api/routeModule';
 
 const styleTransitionColor = `transition duration-300 ease-in-out`;
 
 export default function PLPLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
 
-    const [studyGroupSearchResult, setStudyGroupSearchResult] = useState<
-        StudyGroup[]
-    >([]);
+    const [topRatedStudyTags, setTopRatedStudyTags] = useState<string[]>([]);
+
+    const getTopRatedStudyTags = async (count: number) => {
+        try {
+            const response = await GET(
+                `v1/groups/top-rated-tags?count=${count}`,
+                {
+                    params: '',
+                    isAuth: true,
+                    revalidateTime: 0,
+                },
+            );
+
+            setTopRatedStudyTags(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        getTopRatedStudyTags(5);
+    }, []);
 
     return (
         <div className="relative flex flex-row justify-center pr-32 gap-4 h-max mb-14">
@@ -56,12 +75,6 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
                         </Button>
                     </div>
                     <SearchStudyGroup />
-                    {/* <SearchStudyGroup
-                        setStudyGroupSearchResult={setStudyGroupSearchResult}
-                    />
-                    <StudyGroupSearchList
-                        studyGroupSearchResult={studyGroupSearchResult}
-                    /> */}
 
                     <div className="pb-4 bg-zinc-900 rounded-md">
                         <div className="w-full border-b-[1px] border-zinc-700 ">
@@ -70,10 +83,10 @@ export default function PLPLayout({ children }: { children: React.ReactNode }) {
                             </p>
                         </div>
                         <ul className="px-3 py-2 flex flex-wrap justify-start gap-x-2 gap-y-2">
-                            {['태그1', '태그2', '태그3'].map((tagName, i) => (
+                            {topRatedStudyTags?.map((tagName, i) => (
                                 <li key={i}>
                                     <Link
-                                        href={`/group?page=1&size=5&tagName=${tagName}`}
+                                        href={`/group/list?page=1&size=5&tagName=${tagName}`}
                                     >
                                         <button className="h-full inline-flex items-center animate-popIn">
                                             <span

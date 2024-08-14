@@ -3,7 +3,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { GET } from '@/app/api/routeModule';
-import { useRouter } from 'next/navigation';
 import { showToast } from '@/utils/toastUtil';
 import { ToastContainer } from 'react-toastify';
 
@@ -19,7 +18,6 @@ const SearchModerator = ({
     setModeratorSearchResult: Dispatch<SetStateAction<any[]>>;
 }) => {
     const [moderatorQuery, setModeratorQuery] = useState<string>('');
-    const [isRequesting, setIsRequesting] = useState<boolean>(false); // 요청 상태 관리
 
     const isValidInput = (input: string) => {
         const regex = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s]*$/; // 허용할 문자 정의
