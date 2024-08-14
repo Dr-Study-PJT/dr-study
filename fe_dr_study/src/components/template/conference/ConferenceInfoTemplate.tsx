@@ -81,9 +81,7 @@ const ConferenceInfoTemplate = ({
                     <Button
                         onClick={handleOpenConference}
                         color={`${
-                            isHostOnly || isMemberInvited
-                                ? 'coral'
-                                : sslate - 6 - 80700
+                            isHostOnly || isMemberInvited ? 'coral' : 'gray'
                         }`}
                         disabled={!isHostOnly && !isMemberInvited}
                         size="lg"
