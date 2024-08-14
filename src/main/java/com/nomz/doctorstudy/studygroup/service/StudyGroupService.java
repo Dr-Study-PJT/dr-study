@@ -5,6 +5,7 @@ import com.nomz.doctorstudy.studygroup.entity.MemberStudyGroupApply;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.request.*;
 import com.nomz.doctorstudy.studygroup.response.GetStudyGroupPageResponse;
+import com.nomz.doctorstudy.tag.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -51,4 +52,6 @@ public interface StudyGroupService {
 
     // Retrieve all study group applications
     // List<AdmissionResponse> getAllStudyGroupApplications();
+
+    List<Tag> getTopRatedTags(int maxCount);
 }

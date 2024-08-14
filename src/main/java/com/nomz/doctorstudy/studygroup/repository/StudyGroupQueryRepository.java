@@ -2,7 +2,9 @@ package com.nomz.doctorstudy.studygroup.repository;
 
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
+import com.nomz.doctorstudy.tag.Tag;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,41 +30,42 @@ public class StudyGroupQueryRepository {
         this.query = new JPAQueryFactory(em);
     }
 
+    public List<Tag> getTopRatedTags(int count) {
+        return query
+                .select(tag)
+                .from(studyGroupTag)
+                .groupBy(studyGroupTag.tag.id)
+                .orderBy(studyGroup.count().desc())
+                .limit(count)
+                .fetch();
+    }
+
     /**
      * DB에서 조건에 맞는 StudyGroup 들을 검색하고 해당하는 객체 리스트를 반환합니다.
      * @param filter DB 검색에 사용되는 필터 객체
      * @return 조건에 맞는 StudyGroup 리스트를 반환합니다.
      */
-
     public Page<StudyGroup> getStudyGroupList(StudyGroupSearchFilter filter, Pageable pageable){
         // 기본 쿼리 빌더
         JPAQuery<StudyGroup> baseQuery = query.select(studyGroup).from(studyGroup);
 
-        // 페이징 없는 쿼리로 전체 데이터 수 계산
-        long total = baseQuery.clone()  // 클론을 사용하여 baseQuery 복제
+        JPAQuery<StudyGroup> totalGroupsQuery = baseQuery.clone()  // 동일한 쿼리 조건을 가진 클론 사용
                 .where(
-                        equalMemberId(filter.getMemberId()),
-                        likeName(filter.getName()),
-                        equalMemberCapacity(filter.getMemberCapacity()),
-                        likeTagName(filter.getTagName()),
-                        isNotDeleted()
-                ).fetchCount();
-
-        // 페이징 적용된 쿼리
-        List<StudyGroup> results = baseQuery.clone()  // 동일한 쿼리 조건을 가진 클론 사용
-                .where(
-                        equalMemberId(filter.getMemberId()),
-                        likeName(filter.getName()),
-                        equalMemberCapacity(filter.getMemberCapacity()),
-                        likeTagName(filter.getTagName()),
-                        isNotDeleted()
-                )
+                        Expressions.asBoolean(false).isTrue()
+                                .and(isNotDeleted())
+                                .or(equalMemberId(filter.getMemberId()))
+                                .or(likeName(filter.getName()))
+                                .or(equalMemberCapacity(filter.getMemberCapacity()))
+                                .or(likeTagName(filter.getTagName()))
+                );
+        int totalCount = totalGroupsQuery.fetch().size();
+        List<StudyGroup> results = totalGroupsQuery
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(studyGroup.createdAt.desc())
                 .fetch();
 
-        return new PageImpl<>(results, pageable, total);
-
+        return new PageImpl<>(results, pageable, totalCount);
     }
 
 

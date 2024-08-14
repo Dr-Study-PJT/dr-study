@@ -311,4 +311,9 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     public List<MemberStudyGroup> getStudyGroupListByMemberId(Member requester) {
         return memberStudyGroupRepository.findByMemberId(requester.getId());
     }
+
+    @Override
+    public List<Tag> getTopRatedTags(int maxCount) {
+        return studyGroupQueryRepository.getTopRatedTags(maxCount);
+    }
 }

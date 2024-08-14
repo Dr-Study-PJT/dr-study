@@ -2,7 +2,6 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.*;
 import com.nomz.doctorstudy.common.exception.BusinessException;
-import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import com.nomz.doctorstudy.conference.room.SignalTransmitter;
 import com.nomz.doctorstudy.conference.room.signal.ProgrammeSignal;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,7 @@ import java.util.*;
 public class BlockInterpreter {
     private final ProcessManager processManager;
     private final ThreadProcessContext threadProcessContext;
-    private final BlockExecutorMapper blockExecutorMapper;
+    private final BlockExecutorResolver blockExecutorResolver;
     private final ScriptPreprocessor scriptPreprocessor;
     private final SignalTransmitter signalTransmitter;
 
@@ -49,7 +48,7 @@ public class BlockInterpreter {
             log.debug("cursor={}, block={}", processContext.getCursor(), commandBlock.getMethod());
 
             while (!stack.empty()) {
-                BlockExecutor blockExecutor = blockExecutorMapper.getBlockExecutor(stack.peek().block.getMethod());
+                BlockExecutor blockExecutor = blockExecutorResolver.resolve(stack.peek().block.getMethod());
 
                 if (blockExecutor == null) {
                     String value = stack.peek().block.getMethod();

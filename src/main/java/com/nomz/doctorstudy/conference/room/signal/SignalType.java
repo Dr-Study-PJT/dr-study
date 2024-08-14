@@ -16,7 +16,7 @@ public enum SignalType {
     NEXT_STEP("next-step"),
     JOINING("joining"),
     DIALOGUE("avatar-dialogue"),
-
+    QUIT("quit"),
 
     PARTICIPANT_AUDIO("participant-audio"),
     HEART_BEAT("heartbeat")

@@ -7,6 +7,7 @@ import com.nomz.doctorstudy.conference.ConferenceErrorCode;
 import com.nomz.doctorstudy.conference.QuitMemberInfo;
 import com.nomz.doctorstudy.conference.room.signal.HeartStopSignal;
 import com.nomz.doctorstudy.conference.room.signal.JoiningSignal;
+import com.nomz.doctorstudy.conference.room.signal.QuitSignal;
 import com.nomz.doctorstudy.member.entity.Member;
 import com.nomz.doctorstudy.member.exception.member.MemberErrorCode;
 import com.nomz.doctorstudy.member.exception.member.MemberException;
@@ -106,6 +107,8 @@ public class RoomService {
     public void finishRoom(Long roomId) {
         processManager.removeProcess(roomId);
 
+        signalTransmitter.transmitSignal(roomId, new QuitSignal());
+
         CompletableFuture<Void> completableFuture = processThreadMap.get(roomId);
         if (completableFuture.isDone()) {
             log.warn("Room:{}의 Completable Future가 완료돼지 않았습니다.", roomId);
@@ -152,13 +155,17 @@ public class RoomService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         lock.lock();
-
-        List<String> existingPeerIds = existingParticipantMap.get(roomId).values().stream().map(RoomParticipantInfo::getPeerId).toList();
-        existingParticipantMap.get(roomId).put(member.getId(), new RoomParticipantInfo(member.getId(), member.getNickname(), peerId));
-
-        lock.unlock();
-
-        return existingPeerIds;
+        try {
+            List<String> existingPeerIds = existingParticipantMap.get(roomId).values().stream().map(RoomParticipantInfo::getPeerId).toList();
+            existingParticipantMap.get(roomId).put(member.getId(), new RoomParticipantInfo(member.getId(), member.getNickname(), peerId));
+            return existingPeerIds;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while joining room", e);
+            throw new BusinessException(RoomErrorCode.PARTICIPANT_JOIN_FAILED);
+        }
+        finally {
+            lock.unlock();
+        }
     }
 
     private String removePeer(Long roomId, Long memberId) {
@@ -167,12 +174,16 @@ public class RoomService {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_OPENED);
         }
         lock.lock();
-
-        String peerId = existingParticipantMap.get(roomId).get(memberId).getPeerId();
-        existingParticipantMap.get(roomId).remove(memberId);
-
-        lock.unlock();
-
-        return peerId;
+        try {
+            String peerId = existingParticipantMap.get(roomId).get(memberId).getPeerId();
+            existingParticipantMap.get(roomId).remove(memberId);
+            return peerId;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while quiting room", e);
+            throw new BusinessException(RoomErrorCode.PARTICIPANT_JOIN_FAILED);
+        }
+        finally {
+            lock.unlock();
+        }
     }
 }

@@ -219,12 +219,6 @@ public class ConferenceServiceImpl implements ConferenceService {
         return peerIds;
     }
 
-    @Override
-    @Transactional
-    public void quitConference(Member requester, Long conferenceId) {
-        roomService.quitRoom(requester.getId(), conferenceId);
-    }
-
     private void removeConferenceMemberData(Long conferenceId, Long memberId) {
         conferenceMemberRepository.findById(new ConferenceMemberId(conferenceId, memberId))
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_JOINED));
