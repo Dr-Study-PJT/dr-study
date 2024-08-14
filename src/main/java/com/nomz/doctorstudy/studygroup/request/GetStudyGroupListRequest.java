@@ -10,6 +10,5 @@ import lombok.*;
 public class GetStudyGroupListRequest {
     private Long memberId;
     private String name;
-    private Integer memberCapacity;
     private String tagName;
 }

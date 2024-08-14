@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.studygroup.repository;
 
+import com.nomz.doctorstudy.moderator.dto.ModeratorSearchFilter;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
 import com.nomz.doctorstudy.studygroup.dto.StudyGroupSearchFilter;
 import com.nomz.doctorstudy.tag.Tag;
@@ -17,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+import static com.nomz.doctorstudy.moderator.entity.QModerator.moderator;
 import static com.nomz.doctorstudy.studygroup.entity.QStudyGroup.studyGroup;
 import static com.nomz.doctorstudy.studygroup.entity.QStudyGroupTag.studyGroupTag;
 import static com.nomz.doctorstudy.tag.QTag.tag;
@@ -52,11 +54,11 @@ public class StudyGroupQueryRepository {
         JPAQuery<StudyGroup> totalGroupsQuery = baseQuery.clone()  // 동일한 쿼리 조건을 가진 클론 사용
                 .where(
                         Expressions.asBoolean(false).isTrue()
-                                .and(isNotDeleted())
+                                .or(wholeSearch(filter))
                                 .or(equalMemberId(filter.getMemberId()))
                                 .or(likeName(filter.getName()))
-                                .or(equalMemberCapacity(filter.getMemberCapacity()))
                                 .or(likeTagName(filter.getTagName()))
+                                .and(isNotDeleted())
                 );
         int totalCount = totalGroupsQuery.fetch().size();
         List<StudyGroup> results = totalGroupsQuery
@@ -81,36 +83,36 @@ public class StudyGroupQueryRepository {
         }
     }
 
-    private BooleanExpression likeName(String name){
-        if (StringUtils.hasText(name)){
-            return studyGroup.name.like("%" + name + "%");
-        }else{
+    private BooleanExpression likeName(String name) {
+        if (name == null) {
             return null;
         }
-    }
-    private BooleanExpression equalMemberCapacity(Integer memberCapacity) {
-        if (memberCapacity != null) {
-            return studyGroup.memberCapacity.eq(memberCapacity);
-        }
-        else {
-            return null;
-        }
+        return studyGroup.name.like("%" + name + "%");
     }
 
     private BooleanExpression likeTagName(String tagName) {
-        if (StringUtils.hasText(tagName)) {
-            return studyGroup.id.in(
-                    JPAExpressions.select(studyGroupTag.studyGroup.id)
-                            .from(studyGroupTag)
-                            .leftJoin(studyGroupTag.tag, tag)
-                            .where(tag.name.like("%" + tagName + "%"))
-            );
-        } else {
+        if (tagName == null) {
             return null;
         }
+        return studyGroup.id.in(
+                JPAExpressions.select(studyGroupTag.studyGroup.id)
+                        .from(studyGroupTag)
+                        .leftJoin(studyGroupTag.tag, tag)
+                        .where(tag.name.like("%" + tagName + "%"))
+        );
     }
 
     private BooleanExpression isNotDeleted() {
         return studyGroup.isDeleted.isFalse();
+    }
+
+    private BooleanExpression wholeSearch(StudyGroupSearchFilter filter) {
+        if (filter.getName() == null
+                && filter.getTagName() == null
+                && filter.getMemberId() == null
+        ) {
+            return Expressions.asBoolean(true).isTrue();
+        }
+        return Expressions.asBoolean(true).isFalse();
     }
 }

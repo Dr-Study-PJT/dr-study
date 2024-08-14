@@ -106,7 +106,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         StudyGroupSearchFilter filter = StudyGroupSearchFilter.builder()
                 .memberId(command.getMemberId())
                 .name(command.getName())
-                .memberCapacity(command.getMemberCapacity())
                 .tagName(command.getTagName())
                 .build();
 
