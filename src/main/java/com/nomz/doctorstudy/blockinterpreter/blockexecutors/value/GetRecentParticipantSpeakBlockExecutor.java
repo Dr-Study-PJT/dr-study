@@ -1,6 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter.blockexecutors.value;
 
 import com.nomz.doctorstudy.blockinterpreter.ThreadProcessContext;
+import com.nomz.doctorstudy.blockinterpreter.Transcript;
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,10 +22,11 @@ public class GetRecentParticipantSpeakBlockExecutor extends BlockExecutor {
     protected Object executeAction(List<Object> args) {
         int n = (int) args.get(0);
 
-        String recentTranscript = threadProcessContext.get().getRecentTranscript(n);
-        log.debug("Recent [{}] Transcript={}", n, recentTranscript);
+        Transcript recentTranscript = threadProcessContext.get().getRecentTranscript(n);
+        String recentTranscriptString = String.format("직전발화정보: %s", recentTranscript.getSpeakerNameAndContent());
+        log.debug("Recent [{}] Transcript={}", n, recentTranscriptString);
 
-        return recentTranscript;
+        return recentTranscriptString;
     }
 
     @Override

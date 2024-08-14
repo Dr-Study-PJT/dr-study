@@ -19,6 +19,7 @@ public enum SignalType {
     QUIT("quit"),
 
     PARTICIPANT_AUDIO("participant-audio"),
+    PARTICIPANT_AUDIO_TEXT("participant-audio-text"),
     HEART_BEAT("heartbeat")
     ;
 

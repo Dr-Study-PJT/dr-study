@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.blockinterpreter;
 
+import com.nomz.doctorstudy.moderator.CharacterType;
+import com.nomz.doctorstudy.moderator.VoiceType;
 import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,4 +17,6 @@ public class ConferenceContext {
     private final String prePrompt;
     private final String subject;
     private final List<RoomParticipantInfo> participantInfoList;
+    private final VoiceType voiceType;
+    private final CharacterType characterType;
 }

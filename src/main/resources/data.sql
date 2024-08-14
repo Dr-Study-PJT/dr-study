@@ -228,6 +228,7 @@ VALUES (1, 3, 'WAITING', DATE_ADD(NOW(), INTERVAL -10 MINUTE),  '스터디그룹
 
 INSERT INTO avatar (creator_id, character_type, model_type, voice_type, created_at)
  VALUES
+ (1 + FLOOR(RAND() * 6), 'C', SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), 'C', NOW()),
  (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
  (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
  (1 + FLOOR(RAND() * 6), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), SUBSTRING('ABCDEF', FLOOR(RAND() * 6) + 1, 1), SUBSTRING('ABC', FLOOR(RAND() * 3) + 1, 1), NOW()),
@@ -259,7 +260,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 }
 ",
         NOW()),
-       (2, "중첩 반복문 돌면서 로그 출력 수행", "2번 사전 프롬프트",
+       (2, "중첩 반복문 돌면서 단순 로그 출력 수행", "2번 사전 프롬프트",
         "
                 phase(1) {
                     loop(3) {
@@ -272,7 +273,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 }
 ",
         NOW()),
-       (3, "아바타 말하기 스크립트", "3번 사전 프롬프트",
+       (3, "GPT 쿼리 후, 아바타를 통해 음성이 오는 스크립트", "3번 사전 프롬프트",
         "
                 phase(1) {
                     loop(1) {
@@ -282,7 +283,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 }
 ",
         NOW()),
-       (1, "아바타 말하기 스크립트", "4번 사전 프롬프트",
+       (1, "아바타가 주어진 음성을 말하는 스크립트", "4번 사전 프롬프트",
         "
                 phase(1) {
                     loop (1) {
@@ -291,18 +292,18 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 }
 ",
         NOW()),
-       (1, "사용자 말하기 스크립트", "5번 사전 프롬프트",
+       (1, "사용자가 말하는 내용을 아바타가 다시 말해주는 스크립트", "5번 사전 프롬프트",
         "
                 phase(1) {
                     loop (1) {
-                        let_participant_speak(1, 5000);
+                        let_participant_speak(1, 30);
                         log(get_recent_participant_speak(1));
                         let_avatar_speak(get_recent_participant_speak(1));
                     }
                 }
 ",
         NOW()),
-       (1, "시연:올림픽 스크립트", "6번 사전 프롬프트",
+       (1, "3개의 페이즈, 각 페이즈마다 3번의 아바타 음성 출력", "6번 사전 프롬프트",
         "
             phase(1) {
                 let_avatar_speak(
@@ -359,6 +360,33 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 }
             }
 ",
+        NOW()),
+       (1, "시나리오: 올림픽의 역사",
+"너는 인문학에 특화된 스터디의 사회자 역할을 맡은 AI 사회자야. 스터디는 총 두개의 단계로 구성되어 진행돼야해.
+너는 인문,사회학에 가장 적합한 사회진행 기법으로 사회 진행을 할거야.
+아래와 같은 형식으로 스터디가 진행될거야.
+1단계는 너가 이번 스터디의 주제, 단계 등에 대해 간단하게 설명하는 단계야.
+2단계에는 참여자들이 서로 각자 공부해온 내용을 발표하게 될거야. 각 참여자들의 발화가 끝난 후 10초가량의 짧은 발표요약 후, 다음 참가자의 발표를 안내해줘.
+2단계의 모든 참가자의 발표가 끝나면, 이번  스터디의 총평 및 피드백을 해주고 스터디가 끝났음을 안내해줘.",
+"
+phase(1) {
+    let_avatar_speak(gpt_query(string_concat('1단계 시작 안내해줘.')));
+}
+phase(2) {
+    let_avatar_speak(gpt_query(string_concat('2단계 시작될거야. 단계 안내해주고, 발표 안내해줘.')));
+    loop(get_int_variable('num_of_participant')) {
+        let_participant_speak(get_num_of_iteration(), 30);
+        let_avatar_speak(
+            gpt_query(
+                string_concat(
+                    '직전 참가자의 발표가 끝났어. 그 다음을 진행해줘.',
+                    get_recent_participant_speak(1)
+                )
+            )
+        );
+    }
+}
+",
         NOW())
 ;
 
@@ -366,13 +394,13 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
 VALUES
 
-(1 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "강대범프로", NOW()),
+(1 + FLOOR(RAND() * 7), 1, 7, "강대범프로", NOW()),
 (2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "면접왕 이형", NOW()),
 (3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "설민석", NOW()),
 (4 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "정승제", NOW()),
 (5 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "전한길", NOW()),
 (6 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "샘 알트먼", NOW()),
-(7 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "일론 머스크", NOW()),
+(6 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "일론 머스크", NOW()),
 (1 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "유재석", NOW()),
 (2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "전현무", NOW()),
 (3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "나동빈", NOW()),

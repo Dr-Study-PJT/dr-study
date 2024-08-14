@@ -15,7 +15,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -41,9 +40,8 @@ public class SignalController {
     }
 
     @MessageMapping("/signal/{conferenceId}/participant-audio")
-    public void handleParticipantAudioSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
+    public void handleParticipantAudioTextSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioSignal signal) {
         log.debug("signal: {} from conference: {}", signal, conferenceId);
-
 
         byte[] rawAudioData = Base64.getDecoder().decode(signal.getRawAudio());
 
@@ -53,13 +51,19 @@ public class SignalController {
         String transcript = externalApiCallService.stt(rawAudioData);
 
         ProcessContext processContext = processManager.getProcessContext(conferenceId);
-        processContext.addTranscript(transcript);
-        // TODO: 발화 블록
+        processContext.addTranscript(signal.getId(), transcript);
 
-        //
-        //AudioUtils.convertAudio(testSrcAudio + ".webm", "wav");
-        //AudioUtils.playAudio(testSrcAudio + ".wav");
-        //
+        ProcessLockManager.awaken(conferenceId);
+    }
+
+    @MessageMapping("/signal/{conferenceId}/participant-audio-text")
+    public void handleParticipantAudioTextSignal(@DestinationVariable("conferenceId") Long conferenceId, ParticipantAudioTextSignal signal) {
+        log.debug("signal: {} from conference: {}", signal, conferenceId);
+
+        String transcript = signal.getText();
+
+        ProcessContext processContext = processManager.getProcessContext(conferenceId);
+        processContext.addTranscript(signal.getId(), transcript);
 
         ProcessLockManager.awaken(conferenceId);
     }

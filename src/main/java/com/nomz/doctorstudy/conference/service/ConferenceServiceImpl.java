@@ -1,5 +1,8 @@
 package com.nomz.doctorstudy.conference.service;
 
+import com.nomz.doctorstudy.moderator.AvatarTypeResolver;
+import com.nomz.doctorstudy.moderator.VoiceType;
+import com.nomz.doctorstudy.blockinterpreter.ConferenceContext;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
 import com.nomz.doctorstudy.conference.ConferenceEvent;
@@ -21,7 +24,6 @@ import com.nomz.doctorstudy.member.exception.member.MemberException;
 import com.nomz.doctorstudy.member.repository.MemberRepository;
 import com.nomz.doctorstudy.moderator.ModeratorErrorCode;
 import com.nomz.doctorstudy.moderator.entity.Moderator;
-import com.nomz.doctorstudy.moderator.entity.Processor;
 import com.nomz.doctorstudy.moderator.repository.ModeratorRepository;
 import com.nomz.doctorstudy.notification.NotificationService;
 import com.nomz.doctorstudy.studygroup.entity.StudyGroup;
@@ -39,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -177,8 +178,16 @@ public class ConferenceServiceImpl implements ConferenceService {
             //throw new BusinessException(ConferenceErrorCode.CONFERENCE_ALREADY_STARTED);
         }
 
-        Processor processor = conference.getModerator().getProcessor();
-        roomService.startRoom(conferenceId, conference.getSubject(), processor.getScript(), processor.getPrePrompt(), () -> finishConference(conferenceId));
+        Moderator moderator = conference.getModerator();
+
+        ConferenceContext conferenceContext = ConferenceContext.builder()
+                .prePrompt(moderator.getProcessor().getPrePrompt())
+                .subject(conference.getSubject())
+                .participantInfoList(roomService.getParticipants(conferenceId))
+                .voiceType(AvatarTypeResolver.resolveVoiceType(moderator.getAvatar().getVoiceType()))
+                .characterType(AvatarTypeResolver.resolveCharacterType(moderator.getAvatar().getCharacterType()))
+                .build();
+        roomService.startRoom(conferenceId, moderator.getProcessor().getScript(), conferenceContext, () -> finishConference(conferenceId));
 
         conference.updateStartTime(LocalDateTime.now());
     }

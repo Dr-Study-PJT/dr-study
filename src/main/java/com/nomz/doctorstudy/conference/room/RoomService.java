@@ -78,32 +78,14 @@ public class RoomService {
         roomParticipantMap.remove(roomId);
     }
 
-    public void startRoom(Long roomId, String subject, String script, String prePrompt, Runnable finishCallback) {
+    public void startRoom(Long roomId, String script, ConferenceContext conferenceContext, Runnable finishCallback) {
         log.info("========== STARTING WITH PROGRAMME MODE ==========");
-        blockInterpreter.init(
-                roomId,
-                script,
-                Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
-                ConferenceContext.builder()
-                        .prePrompt(prePrompt)
-                        .subject(subject)
-                        .participantInfoList(roomParticipantMap.get(roomId).values().stream().toList())
-                        .build()
-        );
+        blockInterpreter.init(roomId, script, Map.of(), conferenceContext);
         blockInterpreter.interpret(roomId, ProcessMode.PROGRAMME);
         log.info("========== FINISHED PROGRAMME MODE ==========");
 
         log.info("========== STARTING WITH NORMAL MODE ==========");
-        blockInterpreter.init(
-                roomId,
-                script,
-                Map.of(BlockVariable.STUDY_SUBJECT.getToken(), subject),
-                ConferenceContext.builder()
-                        .prePrompt(prePrompt)
-                        .subject(subject)
-                        .participantInfoList(roomParticipantMap.get(roomId).values().stream().toList())
-                        .build()
-        );
+        blockInterpreter.init(roomId, script, Map.of(), conferenceContext);
         processThreadMap.put(roomId, CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
         }).thenRun(() -> {

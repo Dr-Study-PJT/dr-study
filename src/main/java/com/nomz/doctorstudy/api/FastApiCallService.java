@@ -1,8 +1,9 @@
 package com.nomz.doctorstudy.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nomz.doctorstudy.common.exception.BusinessException;
+import com.nomz.doctorstudy.common.exception.CommonErrorCode;
+import com.nomz.doctorstudy.moderator.VoiceType;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +46,10 @@ public class FastApiCallService implements ExternalApiCallService{
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             log.debug("received gpt response from FastAPI server, response={}", response);
             return response.getBody();
-        } catch (ResourceAccessException e){
+        } catch (ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
-            return null;
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "TTS 서버와의 연결에 실패했습니다.");
         }
-
     }
 
     @Override
@@ -70,9 +67,9 @@ public class FastApiCallService implements ExternalApiCallService{
             ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.POST, entity, byte[].class);
             log.debug("received tts response from FastAPI server, response={}", response);
             return response.getBody();
-        }catch (ResourceAccessException e) {
+        } catch (ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
-            return null;
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "TTS 서버와의 연결에 실패했습니다.");
         }
     }
 
@@ -93,7 +90,7 @@ public class FastApiCallService implements ExternalApiCallService{
             return response.getBody();
         }catch(ResourceAccessException e) {
             System.err.println("ResourceAccessException: " + e.getMessage());
-            return null;
+            throw new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR, "TTS 서버와의 연결에 실패했습니다.");
         }
     }
 }

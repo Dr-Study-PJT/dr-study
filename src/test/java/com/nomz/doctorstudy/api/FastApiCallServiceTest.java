@@ -1,5 +1,6 @@
 package com.nomz.doctorstudy.api;
 
+import com.nomz.doctorstudy.moderator.VoiceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
@@ -33,7 +34,7 @@ public class FastApiCallServiceTest {
 //                "데이터베이스는 다양한 정보를 체계적으로 저장하고 효율적으로 관리할 수 있는 시스템을 말합니다. " +
 //                "대량의 데이터를 정확하게 저장하고 분석할 수 있도록 도와줍니다.";
         String inputText = "안녕하십니까. 저는 엄격한 ai 사회자 입니다." ;
-        byte[] actualResponse = fastApiCallService.tts(inputText, VoiceType.ROBOT);
+        byte[] actualResponse = fastApiCallService.tts(inputText, VoiceType.MEN_HIGH);
         System.out.println("Actual Response: " + Arrays.toString(actualResponse));
 
     }

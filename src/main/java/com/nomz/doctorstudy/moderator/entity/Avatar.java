@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.moderator.entity;
 
+import com.nomz.doctorstudy.moderator.CharacterType;
+import com.nomz.doctorstudy.moderator.VoiceType;
 import com.nomz.doctorstudy.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -2,6 +2,7 @@ package com.nomz.doctorstudy.blockinterpreter;
 
 import com.nomz.doctorstudy.blockinterpreter.blockexecutors.BlockVariable;
 import com.nomz.doctorstudy.blockinterpreter.programme.ProgrammeItem;
+import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.conference.room.RoomParticipantInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -129,22 +130,27 @@ public class ProcessContext {
         variableMapStack.get(scopeDepth).put(key, val);
     }
 
-    public void addTranscript(String content) {
+    public void addTranscript(Long memberId, String content) {
         int currentPhase = (int) getVariable("current_phase");
-        transcripts.add(new Transcript(currentPhase, content));
+        String participantName = participantInfoList.stream()
+                .filter(info -> info.getMemberId() == memberId)
+                .map(RoomParticipantInfo::getName)
+                .findAny()
+                .orElseThrow(() -> new BusinessException(BlockErrorCode.PARTICIPANT_NAME_NOT_FOUND));
+
+        transcripts.add(new Transcript(participantName, currentPhase, content));
     }
 
-    public String getRecentTranscript(int n) {
+    public Transcript getRecentTranscript(int n) {
         if (n < 1 || n > transcripts.size()) {
             throw new BlockException(BlockErrorCode.TRANSCRIPT_INDEX_OUT_OF_BOUND);
         }
-        return transcripts.get(transcripts.size() - n).content;
+        return transcripts.get(transcripts.size() - n);
     }
 
-    public List<String> getPhaseTranscript(int phase) {
+    public List<Transcript> getPhaseTranscript(int phase) {
         return transcripts.stream()
                 .filter(transcript -> transcript.getPhase() == phase)
-                .map(Transcript::getContent)
                 .toList();
     }
 
@@ -173,12 +179,6 @@ public class ProcessContext {
         gptContext.addHistory(query, answer);
     }
 
-    @Getter
-    @RequiredArgsConstructor
-    private static class Transcript {
-        private final int phase;
-        private final String content;
-    }
 
     public static class GptContext {
         private final StringBuilder history = new StringBuilder();
