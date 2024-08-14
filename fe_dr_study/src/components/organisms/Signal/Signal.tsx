@@ -8,18 +8,25 @@ import { ConferenceData } from '@/interfaces/conference';
 import Chats from './Chats';
 import ConferenceParticipants from './ConferenceParticipants';
 import { Member } from '@/app/group/[group_id]/_types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     setFullPhase,
     setNextStep,
 } from '@/store/slices/conferenceProgressSlice';
-import { setIsAvatarSpeaking } from '@/store/slices/isAvatarSpeakingSlice';
+import isAvatarSpeakingSlice, {
+    setIsAvatarSpeaking,
+} from '@/store/slices/isAvatarSpeakingSlice';
 import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSlice';
 import { setIsMutedBySystem } from '@/store/slices/isMutedBySystemSlice';
 import { setGptSummaryBySystem } from '@/store/slices/gptSummaryBySystemSlice';
 import { pushSummaryMessages } from '@/store/slices/summaryMessagesSlice';
 import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
 import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
+import { setIsCloseSignal } from '@/store/slices/isCloseSignalSlice';
+import ConferenceStartAndCloseButtons from '../ConferenceStartAndCloseButtons/ConferenceStartAndCloseButtons';
+import FinishMyTurnButton from './FinishMyTurnButton';
+import { RootState } from '@/store';
+import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
 
 export interface JoiningMember {
     id: number;
@@ -64,6 +71,7 @@ interface SignalProps {
 const Signal = ({
     currentMembers,
     setCurrentMembers,
+    conferenceInfo,
     client,
     isJoined,
     setExistingPeers,
@@ -80,6 +88,7 @@ const Signal = ({
     const [isStartRecordingAudio, setIsStartRecordingAudio] =
         useState<boolean>(false); // 오디오 스트림 시작 신호
     const messagesEndRef = useRef<HTMLDivElement>(null); // 메시지 목록 끝에 대한 참조
+    const [isFinishMyTurn, setIsFinishMyTurn] = useState<boolean>(false); // 내 발화 차례 종료 신호
 
     useEffect(() => {
         // 소켓 연결
@@ -162,7 +171,7 @@ const Signal = ({
         console.log('newSignal.time => ', newSignal.time, 'ms');
         if (client.memberId.toString() === newSignal.id?.toString()) {
             dispatch(setTimeForAudioRecord(newSignal.time as number));
-
+            dispatch(setFocusingId(newSignal.peerId as string));
             setIsStartRecordingAudio(true); // 오디오 녹음 시작
         }
     };
@@ -216,7 +225,7 @@ const Signal = ({
         ]);
     };
 
-    // 방송 종료 신호 처리
+    // 스트림 연결 종료 신호 처리
     const handleHeartstop = (newSignal: SignalInterface) => {
         setExistingPeers((existingPeers) => {
             const newPeers = { ...existingPeers };
@@ -229,16 +238,31 @@ const Signal = ({
         );
     };
 
+    // 스트림 연결 종료 신호 처리
+    const handleCloseSignal = () => {
+        dispatch(setIsCloseSignal(true));
+
+        if (stompClient) {
+            stompClient?.send(
+                `/pub/signal/${conferenceId}/close`,
+                {},
+                JSON.stringify({
+                    id: memberData?.id, // 송신자 ID
+                }),
+            );
+        }
+    };
+
     // 메시지 전송 함수
     const sendMessage = () => {
+        // 메시지가 없을 경우 아무 동작도 하지 않음
         if (!message.trim()) {
-            return; // 메시지가 없을 경우 아무 동작도 하지 않음
+            return;
         }
 
         if (stompClient) {
-            // Stomp 클라이언트가 존재할 때
             stompClient?.send(
-                `/pub/chat/${conferenceId}`, // 메시지를 보낼 경로
+                `/pub/chat/${conferenceId}`,
                 {},
                 JSON.stringify({
                     id: memberData?.id, // 송신자 ID
@@ -305,7 +329,21 @@ const Signal = ({
                     memberId={memberData?.id}
                     stompClient={stompClient}
                     isStartRecordingAudio={isStartRecordingAudio}
+                    isFinishMyTurn={isFinishMyTurn}
+                    setIsFinishMyTurn={setIsFinishMyTurn}
                 />
+            </div>
+
+            <div className="fixed top-[3px] right-[3px] p-3 rounded-xl bg-dr-black bg-opacity-40">
+                {memberData?.id === conferenceInfo?.hostId && (
+                    <ConferenceStartAndCloseButtons
+                        conferenceInfo={conferenceInfo}
+                        handleCloseSignal={handleCloseSignal}
+                    />
+                )}
+            </div>
+            <div className="absolute right-[21%] bottom-[11%] ">
+                <FinishMyTurnButton setIsFinishMyTurn={setIsFinishMyTurn} />
             </div>
         </div>
     );

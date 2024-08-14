@@ -15,7 +15,7 @@ export const showToast = (type: ToastType, message: string) => {
             {type === 'success' ? (
                 <FaCheckCircle className="mr-2 text-dr-coral-300" />
             ) : (
-                <FaExclamationCircle className="mr-2 text-dr-red" />
+                <FaExclamationCircle className="mr-2 text-dr-red " />
             )}
             <span className="text-dr-body-4">{message}</span>
         </div>,

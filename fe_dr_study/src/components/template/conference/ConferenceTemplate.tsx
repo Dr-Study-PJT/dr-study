@@ -1,7 +1,6 @@
 'use client';
 
 import { POST } from '@/app/api/routeModule';
-import { Button } from '@/components/atoms';
 import ConferenceControlBar from '@/components/organisms/ConferenceControlBar/ConferenceControlBar';
 import ConferenceProgress from '@/components/organisms/ConferenceProgress/ConferenceProgress';
 import ModeratorAvatar from '@/components/organisms/ModeratorAvatar/Mod';
@@ -70,8 +69,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         },
     ]);
 
-    // 오디오 주소
-
     // 클라이언트 정보 참조
     const client = useRef<ClientInterface>({
         memberId: '', // 클라이언트 멤버 ID
@@ -125,6 +122,11 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
     // 2. 스트림 생성 및 설정
     useEffect(() => {
         if (!isFlag) return;
+
+        const devices = navigator.mediaDevices.enumerateDevices();
+        const defaultDevice = devices.then((devices) =>
+            devices.find((device) => device.deviceId === 'default'),
+        );
 
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
@@ -224,20 +226,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         }
     };
 
-    // 컨퍼런스 룸 시작 함수
-    const startConference = async () => {
-        try {
-            const response = await POST({
-                API: API, // as API 로 작성
-                endPoint: `${conferenceInfo?.id}/start`, //  v1/conferences 뒤에 있으면 '/' 붙고 아니면 안 붙음
-                body: '', // body는 body
-                isAuth: true, // 항상 true로
-            });
-        } catch (error) {
-            console.error('Error fetching room list:', error);
-        }
-    };
-
     return (
         <div className="flex h-[100%] w-[100%] bg-dr-dark-200">
             <div className="flex flex-col w-full h-full">
@@ -253,6 +241,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                                     <Video
                                         existingPeers={existingPeers}
                                         peerId={peerId}
+                                        client={client.current}
                                     />
                                 </React.Fragment>
                             );
@@ -288,14 +277,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
                         <ModeratorAvatar conferenceInfo={conferenceInfo} />
                     </div>
                 </div>
-            </div>
-
-            <div className="fixed top-[3px] right-[3px] p-3 flex flex-col gap-dr-5 rounded-xl bg-dr-black bg-opacity-40">
-                {memberData?.id === conferenceInfo?.hostId && (
-                    <Button fullWidth onClick={startConference}>
-                        컨퍼런스 시작
-                    </Button>
-                )}
             </div>
             <TotalSummary />
         </div>

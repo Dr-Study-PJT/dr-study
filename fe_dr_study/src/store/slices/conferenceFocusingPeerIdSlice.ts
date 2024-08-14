@@ -2,11 +2,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // conferenceFocusingPeerIdState 정의
 interface conferenceFocusingPeerIdState {
-    focusingPeerId: number;
+    focusingPeerId: string;
 }
 
 const initialState: conferenceFocusingPeerIdState = {
-    focusingPeerId: 0,
+    focusingPeerId: '',
 };
 
 const conferenceFocusingPeerIdSlice = createSlice({

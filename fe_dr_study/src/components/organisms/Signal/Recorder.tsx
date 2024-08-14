@@ -1,31 +1,24 @@
-import { Button } from '@/components/atoms';
 import { RootState } from '@/store';
 import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
-import React, {
-    useState,
-    useRef,
-    useEffect,
-    Dispatch,
-    SetStateAction,
-} from 'react';
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 interface RecorderProps {
     conferenceId: number;
     memberId: number;
     stompClient: any;
-    // timeForAudioRecord: number;
-    // setTimeForAudioRecord: Dispatch<React.SetStateAction<number>>;
+    isFinishMyTurn: boolean;
     isStartRecordingAudio: boolean;
+    setIsFinishMyTurn: Dispatch<SetStateAction<boolean>>;
 }
 
 function Recorder({
     memberId,
     conferenceId,
     stompClient,
-    // timeForAudioRecord,
-    // setTimeForAudioRecord,
+    isFinishMyTurn,
     isStartRecordingAudio,
+    setIsFinishMyTurn,
 }: RecorderProps) {
     const dispatch = useDispatch();
 
@@ -46,17 +39,27 @@ function Recorder({
 
             // 설정한 시간 후에 오디오 녹음 중지
             const timeout = setTimeout(() => {
-                stopAudioStream();
+                // 내 턴이 끝나지 않았을 때만 시간이 지남에 따라 녹음 중지
+                if (!isFinishMyTurn) {
+                    stopAudioStream();
+                }
             }, timeForAudioRecord);
 
             return () => {
                 clearTimeout(timeout);
                 stopAudioStream();
                 dispatch(setTimeForAudioRecord(0));
-                // setTimeForAudioRecord(0);
             };
         }
     }, [isStartRecordingAudio]);
+
+    useEffect(() => {
+        // 내 턴이 끝나면 곧바로 녹음 중지
+        if (isFinishMyTurn) {
+            stopAudioStream();
+            setIsFinishMyTurn(false);
+        }
+    }, [isFinishMyTurn]);
 
     // 오디오 스트림 시작
     const startAudioStream = async () => {
@@ -101,7 +104,7 @@ function Recorder({
                         console.log('before send audio:');
                         if (stompClient) {
                             stompClient.send(
-                                `/pub/signal/${conferenceId}/participant-audio`, // 적절한 STOMP 경로 설정
+                                `/pub/signal/${conferenceId}/participant-audio`,
                                 {},
                                 JSON.stringify({
                                     id: memberId,

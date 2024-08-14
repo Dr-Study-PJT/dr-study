@@ -15,8 +15,6 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
         });
     };
 
-    useEffect(() => {}, []);
-
     return (
         <section className="w-[70%] self-center mt-3">
             <div className="w-full h-max flex flex-col justify-around gap-6 items-center">
@@ -46,6 +44,7 @@ const Step1: React.FC<StepProps> = ({ onNext, onBack, data, setData }) => {
                                 id="memberCapacity"
                                 label="스터디 그룹 최대 인원수"
                                 inputSize="md"
+                                type="number"
                                 name="memberCapacity"
                                 value={data.memberCapacity}
                                 onChange={(e) =>
