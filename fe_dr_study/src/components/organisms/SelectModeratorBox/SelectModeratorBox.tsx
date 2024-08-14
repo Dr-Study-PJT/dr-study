@@ -34,12 +34,18 @@ const SelectModeratorBox = ({
                     setModeratorSearchResult={setModeratorSearchResult}
                 />
             </div>
-            <ModeratorList
-                moderators={moderatorSearchResult}
-                setSelectedModerator={setSelectedModerator}
-                isDisableCreateNewModerator
-            />
-            <ModeratorDetail moderator={selectedModerator} />
+            <div className="flex w-[100%]">
+                <div className="w-3/5">
+                    <ModeratorList
+                        moderators={moderatorSearchResult}
+                        setSelectedModerator={setSelectedModerator}
+                        isDisableCreateNewModerator
+                    />
+                </div>
+                <div className="w-2/5 pt-[2.5rem]">
+                    <ModeratorDetail moderator={selectedModerator} />
+                </div>
+            </div>
         </div>
     );
 };
