@@ -77,7 +77,6 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
         '게시판',
     );
     const [conferencesWithMembers, setConferencesWithMembers] = useState([]);
-    const dispatch = useDispatch();
     const router = useRouter();
 
     useEffect(() => {
@@ -86,7 +85,6 @@ export const SectionContents: React.FC<SectionContentsProps> = ({
                 const response = await fetchConferenceList({
                     studyGroupId: groupId,
                 });
-                console.log('컨퍼런스 리스트 조회!!!:', response);
                 setConferencesWithMembers(response);
             } catch (error) {
                 console.error('Failed to fetch conferences:', error);

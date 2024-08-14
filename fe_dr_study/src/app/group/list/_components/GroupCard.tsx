@@ -41,7 +41,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                             className={`pl-[4.5rem] ${getBackgroundColorRandomPastel()}  transition-colors duration-300`}
                             alt={name}
                             src={imageUrl}
-                            layout="fill"
+                            fill
                             objectFit="cover"
                         />
                     </div>

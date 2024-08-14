@@ -1,10 +1,15 @@
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 const ModeratorSearchList = ({
     moderatorSearchResult,
 }: {
     moderatorSearchResult: any[];
 }) => {
+    useEffect(() => {
+        console.log('검색 결과 moderatorSearchResult:', moderatorSearchResult);
+    }, [moderatorSearchResult]);
+
     return (
         <div className="text-dr-white bg-zinc-900 rounded-md">
             <ul className="p-[1rem] rounded-lg text-dr-body-3">

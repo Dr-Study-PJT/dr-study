@@ -61,7 +61,7 @@ const SidebarTooltipItem: React.FC<SidebarTooltipItemProps> = ({
                             className="rounded-[2rem] hover:rounded-[0.7rem] transition-all duration-300 bg-dr-coral-50 hover:bg-dr-coral-100 "
                             src={imageUrl}
                             alt={`${title} Image`}
-                            layout="fill"
+                            fill
                             objectFit="cover"
                         />
                         {isLive && (
@@ -103,7 +103,6 @@ const SideBar = () => {
 
     const fetchData = useCallback(async () => {
         const myGroups = await getMyGroups();
-        console.log('내 그룹:', myGroups);
 
         setGroups(myGroups?.filter((group: Group) => !group.isDeleted));
 

@@ -7,7 +7,7 @@ import { showToast } from '@/utils/toastUtil';
 import { ToastContainer } from 'react-toastify';
 
 interface SearchModeratorProps {
-    size: number;
+    count: number;
     name: string;
     description: string;
 }
@@ -25,12 +25,11 @@ const SearchModerator = ({
     };
 
     const getModeratorQueryResult = async ({
-        size,
+        count,
         name,
         description,
     }: SearchModeratorProps) => {
-        console.log('getModeratorQueryResult 호출');
-        const baseUrl = `v1/moderators&size=${size}`;
+        const baseUrl = `v1/moderators?count=${count}`;
         let urlWithFilterQuery = `${baseUrl}`;
 
         if (name) {
@@ -46,7 +45,10 @@ const SearchModerator = ({
             isAuth: true,
             revalidateTime: 0,
         });
-        console.log('moderator 검색 결과: ' + response);
+        if (!response.data) {
+            showToast('error', '검색 결과가 없습니다.');
+            return;
+        }
         return response;
     };
     // showToast('error', '검색 결과를 가져오는 중 오류가 발생했습니다.');
@@ -56,7 +58,6 @@ const SearchModerator = ({
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        console.log('검색어:', moderatorQuery);
         e.preventDefault(); // 기본 제출 이벤트 방지
 
         // 사용 예
@@ -68,14 +69,14 @@ const SearchModerator = ({
 
         try {
             const response = await getModeratorQueryResult({
-                size: 5,
+                count: 5,
                 name: moderatorQuery,
                 description: moderatorQuery,
             });
-            console.log(response);
-            setModeratorSearchResult(response?.content); // 검색 결과 업데이트
+            setModeratorSearchResult(response?.data); // 검색 결과 업데이트
             setModeratorQuery('');
-            if (!response) {
+
+            if (!response.data.length) {
                 showToast('error', '검색 결과가 없습니다.');
             }
         } catch (error) {

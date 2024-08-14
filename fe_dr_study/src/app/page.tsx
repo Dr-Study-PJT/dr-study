@@ -17,7 +17,7 @@ export default async function HomePage({}: {}) {
                     <Image
                         alt="thumbnail"
                         src="/images/thumbnail.png"
-                        layout="fill"
+                        fill
                         objectFit="cover"
                     />
                     <div className="absolute bottom-0 left-[13%] w-[30%]">
