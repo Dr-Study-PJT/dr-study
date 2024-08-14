@@ -117,7 +117,7 @@ const EditArticle: React.FC<EditArticleProps> = ({
                             type="button"
                             onClick={() => {
                                 reset(); // 폼을 리셋합니다.
-                                window.history.back(); // 이전 페이지로 이동합니다.
+                                window.location.href = `/group/${groupId}/article/${articleId}`;
                             }}
                         >
                             취소하기

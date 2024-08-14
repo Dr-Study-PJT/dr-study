@@ -68,9 +68,10 @@ export const updatingArticle = async (
             API: articleAPI,
             endPoint: `/${articleId}`,
             body: updateArticleBody,
-            params: articleId.toString(),
+            // params: articleId.toString(),
             isAuth: true,
         });
+        console.log('updatingArticle에서 확인용: ', response);
         return response;
     } catch (error) {
         console.error('게시글 수정 실패함 ㅠㅠ ', error);
