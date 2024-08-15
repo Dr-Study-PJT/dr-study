@@ -53,7 +53,7 @@ const ConferenceInfoTemplate = ({
                             {conferenceData?.title}
                         </h2>
                         <div className="flex flex-col gap-3 text-dr-body-1">
-                            <p className="text-dr-body-3 border-slate-700">
+                            <p className="text-dr-body-3 text-slate-300 border-slate-700">
                                 {conferenceData?.subject}
                             </p>
                         </div>
@@ -84,7 +84,7 @@ const ConferenceInfoTemplate = ({
                             isHostOnly || isMemberInvited ? 'coral' : 'gray'
                         }`}
                         disabled={!isHostOnly && !isMemberInvited}
-                        size="lg"
+                        size="md"
                         classNameStyles={`relative group ${
                             !isHostOnly && !isMemberInvited
                                 ? 'cursor-not-allowed'

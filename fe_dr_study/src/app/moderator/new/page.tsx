@@ -75,8 +75,14 @@ const CreateModeratorPage: React.FC = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        if (currentStep === 2 && formData.script === '') {
+            console.log('currentStep:', currentStep);
+            showToast('error', '블록을 하나 이상 놓아주세요.');
+            return;
+        }
         setIsResultPage(true);
         setLoading(true);
+
         try {
             const response = await createModerator(formData);
             setTimeout(() => {

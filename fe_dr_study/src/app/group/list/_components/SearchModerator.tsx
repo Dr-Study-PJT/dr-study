@@ -117,7 +117,7 @@ const SearchModerator = ({
                     autoFocus
                     autoComplete="off"
                     required
-                    placeholder="태그나 AI 사회자 이름으로 검색해요."
+                    placeholder="AI 사회자 이름으로 검색해요."
                     onChange={handleInputChange} // 변경 핸들러 연결
                 />
                 <button

@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import MemberAvatar from '@/components/molecules/MemberAvatar';
 import { FaCrown } from 'react-icons/fa';
 import { LoadingLottie } from '@/app/_components/Lottie/Loading/LoadingLottie';
+import { getBackgroundColorRandomPastel } from '@/utils/colors';
 
 interface ConferenceWaitingRoomTemplateProps {
     memberData: IMemberData | null;
@@ -68,12 +69,20 @@ const ConferenceWaitingRoomTemplate = ({
                             </span>
                         )}
                     </h2>
+                    <div>
+                        <h3 className="text-dr-header-1 font-semibold text-slate-200">
+                            컨퍼런스 주제
+                        </h3>
+                        <p className="text-dr-body-3 text-slate-400 mb-4">
+                            {subject}
+                        </p>
+                    </div>
                     <div className="relative flex items-center justify-center w-full h-[20rem] rounded-lg overflow-hidden">
                         <Image
                             src={imageUrl || '/images/conference-default.jpg'}
                             alt="conference-image"
                             fill
-                            className="object-cover"
+                            className={`object-cover ${getBackgroundColorRandomPastel()}`}
                         />
                     </div>
                     <div className="flex gap-dr-10">
@@ -83,16 +92,13 @@ const ConferenceWaitingRoomTemplate = ({
                             </Link>
                         )}
                     </div>
-                    <div>
-                        <h3 className="text-dr-header-2">컨퍼런스 주제</h3>
-                        <p className="text-dr-body-2">{subject}</p>
-                    </div>
+
                     <div></div>
                     <HrLine />
                     <MeetingIdBox>{`${process.env.NEXT_PUBLIC_HOST}/conference/${id}`}</MeetingIdBox>
                     <HrLine />
                     <div>
-                        <div className="flex justify-center items-center content-center">
+                        <div className="flex ">
                             <p className="mt-6 text-xl font-semibold">
                                 참여자 목록
                             </p>
