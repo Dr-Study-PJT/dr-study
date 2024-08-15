@@ -9,7 +9,7 @@ import ResultStep from './_components/Result';
 import { register } from './_api/register';
 import { useRouter } from 'next/navigation';
 
-const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center py-6 w-full min-h-full h-max bg-gray-800`;
+const pageStyles = `PAGE-CREATE-MODERATOR flex justify-center py-6 w-full min-h-full h-max`;
 const containerStyles = `CONTAINER-FORM min-w-[50%] w-max h-max flex bg-gray-900 text-dr-white rounded-lg shadow-xl overflow-hidden border-[1px] border-dr-gray-300 p-4`;
 
 const initialFormData: IRegisterReq = {
