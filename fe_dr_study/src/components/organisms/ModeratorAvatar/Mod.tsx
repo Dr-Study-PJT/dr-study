@@ -15,7 +15,7 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(new Audio());
     const audioSrc = `${S3_URL}/audio/avatar_audio_${conferenceInfo?.id}.mp3`;
-    const videoSrc = `${S3_URL}/moderators/preset/videos/${'A'}_speak.mp4`;
+    const videoSrc = `${S3_URL}/moderators/preset/videos/${conferenceInfo?.moderatorInfo.avatarModelType}_speak.mp4`;
 
     const isAvatarSpeaking = useSelector(
         (state: RootState) => state.isAvatarSpeaking.isAvatarSpeaking,
