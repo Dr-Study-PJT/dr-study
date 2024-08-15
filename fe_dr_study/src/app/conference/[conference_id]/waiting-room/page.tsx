@@ -41,7 +41,7 @@ const Page = ({ searchParams }: ConferenceWaitingRoomPageProps) => {
             } else if (searchParams.error === 'already_open') {
                 showToast('error', '컨퍼런스가 이미 개최되었습니다.');
             } else if (searchParams.error === 'finished_conference') {
-                showToast('error', '컨퍼런스가 종료되었습니다.');
+                showToast('success', '컨퍼런스가 종료되었습니다.');
             }
         }, 1000);
         return () => clearTimeout(timeout);
