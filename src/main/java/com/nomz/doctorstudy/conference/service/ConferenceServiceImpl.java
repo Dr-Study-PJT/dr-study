@@ -1,7 +1,6 @@
 package com.nomz.doctorstudy.conference.service;
 
 import com.nomz.doctorstudy.moderator.AvatarTypeResolver;
-import com.nomz.doctorstudy.moderator.VoiceType;
 import com.nomz.doctorstudy.blockinterpreter.ConferenceContext;
 import com.nomz.doctorstudy.common.exception.BusinessException;
 import com.nomz.doctorstudy.common.exception.CommonErrorCode;
@@ -37,7 +36,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,6 +61,8 @@ public class ConferenceServiceImpl implements ConferenceService {
 
     private final RoomService roomService;
     private final NotificationService notificationService;
+
+    private final TransactionTemplate transactionTemplate;
 
     @PostConstruct
     public void setQuitCallback() {
@@ -187,7 +192,10 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .voiceType(AvatarTypeResolver.resolveVoiceType(moderator.getAvatar().getVoiceType()))
                 .characterType(AvatarTypeResolver.resolveCharacterType(moderator.getAvatar().getCharacterType()))
                 .build();
-        roomService.startRoom(conferenceId, moderator.getProcessor().getScript(), conferenceContext, () -> finishConference(conferenceId));
+
+        roomService.startRoom(conferenceId, moderator.getProcessor().getScript(), conferenceContext, () -> {
+            transactionTemplate.executeWithoutResult(transactionStatus -> finishConference(conferenceId));
+        });
 
         conference.updateStartTime(LocalDateTime.now());
     }
@@ -197,6 +205,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     public void finishConference(Long conferenceId) {
         Conference conference = conferenceRepository.findById(conferenceId)
                 .orElseThrow(() -> new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_FOUND_ERROR));
+
 
         if (conference.getStartTime() == null) {
             throw new BusinessException(ConferenceErrorCode.CONFERENCE_NOT_STARTED);

@@ -256,6 +256,7 @@ VALUES (1, "간단하게 블록 로그 출력 수행", "1번 사전 프롬프트
                 phase(1) {
                     log(string_concat('hello ', 'world! ', '반갑습니다 ', '여러분들!'));
                     log('hi');
+                    wait(3);
                     log(int_to_string(get_int_variable('current_phase')));
                 }
 ",
@@ -375,7 +376,7 @@ phase(1) {
 phase(2) {
     let_avatar_speak(gpt_query(string_concat('2단계 시작될거야. 단계 안내해주고, 발표 안내해줘.')));
     loop(get_int_variable('num_of_participant')) {
-        let_participant_speak(get_num_of_iteration(), 30);
+        let_participant_speak(get_num_of_iteration(), 40);
         let_avatar_speak(
             gpt_query(
                 string_concat(
@@ -394,13 +395,13 @@ phase(2) {
 INSERT INTO moderator (creator_id, avatar_id, processor_id, name, created_at)
 VALUES
 
-(1 + FLOOR(RAND() * 7), 1, 7, "강대범프로", NOW()),
-(2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "면접왕 이형", NOW()),
-(3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "설민석", NOW()),
-(4 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "정승제", NOW()),
-(5 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "전한길", NOW()),
-(6 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "샘 알트먼", NOW()),
-(6 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "일론 머스크", NOW()),
+(1 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 1, "강대범프로", NOW()),
+(2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 2, "면접왕 이형", NOW()),
+(3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 3, "설민석", NOW()),
+(4 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 4, "정승제", NOW()),
+(5 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 5, "전한길", NOW()),
+(6 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 6, "샘 알트먼", NOW()),
+(6 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), 7, "일론 머스크", NOW()),
 (1 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "유재석", NOW()),
 (2 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "전현무", NOW()),
 (3 + FLOOR(RAND() * 7), 1 + FLOOR(RAND() * 20), FLOOR(1 + RAND() * 6), "나동빈", NOW()),
