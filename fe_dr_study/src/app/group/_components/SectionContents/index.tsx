@@ -21,7 +21,7 @@ export const fetchConferenceList = async ({
     memberId,
     studyGroupId,
     isOpened,
-    isClose,
+    isClosed,
     isStart,
     isFinish,
     // lowerBoundDate,
@@ -30,7 +30,7 @@ export const fetchConferenceList = async ({
     memberId?: number;
     studyGroupId?: string;
     isOpened?: boolean;
-    isClose?: boolean;
+    isClosed?: boolean;
     isStart?: boolean;
     isFinish?: boolean;
 }) => {
@@ -45,8 +45,8 @@ export const fetchConferenceList = async ({
     if (isOpened !== null && isOpened !== undefined) {
         url += `isOpened=${isOpened}&`;
     }
-    if (isClose !== null && isClose !== undefined) {
-        url += `isClose=${isClose}&`;
+    if (isClosed !== null && isClosed !== undefined) {
+        url += `isClosed=${isClosed}&`;
     }
     if (isStart !== null && isStart !== undefined) {
         url += `isStart=${isStart}&`;

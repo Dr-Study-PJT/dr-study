@@ -136,7 +136,7 @@ const SideBar = () => {
         const fetchedConferences = await fetchConferenceList({
             memberId: memberData?.id || -1,
             isOpened: true,
-            isClose: false,
+            isClosed: false,
         });
 
         // 내가 초대된 회의만 필터링
