@@ -84,7 +84,7 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
         Image image = imageRepository.findById(request.getImageId())
-                .orElseThrow(() -> new BusinessException(CommonErrorCode.RESOURCE_NOT_FOUND));
+                .orElse(null);
 
         Conference conference = Conference.builder()
                 .moderator(moderator)
