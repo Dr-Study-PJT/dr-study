@@ -134,7 +134,7 @@ const NewArticlePage: React.FC<any> = ({ params: { group_id } }: any) => {
     };
 
     return (
-        <PageContainer className="bg-[#36393E]">
+        <PageContainer className=" bg-dr-indigo-100">
             <Box variant="createStudyGroupStepBox">
                 <CreateArticle
                     groupId={groupId}

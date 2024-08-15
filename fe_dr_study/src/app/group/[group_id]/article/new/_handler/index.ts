@@ -12,7 +12,7 @@ export const handleArticleSubmit = async (data: CreateArticleReq, groupId: numbe
         });
 
         if (response && response.data && response.data.articleId) {
-            alert('게시글이 성공적으로 작성되었습니다.');
+            // alert('게시글이 성공적으로 작성되었습니다.');
             return response;
         } else {
             throw new Error('게시글 작성 실패');
