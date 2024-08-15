@@ -91,7 +91,7 @@ public class LetAvatarSpeakBlockExecutor extends BlockExecutor {
 
     @Override
     public Object executeGetProgramme(List<Object> args) {
-        threadProcessContext.get().addProgrammeItem(Map.of("nickname", "Moderator", "time", -1));
+        threadProcessContext.get().addProgrammeItem(Map.of("nickname", "AI 사회자", "time", -1));
 
         return null;
     }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,14 +37,18 @@ public class StatisticServiceImpl implements  StatisticService{
         List<MemberStudyGroup> memberStudyGroups = memberStudyGroupRepository.findByMemberId(userId);
 
         // 총 컨퍼런스 참여 시간과 횟수 계산
+        AtomicInteger totalConferenceJoinCount = new AtomicInteger();
         int totalConferenceTime = conferenceMemberHistories.stream()
                 .mapToInt(cm -> {
                     // 컨퍼런스 시간 차이를 계산
-                    Duration duration = Duration.between(cm.getConference().getStartTime(), cm.getConference().getFinishTime());
-                    return (int) duration.toMinutes();
+                    if (cm.getConference().getStartTime() != null && cm.getConference().getFinishTime() != null) {
+                        Duration duration = Duration.between(cm.getConference().getStartTime(), cm.getConference().getFinishTime());
+                        totalConferenceJoinCount.addAndGet(1);
+                        return (int) duration.toMinutes();
+                    }
+                    return 0;
                 })
                 .sum(); // 모든 시간 차이를 합산
-        int totalConferenceJoinCount = conferenceMemberHistories.size();
 
         // 스터디 그룹별 가입 횟수 계산
         Map<Long, Integer> studyGroupJoinCounts = memberStudyGroups.stream()
@@ -83,7 +88,7 @@ public class StatisticServiceImpl implements  StatisticService{
         // DTO를 조합하여 반환
         return MemberStatisticDTO.builder()
                 .totalConferenceTime(totalConferenceTime)
-                .totalConferenceJoinCount(totalConferenceJoinCount)
+                .totalConferenceJoinCount(totalConferenceJoinCount.get())
                 .top3StudyGroups(top3StudyGroups)
                 .totalGroupJoinCount(totalGroupJoinCount)
                 .totalGroupTags(studyGroupTags)
