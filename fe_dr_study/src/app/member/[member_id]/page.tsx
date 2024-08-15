@@ -55,7 +55,7 @@ const MemberDetailPage = () => {
         try {
             const response = await fetchConferenceList({
                 memberId: parseInt(member_id as string),
-                isClose: true,
+                isClosed: true,
             });
 
             console.log('conferences 조회 성공:', response);
