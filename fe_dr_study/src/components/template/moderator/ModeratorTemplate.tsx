@@ -158,7 +158,7 @@ export const ModeratorDetail = ({
     const S3_URL =
         'https://mz-stop.s3.ap-northeast-2.amazonaws.com/dr-study/moderators/preset';
     const videoSrc = `${S3_URL}/videos/${moderator.modelType}_speak.mp4`;
-    const audioSrc = `/audios/audio_${moderator.voiceType}${moderator.characterType}.mp3`;
+    const audioSrc = `${S3_URL}/audios/${moderator.voiceType}${moderator.characterType}.mp3`;
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
