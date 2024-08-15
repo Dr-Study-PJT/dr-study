@@ -67,7 +67,6 @@ const MemberDetailPage = () => {
     const getStatistics = async () => {
         try {
             console.log('member_id:', member_id);
-            `v1/statistics/members/{memberId}`;
             const response = await GET(`v1/statistics/members/${member_id}`, {
                 params: ``,
                 isAuth: true,
