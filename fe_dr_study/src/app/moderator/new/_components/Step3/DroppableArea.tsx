@@ -28,18 +28,15 @@ const DroppableArea: React.FC<{
             if (!dropRef.current) return;
 
             const boundingRect = dropRef.current.getBoundingClientRect();
-            const scrollOffset = 20; // pixels to scroll per frame
-            const scrollAreaHeight = 100; // pixels from the edge where scrolling starts
+            const scrollOffset = 20;
+            const scrollAreaHeight = 100;
 
-            // Scrolling down
             if (event.clientY > boundingRect.bottom - scrollAreaHeight) {
                 dropRef.current.scrollBy({
                     top: scrollOffset,
                     behavior: 'smooth',
                 });
-            }
-            // Scrolling up
-            else if (event.clientY < boundingRect.top + scrollAreaHeight) {
+            } else if (event.clientY < boundingRect.top + scrollAreaHeight) {
                 dropRef.current.scrollBy({
                     top: -scrollOffset,
                     behavior: 'smooth',
