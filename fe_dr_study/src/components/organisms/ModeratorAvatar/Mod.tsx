@@ -108,7 +108,7 @@ const ModeratorAvatar = ({ conferenceInfo }: ModeratorAvatarProps) => {
                 >
                     <div
                         className={`absolute left-[100%] min-h-11 ${
-                            isHovered ? 'max-w-full' : 'max-w-24'
+                            isHovered ? 'max-w-48' : 'max-w-24'
                         } w-max min-w-20 text-dr-body-4 text-dr-white bg-dr-black bg-opacity-70 text-left p-4 rounded-xl z-20 
                     before:absolute before:bg-opacity-70 before:-bottom-[10px] before:left-4 before:border-[8px] before:border-transparent 
                     before:border-t-dr-black before:border-l-dr-black before:transform before:-translate-x-1/3 before:translate-y-1 before:opacity-70 animate-popIn transition-all duration-300`}
