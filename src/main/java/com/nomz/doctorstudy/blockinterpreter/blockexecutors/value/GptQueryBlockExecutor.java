@@ -35,7 +35,7 @@ public class GptQueryBlockExecutor extends BlockExecutor {
         너는 진행자 역할을 맡았으며 대답할 때 <My New Query>의 내용에 대한 답변을 해야해.
         그 외의 내용은 모두 대답을 하기 위한 참고사항일 뿐이야.
         또한 참여자들은 너가 나에게 쿼리를 받아서 그것에 대해 답변한다는 느낌을 받아서는 안돼.
-        너의 응답은 그대로 참여자들에게 전달될테니 그들이 몰입할 수 있도록 진행자로서의 역할을 수행해.
+        너의 응답은 그대로 참여자들에게 전달될테니 그들이 몰입할 수 있도록 한 명의 사람인 것 처럼 역할을 수행해.
         """;
         String suffix = "";
         String prePrompt = processContext.getConferenceContext().getPrePrompt();
@@ -45,7 +45,7 @@ public class GptQueryBlockExecutor extends BlockExecutor {
         CharacterType characterType = processContext.getConferenceContext().getCharacterType();
 
         StringBuilder contextBuilder = new StringBuilder();
-        contextBuilder.append(String.format("\t<이번 스터디 내 총 참여자 수=%d/>\n", numOfParticipant));
+        contextBuilder.append(String.format("\t<이번 총 참여자 수=%d/>\n", numOfParticipant));
         for (int i=1; i<=numOfParticipant; i++) {
             String participantName = processContext.getParticipantName(i);
             contextBuilder.append(String.format("\t<%d번 참여자의 이름=%s/>\n", i, participantName));
@@ -55,12 +55,12 @@ public class GptQueryBlockExecutor extends BlockExecutor {
 
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(prefix).append('\n');
-        queryBuilder.append("----- 이 정보들은 이번 스터디의 사회를 진행하기 위해 너가 사전에 숙지해야 할 정보들이야. -----\n");
+        queryBuilder.append("----- 이 정보들은 너가 사전에 숙지해야 할 정보들이야. -----\n");
         queryBuilder.append(String.format("<My Query & Gpt Answer History>\n%s\n<My Query & Gpt Answer History/>\n\n", gptHistory));
         queryBuilder.append(String.format("<말투>\n%s\n<말투/>\n\n", characterType.getDescription()));
-        queryBuilder.append(String.format("<PrePrompt>\n%s\n<PrePrompt/>\n\n", prePrompt));
+        queryBuilder.append(String.format("<System>\n%s\n<System/>\n\n", prePrompt));
         queryBuilder.append(String.format("<Context>\n%s\n<Context/>\n\n", contextBuilder));
-        queryBuilder.append("----- 지금까지가 이번 스터디의 사회를 진행하기 위해 숙지해야 하는 정보들이야. -----\n\n\n");
+        queryBuilder.append("----- 지금까지가 너가 사전에 숙지해야 하는 정보들이야. -----\n\n\n");
         queryBuilder.append(String.format("<My New Query>\n%s\n<My New Query/>\n\n", query));
         queryBuilder.append(suffix).append('\n');
 
