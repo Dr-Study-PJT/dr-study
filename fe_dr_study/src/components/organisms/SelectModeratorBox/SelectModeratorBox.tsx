@@ -36,7 +36,7 @@ const SelectModeratorBox = ({
             </div>
             <div className="flex flex-col w-[100%]">
                 <ModeratorList
-                    moderators={moderatorSearchResult}
+                    moderators={moderatorSearchResult.slice(0, 4)}
                     setSelectedModerator={setSelectedModerator}
                     isDisableCreateNewModerator
                 />

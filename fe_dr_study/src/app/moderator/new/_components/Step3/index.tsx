@@ -15,6 +15,7 @@ import Tutorial from './Tutorial';
 const Step3: React.FC<StepProps & { initialBlocks?: Block[] }> = ({
     onNext,
     onBack,
+    onSubmit,
     data,
     setData,
     initialBlocks = [],
@@ -456,8 +457,11 @@ const Step3: React.FC<StepProps & { initialBlocks?: Block[] }> = ({
                             <Button size="md" onClick={onBack} color="dark">
                                 이전으로
                             </Button>
-                            <Button size="md" onClick={onNext}>
-                                다음으로
+                            <Button
+                                size="md"
+                                onClick={(e) => onSubmit(e, data)}
+                            >
+                                제출하기
                             </Button>
                         </div>
                     </div>

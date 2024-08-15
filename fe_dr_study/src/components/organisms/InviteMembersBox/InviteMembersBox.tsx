@@ -2,6 +2,7 @@ import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { GET, POST } from '@/app/api/routeModule';
 import { Button } from '@/components/atoms';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
+import { getBackgroundColorRandomPastel } from '@/utils/colors';
 import { showToast } from '@/utils/toastUtil';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -111,10 +112,10 @@ const InviteMembersBox = ({
 
     return (
         <div className="rounded-md">
-            <p className="text-dr-header-2">컨퍼런스 멤버 초대하기</p>
+            <p className="text-dr-header-1 font-bold">컨퍼런스 멤버 초대하기</p>
             {isMemberInvited ? null : (
                 <div>
-                    <p className="py-[0.5rem] text-dr-body-3 text-dr-gray-100">
+                    <p className="py-[0.5rem] text-dr-body-4 text-dr-gray-100">
                         스터디 그룹 멤버 목록
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -143,10 +144,10 @@ const InviteMembersBox = ({
                                             src={member?.memberInfo?.imageUrl}
                                             alt="profile-image"
                                             fill
-                                            className="rounded-md"
+                                            className={`rounded-md object-cover ${getBackgroundColorRandomPastel()}`}
                                         />
                                     </div>
-                                    <p className="w-full text-center text-dr-body-4 overflow-hidden text-ellipsis whitespace-nowrap">
+                                    <p className="w-full text-center text-dr-body-4 font-semibold mt-1 text-slate-300 overflow-hidden text-ellipsis whitespace-nowrap">
                                         {member.memberInfo?.nickname}
                                     </p>
                                 </div>
@@ -156,7 +157,7 @@ const InviteMembersBox = ({
             )}
 
             <div>
-                <p className="py-[0.5rem] text-dr-body-3 text-dr-gray-100">
+                <p className="py-[0.5rem] text-dr-body-3 font-semibold text-dr-gray-100">
                     {isMemberInvited
                         ? '초대된 멤버 목록'
                         : `컨퍼런스에 초대할 멤버 ( ${selectedMembers.length} /
@@ -183,10 +184,10 @@ const InviteMembersBox = ({
                                         src={member.memberInfo?.imageUrl}
                                         alt="profile-image"
                                         fill
-                                        className="rounded-md"
+                                        className="rounded-md object-cover"
                                     />
                                 </div>
-                                <p className="w-full text-center text-dr-body-4 overflow-hidden text-ellipsis whitespace-nowrap">
+                                <p className="w-full text-center text-dr-body-4 font-semibold mt-1 text-slate-300  overflow-hidden text-ellipsis whitespace-nowrap">
                                     {member.memberInfo?.nickname}
                                 </p>
                             </div>
@@ -195,8 +196,8 @@ const InviteMembersBox = ({
             </div>
             <div>
                 {isMemberSelected && (
-                    <p className="text-dr-body-1 text-dr-coral-500">
-                        * 초대할 멤버를 선택해주세요. *
+                    <p className="text-dr-body-3 text-dr-gray-300">
+                        초대할 멤버를 선택해주세요.
                     </p>
                 )}
                 <div className="py-3">
@@ -204,7 +205,7 @@ const InviteMembersBox = ({
                         <Button
                             onClick={handleInviteConferenceMember}
                             color="gray"
-                            size="lg"
+                            size="md"
                             disabled
                         >
                             멤버 초대 완료
@@ -213,7 +214,7 @@ const InviteMembersBox = ({
                         <Button
                             onClick={handleInviteConferenceMember}
                             color="coral"
-                            size="lg"
+                            size="md"
                         >
                             선택된 멤버 초대하기
                         </Button>

@@ -54,15 +54,13 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({
     }
 
     return (
-        <>
-            <ConferenceInfoTemplate
-                memberData={memberData}
-                conferenceId={conferenceId}
-                conferenceData={conferenceData}
-                studyMembers={studyMembers}
-                handleOpenConference={handleOpenConference}
-            />
-        </>
+        <ConferenceInfoTemplate
+            memberData={memberData}
+            conferenceId={conferenceId}
+            conferenceData={conferenceData}
+            studyMembers={studyMembers}
+            handleOpenConference={handleOpenConference}
+        />
     );
 };
 
