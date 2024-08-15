@@ -86,6 +86,12 @@ public class RoomService {
 
         log.info("========== STARTING WITH NORMAL MODE ==========");
         blockInterpreter.init(roomId, script, Map.of(), conferenceContext);
+
+        CompletableFuture<Void> completableFuture = processThreadMap.get(roomId);
+        if (completableFuture != null && !completableFuture.isDone() && !completableFuture.isCancelled()) {
+            completableFuture.cancel(true);
+        }
+
         processThreadMap.put(roomId, CompletableFuture.runAsync(() -> {
             blockInterpreter.interpret(roomId);
         }).thenRun(() -> {
@@ -99,12 +105,9 @@ public class RoomService {
 
         CompletableFuture<Void> completableFuture = processThreadMap.get(roomId);
         if (completableFuture != null) {
-            if (completableFuture.isDone()) {
+            if (!completableFuture.isDone()) {
                 log.warn("Room:{}의 Process가 아직 진행중입니다.", roomId);
                 completableFuture.cancel(true);
-            }
-            if (!completableFuture.isDone() && !completableFuture.isCancelled()) {
-                throw new BusinessException(RoomErrorCode.EXISTING_PROCESS_RUNNING);
             }
         }
 

@@ -47,8 +47,8 @@ public class ConferenceQueryRepository {
             return JPAExpressions
                     .selectOne()
                     .from(conferenceMemberInvite)
-                    .where(conferenceMemberInvite.member.id.eq(memberId)
-                            .and(conferenceMemberInvite.conference.id.eq(conference.id))
+                    .where(conferenceMemberInvite.conference.id.eq(conference.id)
+                            .and(conferenceMemberInvite.member.id.eq(memberId).or(conferenceMemberInvite.conference.host.id.eq(memberId)))
                     )
                     .exists();
         }
