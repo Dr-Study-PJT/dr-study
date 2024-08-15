@@ -1,5 +1,7 @@
 package com.nomz.doctorstudy.conference.service;
 
+import com.nomz.doctorstudy.image.entity.Image;
+import com.nomz.doctorstudy.image.repository.ImageRepository;
 import com.nomz.doctorstudy.moderator.AvatarTypeResolver;
 import com.nomz.doctorstudy.blockinterpreter.ConferenceContext;
 import com.nomz.doctorstudy.common.exception.BusinessException;
@@ -63,6 +65,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final NotificationService notificationService;
 
     private final TransactionTemplate transactionTemplate;
+    private final ImageRepository imageRepository;
 
     @PostConstruct
     public void setQuitCallback() {
@@ -80,9 +83,13 @@ public class ConferenceServiceImpl implements ConferenceService {
         Moderator moderator = moderatorRepository.findById(request.getModeratorId())
                 .orElseThrow(() -> new BusinessException(ModeratorErrorCode.MODERATOR_NOT_FOUND));
 
+        Image image = imageRepository.findById(request.getImageId())
+                .orElseThrow(() -> new BusinessException(CommonErrorCode.RESOURCE_NOT_FOUND));
+
         Conference conference = Conference.builder()
                 .moderator(moderator)
                 .host(requester)
+                .image(image)
                 .studyGroup(studyGroup)
                 .title(request.getTitle())
                 .subject(request.getSubject())
