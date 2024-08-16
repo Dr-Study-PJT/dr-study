@@ -17,6 +17,15 @@ import { Stomp } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';
 import TotalSummary from '@/components/organisms/ModeratorAvatar/TotalSummary';
 import { ConferenceData } from '@/interfaces/conference';
+import { useDispatch } from 'react-redux';
+import { setIsAvatarSpeaking } from '@/store/slices/isAvatarSpeakingSlice';
+import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSlice';
+import { setIsMutedBySystem } from '@/store/slices/isMutedBySystemSlice';
+import { setGptSummaryBySystem } from '@/store/slices/gptSummaryBySystemSlice';
+import { initSummaryMessages } from '@/store/slices/summaryMessagesSlice';
+import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
+import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
+import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
 
 interface ConferenceTemplateProps {
     conferenceInfo: ConferenceData | null;
@@ -94,9 +103,24 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         onClickJoin();
     }, []);
 
+    const dispatch = useDispatch();
+
+    const initConference = () => {
+        console.log('initConference');
+        dispatch(setIsAvatarSpeaking(false));
+        dispatch(setTimeForAvatarSpeaking(0));
+        dispatch(setIsMutedBySystem(false));
+        dispatch(setGptSummaryBySystem(''));
+        dispatch(initSummaryMessages());
+        dispatch(setAvatarDialogue(''));
+        dispatch(setTimeForAudioRecord(0));
+        dispatch(setFocusingId(''));
+    };
+
     // 1. new Peer 내 피어 생성
     const onClickJoin = () => {
         setIsFlag(1);
+        initConference();
 
         myPeer.current = new Peer();
 

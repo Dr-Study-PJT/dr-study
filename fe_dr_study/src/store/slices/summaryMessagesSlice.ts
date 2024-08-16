@@ -17,8 +17,12 @@ const summaryMessagesSlice = createSlice({
         pushSummaryMessages: (state, actions) => {
             state.summaryMessages.push(actions.payload);
         },
+        initSummaryMessages: (state) => {
+            state.summaryMessages = [];
+        },
     },
 });
 
-export const { pushSummaryMessages } = summaryMessagesSlice.actions;
+export const { pushSummaryMessages, initSummaryMessages } =
+    summaryMessagesSlice.actions;
 export default summaryMessagesSlice.reducer;
