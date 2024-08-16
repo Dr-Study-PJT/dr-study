@@ -17,13 +17,17 @@ import { setIsAvatarSpeaking } from '@/store/slices/isAvatarSpeakingSlice';
 import { setTimeForAvatarSpeaking } from '@/store/slices/timeForAvatarSpeakingSlice';
 import { setIsMutedBySystem } from '@/store/slices/isMutedBySystemSlice';
 import { setGptSummaryBySystem } from '@/store/slices/gptSummaryBySystemSlice';
-import { pushSummaryMessages } from '@/store/slices/summaryMessagesSlice';
+import {
+    initSummaryMessages,
+    pushSummaryMessages,
+} from '@/store/slices/summaryMessagesSlice';
 import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
 import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
 import ConferenceStartAndCloseButtons from '../ConferenceStartAndCloseButtons/ConferenceStartAndCloseButtons';
 import FinishMyTurnButton from './FinishMyTurnButton';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
 import { useRouter } from 'next/navigation';
+import { init } from 'next/dist/compiled/webpack/webpack';
 
 export interface JoiningMember {
     id: number;
@@ -176,8 +180,6 @@ const Signal = ({
     const handleParticipantSpeakSignal = (newSignal: SignalInterface) => {
         // newSignal.id 라는 멤버 아이디를 가진 사람의 피어 아이디를 focusingPeerId
         console.log('newSignal.time => ', newSignal.time, 'ms');
-        console.log(client.memberId.toString());
-        console.log(newSignal.id?.toString());
         if (client.memberId.toString() === newSignal.id?.toString()) {
             dispatch(setTimeForAudioRecord(newSignal.time as number));
             dispatch(setFocusingId(newSignal.peerId as string));
@@ -339,7 +341,7 @@ const Signal = ({
                 </Button>
             </form>
 
-            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-slate-300 rounded-xl bg-dr-black bg-opacity-40 hidden">
+            <div className="fixed left-[3rem] bottom-[5rem] p-3 text-slate-300 rounded-xl bg-dr-black bg-opacity-40">
                 <Recorder
                     conferenceId={conferenceId}
                     memberId={memberData?.id}
