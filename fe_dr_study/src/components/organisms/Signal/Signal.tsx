@@ -84,7 +84,7 @@ const Signal = ({
     const [message, setMessage] = useState<string>(''); // 사용자가 입력한 메시지를 저장하는 상태
     const [messages, setMessages] = useState<Message[]>([]); // 수신된 메시지 목록을 저장하는 상태
     const [isStartRecordingAudio, setIsStartRecordingAudio] =
-        useState<boolean>(false); // 오디오 스트림 시작 신호
+        useState<number>(0); // 오디오 스트림 시작 신호
     const messagesEndRef = useRef<HTMLDivElement>(null); // 메시지 목록 끝에 대한 참조
     const [isFinishMyTurn, setIsFinishMyTurn] = useState<boolean>(false); // 내 발화 차례 종료 신호
 
@@ -176,10 +176,12 @@ const Signal = ({
     const handleParticipantSpeakSignal = (newSignal: SignalInterface) => {
         // newSignal.id 라는 멤버 아이디를 가진 사람의 피어 아이디를 focusingPeerId
         console.log('newSignal.time => ', newSignal.time, 'ms');
+        console.log(client.memberId.toString());
+        console.log(newSignal.id?.toString());
         if (client.memberId.toString() === newSignal.id?.toString()) {
             dispatch(setTimeForAudioRecord(newSignal.time as number));
             dispatch(setFocusingId(newSignal.peerId as string));
-            setIsStartRecordingAudio(true); // 오디오 녹음 시작
+            setIsStartRecordingAudio((prev) => prev + 1); // 오디오 녹음 시작
         }
     };
 
@@ -344,7 +346,8 @@ const Signal = ({
                     stompClient={stompClient}
                     isStartRecordingAudio={isStartRecordingAudio}
                     isFinishMyTurn={isFinishMyTurn}
-                    setIsFinishMyTurn={setIsFinishMyTurn}
+                    // setIsFinishMyTurn={setIsFinishMyTurn}
+                    setIsStartRecordingAudio={setIsStartRecordingAudio}
                 />
             </div>
 

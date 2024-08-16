@@ -8,8 +8,9 @@ interface RecorderProps {
     memberId: number;
     stompClient: any;
     isFinishMyTurn: boolean;
-    isStartRecordingAudio: boolean;
-    setIsFinishMyTurn: Dispatch<SetStateAction<boolean>>;
+    isStartRecordingAudio: number;
+    // setIsFinishMyTurn: Dispatch<SetStateAction<boolean>>;
+    setIsStartRecordingAudio: Dispatch<SetStateAction<number>>;
 }
 
 function Recorder({
@@ -18,7 +19,8 @@ function Recorder({
     stompClient,
     isFinishMyTurn,
     isStartRecordingAudio,
-    setIsFinishMyTurn,
+    // setIsFinishMyTurn,
+    setIsStartRecordingAudio,
 }: RecorderProps) {
     const dispatch = useDispatch();
 
@@ -37,6 +39,7 @@ function Recorder({
 
     useEffect(() => {
         console.log('timeForAudioRecord:', timeForAudioRecord, 'ms');
+        console.log('isStartRecordingAudio:', isStartRecordingAudio);
         if (timeForAudioRecord) {
             startAudioStream();
             // setIsShowTextAudioMessageBox(true);
@@ -54,17 +57,18 @@ function Recorder({
                 clearTimeout(timeout);
                 stopAudioStream();
                 dispatch(setTimeForAudioRecord(0));
+                // setIsStartRecordingAudio((prev) => prev + 1);
             };
         }
     }, [isStartRecordingAudio]);
 
-    useEffect(() => {
-        // 내 턴이 끝나면 곧바로 녹음 중지
-        if (isFinishMyTurn) {
-            stopAudioStream();
-            setIsFinishMyTurn(false);
-        }
-    }, [isFinishMyTurn]);
+    // useEffect(() => {
+    //     // 내 턴이 끝나면 곧바로 녹음 중지
+    //     if (isFinishMyTurn) {
+    //         stopAudioStream();
+    //         setIsFinishMyTurn(false);
+    //     }
+    // }, [isFinishMyTurn]);
 
     // 오디오 스트림 시작
     const startAudioStream = async () => {
