@@ -120,7 +120,7 @@ const ConferenceControlBar = ({
     return (
         <div className="relative z-50 flex justify-center bg-[#191B28]  gap-dr-10 h-full border-t-[1px] border-dr-indigo-0">
             {isVisibleMediaSetting && (
-                <div className="absolute top-[-500%] left-[50%] w-[70%]  bg-[#191B28] z-[500] text-dr-white transform translate-x-[-50%] translate-y-[-50%]">
+                <div className="absolute top-[-500%] left-[50%] w-[70%] h-[600%] bg-[#191B28] z-[500] text-dr-white transform translate-x-[-50%] translate-y-[-50%]">
                     <ConferenceMediaSetting
                         audioInputs={audioInputs}
                         videoInputs={videoInputs}
