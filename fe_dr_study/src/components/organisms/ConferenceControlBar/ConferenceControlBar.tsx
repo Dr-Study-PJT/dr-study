@@ -14,8 +14,12 @@ import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Timer } from '../ConferenceProgress/ConferenceProgress';
+import ConferenceMediaSetting from '../ConferenceMediaSetting/ConferenceMediaSetting';
 
 interface ConferenceControlBarProps {
+    audioInputs: MediaDeviceInfo[];
+    audioOutputs: MediaDeviceInfo[];
+    videoInputs: MediaDeviceInfo[];
     subscriptionList: string[];
     client: ClientInterface;
     stompClient: any;
@@ -26,6 +30,9 @@ interface ConferenceControlBarProps {
 }
 
 const ConferenceControlBar = ({
+    audioInputs,
+    audioOutputs,
+    videoInputs,
     subscriptionList,
     client,
     stompClient,
@@ -103,8 +110,30 @@ const ConferenceControlBar = ({
     // const handleClickAddSummary = (message: {}) =>
     //     dispatch(pushSummaryMessages(message));
 
+    const handleClickToggleMediaSetting = () => {
+        setIsVisibleMediaSetting((prev) => !prev);
+    };
+
+    const [isVisibleMediaSetting, setIsVisibleMediaSetting] =
+        useState<boolean>(false);
+
     return (
         <div className="relative z-50 flex justify-center bg-[#191B28]  gap-dr-10 h-full border-t-[1px] border-dr-indigo-0">
+            {isVisibleMediaSetting && (
+                <div className="absolute top-[-500%] left-[50%] w-[70%]  bg-[#191B28] z-[500] text-dr-white transform translate-x-[-50%] translate-y-[-50%]">
+                    <ConferenceMediaSetting
+                        audioInputs={audioInputs}
+                        videoInputs={videoInputs}
+                        audioOutputs={audioOutputs}
+                        localStream={localStream}
+                        existingPeers={existingPeers}
+                        client={client}
+                        handleClickToggleMediaSetting={
+                            handleClickToggleMediaSetting
+                        }
+                    />
+                </div>
+            )}
             <Timer />
             {/* <Button onClick={() => handleClickStartSpeaking(true)}>
                 isAvatarSpeaking True
@@ -129,6 +158,7 @@ const ConferenceControlBar = ({
             >
                 handleClickAddSummary
             </Button> */}
+
             <button className="cursor-auto" onClick={toggleVideo}>
                 {videoEnabled ? (
                     <Icon
@@ -188,6 +218,21 @@ const ConferenceControlBar = ({
                     bg="red"
                     size="md"
                 />
+            </button>
+            <button
+                className="cursor-auto"
+                onClick={handleClickToggleMediaSetting}
+            >
+                {
+                    <Icon
+                        cursor="pointer"
+                        size="md"
+                        hover="blue"
+                        bg="gray"
+                        text="white"
+                        icon="gear"
+                    />
+                }
             </button>
         </div>
     );
