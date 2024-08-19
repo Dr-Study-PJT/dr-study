@@ -79,9 +79,8 @@ const ConferenceMediaSetting = ({
             >
                 <Icon icon="xMark" size="md" cursor="pointer" />
             </button>
-
             <div className="w-3/5">
-                {[Object.keys(existingPeers)[0]].map((peerId) => {
+                {[Object.keys(existingPeers)?.[0]].map((peerId) => {
                     console.log(existingPeers);
                     return (
                         <React.Fragment key={peerId}>
@@ -96,7 +95,6 @@ const ConferenceMediaSetting = ({
                     );
                 })}
             </div>
-
             <div className="flex flex-col justify-center p-5 w-2/5 h-full">
                 <div className="p-3">
                     <label htmlFor="audio-inputs">오디오 입력</label>
