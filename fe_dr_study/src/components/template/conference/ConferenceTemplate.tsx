@@ -26,6 +26,8 @@ import { initSummaryMessages } from '@/store/slices/summaryMessagesSlice';
 import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
 import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
+import { d } from '@tanstack/react-query-devtools/build/legacy/devtools-PtxSnd7z';
+import ConferenceMediaSetting from '@/components/organisms/ConferenceMediaSetting/ConferenceMediaSetting';
 
 interface ConferenceTemplateProps {
     conferenceInfo: ConferenceData | null;
@@ -79,6 +81,11 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             imageUrl: memberData?.imageUrl,
         },
     ]);
+
+    // device 상태
+    const [audioInputs, setAudioInputs] = useState<MediaDeviceInfo[]>([]); // 디바이스 목록
+    const [audioOutputs, setAudioOutputs] = useState<MediaDeviceInfo[]>([]); // 디바이스 목록
+    const [videoInputs, setVideoInputs] = useState<MediaDeviceInfo[]>([]); // 디바이스 목록
 
     // 클라이언트 정보 참조
     const client = useRef<ClientInterface>({
@@ -145,13 +152,39 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         });
     };
 
+    const setDevices = (devices: MediaDeviceInfo[]) => {
+        devices.forEach((device) => {
+            switch (device.kind) {
+                case 'audioinput':
+                    setAudioInputs((prev) => [...prev, device]);
+                    break;
+                case 'audiooutput':
+                    setAudioOutputs((prev) => [...prev, device]);
+                    break;
+                case 'videoinput':
+                    setVideoInputs((prev) => [...prev, device]);
+                    break;
+
+                default:
+                    break;
+            }
+        });
+    };
+
     // 2. 스트림 생성 및 설정
     useEffect(() => {
         if (!isFlag) return;
 
-        const devices = navigator.mediaDevices.enumerateDevices();
+        if (!navigator.mediaDevices) {
+            return;
+        }
+        const devices = navigator.mediaDevices?.enumerateDevices();
         const defaultDevice = devices.then((devices) =>
             devices.find((device) => device.deviceId === 'default'),
+        );
+        console.log(
+            'devices=>',
+            devices.then((devices) => setDevices(devices)),
         );
 
         navigator.mediaDevices
@@ -219,23 +252,23 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         };
 
         try {
-            const response = await POST({
-                API: API,
-                endPoint: `${conferenceInfo?.id}/join`,
-                body: { peerId },
-                isAuth: true,
-            });
+            // const response = await POST({
+            //     API: API,
+            //     endPoint: `${conferenceInfo?.id}/join`,
+            //     body: { peerId },
+            //     isAuth: true,
+            // });
 
-            const { data } = response.data;
+            // const { data } = response.data;
 
-            setCurrentMembers((prevMembers) => [
-                ...prevMembers,
-                ...data.existingMembers,
-            ]);
+            // setCurrentMembers((prevMembers) => [
+            //     ...prevMembers,
+            //     ...data.existingMembers,
+            // ]);
 
-            data.existingPeerIds.forEach((remotePeerId: string) =>
-                makeCall(remotePeerId),
-            );
+            // data.existingPeerIds.forEach((remotePeerId: string) =>
+            //     makeCall(remotePeerId),
+            // );
 
             const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
             const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
@@ -243,7 +276,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
 
             setIsJoined(true);
-            setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
+            // setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
         } catch (error) {
             console.error('Error joining conference:', error);
             if (!conferenceInfo?.openTime) {
@@ -299,6 +332,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
 
                 <div className="fixed left-0 bottom-0 w-4/5 h-[9%] z-30 bg-[#191B28] border-t-[1px] border-dr-indigo-0">
                     <ConferenceControlBar
+                        audioInputs={audioInputs}
+                        audioOutputs={audioOutputs}
+                        videoInputs={videoInputs}
                         subscriptionList={subscriptionList.current}
                         client={client.current}
                         stompClient={stompClient}

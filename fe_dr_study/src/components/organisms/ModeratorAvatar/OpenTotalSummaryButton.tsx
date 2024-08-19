@@ -8,7 +8,6 @@ interface OpenTotalSummaryButtonProps {
 const OpenTotalSummaryButton = ({
     prevSummary,
 }: OpenTotalSummaryButtonProps) => {
-    console.log('prevSummary:', prevSummary);
     return (
         <div className="cursor-pointer overflow-hidden rounded-lg ">
             {prevSummary && prevSummary !== 'undefined' && (
