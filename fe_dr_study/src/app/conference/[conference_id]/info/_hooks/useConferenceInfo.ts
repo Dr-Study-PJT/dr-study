@@ -1,14 +1,11 @@
-'use client';
+// hooks/useConferenceInfo.ts
 import { useEffect, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { GET, POST } from '@/app/api/routeModule';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
-import { useRouter } from 'next/navigation';
 
 const useConferenceInfo = (conferenceId: number) => {
-    const router = useRouter();
-
     const memberData = getSessionStorageItem('memberData');
 
     const [conferenceInfo, setConferenceInfo] = useState<ConferenceData | null>(
@@ -16,15 +13,10 @@ const useConferenceInfo = (conferenceId: number) => {
     );
     const [studyMembers, setStudyMembers] = useState<ConferenceMember[]>([]);
     const [isFetchFailed, setIsFetchFailed] = useState<boolean>(false);
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await handleGetConferenceInfo();
-        };
-        fetchData();
-    }, [conferenceId]);
-
-    const handleGetConferenceInfo = async () => {
+    const getConferenceInfo = async () => {
         try {
             const response = await GET(`v1/conferences`, {
                 params: `${conferenceId}`,
@@ -35,28 +27,24 @@ const useConferenceInfo = (conferenceId: number) => {
             if (Object.keys(response).includes('errors')) {
                 console.error('컨퍼런스 조회 실패');
                 setIsFetchFailed(true);
+                setErrorMessage('컨퍼런스 조회 중 오류가 발생했습니다.');
                 return;
             }
+
             const { data } = response;
-
-            // 호스트가 아닌 경우 대기실로 이동
-            if (data?.hostId !== memberData.id) {
-                router.push(`/conference/${conferenceId}/waiting-room`);
-            }
-
-            // 컨퍼런스 데이터 설정
             setConferenceInfo(data);
-
-            // 스터디 멤버 조회
-            await handleGetStudyMembers(data.studyGroupId);
+            await getStudyMembers(data.studyGroupId);
             console.log('컨퍼런스 조회 성공:', response);
         } catch (error) {
             console.error('컨퍼런스 조회 실패:', error);
             setIsFetchFailed(true);
+            setErrorMessage(
+                '컨퍼런스 조회 중 예기치 않은 오류가 발생했습니다.',
+            );
         }
     };
 
-    const handleGetStudyMembers = async (studyGroupId: number) => {
+    const getStudyMembers = async (studyGroupId: number) => {
         try {
             const response = await GET(`v1/groups`, {
                 params: `${studyGroupId}/members`,
@@ -68,10 +56,11 @@ const useConferenceInfo = (conferenceId: number) => {
             setStudyMembers(response.data);
         } catch (error) {
             console.error('스터디 멤버 리스트 조회 실패:', error);
+            setErrorMessage('스터디 멤버 조회 중 오류가 발생했습니다.');
         }
     };
 
-    const handleOpenConference = async () => {
+    const openConference = async () => {
         console.log(
             '컨퍼런스 개최 요청 시작. conferenceInfo =>',
             conferenceInfo,
@@ -84,21 +73,31 @@ const useConferenceInfo = (conferenceId: number) => {
                 isAuth: true,
             });
 
-            console.log('컨퍼런스 개최 성공(handleOpenConference):', response);
-            router.push(`/conference/${conferenceId}`);
-
             return response; // 필요한 경우 응답 반환
         } catch (error) {
-            console.error('컨퍼런스 개최 실패(handleOpenConference):', error);
+            console.error('컨퍼런스 개최 실패(openConference):', error);
+            setErrorMessage('컨퍼런스 개최 중 오류가 발생했습니다.');
         }
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            await getConferenceInfo();
+            setLoading(false);
+        };
+
+        fetchData();
+    }, [conferenceId]);
 
     return {
         memberData,
         conferenceInfo,
         studyMembers,
         isFetchFailed,
-        handleOpenConference,
+        loading,
+        openConference,
+        errorMessage, // 에러 메시지 반환
     };
 };
 

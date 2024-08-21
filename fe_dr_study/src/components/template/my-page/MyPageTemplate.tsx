@@ -20,8 +20,8 @@ const MyPageTemplate = ({
     myGroups,
 }: MyPageTemplateProps) => {
     return (
-        <div className="flex flex-col p-[4rem] justify-center items-center gap-dr-30 bg-dr-indigo-400 ">
-            <div className="flex flex-col p-[2rem] w-full bg-dr-indigo-300 rounded-lg ">
+        <div className="flex flex-col p-[4rem] justify-center items-center gap-dr-30 bg-dr-indigo-400">
+            <div className="flex flex-col p-[2rem] w-full bg-dr-indigo-300 rounded-lg  max-w-[80rem] w-full">
                 <div className="flex items-center justify-center rounded-lg w-full px-[3.5rem] pt-[2rem] bg-dr-indigo-100 border-b-2 border-slate-700 rounded-bl-none rounded-br-none">
                     <ProfileCard member={member} statistics={statistics} />
                 </div>
@@ -30,7 +30,7 @@ const MyPageTemplate = ({
                 </div>
             </div>
 
-            <div className=" flex p-[2rem] bg-dr-indigo-300 rounded-lg gap-dr-30">
+            <div className=" flex p-[2rem] bg-dr-indigo-300 rounded-lg gap-dr-30 max-w-[80rem] w-full">
                 <div className="flex items-start justify-start rounded-lg w-full bg-dr-indigo-200 shadow-dr-rb-2 h-max">
                     <ConferenceList conferences={conferences} />
                 </div>

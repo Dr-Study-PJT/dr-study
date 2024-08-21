@@ -1,13 +1,12 @@
 'use client';
 
-import { LoadingLottie } from '@/app/_components/Lottie/Loading/LoadingLottie';
+import Loading from '@/app/loading';
 import ConferenceTemplate from '@/components/template/conference/ConferenceTemplate';
 import { URLs } from '@/constants/URLs';
 import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
 import useConferenceInvitees from '@/hooks/conference/useConferenceInvitees';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
-import { redirect } from 'next/navigation';
-import { useEffect } from 'react';
+import { redirect, usePathname } from 'next/navigation';
 
 interface ConferencePageProps {
     searchParams?: {
@@ -16,46 +15,64 @@ interface ConferencePageProps {
     };
 }
 
-const ConferencePage: React.FC<ConferencePageProps> = ({ searchParams }) => {
-    const { conferenceInfo, error } = useConferenceInfo();
-    const { conferenceInvitees: invitees, error: inviteesError } =
-        useConferenceInvitees();
+const ConferencePage: React.FC<ConferencePageProps> = () => {
+    const currentUrl = usePathname();
+
+    const {
+        conferenceInfo,
+        loading: conferenceInfoLoading,
+        error: conferenceInfoError,
+    } = useConferenceInfo();
+    const {
+        conferenceInvitees: invitees,
+        loading: inviteesLoading,
+        error: inviteesError,
+    } = useConferenceInvitees();
     const memberData = getSessionStorageItem('memberData');
 
-    useEffect(() => {
-        // 1. 비로그인
-        if (!memberData) {
-            redirect(URLs.LOGIN); // 로그인 페이지로 리다이렉트
-        }
+    // 로딩 중인 경우 로딩 컴포넌트를 렌더링
+    if (conferenceInfoLoading || inviteesLoading) {
+        return <Loading />;
+    }
 
-        if (conferenceInfo) {
-            // 2. 초대여부
-            if (
-                conferenceInfo?.hostId !== memberData.id &&
-                !invitees.map((invitee) => invitee.id).includes(memberData.id)
-            ) {
-                redirect(
-                    URLs.GROUP(conferenceInfo.studyGroupId.toString() || ''),
-                ); // 그룹 페이지로 리다이렉트
-            }
-            // 3. 개방여부
-            if (!conferenceInfo?.openTime) {
-                redirect(
-                    URLs.CONFERENCE_WAITING_ROOM(
-                        conferenceInfo.id.toString() || '',
-                    ),
-                );
-            }
-        }
-    }, [conferenceInfo, invitees, memberData]);
+    // 에러가 발생한 경우 404 페이지로 리다이렉트
+    if (conferenceInfoError || inviteesError) {
+        return redirect(URLs.NOT_FOUND(currentUrl));
+    }
 
-    return conferenceInfo ? (
+    // 1. 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+    if (!memberData) {
+        redirect(URLs.LOGIN());
+    }
+
+    if (conferenceInfo) {
+        // 2. 스터디 그룹에 초대되지 않은 경우 그룹 페이지로 리다이렉트
+        if (
+            conferenceInfo?.hostId !== memberData.id &&
+            !invitees.map((invitee) => invitee.id).includes(memberData.id)
+        ) {
+            redirect(
+                URLs.GROUP(
+                    conferenceInfo.studyGroupId.toString() || '',
+                    'not_invited',
+                ),
+            );
+        }
+        // 3. 컨퍼런스가 개회되지 않은 경우 대기실 페이지로 리다이렉트
+        if (!conferenceInfo?.openTime) {
+            redirect(
+                URLs.CONFERENCE_WAITING_ROOM(
+                    conferenceInfo.id.toString() || '',
+                ),
+            );
+        }
+    }
+
+    return (
         <ConferenceTemplate
             conferenceInfo={conferenceInfo}
             memberData={memberData}
         />
-    ) : (
-        <LoadingLottie />
     );
 };
 
