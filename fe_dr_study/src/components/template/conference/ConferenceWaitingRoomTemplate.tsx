@@ -5,25 +5,19 @@ import { ConferenceData, Participant } from '@/interfaces/conference';
 import { IMemberData } from '@/interfaces/members';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import MemberAvatar from '@/components/molecules/MemberAvatar';
 import { FaCrown } from 'react-icons/fa';
-import { LoadingLottie } from '@/app/_components/Lottie/Loading/LoadingLottie';
 import { getBackgroundColorRandomPastel } from '@/utils/colors';
 
 interface ConferenceWaitingRoomTemplateProps {
-    memberData: IMemberData | null;
     conferenceInfo: ConferenceData | null;
     conferenceInvitees: Participant[];
 }
 
 const ConferenceWaitingRoomTemplate = ({
-    memberData,
     conferenceInfo,
     conferenceInvitees,
 }: ConferenceWaitingRoomTemplateProps) => {
-    console.log('conferenceInfo =>', conferenceInfo);
     const {
         title,
         subject,
@@ -38,24 +32,6 @@ const ConferenceWaitingRoomTemplate = ({
         participants,
         studyGroupId,
     } = conferenceInfo || {};
-
-    const router = useRouter();
-
-    useEffect(() => {
-        // 스터디 멤버가 아니거나 컨퍼런스 초대자가 아닌 경우 홈으로 이동
-        if (
-            conferenceInfo?.hostId !== memberData?.id &&
-            conferenceInvitees.length &&
-            !conferenceInvitees.some((invitee) => invitee.id === memberData?.id)
-        ) {
-            // 직전 페이지로 이동
-            router.push(`/group/${studyGroupId}?error=not-invited`);
-        }
-    }, [conferenceInvitees, memberData]);
-
-    if (!conferenceInfo) {
-        return <LoadingLottie />;
-    }
 
     return (
         <div className="flex items-center justify-center p-[4rem] bg-dr-indigo-200 text-dr-white">
@@ -104,7 +80,7 @@ const ConferenceWaitingRoomTemplate = ({
                             </p>
                         </div>
 
-                        {conferenceInvitees.map((invitee) => (
+                        {conferenceInvitees?.map((invitee) => (
                             <div
                                 key={invitee.id}
                                 className="flex items-center mt-2 gap-dr-5 relative"

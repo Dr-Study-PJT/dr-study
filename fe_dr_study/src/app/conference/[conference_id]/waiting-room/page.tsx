@@ -1,39 +1,51 @@
 'use client';
 
 import ConferenceWaitingRoomTemplate from '@/components/template/conference/ConferenceWaitingRoomTemplate';
+import { URLs } from '@/constants/URLs';
 import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
 import useConferenceInvitees from '@/hooks/conference/useConferenceInvitees';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
 import { showToast } from '@/utils/toastUtil';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { redirect } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 
 interface ConferenceWaitingRoomPageProps {
     searchParams: { error: string };
 }
 
 const Page = ({ searchParams }: ConferenceWaitingRoomPageProps) => {
-    const router = useRouter();
-    const pathname = usePathname();
-
     const { conferenceInfo, error: conferenceInfoFetchError } =
         useConferenceInfo();
-    const { conferenceInvitees, error: inviteesFetchError } =
+    const { conferenceInvitees: invitees, error: inviteesFetchError } =
         useConferenceInvitees();
-
     const memberData = getSessionStorageItem('memberData');
 
-    useEffect(() => {
-        console.log('conferenceInvitees 26번 라인 =>', conferenceInvitees);
-    }, [conferenceInvitees]);
-
-    if (conferenceInfoFetchError || inviteesFetchError) {
-        router.push(pathname + '/not-found');
-        return null;
-    }
+    const isToastShown = useRef(false);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
+        // 1. 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+        if (!memberData) {
+            redirect(URLs.LOGIN);
+        }
+
+        if (conferenceInfo) {
+            // 2. 초대가 되어있지 않은 경우 그룹 페이지로 리다이렉트
+            if (
+                conferenceInfo?.hostId !== memberData.id &&
+                !invitees.map((invitee) => invitee.id).includes(memberData.id)
+            ) {
+                redirect(
+                    URLs.GROUP(
+                        conferenceInfo.studyGroupId.toString() || '',
+                        'not_invited',
+                    ),
+                );
+            }
+        }
+    }, [conferenceInfo, invitees, memberData]);
+
+    useEffect(() => {
+        if (!isToastShown.current) {
             if (searchParams.error === 'join_failed') {
                 showToast('error', '컨퍼런스 입장에 실패했습니다.');
             } else if (searchParams.error === 'not_open') {
@@ -43,15 +55,14 @@ const Page = ({ searchParams }: ConferenceWaitingRoomPageProps) => {
             } else if (searchParams.error === 'finished_conference') {
                 showToast('success', '컨퍼런스가 종료되었습니다.');
             }
-        }, 1000);
-        return () => clearTimeout(timeout);
-    }, [searchParams]);
+            isToastShown.current = true;
+        }
+    }, []);
 
     return (
         <ConferenceWaitingRoomTemplate
-            memberData={memberData}
             conferenceInfo={conferenceInfo}
-            conferenceInvitees={conferenceInvitees}
+            conferenceInvitees={invitees}
         />
     );
 };

@@ -23,10 +23,6 @@ const useConferenceInvitees = () => {
                 );
 
                 setConferenceInvitees(response.data);
-                console.log(
-                    '컨퍼런스에 초대받은 유저 정보 조회 성공:',
-                    response,
-                );
             } catch (error) {
                 console.error(
                     '컨퍼런스에 초대받은 유저 정보 조회 실패:',

@@ -11,7 +11,7 @@ const useConferenceInfo = (conferenceId: number) => {
 
     const memberData = getSessionStorageItem('memberData');
 
-    const [conferenceData, setConferenceData] = useState<ConferenceData | null>(
+    const [conferenceInfo, setConferenceInfo] = useState<ConferenceData | null>(
         null,
     );
     const [studyMembers, setStudyMembers] = useState<ConferenceMember[]>([]);
@@ -45,7 +45,7 @@ const useConferenceInfo = (conferenceId: number) => {
             }
 
             // 컨퍼런스 데이터 설정
-            setConferenceData(data);
+            setConferenceInfo(data);
 
             // 스터디 멤버 조회
             await handleGetStudyMembers(data.studyGroupId);
@@ -73,8 +73,8 @@ const useConferenceInfo = (conferenceId: number) => {
 
     const handleOpenConference = async () => {
         console.log(
-            '컨퍼런스 개최 요청 시작. conferenceData =>',
-            conferenceData,
+            '컨퍼런스 개최 요청 시작. conferenceInfo =>',
+            conferenceInfo,
         );
         try {
             const response = await POST({
@@ -95,7 +95,7 @@ const useConferenceInfo = (conferenceId: number) => {
 
     return {
         memberData,
-        conferenceData,
+        conferenceInfo,
         studyMembers,
         isFetchFailed,
         handleOpenConference,

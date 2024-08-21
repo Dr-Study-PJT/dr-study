@@ -60,7 +60,6 @@ export const fetchConferenceList = async ({
             isAuth: true,
             revalidateTime: 0,
         });
-        console.log('GET 컨퍼런스 리스트 : ', response.data);
         return await response.data;
     } catch (error) {
         console.error('Error fetching conferences:', error);

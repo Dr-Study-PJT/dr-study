@@ -1,45 +1,62 @@
 'use client';
 
+import { LoadingLottie } from '@/app/_components/Lottie/Loading/LoadingLottie';
 import ConferenceTemplate from '@/components/template/conference/ConferenceTemplate';
+import { URLs } from '@/constants/URLs';
 import useConferenceInfo from '@/hooks/conference/useConferenceInfo';
+import useConferenceInvitees from '@/hooks/conference/useConferenceInvitees';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
 
 interface ConferencePageProps {
-    params: {
-        conference_id: number;
+    searchParams?: {
+        groupId?: string;
+        conferenceId?: string;
     };
 }
 
-const ConferencePage: React.FC<ConferencePageProps> = ({ params }) => {
-    const router = useRouter();
-
+const ConferencePage: React.FC<ConferencePageProps> = ({ searchParams }) => {
     const { conferenceInfo, error } = useConferenceInfo();
+    const { conferenceInvitees: invitees, error: inviteesError } =
+        useConferenceInvitees();
     const memberData = getSessionStorageItem('memberData');
 
     useEffect(() => {
-        // conferenceInfo가 없으면 conferenceInfo를 가져오는 중이거나 에러가 발생한 상태
-        if (conferenceInfo && !conferenceInfo.openTime) {
-            router.push(
-                `/conference/${params.conference_id}/info?error=not_open`,
-            );
-        }
-
-        // memberData가 없으면 로그인 페이지로 이동
+        // 1. 비로그인
         if (!memberData) {
-            router.push('/auth/login');
+            redirect(URLs.LOGIN); // 로그인 페이지로 리다이렉트
         }
 
-        // 에러가 발생하면 conferenceInfo가 없는 상태이므로 conferenceInfo 페이지로 이동
-        if (error) {
-            router.push(`/conference/${params.conference_id}/info`);
+        if (conferenceInfo) {
+            // 2. 초대여부
+            if (
+                conferenceInfo?.hostId !== memberData.id &&
+                !invitees.map((invitee) => invitee.id).includes(memberData.id)
+            ) {
+                redirect(
+                    URLs.GROUP(conferenceInfo.studyGroupId.toString() || ''),
+                ); // 그룹 페이지로 리다이렉트
+            }
+            // 3. 개방여부
+            if (!conferenceInfo?.openTime) {
+                redirect(
+                    URLs.CONFERENCE_WAITING_ROOM(
+                        conferenceInfo.id.toString() || '',
+                    ),
+                );
+            }
         }
-    }, [memberData, conferenceInfo]);
+    }, [conferenceInfo, invitees, memberData]);
 
     return conferenceInfo ? (
-        <ConferenceTemplate conferenceInfo={conferenceInfo} />
-    ) : null;
+        <ConferenceTemplate
+            conferenceInfo={conferenceInfo}
+            memberData={memberData}
+        />
+    ) : (
+        <LoadingLottie />
+    );
 };
 
 export default ConferencePage;

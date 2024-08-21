@@ -1,11 +1,13 @@
 'use client';
 
-import NotExistConference from '@/components/organisms/NotExistConference/NotExistConference';
 import ConferenceInfoTemplate from '@/components/template/conference/ConferenceInfoTemplate';
 import useConferenceInfo from './_hooks/useConferenceInfo';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { showToast } from '@/utils/toastUtil';
+import { getSessionStorageItem } from '@/utils/sessionStorage';
+import { URLs } from '@/constants/URLs';
+import { LoadingLottie } from '@/app/_components/Lottie/Loading/LoadingLottie';
 
 interface ConferenceInfoPageProps {
     params: {
@@ -18,49 +20,59 @@ const ConferenceInfoPage: React.FC<ConferenceInfoPageProps> = ({
     params,
     searchParams,
 }) => {
-    const router = useRouter();
     const conferenceId = params.conference_id;
 
-    const {
-        memberData,
-        conferenceData,
-        studyMembers,
-        isFetchFailed,
-        handleOpenConference,
-    } = useConferenceInfo(conferenceId);
+    const { conferenceInfo, studyMembers, handleOpenConference } =
+        useConferenceInfo(conferenceId);
+
+    // const { conferenceInfo, error } = useConferenceInfo();
+    const memberData = getSessionStorageItem('memberData');
 
     useEffect(() => {
-        const isStartedConference = conferenceData?.openTime;
-        // 컨퍼런스가 시작되었을 경우 대기실로 이동
-        if (isStartedConference) {
-            router.push(
-                `/conference/${conferenceId}/waiting-room?error=already_open`,
-            );
+        // 1. 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+        if (!memberData) {
+            redirect(URLs.LOGIN);
         }
-    }, [conferenceData]);
+
+        if (conferenceInfo) {
+            console.log(conferenceInfo);
+            // 2. 시작 시간이 있으면 대기실로 이동
+            if (conferenceInfo.openTime) {
+                redirect(
+                    URLs.CONFERENCE_WAITING_ROOM(
+                        conferenceInfo.id.toString() || '',
+                        'already_open',
+                    ),
+                );
+            }
+            // 3. 호스트가 아닌 경우 그룹 페이지로 이동
+            if (conferenceInfo?.hostId !== memberData.id) {
+                redirect(
+                    URLs.GROUP(
+                        conferenceInfo.studyGroupId.toString() || '',
+                        'not_host',
+                    ),
+                );
+            }
+        }
+    }, [conferenceInfo]);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (searchParams.error === 'not_open') {
-                showToast('error', '컨퍼런스가 아직 개최되지 않았습니다.');
-            }
-        }, 1000);
-        return () => clearTimeout(timeout);
+        if (searchParams.error === 'not_open') {
+            showToast('error', '컨퍼런스가 아직 개최되지 않았습니다.');
+        }
     }, [searchParams]);
 
-    // 컨퍼런스 정보 조회 실패 시 이용 불가 페이지로 이동
-    if (isFetchFailed) {
-        return <NotExistConference />;
-    }
-
-    return (
+    return conferenceInfo ? (
         <ConferenceInfoTemplate
             memberData={memberData}
             conferenceId={conferenceId}
-            conferenceData={conferenceData}
+            conferenceData={conferenceInfo}
             studyMembers={studyMembers}
             handleOpenConference={handleOpenConference}
         />
+    ) : (
+        <LoadingLottie />
     );
 };
 

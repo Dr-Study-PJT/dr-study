@@ -8,13 +8,11 @@ import ConferenceProgress, {
 import ModeratorAvatar from '@/components/organisms/ModeratorAvatar/Mod';
 import Signal from '@/components/organisms/Signal/Signal';
 import Video from '@/components/organisms/Video/Video';
-import { getSessionStorageItem } from '@/utils/sessionStorage';
 import Peer from 'peerjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
-import { useRouter } from 'next/navigation';
 import TotalSummary from '@/components/organisms/ModeratorAvatar/TotalSummary';
 import { ConferenceData } from '@/interfaces/conference';
 import { useDispatch } from 'react-redux';
@@ -26,15 +24,15 @@ import { initSummaryMessages } from '@/store/slices/summaryMessagesSlice';
 import { setAvatarDialogue } from '@/store/slices/avatarDialogueSlice';
 import { setTimeForAudioRecord } from '@/store/slices/timeForAudioRecord';
 import { setFocusingId } from '@/store/slices/conferenceFocusingPeerIdSlice';
-import { d } from '@tanstack/react-query-devtools/build/legacy/devtools-PtxSnd7z';
-import ConferenceMediaSetting from '@/components/organisms/ConferenceMediaSetting/ConferenceMediaSetting';
+import { IMemberData } from '@/interfaces/members';
 
 interface ConferenceTemplateProps {
     conferenceInfo: ConferenceData | null;
+    memberData: IMemberData;
 }
 
 export interface ClientInterface {
-    memberId: string;
+    memberId: number;
     peerId: string;
     streamId: string;
 }
@@ -44,17 +42,10 @@ export interface SummaryMessageInterface {
     time: string;
 }
 
-const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
-    const router = useRouter();
-
-    // 로그인 여부 확인
-    useEffect(() => {
-        if (!memberData) router.push('/auth/login');
-    }, []);
-
-    // 세션 스토리지에서 멤버 ID 가져오기
-    const memberData = getSessionStorageItem('memberData');
-
+const ConferenceTemplate = ({
+    conferenceInfo,
+    memberData,
+}: ConferenceTemplateProps) => {
     // stompClient 상태
     const [stompClient, setStompClient] = useState<any>(null);
 
@@ -89,7 +80,7 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
 
     // 클라이언트 정보 참조
     const client = useRef<ClientInterface>({
-        memberId: '', // 클라이언트 멤버 ID
+        memberId: -1, // 클라이언트 멤버 ID
         peerId: '', // 클라이언트 피어 ID
         streamId: '', // 클라이언트 스트림 ID
     });
@@ -178,14 +169,6 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         if (!navigator.mediaDevices) {
             return;
         }
-        const devices = navigator.mediaDevices?.enumerateDevices();
-        const defaultDevice = devices.then((devices) =>
-            devices.find((device) => device.deviceId === 'default'),
-        );
-        console.log(
-            'devices=>',
-            devices.then((devices) => setDevices(devices)),
-        );
 
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
@@ -246,29 +229,29 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
         if (!isFlag) return;
 
         client.current = {
-            memberId: memberData?.id,
+            memberId: memberData.id,
             peerId,
             streamId: localStream.current?.id as string,
         };
 
         try {
-            // const response = await POST({
-            //     API: API,
-            //     endPoint: `${conferenceInfo?.id}/join`,
-            //     body: { peerId },
-            //     isAuth: true,
-            // });
+            const response = await POST({
+                API: API,
+                endPoint: `${conferenceInfo?.id}/join`,
+                body: { peerId },
+                isAuth: true,
+            });
 
-            // const { data } = response.data;
+            const { data } = response.data;
 
-            // setCurrentMembers((prevMembers) => [
-            //     ...prevMembers,
-            //     ...data.existingMembers,
-            // ]);
+            setCurrentMembers((prevMembers) => [
+                ...prevMembers,
+                ...data.existingMembers,
+            ]);
 
-            // data.existingPeerIds.forEach((remotePeerId: string) =>
-            //     makeCall(remotePeerId),
-            // );
+            data.existingPeerIds.forEach((remotePeerId: string) =>
+                makeCall(remotePeerId),
+            );
 
             const socket = new SockJS(sockTargetUrl); // SockJS 소켓 생성
             const clientStomp = Stomp.over(socket); // Stomp 클라이언트 생성
@@ -276,20 +259,9 @@ const ConferenceTemplate = ({ conferenceInfo }: ConferenceTemplateProps) => {
             setStompClient(clientStomp); // 생성한 Stomp 클라이언트 상태에 저장
 
             setIsJoined(true);
-            // setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
+            setExistingPeerIds([...existingPeerIds, ...data.existingPeerIds]); // 방에 존재하는 peerIds 저장
         } catch (error) {
             console.error('Error joining conference:', error);
-            if (!conferenceInfo?.openTime) {
-                // 컨퍼런스가 개최되지 않았을 때 waiting-room으로 이동
-                router.push(
-                    `/conference/${conferenceInfo?.id}/waiting-room?error=not_open`,
-                );
-            } else {
-                // 회의 참여 실패 시, waiting-room으로 이동
-                router.push(
-                    `/conference/${conferenceInfo?.id}/waiting-room?error=join_failed`,
-                );
-            }
         }
     };
 

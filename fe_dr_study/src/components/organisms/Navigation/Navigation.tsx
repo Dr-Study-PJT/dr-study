@@ -123,7 +123,6 @@ const Navigation = ({ scrollPosition }: { scrollPosition: string }) => {
                 isAuth: true,
                 revalidateTime: 0,
             });
-            console.log('GET 알림 데이터 : ', response.data);
             setNotifications(response.data);
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
