@@ -7,6 +7,7 @@ import MeetingIdBox from '@/components/molecules/MeetingIdBox/MeetingIdBox';
 import InviteMembersBox from '@/components/organisms/InviteMembersBox/InviteMembersBox';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface ConferenceInfoProps {
@@ -24,9 +25,9 @@ const ConferenceInfoTemplate = ({
     studyMembers,
     handleOpenConference,
 }: ConferenceInfoProps) => {
+    const router = useRouter();
     const [isMemberInvited, setIsMemberInvited] = useState<boolean>(false); // 멤버 초대 여부
     const [isHostOnly, setIsHostOnly] = useState<boolean>(false);
-    const [currentTime, setCurrentTime] = useState('0000. 0. 0. 오후 0:00:00');
 
     useEffect(() => {
         setIsHostOnly(
