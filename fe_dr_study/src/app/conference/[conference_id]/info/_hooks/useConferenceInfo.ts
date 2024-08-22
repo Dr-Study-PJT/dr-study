@@ -4,8 +4,11 @@ import { conferenceAPI as API } from '@/app/api/axiosInstanceManager';
 import { GET, POST } from '@/app/api/routeModule';
 import { ConferenceData, ConferenceMember } from '@/interfaces/conference';
 import { getSessionStorageItem } from '@/utils/sessionStorage';
+import { useRouter } from 'next/navigation';
 
 const useConferenceInfo = (conferenceId: number) => {
+    const router = useRouter();
+
     const memberData = getSessionStorageItem('memberData');
 
     const [conferenceInfo, setConferenceInfo] = useState<ConferenceData | null>(
@@ -72,7 +75,7 @@ const useConferenceInfo = (conferenceId: number) => {
                 body: {},
                 isAuth: true,
             });
-
+            router.push(`/conference/${conferenceId}`);
             return response; // 필요한 경우 응답 반환
         } catch (error) {
             console.error('컨퍼런스 개최 실패(openConference):', error);
